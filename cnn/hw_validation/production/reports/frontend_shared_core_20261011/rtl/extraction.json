@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "module": "road_down2_tile_scheduler",
+  "source": {
+    "path": "../../board_selftest_20261010/core/down2_dynamic_tile_runner.v",
+    "module": "down2_dynamic_tile_runner",
+    "sha256": "42d1de0839e1c7d81e9dc17335559f72dba0482a4eeaeb6f7679af222d5f8d4a"
+  },
+  "adapter_reference": {
+    "path": "../../board_selftest_20261010/core/road_down2_dynamic_adapter.v",
+    "sha256": "3f98c0aa797eee97ab1e553b106b250dbc76b23170d5fc35a270bf8884e7d2e0"
+  },
+  "output": {
+    "path": "road_down2_tile_scheduler.v",
+    "sha256": "84bfd384bf0f2a8e11c2428108ee8e97dffea121407fa74c8538459586817f4d"
+  },
+  "changes": [
+    "Removed the road_mac_probe and road_down2_dynamic_adapter instances and exported their existing connections.",
+    "Replaced the local table loader ports with i_table_loaded; all other public load, control, export, debug, and counter ports remain.",
+    "Preserved the original internal MAC and PP signal names as aliases for waveform comparison."
+  ],
+  "preserved_semantics": {
+    "body_mapping": "source lines 396-941 map byte-for-byte to output lines 484-1029",
+    "body_sha256": "d461407c963321b104b842d2cae60d57c0e986f049b8f4194a9265894b92c34e",
+    "tag": "each lane tag is {layer[15],position[14:11],channel[10:6],6'b0}; o_pp_tags is {gamma,beta,alpha}",
+    "int8_writeback": "i_pp_data[7:0], matching the adapter's activated INT8 selection; i_pp_int16 remains an observable protocol alias",
+    "pp_input_fault": "(PW ? i_mac_fault : 1'b0) || the adapter's unchanged lane-mask/channel-base shape fault",
+    "pp_meta_count": "i_pp_meta_count is the shared postprocess o_pending_count used by the original adapter"
+  },
+  "verification": {
+    "shared_top_named_ports": "80 of 80 matched; no unknown or unconnected scheduler ports",
+    "formatter_compile": "passed",
+    "strict_gate": "not delivery-ready because inherited source style/profile/comment findings remain; integration gate is owned by the coordinator",
+    "iverilog": "inconclusive: Windows Icarus exited with access violation while expanding the inherited large-array always-at-star sensitivity set"
+  }
+}
