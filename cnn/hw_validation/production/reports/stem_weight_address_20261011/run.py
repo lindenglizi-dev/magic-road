@@ -188,6 +188,11 @@ def finish():
         status["status"] = "FUNCTIONAL_PASS_PHYSICAL_RESULT_PENDING"
     save(ROOT / "status.json", status)
 
+    # status覆盖后刷新收据，避免沿用shared.finish中较早的状态哈希。
+    save(ROOT / "artifact_manifest.json", {str(path): sha(path) for path in sorted(ROOT.rglob("*"))
+         if path.is_file() and path.name != "artifact_manifest.json" and path.suffix not in (".wlf", ".pyc")
+         and "work" not in path.relative_to(ROOT).parts})
+
 
 def evidence():
     shared.check()

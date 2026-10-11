@@ -1,0 +1,67 @@
+{
+  "modules": [
+    {
+      "name": "tb_stem_weight_address",
+      "feature": "stem_address",
+      "rtl_path": "tb_stem_weight_address.v",
+      "description": "白盒地址测试台，不作为可综合RTL；握手/复位由原测试台验证。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "初始为0，1ns后释放；clk保持0，白盒只枚举组合逻辑。"
+      },
+      "behavior": [
+        "两组权重地址指纹分别检查低/高字节，18,432项包含尾路零填充。"
+      ],
+      "constraints": [
+        "TEST_ONLY量化参数；仅前三个卷积验证；不含DDR/生产/位流。",
+        "调度FSM及全部算术源码冻结，非合法通道状态不扩展契约。"
+      ],
+      "corner_cases": [
+        "channel15尾路、group3尾lane、地址431、负权重、反压、装载/计算中复位。"
+      ],
+      "verification_cases": [
+        "Python地址穷举；RTL两组权重指纹穷举；冻结normal/stalls/control整帧回归。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "enumeration",
+          "title": "组合地址采样",
+          "scenario": "enumeration",
+          "description": "时钟保持0，改动组索引后等待1ns再采样下一权重。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "0...."
+              },
+              {
+                "name": "group",
+                "wave": "=.=.=",
+                "data": [
+                  0,
+                  1,
+                  2
+                ]
+              },
+              {
+                "name": "sample",
+                "wave": "01010"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

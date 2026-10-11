@@ -1,0 +1,99 @@
+Stem权重地址生成——单变量修复报告
+日期：2026-10-11；分支work/roadyolo；旧基线cd4f6e2b不可覆盖。
+
+一、问题和改法
+旧共享前端有52个内部setup失败端点，其中Stem权重35个，最差-1.617ns。
+旧表达式：(cnt_channel+output_lane)*27+term，宽整数展开进入两个地址DSP。
+本候选：六组固定OIHW基址+9位term偏移，最大405+26=431。
+通道组0/3/6/9/12/15；channel15仅第一输出路有效；最后归约组仅3个lane有效。
+没有新增模块或流水寄存器，不改接口、FSM、II、偏置、算术、反压或复位。
+
+代码位置：本目录rtl/road_stem_tile_scheduler.v；修改仅声明、基址case和权重读地址。
+road_frontend_shared_core.v与road_down2_tile_scheduler.v为旧文件逐字节副本。
+MAC、动态重定标、round和SiLU仍引用board_selftest_20261010/core中的冻结源码。
+
+二、功能和周期——已通过
+Python覆盖6912次有效地址及2304个屏蔽lane，全部432地址被访问。
+RTL用地址低/高字节两组指纹，18432项比较零错误。
+原control/normal/stalls全部通过。每模式覆盖Stem589824、DW147456、PW221184项，
+合计958464项；逐级acc/pre/SiLU/post/commit与真实缓存导出比较，不靠checksum。
+control保留未装满表禁止启动、越界地址、故障封锁、计算中复位、恢复、
+提前保持选择/装表请求不死锁等原测试。
+
+正常：Stem10911744 + DW630720 + PW340992 = 11883456核心周期。
+背压：Stem13196638 + DW/PW1376668 = 14573306核心周期。
+cycle_summary.json整个字典与旧基线一致，包括互斥周期分类和预装载/导出窗口。
+本次没有加速吞吐，目标是去掉宽地址长路径和多余DSP；不是全网5FPS证据。
+
+三、物理——Stem地址链通过，但全前端仍有未通过项
+器件PH1P35MDG324-3，100MHz，顶层仍142位IO，自动引脚、零IO延迟仅诊断。
+frontend.sdc与frontend.adc逐字节相同，不新增时序例外。
+TD真实新实现结束，REPORT_COMPLETION_DONE已核对；实际工具运行1361.655秒，约22分42秒。
+实际资源：DSP32→30，Slice10155→9763（减少392），ERAM4→4，LUT6数量9591→9175（减少416）。
+M-Slice5319→5257，L-Slice4836→4506。
+物理寄存器4785→4840；来源尚未逐项分摊，不将映射变化称为新增流水拍；源码和周期不变已另证。
+DSP分属u_mac24、u_pp6；Stem地址DSP为0；一个MAC、一个PP、一个SiLU，SiLU ERAM仅1块。
+总ERAM4块，另外3块为原Stem推断缓存；不能把总ERAM要求错写成1。
+
+内部setup失败（含ignored/分布RAM端点，按check+终点去重）：
+区域                       旧失败数    新失败数    新最差裕量
+Stem权重读出                   35           0       +2.205ns（已通过）
+down2权重                       9           0       此次无负裕量
+down2激活                       3           0       此次无负裕量
+down2输出计数                   4           0       此次无负裕量
+旧PP缓存WE及其他                1           0       旧端点本次不再失败
+pre round使能                   0          36       -0.462ns（未通过）
+down2缓存WE                     0           1       -0.091ns（未通过）
+总计                           52          37       -0.462ns
+内部hold最差+0.026ns，通过当前报告范围。
+
+不能只说总失败减少：去掉Stem后，其他内部失败17→37，净增加20。
+其他RTL未改，这是布局重排暴露/改变的控制分发瓶颈，不是增加20项数值错误；新失败全部保留。
+主路径：u_stem/state_current_reg[0] → u_pp/u_pre/u_round/reg_half_reg[24].cea。
+实际4级LUT，10.199ns数据延迟，其中布线8.999ns（89%）；i_advance扇出847，末段网延迟6.182ns。
+下一项优先局部使能分发，不继续切算术乘积、不缩网；若须改冻结PP/round内部核，应另行申请。
+
+外部仍未签核：数据输入setup -0.485/hold -0.838ns；输出setup -1.788/hold +2.871ns；
+raw reset setup +0.257/hold -0.472/recovery +6.889/removal -1.844ns。
+全量DSP输入setup +1.136、hold -0.299、recovery +6.410、removal -0.319ns；
+ERAM输入setup +1.865、hold -1.750、recovery +8.340、removal -0.192ns。
+这些DSP/ERAM聚合hold/removal包含外部装表/装载/reset，不能误记成内部算术失败或略过。
+报告覆盖100%，Both Slow/Fast；未新增时序例外。no-clock/invalid-constraint/组合环均为0。
+clock-definition(1)、dummy-node(2)仍保留：生成时钟未连master的标题无具体对象，
+厂商可选DSP mul9端点及未用i_activate输出；没有据此宣布整个时钟/原语合同已闭合。
+SYN-5025只读展开查询1026个无驱动网全部PIN_COUNT=0；可见带负载无驱动网0。
+此查询不覆盖厂商加密/可选模型的一切语义，不作为严格门禁通过的替代。
+最终必须同时看含RAM/DSP端点的全量内部、外部接口和raw reset，不以一个WNS替代。
+物理完成时要求REPORT_COMPLETION_DONE标记，不能仅凭TD退出码0判定。
+
+四、严格检查和工具限制——未闭合
+单Stem同口径：555→571条；增加16条不是仿真错16项。
+增量：VG125 +11（显式9位常量不满足检查器最小字面宽度规则），VG062 +2，
+VG013 +1，VG145 +1，VG147 +1，VG153 +1，VG138 -1。
+VG145/147组合锥和VG153数组驱动证据未闭合，不写成仅格式问题。
+组合case逐分支赋值，地址范围穷举及同向量通过；保留检查器未知项，不能替代静态签核。
+新RTL三文件/完整源闭包3617条，TB1174条，与历史两文件/不同闭包总数不可直接相加比较。
+八门：compile通过；ast/readability/comment/naming/profile失败；本次全量检查testbench通过；
+toolchain在原静态门报告为not_requested；ModelSim与实际TD单独记证据，不篡改静态门状态。
+raw严格报告本地保留，较大JSON不入Git；strict_summary.json保存矩阵、规则计数及原报告哈希。
+
+readable-verilog-generator要求的设计规格和WaveDrom由canonical入口生成。
+无端口白盒TB不受该规格工具支持（要求ports非空），保留失败并提供人工同名契约；
+不添加假端口绕过检查。readable-python/script技能未提供，不宣称其门禁通过。
+
+五、执行中问题与最小处理
+1. 第一次规格入口cwd过深导致源码越出workspace：改回本候选根目录，重跑设计规格通过；失败日志保留。
+2. 无端口TB规格生成失败：这是工具合同限制，不改硬件接口，人工补充TB契约。
+3. 汇总文件原名gate_summary.json撞到旧runner的gate*目录选择：改为strict_summary.json，重跑finish通过；未修改旧runner。
+4. 一次只读诊断的命令引号解析失败：改为标准输入执行只读Python检查，不影响RTL或测试结果。
+5. 扩展本候选runner时插入位置曾落入原函数体：检查完整函数边界后修正；未运行该错误版本，正在执行的TD使用此前正确入口，不改变构建源码。
+6. 首次汇总对down2权重/激活端点用了少了mac字段的前缀，误归为other；按真实端点改分类，
+   总数和原始timing不变。首次JSON保留为physical_summary_first_parse.json，正式结论只用physical_summary.json。
+7. Git行尾检查遇原始工具日志尾空格：源码仍严格检查，原始log不重写、不作为源码格式失败。
+
+六、边界和后续
+本轮仍只有前三个卷积；权重和动态系数是测试值，不是部署QAT。
+无训练、生产改动、位流、上板、Flash或新时序例外。
+本轮结论：Stem权重地址修复达到单项目标，资源下降且功能/周期不变；全前端未通过。
+下一步只针对847扇出控制使能做单变量候选，保留36+1剩余内部端点及外部问题。
+不把本次地址修复扩大成缩网或任务间重叠优化。

@@ -33,6 +33,7 @@ def summarize():
         match = re.search(rf"#{key}\s+(\d+)\s+out of\s+(\d+)", area_text)
         assert match, key
         area[key] = {"used": int(match[1]), "available": int(match[2])}
+    area["registers"] = int(re.search(r"#reg\s+(\d+)", area_text)[1])
     log = (PHYSICAL / "td_launcher.log").read_text(encoding="utf-8", errors="replace")
     completion = log
     assert "REPORT_COMPLETION_DONE" in completion
@@ -82,10 +83,12 @@ def summarize():
         output = {}
         for name, predicate in (
             ("stem_weight", lambda r: r["end"].startswith("u_stem/reg_mac_weight")),
-            ("down2_weight", lambda r: r["end"].startswith("u_down2/reg_weight")),
-            ("down2_activation", lambda r: r["end"].startswith("u_down2/reg_activation")),
+            ("down2_weight", lambda r: r["end"].startswith("u_down2/reg_mac_weight")),
+            ("down2_activation", lambda r: r["end"].startswith("u_down2/reg_mac_activation")),
             ("down2_output_counter", lambda r: r["end"].startswith("u_down2/cnt_output")),
-            ("other_internal", lambda r: not (r["end"].startswith("u_stem/reg_mac_weight") or r["end"].startswith("u_down2/reg_weight") or r["end"].startswith("u_down2/reg_activation") or r["end"].startswith("u_down2/cnt_output"))),
+            ("pre_round_enable", lambda r: r["end"].startswith("u_pp/u_pre/u_round/")),
+            ("down2_cache_we", lambda r: r["end"].startswith("u_down2/ramread") and r["end"].endswith(".we")),
+            ("other_internal", lambda r: not (r["end"].startswith(("u_stem/reg_mac_weight", "u_down2/reg_mac_weight", "u_down2/reg_mac_activation", "u_down2/cnt_output", "u_pp/u_pre/u_round/")) or (r["end"].startswith("u_down2/ramread") and r["end"].endswith(".we")))),
         ):
             paths = [r for r in selected if predicate(r)]
             output[name] = {"failed_check_endpoints": len(paths),
