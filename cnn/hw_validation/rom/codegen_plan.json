@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "order": [
+    "requirements",
+    "codegen_plan",
+    "spec_document",
+    "python_golden",
+    "rtl",
+    "local_simulation",
+    "strict_static_gate"
+  ],
+  "python_golden": {
+    "architecture_source": "cnn/model.py:RoadYOLOS4.architecture_manifest",
+    "numeric_source": "cnn/integer.py:tables",
+    "contract_source": "cnn/contract.json",
+    "rng": "NumPy Generator PCG64 seed 42",
+    "endianness": "little-endian bytes; each .dath line is the hexadecimal integer whose least-significant byte is the first package byte"
+  },
+  "rtl": {
+    "module": "road_yolo_numeric_rom_probe",
+    "primitive": "PH1P_LOGIC_ERAM",
+    "logical_mode": "SP",
+    "physical_mapping": "four 40x512 logical lanes; TD wrapper maps 40-bit logical ports to PDP20K/DP20K internally",
+    "runtime_observability": "autonomous sequential scan makes every address visible at module outputs"
+  },
+  "limits": [
+    "The package is deterministic test data, not learned parameters.",
+    "No claim is made that the package is the frozen deployment structure.",
+    "TD synthesis and hardware programming are owned by the parent H0 flow."
+  ]
+}

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RoadYOLO 人工审核台</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #17212b; background: #eef2f5; }
+    header, main { max-width: 1440px; margin: auto; padding: 12px 18px; }
+    header { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #ccd5dd; }
+    h1 { margin: 0 auto 0 0; font-size: 20px; }
+    button, select, input, textarea { font: inherit; }
+    button { padding: 6px 10px; cursor: pointer; }
+    button.primary { color: #fff; background: #1769aa; border: 1px solid #125588; border-radius: 4px; }
+    button.danger { color: #8b1e1e; }
+    button:disabled { cursor: not-allowed; opacity: .5; }
+    .fatal { max-width: 900px; margin: 30px auto; padding: 18px; color: #861c1c; background: #fff4f4; border: 1px solid #df9999; white-space: pre-wrap; }
+    .toolbar, .tabs, .actions, .checks, .nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .toolbar { margin-bottom: 10px; }
+    .status { margin-left: auto; font-weight: 600; }
+    .grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr); gap: 12px; }
+    .card { padding: 12px; background: #fff; border: 1px solid #ccd5dd; border-radius: 6px; }
+    .canvas-wrap { overflow: auto; min-height: 360px; max-height: 76vh; background: #20262c; }
+    canvas { display: block; touch-action: none; cursor: crosshair; }
+    .tabs button.active { color: #fff; background: #334e68; }
+    .meta { margin: 8px 0; font-size: 13px; word-break: break-all; }
+    .warn { color: #8a4b00; }
+    label { display: inline-flex; gap: 5px; align-items: center; }
+    .field { display: grid; grid-template-columns: 100px 1fr; gap: 7px; align-items: center; margin: 7px 0; }
+    .field input, .field select, .field textarea { width: 100%; min-width: 0; }
+    .box-inputs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+    .box-inputs input { width: 100%; }
+    textarea { min-height: 62px; resize: vertical; }
+    .checks { padding: 7px; border: 1px solid #d9e1e7; }
+    .checks label { min-width: 128px; }
+    .decision { margin: 6px 0; padding: 6px; background: #f4f7f9; border-left: 4px solid #789; font-size: 13px; }
+    .decision button { float: right; padding: 1px 6px; }
+    .complete { color: #176b35; font-weight: 700; }
+    .incomplete { color: #a23a27; font-weight: 700; }
+    .legend span { margin-right: 12px; }
+    .gt { color: #00a85a; } .teacher { color: #e48b00; } .draft { color: #16a4d8; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .canvas-wrap { max-height: 60vh; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>RoadYOLO 原图画框人工审核台</h1>
+  <label>桶 <select id="bucket">
+    <option value="train_review">训练审核（默认）</option>
+    <option value="road_development">道路开发</option>
+    <option value="person_background_aux">压力集</option>
+    <option value="all">全部</option>
+  </select></label>
+  <label><input id="riskSort" type="checkbox"> 风险从高到低浏览</label>
+  <button id="importButton">导入草稿 JSON</button>
+  <input id="importFile" type="file" accept="application/json,.json" hidden>
+  <button id="exportButton" class="primary">导出 Patch JSON</button>
+</header>
+<main id="app" hidden>
+  <div class="toolbar nav">
+    <button id="prev">← 上一张</button><button id="next">下一张 →</button>
+    <select id="jump" aria-label="跳转图片"></select>
+    <span id="progress"></span><span id="completeCount" class="status"></span>
+  </div>
+  <div class="grid">
+    <section class="card">
+      <div class="tabs">
+        <button data-view="raw" class="active">RAW 无框原图</button>
+        <button data-view="gt">GT 来源框</button>
+        <button data-view="ai">GT + Teacher / 疑点</button>
+        <label>画布缩放 <select id="zoom"><option value="0.25">25%</option><option value="0.5" selected>50%</option><option value="0.75">75%</option><option value="1">100%</option><option value="1.5">150%</option></select></label>
+      </div>
+      <div id="sampleMeta" class="meta"></div>
+      <div id="teacherStatus" class="meta warn"></div>
+      <div class="canvas-wrap"><canvas id="canvas" aria-label="审核图片画布"></canvas></div>
+      <div class="meta legend"><span class="gt">■ 来源 GT</span><span class="teacher">■ Teacher 候选</span><span class="draft">■ 当前手动画框</span></div>
+      <button id="rawSeen" class="primary">我已单独看过 RAW 原图</button>
+      <span id="rawState" class="meta"></span>
+    </section>
+    <aside class="card">
+      <div class="field"><label for="reviewer">审核人（本图）</label><input id="reviewer" autocomplete="off" placeholder="人工填写，不能自动生成"></div>
+      <div class="field"><label for="original">来源框</label><select id="original"></select></div>
+      <div class="field"><label for="teacher">Teacher 候选</label><select id="teacher"></select></div>
+      <div class="field"><span>框 [x1,y1,x2,y2)</span><div class="box-inputs"><input id="x1" type="number" step="any" aria-label="x1"><input id="y1" type="number" step="any" aria-label="y1"><input id="x2" type="number" step="any" aria-label="x2"><input id="y2" type="number" step="any" aria-label="y2"></div></div>
+      <div class="field"><label for="className">类别</label><select id="className"><option value="person">person</option><option value="vehicle">vehicle</option><option value="ignore">ignore</option></select></div>
+      <div class="field"><label for="reason">原因</label><input id="reason" placeholder="M/N/I/D 必填"></div>
+      <label><input id="aiAssisted" type="checkbox"> 参考过 AI 候选</label>
+      <p class="meta">在 GT 或疑点视图中拖框；坐标保存为原图半开 XYXY。Teacher 只能逐项参考，不能批量采用。</p>
+      <div class="actions">
+        <button data-action="A">A 接受来源框</button><button data-action="M">M 修改框/类</button>
+        <button data-action="N">N 新增人工框</button><button data-action="I">I 设为 ignore</button>
+        <button data-action="D" class="danger">D 删除错框</button>
+      </div>
+      <p><button id="acceptRemaining">人工确认本图剩余来源框为 A</button></p>
+      <h3>本图决策</h3><div id="decisions"></div>
+      <h3>逐项检查</h3>
+      <div id="checks" class="checks">
+        <label><input type="checkbox" data-check="person"> person</label>
+        <label><input type="checkbox" data-check="vehicle"> vehicle</label>
+        <label><input type="checkbox" data-check="rider"> rider</label>
+        <label><input type="checkbox" data-check="parked_vehicle"> parked vehicle</label>
+        <label><input type="checkbox" data-check="small_occluded"> 小目标/遮挡</label>
+        <label><input type="checkbox" data-check="ignore"> ignore 区域</label>
+      </div>
+      <div class="field"><label for="notes">备注</label><textarea id="notes"></textarea></div>
+      <div class="actions"><button id="sign" class="primary">签署本图 complete</button><button id="unsign">撤销 complete</button><span id="completeState"></span></div>
+    </aside>
+  </div>
+</main>
+<div id="fatal" class="fatal" hidden></div>
+
+<script id="review-manifest" type="application/json">__REVIEW_MANIFEST_JSON__</script>
+<script id="core">
+globalThis.WorkbenchCore = (() => {
+  const classes = new Set(["person", "vehicle", "ignore"]);
+  const actions = new Set(["A", "M", "N", "I", "D"]);
+  const checks = ["person", "vehicle", "rider", "parked_vehicle", "small_occluded", "ignore"];
+  const sha = /^[0-9a-f]{64}$/i;
+  const relativePath = value => typeof value === "string" && value.length > 0 && !/^(?:[a-z]+:|[\\/])/i.test(value) && !/(?:^|[\\/])\.\.(?:[\\/]|$)/.test(value) && !/(?:^|[\\/])blind(?:[\\/]|$)/i.test(value);
+  const validBox = (box, sample) => Array.isArray(box) && box.length === 4 && box.every(Number.isFinite) &&
+    0 <= box[0] && box[0] < box[2] && box[2] <= sample.width &&
+    0 <= box[1] && box[1] < box[3] && box[3] <= sample.height;
+  const sameBox = (a, b) => Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((v, i) => v === b[i]);
+  function clientToNative(clientX, clientY, rect, width, height) {
+    return [(clientX - rect.left) * width / rect.width, (clientY - rect.top) * height / rect.height];
+  }
+  function actionErrors(sample, action) {
+    const errors = [];
+    const original = sample.original.find(item => item.target_id === action.target_id);
+    if (!(typeof action.target_id === "string" && action.target_id)) errors.push("target_id 缺失");
+    if (!actions.has(action.action)) errors.push("未知动作");
+    if (!classes.has(action.class)) errors.push("类别非法");
+    if (!validBox(action.bbox, sample)) errors.push("框不是原图范围内的半开 XYXY");
+    if (typeof action.ai_assisted !== "boolean") errors.push("ai_assisted 必须为布尔值");
+    if (["A", "M", "D"].includes(action.action) && !original) errors.push(action.action + " 必须绑定来源 target_id");
+    if (action.action === "A" && original && (action.class !== original.class || !sameBox(action.bbox, original.bbox))) errors.push("A 必须保持来源框和类别");
+    if (["M", "N", "I", "D"].includes(action.action) && !(typeof action.reason === "string" && action.reason.trim())) errors.push(action.action + " 必须填写原因");
+    if (action.action === "N" && original) errors.push("N 不能覆盖来源 target_id");
+    if (action.action === "I" && action.class !== "ignore") errors.push("I 的类别必须为 ignore");
+    if (["M", "N"].includes(action.action) && action.class === "ignore") errors.push("ignore 必须使用 I 动作");
+    if (action.action === "D" && original && (action.class !== original.class || !sameBox(action.bbox, original.bbox))) errors.push("D 必须引用原来源框和类别");
+    return errors;
+  }
+  function completionErrors(sample, review) {
+    const errors = [];
+    if (!review.raw_seen) errors.push("尚未确认看过 RAW");
+    if (!(typeof review.reviewer === "string" && review.reviewer.trim())) errors.push("审核人为空");
+    if (!review.checks || checks.some(key => review.checks[key] !== true)) errors.push("六项检查未全部勾选");
+    const decisions = new Set(review.actions.filter(item => ["A", "M", "I", "D"].includes(item.action)).map(item => item.target_id));
+    const existingActions = review.actions.filter(item => sample.original.some(original => original.target_id === item.target_id));
+    if (new Set(existingActions.map(item => item.target_id)).size !== existingActions.length) errors.push("同一来源框有多个决策");
+    const missing = sample.original.filter(item => !decisions.has(item.target_id)).map(item => item.target_id);
+    if (missing.length) errors.push("来源框未决策: " + missing.join(", "));
+    review.actions.forEach((action, i) => errors.push(...actionErrors(sample, action).map(text => `动作${i + 1}: ${text}`)));
+    return errors;
+  }
+  function validateManifest(manifest) {
+    const errors = [];
+    if (manifest.schema !== "cnn_review_workbench_v1") errors.push("manifest schema 不符");
+    if (!sha.test(manifest.dataset_id || "")) errors.push("dataset_id 必须是 SHA-256");
+    if (!sha.test(manifest.annotation_policy_sha256 || "")) errors.push("annotation_policy_sha256 必须是 SHA-256");
+    if (!("teacher_status" in manifest)) errors.push("缺少显式 teacher_status");
+    if (manifest.train_required_count !== 128) errors.push("train_required_count 必须为 128");
+    if (!Array.isArray(manifest.samples)) return errors.concat("samples 必须是数组");
+    if (manifest.samples.length !== 276) errors.push("samples 必须固定为 276 张");
+    const ids = new Set();
+    const counts = {train_review: 0, road_development: 0, person_background_aux: 0};
+    manifest.samples.forEach((sample, index) => {
+      const at = `samples[${index}]`;
+      if (!sample || typeof sample !== "object") { errors.push(at + " 非对象"); return; }
+      if (!(typeof sample.image_id === "string" && sample.image_id) || ids.has(sample.image_id)) errors.push(at + " image_id 缺失或重复");
+      ids.add(sample.image_id);
+      if (!(typeof sample.legacy_id === "string" && sample.legacy_id)) errors.push(at + " legacy_id 缺失");
+      if (!(sample.bucket in counts)) errors.push(at + " bucket 非法"); else counts[sample.bucket]++;
+      if (!["train", "dev", "stress"].includes(sample.split)) errors.push(at + " split 非法");
+      const expectedSplit = {train_review: "train", road_development: "dev", person_background_aux: "stress"}[sample.bucket];
+      if (expectedSplit && sample.split !== expectedSplit) errors.push(at + " bucket/split 不匹配");
+      if (!(Number.isInteger(sample.width) && sample.width > 0 && Number.isInteger(sample.height) && sample.height > 0)) errors.push(at + " 尺寸非法");
+      if (!sha.test(sample.source_sha256 || "")) errors.push(at + " source_sha256 缺失或非法");
+      if (!relativePath(sample.raw_file) || !relativePath(sample.gt_overlay_file)) errors.push(at + " 图片路径必须为非 blind 相对路径");
+      if (!Array.isArray(sample.original) || !Array.isArray(sample.teacher) || !Array.isArray(sample.warnings)) errors.push(at + " original/teacher/warnings 必须是数组");
+      const targetIds = new Set();
+      (sample.original || []).forEach(item => {
+        if (!item || typeof item.target_id !== "string" || !item.target_id || targetIds.has(item.target_id)) errors.push(at + " 来源 target_id 缺失或重复");
+        else targetIds.add(item.target_id);
+        if (!classes.has(item && item.class) || !validBox(item && item.bbox, sample)) errors.push(at + " 来源框非法");
+        if (item && (item.source_category == null || item.source_target_id == null)) errors.push(at + " 来源追溯字段缺失");
+      });
+      const candidateIds = new Set();
+      (sample.teacher || []).forEach(item => {
+        if (!item || typeof item.candidate_id !== "string" || !item.candidate_id || candidateIds.has(item.candidate_id) || !classes.has(item.class) || !validBox(item.bbox, sample) || !Number.isFinite(item.score) || item.score < 0 || item.score > 1 || typeof item.kind !== "string") errors.push(at + " Teacher 候选非法");
+        else candidateIds.add(item.candidate_id);
+      });
+      if (!Number.isFinite(sample.review_score)) errors.push(at + " review_score 非数字");
+    });
+    if (counts.train_review !== 128 || counts.road_development !== 124 || counts.person_background_aux !== 24) errors.push("三桶数量必须为 128/124/24");
+    return errors;
+  }
+  return {checks, validBox, clientToNative, actionErrors, completionErrors, validateManifest};
+})();
+</script>
+<script id="app-script">
+(() => {
+  "use strict";
+  const Core = globalThis.WorkbenchCore;
+  const $ = id => document.getElementById(id);
+  const manifestText = $("review-manifest").textContent.trim();
+  let manifest;
+  try {
+    if (manifestText.startsWith("__REVIEW_")) throw new Error("模板尚未嵌入审核 manifest");
+    manifest = JSON.parse(manifestText);
+    const errors = Core.validateManifest(manifest);
+    if (errors.length) throw new Error(errors.slice(0, 20).join("\n") + (errors.length > 20 ? `\n…另有 ${errors.length - 20} 项` : ""));
+  } catch (error) {
+    $("fatal").hidden = false;
+    $("fatal").textContent = "无法启动审核台：\n" + error.message;
+    return;
+  }
+
+  const blankReview = sample => ({
+    image_id: sample.image_id, source_sha256: sample.source_sha256, reviewer: "", raw_seen: false, complete: false,
+    checks: Object.fromEntries(Core.checks.map(key => [key, false])), actions: [], notes: ""
+  });
+  const reviews = manifest.samples.map(blankReview);
+  const byId = new Map(manifest.samples.map((sample, index) => [sample.image_id, index]));
+  let order = [], position = 0, view = "raw", currentBox = null, dragStart = null, imageToken = 0;
+  const image = new Image();
+  const canvas = $("canvas"), context = canvas.getContext("2d");
+
+  function sampleIndex() { return order[position]; }
+  function sample() { return manifest.samples[sampleIndex()]; }
+  function review() { return reviews[sampleIndex()]; }
+  function markChanged() { review().complete = false; renderComplete(); renderProgress(); }
+  function rebuildOrder(keepId) {
+    const bucket = $("bucket").value;
+    order = manifest.samples.map((item, index) => ({item, index})).filter(row => bucket === "all" || row.item.bucket === bucket);
+    if ($("riskSort").checked) order.sort((a, b) => b.item.review_score - a.item.review_score || a.index - b.index);
+    order = order.map(row => row.index);
+    position = Math.max(0, order.findIndex(index => manifest.samples[index].image_id === keepId));
+    render();
+  }
+  function setOption(select, value, text) { const option = document.createElement("option"); option.value = value; option.textContent = text; select.append(option); }
+  function setBox(box) {
+    currentBox = box ? box.slice() : null;
+    ["x1", "y1", "x2", "y2"].forEach((id, i) => $(id).value = box ? Number(box[i].toFixed(3)) : "");
+    draw();
+  }
+  function readBox() { return ["x1", "y1", "x2", "y2"].map(id => Number($(id).value)); }
+  function selectedOriginal() { return sample().original.find(item => item.target_id === $("original").value); }
+  function render() {
+    if (!order.length) { $("fatal").hidden = false; $("fatal").textContent = "当前筛选没有图片"; $("app").hidden = true; return; }
+    $("fatal").hidden = true; $("app").hidden = false;
+    const item = sample(), record = review();
+    $("jump").replaceChildren();
+    order.forEach((index, i) => setOption($("jump"), String(i), `${i + 1}. ${manifest.samples[index].legacy_id || manifest.samples[index].image_id}`));
+    $("jump").value = String(position);
+    $("original").replaceChildren(); setOption($("original"), "", "（未选择来源框）");
+    item.original.forEach(box => setOption($("original"), box.target_id, `${box.target_id} · ${box.class} · ${box.bbox.join(",")}`));
+    $("teacher").replaceChildren(); setOption($("teacher"), "", item.teacher.length ? "（未选择候选）" : "（本清单无 Teacher 候选）");
+    item.teacher.forEach(box => setOption($("teacher"), box.candidate_id, `${box.candidate_id} · ${box.class} · ${box.score.toFixed(3)} · ${box.kind || "candidate"}`));
+    $("teacher").disabled = !item.teacher.length;
+    $("reviewer").value = record.reviewer; $("notes").value = record.notes;
+    document.querySelectorAll("[data-check]").forEach(input => input.checked = record.checks[input.dataset.check]);
+    $("sampleMeta").textContent = `${item.image_id} · ${item.bucket}/${item.split} · ${item.width}×${item.height} · 风险 ${item.review_score} · 警告 ${item.warnings.length ? item.warnings.join("；") : "无"}`;
+    $("teacherStatus").textContent = `Teacher 状态：${typeof manifest.teacher_status === "string" ? manifest.teacher_status : JSON.stringify(manifest.teacher_status)}。候选仅供参考。`;
+    setBox(null); renderDecisions(); renderComplete(); renderProgress(); setView("raw");
+    canvas.width = item.width; canvas.height = item.height; resizeCanvas(); context.clearRect(0, 0, canvas.width, canvas.height);
+    const token = ++imageToken;
+    image.onload = () => { if (token !== imageToken) return; canvas.width = item.width; canvas.height = item.height; resizeCanvas(); draw(); };
+    image.onerror = () => { if (token !== imageToken) return; context.clearRect(0, 0, canvas.width, canvas.height); context.fillStyle = "#fff"; context.fillText("原图加载失败: " + item.raw_file, 12, 24); };
+    image.src = item.raw_file;
+  }
+  function resizeCanvas() { const scale = Number($("zoom").value); canvas.style.width = `${sample().width * scale}px`; canvas.style.height = `${sample().height * scale}px`; }
+  function drawBox(box, color, label, dash = []) {
+    context.save(); context.strokeStyle = color; context.fillStyle = color; context.lineWidth = Math.max(2, sample().width / 700); context.setLineDash(dash);
+    context.strokeRect(box[0], box[1], box[2] - box[0], box[3] - box[1]);
+    context.font = `${Math.max(12, sample().width / 70)}px sans-serif`; context.fillText(label, box[0] + 2, Math.max(14, box[1] - 3)); context.restore();
+  }
+  function draw() {
+    if (!canvas.width) return;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    if (image.complete && image.naturalWidth) context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    if (view !== "raw") sample().original.forEach(item => drawBox(item.bbox, "#00e676", `${item.target_id} ${item.class}`));
+    if (view === "ai") sample().teacher.forEach(item => drawBox(item.bbox, "#ff9800", `${item.candidate_id} ${item.class} ${item.score.toFixed(2)}`, [8, 5]));
+    if (view !== "raw" && currentBox && Core.validBox(currentBox, sample())) drawBox(currentBox, "#00c8ff", "手工框");
+  }
+  function setView(next) {
+    view = next; document.querySelectorAll("[data-view]").forEach(button => button.classList.toggle("active", button.dataset.view === view));
+    $("rawSeen").disabled = view !== "raw" || review().raw_seen; draw();
+  }
+  function renderDecisions() {
+    $("decisions").replaceChildren();
+    if (!review().actions.length) $("decisions").textContent = "尚无决策";
+    review().actions.forEach((action, index) => {
+      const row = document.createElement("div"); row.className = "decision";
+      const remove = document.createElement("button"); remove.textContent = "撤销"; remove.addEventListener("click", () => { review().actions.splice(index, 1); markChanged(); renderDecisions(); });
+      row.append(remove, document.createTextNode(`${action.action} · ${action.target_id || "无ID"} · ${action.class} · [${action.bbox.join(", ")}) · ${action.reason || "ok"}${action.ai_assisted ? " · AI辅助" : ""}`));
+      $("decisions").append(row);
+    });
+  }
+  function renderComplete() {
+    const record = review(); $("rawState").textContent = record.raw_seen ? "✓ RAW 已人工确认" : "RAW 尚未确认";
+    $("rawSeen").disabled = view !== "raw" || record.raw_seen;
+    $("completeState").className = record.complete ? "complete" : "incomplete"; $("completeState").textContent = record.complete ? "✓ complete" : "未完成";
+    $("sign").disabled = record.complete; $("unsign").disabled = !record.complete;
+  }
+  function renderProgress() {
+    $("progress").textContent = `${position + 1}/${order.length}`;
+    $("completeCount").textContent = `全清单 complete ${reviews.filter(item => item.complete).length}/${reviews.length}`;
+    $("prev").disabled = position === 0; $("next").disabled = position === order.length - 1;
+  }
+  function requireReason(action) { const reason = $("reason").value.trim(); if (action !== "A" && !reason) throw new Error(`${action} 必须填写原因`); return reason; }
+  function nextManualId() {
+    const used = new Set(review().actions.map(item => item.target_id)); let number = 1;
+    while (used.has(`manual_${String(number).padStart(3, "0")}`)) number++;
+    return `manual_${String(number).padStart(3, "0")}`;
+  }
+  function applyAction(action) {
+    try {
+      const original = selectedOriginal();
+      if (["A", "M", "D"].includes(action) && !original) throw new Error(`${action} 必须先选择来源框`);
+      const targetId = original ? original.target_id : nextManualId();
+      const box = action === "A" || action === "D" ? original.bbox.slice() : readBox();
+      const className = action === "A" || action === "D" ? original.class : action === "I" ? "ignore" : $("className").value;
+      const entry = {target_id: targetId, action, class: className, bbox: box, reason: requireReason(action), ai_assisted: $("aiAssisted").checked};
+      const errors = Core.actionErrors(sample(), entry); if (errors.length) throw new Error(errors.join("\n"));
+      if (original) review().actions = review().actions.filter(item => item.target_id !== targetId);
+      review().actions.push(entry); markChanged(); renderDecisions();
+    } catch (error) { alert(error.message); }
+  }
+  function validateImportedReview(candidate, item) {
+    if (!candidate || candidate.image_id !== item.image_id || candidate.source_sha256 !== item.source_sha256) throw new Error(`${item.image_id}: 图片或 SHA 不匹配`);
+    if (typeof candidate.reviewer !== "string" || typeof candidate.raw_seen !== "boolean" || typeof candidate.complete !== "boolean" || typeof candidate.notes !== "string") throw new Error(`${item.image_id}: 审核记录字段非法`);
+    if (!candidate.checks || Core.checks.some(key => typeof candidate.checks[key] !== "boolean") || !Array.isArray(candidate.actions)) throw new Error(`${item.image_id}: checks/actions 非法`);
+    if (new Set(candidate.actions.map(action => action.target_id)).size !== candidate.actions.length) throw new Error(`${item.image_id}: target_id 决策重复`);
+    candidate.actions.forEach((action, i) => { const errors = Core.actionErrors(item, action); if (errors.length) throw new Error(`${item.image_id} 动作${i + 1}: ${errors.join("；")}`); });
+    if (candidate.complete) { const errors = Core.completionErrors(item, candidate); if (errors.length) throw new Error(`${item.image_id}: complete 不成立：${errors.join("；")}`); }
+    return {image_id: item.image_id, source_sha256: item.source_sha256, reviewer: candidate.reviewer, raw_seen: candidate.raw_seen, complete: candidate.complete,
+      checks: Object.fromEntries(Core.checks.map(key => [key, candidate.checks[key]])), actions: candidate.actions.map(action => ({target_id: action.target_id, action: action.action, class: action.class, bbox: action.bbox.slice(), reason: action.reason || "", ai_assisted: action.ai_assisted})), notes: candidate.notes};
+  }
+
+  document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
+  document.querySelectorAll("[data-action]").forEach(button => button.addEventListener("click", () => applyAction(button.dataset.action)));
+  $("bucket").addEventListener("change", () => rebuildOrder(sample().image_id)); $("riskSort").addEventListener("change", () => rebuildOrder(sample().image_id));
+  $("zoom").addEventListener("change", resizeCanvas); $("prev").addEventListener("click", () => { position--; render(); }); $("next").addEventListener("click", () => { position++; render(); });
+  $("jump").addEventListener("change", () => { position = Number($("jump").value); render(); });
+  $("original").addEventListener("change", () => { const item = selectedOriginal(); $("teacher").value = ""; if (item) { $("className").value = item.class; const prior = review().actions.find(action => action.target_id === item.target_id); setBox(prior ? prior.bbox : item.bbox); $("reason").value = prior ? prior.reason : ""; $("aiAssisted").checked = prior ? prior.ai_assisted : false; } else setBox(null); });
+  $("teacher").addEventListener("change", () => { const item = sample().teacher.find(candidate => candidate.candidate_id === $("teacher").value); if (item) { $("original").value = ""; $("className").value = item.class; $("aiAssisted").checked = true; setBox(item.bbox); } });
+  $("rawSeen").addEventListener("click", () => { if (view !== "raw") return; review().raw_seen = true; markChanged(); renderComplete(); });
+  $("reviewer").addEventListener("input", () => { review().reviewer = $("reviewer").value; markChanged(); });
+  $("notes").addEventListener("input", () => { review().notes = $("notes").value; markChanged(); });
+  document.querySelectorAll("[data-check]").forEach(input => input.addEventListener("change", () => { review().checks[input.dataset.check] = input.checked; markChanged(); }));
+  $("acceptRemaining").addEventListener("click", () => {
+    const record = review();
+    if (!record.raw_seen || !record.reviewer.trim() || Core.checks.some(key => !record.checks[key])) { alert("先人工查看 RAW、填写审核人并完成六项检查。错误来源框应先逐项 M/I/D。"); return; }
+    const decided = new Set(record.actions.filter(action => sample().original.some(original => original.target_id === action.target_id)).map(action => action.target_id));
+    const remaining = sample().original.filter(original => !decided.has(original.target_id));
+    if (!remaining.length) { alert("没有尚未处理的来源框。"); return; }
+    if (!confirm(`确认剩余 ${remaining.length} 个来源框及类别均正确？\n这不会采用任何 Teacher 候选，也不会自动签署 complete。`)) return;
+    remaining.forEach(original => record.actions.push({target_id: original.target_id, action: "A", class: original.class, bbox: original.bbox.slice(), reason: "", ai_assisted: false}));
+    markChanged(); renderDecisions();
+  });
+  $("sign").addEventListener("click", () => { const errors = Core.completionErrors(sample(), review()); if (errors.length) { alert("不能签署 complete：\n" + errors.join("\n")); return; } review().complete = true; renderComplete(); renderProgress(); });
+  $("unsign").addEventListener("click", () => { review().complete = false; renderComplete(); renderProgress(); });
+  canvas.addEventListener("pointerdown", event => { if (view === "raw") return; const rect = canvas.getBoundingClientRect(); dragStart = Core.clientToNative(event.clientX, event.clientY, rect, sample().width, sample().height); canvas.setPointerCapture(event.pointerId); });
+  canvas.addEventListener("pointermove", event => { if (!dragStart) return; const rect = canvas.getBoundingClientRect(); const point = Core.clientToNative(event.clientX, event.clientY, rect, sample().width, sample().height); setBox([Math.max(0, Math.min(dragStart[0], point[0])), Math.max(0, Math.min(dragStart[1], point[1])), Math.min(sample().width, Math.max(dragStart[0], point[0])), Math.min(sample().height, Math.max(dragStart[1], point[1]))]); });
+  canvas.addEventListener("pointerup", () => { dragStart = null; }); canvas.addEventListener("pointercancel", () => { dragStart = null; });
+  $("exportButton").addEventListener("click", () => {
+    const payload = {schema: "cnn_review_patch_v1", dataset_id: manifest.dataset_id, annotation_policy_sha256: manifest.annotation_policy_sha256, reviews};
+    const blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], {type: "application/json"}); const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob); link.download = `review_patch_${manifest.dataset_id.slice(0, 12)}_${new Date().toISOString().replace(/[:.]/g, "-")}.json`; link.click(); setTimeout(() => URL.revokeObjectURL(link.href), 0);
+  });
+  $("importButton").addEventListener("click", () => $("importFile").click());
+  $("importFile").addEventListener("change", async () => {
+    try {
+      const patch = JSON.parse(await $("importFile").files[0].text());
+      if (patch.schema !== "cnn_review_patch_v1" || patch.dataset_id !== manifest.dataset_id || patch.annotation_policy_sha256 !== manifest.annotation_policy_sha256 || !Array.isArray(patch.reviews)) throw new Error("草稿 schema、dataset_id 或规则哈希不匹配");
+      const seen = new Set(); const imported = [];
+      patch.reviews.forEach(candidate => { if (seen.has(candidate.image_id) || !byId.has(candidate.image_id)) throw new Error("草稿 image_id 重复或不在清单中: " + candidate.image_id); seen.add(candidate.image_id); const index = byId.get(candidate.image_id); imported.push([index, validateImportedReview(candidate, manifest.samples[index])]); });
+      imported.forEach(([index, record]) => reviews[index] = record); alert(`已导入 ${imported.length} 张草稿；未自动签署任何新记录。`); render();
+    } catch (error) { alert("导入失败：" + error.message); } finally { $("importFile").value = ""; }
+  });
+  document.addEventListener("keydown", event => { if (/^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName)) return; if (["A", "M", "N", "I", "D"].includes(event.key.toUpperCase())) applyAction(event.key.toUpperCase()); });
+
+  $("teacherStatus").textContent = ""; rebuildOrder(null);
+})();
+</script>
+</body>
+</html>

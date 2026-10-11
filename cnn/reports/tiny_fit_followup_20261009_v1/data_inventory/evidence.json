@@ -1,0 +1,220 @@
+{
+  "schema": "road_ground_data_readiness_audit_v1",
+  "audit_time": "2026-10-09T16:53:49+08:00",
+  "workspace": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "scope": "existing local non-SPD ground-source and labeled-manifest metadata only",
+  "operations": {
+    "training_started": false,
+    "labels_modified": false,
+    "downloads_started": false,
+    "blind_reserve_newtest_read": false,
+    "images_decoded": false,
+    "large_videos_read": false
+  },
+  "target": {
+    "train_images_min": 128,
+    "train_images_max": 256,
+    "train_non_spd_sources_min": 2,
+    "dev_images_min": 32,
+    "dev_images_max": 64,
+    "dev_requires_train_disjoint_camera_or_source_family": true,
+    "dev_sources_ideal_min": 2,
+    "dev_gt_objects_per_class_ideal_min": 100
+  },
+  "readiness": {
+    "G_ready": false,
+    "verified_complete_train_images": 0,
+    "verified_complete_dev_images": 0,
+    "reasons": [
+      "No existing manifest proves 128-256 complete full-frame ground-road train images from at least two non-SPD sources.",
+      "No existing manifest proves 32-64 complete full-frame dev images isolated by camera/source family from train.",
+      "Intersection-Flow-5K has sufficient quantity and paired labels, but the inspected package has no machine-readable image-to-intersection/camera/source-family mapping or local source-integrity receipt.",
+      "VIRAT object rows are verified track rows but do not provide trustworthy complete negatives for the sparse Ground48 clips; the local evidence does not support calling the files intentionally movement-only.",
+      "Ground48 remains pending human review with 0/48 human-complete frames and no ground_val48.json.",
+      "COCO has unknown camera/source-family metadata for this purpose and is explicitly not road-acceptance data; VisDrone is aerial; neither counts toward the non-SPD ground-road source requirement.",
+      "public_clips is absent."
+    ]
+  },
+  "sources": [
+    {
+      "source": "Intersection-Flow-5K",
+      "path": "cnn/data/intersection_flow_5k/raw_v4/Intersection-Flow-5K",
+      "classification": "best_local_candidate_but_unverified_for_G",
+      "local_readme_claim": "fixed infrastructure traffic monitoring at 7 urban intersections with comprehensive boxes",
+      "license_in_local_readme": "CC BY-NC-SA 4.0",
+      "inventory": {
+        "train": {
+          "images": 5483,
+          "labels": 5483,
+          "xml": 5483,
+          "missing_or_orphan_pairs": 0,
+          "bad_yolo_label_rows": 0,
+          "class_boxes": {
+            "vehicle": 190417,
+            "bus": 2816,
+            "bicycle": 23396,
+            "pedestrian": 19005,
+            "engine": 642,
+            "truck": 7749,
+            "tricycle": 1610,
+            "obstacle": 82190
+          },
+          "road_mapping_unambiguous_boxes": {
+            "person_from_pedestrian": 19005,
+            "vehicle_from_vehicle_bus_truck": 200982
+          }
+        },
+        "val": {
+          "images": 722,
+          "labels": 722,
+          "xml": 722,
+          "missing_or_orphan_pairs": 0,
+          "bad_yolo_label_rows": 0,
+          "class_boxes": {
+            "vehicle": 23450,
+            "bus": 315,
+            "bicycle": 2771,
+            "pedestrian": 2250,
+            "engine": 74,
+            "truck": 881,
+            "tricycle": 225,
+            "obstacle": 8902
+          },
+          "road_mapping_unambiguous_boxes": {
+            "person_from_pedestrian": 2250,
+            "vehicle_from_vehicle_bus_truck": 24646
+          }
+        },
+        "test": {
+          "images": 723,
+          "labels": 723,
+          "xml": 723,
+          "missing_or_orphan_pairs": 0,
+          "bad_yolo_label_rows": 0
+        }
+      },
+      "gaps": [
+        "No inspected manifest maps each image to one of the seven intersections/cameras, so camera/family isolation cannot be proven from filenames.",
+        "No local download/extraction receipt binds the 6.18 GB archive to an authoritative source hash.",
+        "README completeness claims were not independently confirmed against pixels in this metadata-only audit.",
+        "bicycle, engine, and tricycle require an explicit rider/vehicle mapping policy; obstacle should remain ignore unless separately decided."
+      ]
+    },
+    {
+      "source": "VIRAT Ground Release 2 plus local 010107 extension",
+      "classification": "ground_candidate_with_incomplete_full_frame_supervision",
+      "base_catalog": {
+        "paired_clips": 6,
+        "canonical_annotation_rows": 69310,
+        "excluded_out_of_range_rows": 12,
+        "splits": {
+          "train_scenes": ["000201", "000206"],
+          "val_scenes": ["000200", "000203"],
+          "viewed_development_holdout_scenes": ["000205", "000207"]
+        }
+      },
+      "local_extension": {
+        "clip": "VIRAT_S_010107_02_000282_000312",
+        "video_and_annotation_present": true,
+        "used_by_Ground48": true
+      },
+      "roi_only_audit": {
+        "samples": 429,
+        "train": {"ped": 160, "vehicle": 200},
+        "val": {"ped": 45, "vehicle": 24},
+        "full_frame_detection_GT": false,
+        "invalid_evaluation_ready": false,
+        "test_present": false
+      },
+      "movement_only_check": {
+        "intentional_movement_only_is_supported": false,
+        "official_local_readme_says_objects_may_be_moving_or_static": true,
+        "observed_boundary": "Sparse source rows leave obvious visible vehicles unboxed in four Ground48 clips, so unlisted regions cannot be treated as negative supervision."
+      }
+    },
+    {
+      "source": "Ground48",
+      "path": "cnn/reports/post_review_s_20261007_v1/ground48",
+      "classification": "not_complete_GT",
+      "images": 48,
+      "declared_camera_counts": {
+        "virat-parking-lot-camera-a": 24,
+        "virat-010107-camera-b": 24
+      },
+      "source_rows": {
+        "total": 821,
+        "person": 114,
+        "vehicle": 682,
+        "ignore": 25
+      },
+      "source_projection_and_pixel_checks": "48/48 pass",
+      "human_complete_count": 0,
+      "pending_count": 48,
+      "ground_val48_generated": false,
+      "formal_acceptance": false,
+      "critical_gap": "Four parking-lot clip groups provide only 2-3 source rows per frame despite additional visible vehicles; all 48 frames still require complete full-frame review before use as GT."
+    },
+    {
+      "source": "COCO 2017",
+      "classification": "not_ground_readiness",
+      "images": {"train": 118287, "val": 5000},
+      "formal_road_acceptance_eligible": false,
+      "gap": "No fixed-road-camera or source-family identity is supplied by the inspected receipt; image IDs must not be promoted to camera IDs."
+    },
+    {
+      "source": "VisDrone2019-VID merged development data",
+      "classification": "aerial_regression_only_not_ground_source",
+      "images": {"train": 19049, "val": 5151},
+      "scene_counts": {"train": 46, "val": 10},
+      "class_boxes": {
+        "train": {"person": 249918, "vehicle": 519286},
+        "val": {"person": 78746, "vehicle": 216104}
+      },
+      "formal_training_eligible": false
+    },
+    {
+      "source": "public_clips",
+      "classification": "absent",
+      "exists": false
+    },
+    {
+      "source": "SPD",
+      "classification": "policy_excluded_from_this_inventory",
+      "scanned": false,
+      "train_rule": "SPD:yizhuang09:1 is entirely forbidden from train.",
+      "dev_rule": "Existing SPD8 remains secondary fixed sanity/display only and is not a selection, early-stop, threshold, or primary-dev set."
+    }
+  ],
+  "minimum_next_actions": [
+    "Do not download first. For Intersection-Flow-5K, locate authoritative local/package metadata that maps selected images to intersection/camera/source family and bind it with hashes; do not infer that mapping from image IDs.",
+    "After that mapping exists, audit a 128-192 image Intersection train candidate and a 24-32 image dev candidate from train-disjoint cameras/families for full-frame completeness; keep official train/val roles unless a stronger family split is proven.",
+    "Provide a second non-SPD ground source by completing 64-128 existing VIRAT train-scene frames or another already-local fixed-camera source; current VIRAT track rows alone are insufficient.",
+    "Build a 48-64 image primary dev set as 24-32 complete frames from each of two source families, disjoint from train, and verify at least 100 person and 100 vehicle GT boxes in total.",
+    "Freeze the Intersection class map: pedestrian to person; vehicle/bus/truck to vehicle; bicycle/engine/tricycle require an explicit rider policy; obstacle to ignore unless separately approved.",
+    "Keep Ground48 and SPD8 outside model selection until Ground48 is human-complete; SPD8 remains secondary only."
+  ],
+  "inspected_metadata_sha256": [
+    {"path": "AGENTS.md", "sha256": "1afb5611624ec6af4d6960637aefd193e37f5df680d8c80f79723d0c9bf1f793"},
+    {"path": "MULTI_AGENT_WORKFLOW.md", "sha256": "13676f0bab44df2f00f1f72088ded6ebd003d38394a1ffc3a6ed7a2b8eb4b01e"},
+    {"path": "REAL_DATA_WORKFLOW.md", "sha256": "b63cb2be40913728e51ada1a784188e6a149e0d7d1e4cb7fd763a42af226b2c9"},
+    {"path": "E:/project/qiansai/CNN冻结后恢复训练_建议与执行步骤_20261009.txt", "sha256": "32ab8186a75091f024ca420ccc5167d6f2cd80e2e33472bcdd369619e97a534d"},
+    {"path": "cnn/hw_validation/plans/competition_framework_20261008/RoadYOLO_训练与RTL整体技术框架.md", "sha256": "8f3ff9bce85fcc1e833745a74024c43389a3184fdc3551649cc9da14aa9e4fd0"},
+    {"path": "cnn/hw_validation/plans/competition_framework_20261008/证据索引与对话进度.md", "sha256": "fec7b8d6752cf381c3b5c54dd7f5710c0ea77f461d5dfa36f4ce918eb308fbf3"},
+    {"path": "evaluation/public_data/virat_ground_v2/catalog.json", "sha256": "2c5fc1323e66bdb144dd56e08aeb6b1afe52ec2904e2e72fd439de1496e92ae3"},
+    {"path": "evaluation/public_data/virat_ground_v2/virat_dataset_audit.json", "sha256": "4cdf6aab92b0846ff63621f45ca692101efa2c6e97cc9f1dc0597e528004e6fc"},
+    {"path": "public_data/raw/virat_ground_v2/docs/README_format_release2.txt", "sha256": "fc5833e57280512bcb7e19674b9def83c02a8ce324bf783bfbfb778d5d105f40"},
+    {"path": "cnn/reports/post_review_s_20261007_v1/ground48/selection_receipt.json", "sha256": "813d60feb3b889ea9f401781721042d87340a85aefcf79249c7b76a98d0f8e30"},
+    {"path": "cnn/reports/post_review_s_20261007_v1/ground48/selection.json", "sha256": "8f8d4b5589ad77a09d22e89b3d6d33ad642de1f29a1148f61655b3839a4c3a09"},
+    {"path": "cnn/reports/post_review_s_20261007_v1/ground48/teacher_labels_receipt.json", "sha256": "0f191b36606b8c8a162e2a8acf2ea37a8be735516837bd208965098cf62488f9"},
+    {"path": "cnn/reports/post_review_s_20261007_v1/source_reaudit/REPORT.md", "sha256": "83dd683fadde723258f0ac2a47174975d8932165f6909e209ecda57d4ea2972e"},
+    {"path": "cnn/reports/post_review_s_20261007_v1/source_reaudit/ground48_frame_audit.csv", "sha256": "f178776175a6695eaee29192b2997d1f579c72e7747c16a1a16b2fc377febc40"},
+    {"path": "cnn/data/coco/download_receipt_full2017.json", "sha256": "9d9fe8fb2d85361b6c34822ee505a02b996a05e0793778f5752025345b29bd6e"},
+    {"path": "cnn/data/coco/download_receipt_96_32.json", "sha256": "a531d5b4bc864fd1f09d790aab92599fc7cbb7d3999e3928f7f3f4f3dbbd176d"},
+    {"path": "cnn/data/visdrone_vid_train/raw.zip.receipt.json", "sha256": "bb990f1c5165dea6c6eace71cfb5e6d23c56dc15430bb362bceff00a7f0227f7"},
+    {"path": "cnn/data/visdrone_vid_val/raw.zip.receipt.json", "sha256": "9c1a23f50da4db57e532833b31624155c98ddac1b7cdf788b2560c7f716da340"},
+    {"path": "cnn/reports/post_review_s_20261007_v1/merge_receipt.json", "sha256": "efccb99550c1313a1d8969cfc57cedf11203f358bc2e8c07290a2252ec5f5d02"},
+    {"path": "cnn/data/intersection_flow_5k/raw_v4/Intersection-Flow-5K/README.md", "sha256": "4374e0b15b00144eca359adddadfadaf67c3704c40539ed7ca0ccc731d7af5ba"},
+    {"path": "cnn/data/intersection_flow_5k/raw_v4/Intersection-Flow-5K/classes.txt", "sha256": "dd5fe17be43c09adb602ce8525d9539af6286819e94de82a7cbeec27fd8a388a"},
+    {"path": "cnn/data/intersection_flow_5k/raw_v4/Intersection-Flow-5K/intersection.yaml", "sha256": "f371662a20a583437fd99e0dc1c4ab1b93cba669ed72f3aefdedad4965775656"}
+  ]
+}

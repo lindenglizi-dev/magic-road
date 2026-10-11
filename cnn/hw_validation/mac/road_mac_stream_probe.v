@@ -1,0 +1,227 @@
+`timescale 1ns / 1ps
+
+////////////////////////////////////English///////////////////////////////////////
+// Company:         Erie
+// Engineer:        Erie
+//
+// Create Date:     2026/10/04 00:00:00
+// Design Name:     road_mac_stream_probe
+// Module Name:     road_mac_stream_probe
+// Description:     description/road_mac_stream_probe_Design.pdf
+// Simulations:     testbench/vivado/2021.1/road_mac_stream_probe
+//
+// Referrences:
+// File Format      File Name
+// 1.Book           cnn/hw_validation/mac/road_mac_stream_probe_spec.md
+//
+// Dependencies:
+// Module Name      Version
+//
+// Version:         V1.0
+// Revision Date:   2026/10/04 00:00:00
+// History:
+// Time             Version     Revised by        Contents
+// 2026/10/04       V1.0        Erie              Create file.
+///////////////////////////////////Chinese////////////////////////////////////////
+// 版权归属:        Erie
+// 开发人员:        Erie
+//
+// 创建日期:        2026年10月04日
+// 设计名称:        road_mac_stream_probe
+// 模块名称:        road_mac_stream_probe
+// 模块说明:        Description/road_mac_stream_probe_Design.pdf
+// 仿真工程:        TestBench/Vivado/2021.1/road_mac_stream_probe
+//
+// 参考资料:
+// 文件格式         文件名称
+// 1.Book           cnn/hw_validation/mac/road_mac_stream_probe_spec.md
+//
+// 依赖文件:
+// 模块名称         版本
+//
+// 当前版本:        V1.0
+// 修订日期:        2026年10月04日
+// 修订历史:
+// 时间             版本        修订人            修订内容
+// 2026年10月04日   V1.0        Erie              创建文件
+
+module road_mac_stream_probe
+(
+	//-----------------全局信号-----------------//
+	input i_clk,                                // 百兆工作时钟
+	input i_rstn,                               // 异步低有效复位
+
+	//-----------------用户接口-----------------//
+
+	//COMMAND接口
+	input i_command_valid,                      // 命令负载保持有效标志
+	input [1:0]i_command_opcode,                // 激活权重偏置或控制选择
+	input [2:0]i_command_index,                 // 当前类别内三十二位字序号
+	input [31:0]i_command_data,                 // 动态输入三十二位负载
+	input i_result_ready,                       // 下游接受结果或故障终态
+	output o_command_ready,                     // 单命令缓冲空闲标志
+	output o_result_valid,                      // 结果负载保持有效标志
+	output [95:0]o_result_data,                 // 三个低字优先的累加结果
+	output o_fault                              // 任一路有符号累加越界标志
+);
+
+	//----------------寄存器信号----------------//
+	//动态移位负载与单命令缓冲
+	reg [63:0]reg_activation_payload = 64'd0;   // 两次移位形成八通道激活
+	reg [191:0]reg_weight_payload = 192'd0;     // 六次移位形成二十四权重
+	reg [95:0]reg_bias_payload = 96'd0;         // 三次移位形成三路偏置
+	reg [31:0]reg_control_payload = 32'd0;      // 末字保存掩码和边界属性
+	reg [4:0]reg_command_address = 5'd0;        // 已握手命令类别与序号
+	reg [31:0]reg_command_payload = 32'd0;      // 已握手动态数据缓冲
+	reg [12:0]reg_progress = 13'b0000000000001; // 十二字事务独热进度
+
+	//-----------------标志信号-----------------//
+	reg flag_command_pending = 1'b0;            // 单命令缓冲等待处理
+
+	//握手与类别处理事件
+	wire flag_command_accept;                   // 包装层接受一个动态命令
+	wire flag_process_activation;               // 缓冲命令移入激活负载
+	wire flag_process_weight;                   // 缓冲命令移入权重负载
+	wire flag_process_bias;                     // 缓冲命令移入偏置负载
+	wire flag_process_control;                  // 缓冲命令保存控制负载
+	wire flag_all_loaded;                       // 十二个动态字完成装载
+	wire flag_core_accept;                      // 算术核心接受完整输入拍
+
+	//算术核心模块实例化信号
+	wire flag_core_input_ready;                 // 核心允许接受完整输入拍
+
+	//-----------------输出信号-----------------//
+	//用户接口COMMAND接口
+	//用户接口
+	wire result_valid_o;                        // 核心产生结果或故障终态
+	wire [95:0]result_data_o;                   // 核心三路有符号结果
+	wire fault_o;                               // 核心有符号越界终态
+
+	//---------------其他信号连线---------------//
+	//road_mac_probe--用户接口
+	//其他信号连线
+	assign result_valid_o = 1'bz;               // 核心产生结果或故障终态
+
+	//其他信号连线
+	assign result_data_o = {96{1'bz}};          // 核心三路有符号结果
+	assign fault_o = 1'bz;                      // 核心有符号越界终态
+	assign flag_process_activation = flag_command_pending & (reg_command_address[4:3] == 2'b00); // 将两字依次移入激活负载
+	assign flag_process_weight = flag_command_pending & (reg_command_address[4:3] == 2'b01); // 将六字依次移入权重负载
+	assign flag_process_bias = flag_command_pending & (reg_command_address[4:3] == 2'b10); // 将三字依次移入偏置负载
+	assign flag_process_control = flag_command_pending & (reg_command_address[4:3] == 2'b11); // 保存末尾控制动态字
+	assign flag_all_loaded = reg_progress[12];  // 独热末位保持完整负载有效
+	assign flag_core_accept = flag_all_loaded & flag_core_input_ready; // 核心接受保持的完整负载
+
+	//算术核心模块实例化信号
+	assign flag_core_input_ready = 1'bz;        // 核心允许接受完整输入拍
+
+	//COMMAND接口
+	//其他信号连线
+	//命令缓冲把外部握手与类别处理隔开一拍
+	assign flag_command_accept = i_command_valid & o_command_ready; // 接受当前动态命令负载
+
+	//---------------输出信号连线---------------//
+	//用户接口COMMAND接口
+	//用户接口
+	assign o_command_ready = (~flag_command_pending) & (~flag_all_loaded); // 缓冲和完整负载均空闲时接收命令
+	assign o_result_valid = result_valid_o;     // 直通核心保持的终态有效
+	assign o_result_data = result_data_o;       // 直通核心三路有符号结果
+	assign o_fault = fault_o;                   // 直通核心越界故障属性
+
+	//-------------主要任务处理区域-------------//
+	//单命令缓冲在接受后占用一个处理周期
+	always@(posedge i_clk or negedge i_rstn)begin
+		if(i_rstn == 1'b0)begin
+			flag_command_pending <= 1'b0;       // 复位清除未处理命令
+		end else if(flag_command_accept == 1'b1)begin
+			flag_command_pending <= 1'b1;       // 握手后占用内部缓冲
+		end else if(flag_command_pending == 1'b1)begin
+			flag_command_pending <= 1'b0;       // 处理完成后重新开放入口
+		end
+	end
+
+	//握手时锁存类别和索引形成五位地址
+	always@(posedge i_clk or negedge i_rstn)begin
+		if(i_rstn == 1'b0)begin
+			reg_command_address <= 5'd0;        // 复位清除命令地址缓冲
+		end else if(flag_command_accept == 1'b1)begin
+			reg_command_address <= {i_command_opcode, i_command_index}; // 保存本次动态字地址
+		end
+	end
+
+	//握手时锁存动态三十二位数据
+	always@(posedge i_clk or negedge i_rstn)begin
+		if(i_rstn == 1'b0)begin
+			reg_command_payload <= 32'd0;       // 复位清除动态数据缓冲
+		end else if(flag_command_accept == 1'b1)begin
+			reg_command_payload <= i_command_data; // 保存本次动态输入字
+		end
+	end
+
+	//每个处理字推进独热进度并在核心接受后复位
+	always@(posedge i_clk or negedge i_rstn)begin
+		if(i_rstn == 1'b0)begin
+			reg_progress <= 13'b0000000000001;  // 复位回到首激活字位置
+		end else if(flag_core_accept == 1'b1)begin
+			reg_progress <= 13'b0000000000001;  // 完整拍交付后准备下一事务
+		end else if(flag_command_pending == 1'b1)begin
+			reg_progress <= {reg_progress[11:0], 1'b0}; // 每个处理字左移一个位置
+		end
+	end
+
+	//两次激活命令按低字在前顺序移入完整负载
+	always@(posedge i_clk or negedge i_rstn)begin
+		if(i_rstn == 1'b0)begin
+			reg_activation_payload <= 64'd0;    // 复位清空八通道激活
+		end else if(flag_process_activation == 1'b1)begin
+			reg_activation_payload <= {reg_command_payload, reg_activation_payload[63:32]}; // 新字移入高半形成低字优先布局
+		end
+	end
+
+	//六次权重命令按低字在前顺序移入完整负载
+	always@(posedge i_clk or negedge i_rstn)begin
+		if(i_rstn == 1'b0)begin
+			reg_weight_payload <= 192'd0;       // 复位清空二十四动态权重
+		end else if(flag_process_weight == 1'b1)begin
+			reg_weight_payload <= {reg_command_payload, reg_weight_payload[191:32]}; // 新字移入最高端并保留既有顺序
+		end
+	end
+
+	//三次偏置命令按甲乙丙顺序移入完整负载
+	always@(posedge i_clk or negedge i_rstn)begin
+		if(i_rstn == 1'b0)begin
+			reg_bias_payload <= 96'd0;          // 复位清空三路动态偏置
+		end else if(flag_process_bias == 1'b1)begin
+			reg_bias_payload <= {reg_command_payload, reg_bias_payload[95:32]}; // 新字移入高端形成输出优先布局
+		end
+	end
+
+	//末尾控制命令保存掩码和序列边界属性
+	always@(posedge i_clk or negedge i_rstn)begin
+		if(i_rstn == 1'b0)begin
+			reg_control_payload <= 32'd0;       // 复位清除动态控制属性
+		end else if(flag_process_control == 1'b1)begin
+			reg_control_payload <= reg_command_payload; // 保存掩码首拍和末拍字段
+		end
+	end
+
+	//--------------模块实例化区域--------------//
+	//复用已通过数值与严格门禁的八乘三核心
+	road_mac_probe road_mac_probe_Inst_core(
+		.i_clk(i_clk),                          // 共享百兆工作时钟
+		.i_rstn(i_rstn),                        // 共享异步低有效复位
+		.i_input_valid(flag_all_loaded),        // 十二字到齐后保持核心输入有效
+		.i_first(reg_control_payload[8]),       // 控制字第八位选择偏置初值
+		.i_last(reg_control_payload[9]),        // 控制字第九位请求终态发布
+		.i_lane_mask(reg_control_payload[7:0]), // 控制字低八位驱动通道掩码
+		.i_activation_data(reg_activation_payload), // 动态移位寄存器提供八路激活
+		.i_weight_data(reg_weight_payload),     // 动态移位寄存器提供二十四权重
+		.i_bias_data(reg_bias_payload),         // 动态移位寄存器提供三路偏置
+		.i_result_ready(i_result_ready),        // 直通结果下游背压
+		.o_input_ready(flag_core_input_ready),  // 观察核心完整拍接受能力
+		.o_result_valid(result_valid_o),        // 直通核心终态有效标志
+		.o_result_data(result_data_o),          // 直通核心三路结果负载
+		.o_fault(fault_o)                       // 直通核心有符号越界标志
+	);
+
+endmodule

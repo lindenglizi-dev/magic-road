@@ -1,0 +1,56 @@
+{
+  "schema": "crop_adaptation_trial_v1",
+  "registered_on": "2026-09-30",
+  "status": "blocked_pending_independent_training_labels_and_source_provenance",
+  "purpose": "Test whether human-reviewed real training crops improve a fixed HOG324 classifier on unchanged development candidates. Do not patch individual validation frames with geometry or thresholds.",
+  "evidence": {
+    "paired_baseline_and_minrun1_matches": 12,
+    "ped_to_vehicle_flips": [[360, "p01"], [690, "p02"], [1050, "p02"]],
+    "float_quantized_disagreements_in_pairs": 0,
+    "integer_product_delta_reconstruction_mismatches": 0,
+    "reference": "evaluation/local_scene_pilots/intersection_2415171_margin_change_v1/receipt.json"
+  },
+  "frozen_choices": {
+    "input": "32x32, FPGA grayscale and stride5 analysis path, existing nearest-neighbor stretch",
+    "features": "existing OpenCV HOG324 diagnostic descriptor; not integer HOG",
+    "classifier": "LinearSVC(C=1.0, class_weight=balanced)",
+    "scaler": "fit only on each experiment's training inputs; fold into linear weights and bias",
+    "comparison": "existing frozen model versus one candidate-adapted binary fit",
+    "candidate_pipeline": "existing min_run2, min_area16, top4; no joint candidate or threshold changes",
+    "threshold": "binary decision at zero only; no rejection threshold optimization",
+    "training_import": false,
+    "production_rtl_changes": false
+  },
+  "data_gates": [
+    "Preserve original annotations, explicit human confirmation, frames, boxes, ROI hashes and reviewer/time receipts.",
+    "Obtain provenance/license and confirm scene/family separation for proposed training clip 3785878; source hash difference alone does not prove independent scene lineage.",
+    "Use only existing audited train360 plus confirmed ped/vehicle, crop_usable=yes crops from designated training scenes; exclude merged/uncertain and all validation material.",
+    "Apply per-track temporal thinning and exact-pixel duplicate checks. Geometry tracks are not human identity ground truth.",
+    "Do not count multiple crop variants of one target/time group as independent evidence; freeze the sample manifest and weighting before fitting.",
+    "Keep original ped/vehicle semantics separate from crop usability. Riders remain ignore and do not become background negatives.",
+    "All new samples and frame annotations stay pending until the user completes review. No AI prelabels become human truth."
+  ],
+  "evaluation": {
+    "development_only": true,
+    "inputs": [
+      "Existing 69 audited annotated-validation ROIs, unchanged",
+      "Confirmed local2415171 32-frame moving-target set, unchanged, no training reuse"
+    ],
+    "reports": [
+      "By scene, class, human track and visibility: raw numerators/denominators",
+      "GT crop classification separately from matched-candidate classification and end-to-end recall",
+      "Paired fixes and regressions, including the three known flips without tuning specifically to them",
+      "Float/quantized label and score differences, product/accumulator bounds",
+      "Invalid FAR only if an independently confirmed invalid evaluation set exists; otherwise null"
+    ],
+    "no_blind_or_test_access": true,
+    "limitation": "Even perfect classification cannot exceed unchanged candidate localization coverage. This trial does not certify complete target detection."
+  },
+  "later_rejection_heads": {
+    "status": "not_started",
+    "gate": "At least two distinct training scenes with reviewed invalid target/time groups, enough valid positives, and independently reviewed evaluation negatives; then preregister a separate fixed comparison.",
+    "rule": "Do not quietly add a validity gate or train on current validation invalid samples."
+  },
+  "acceptance_targets_frozen": false,
+  "formal_acceptance_allowed": false
+}

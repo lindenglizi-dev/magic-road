@@ -1,0 +1,89 @@
+{
+  "modules": [
+    {
+      "name": "road_mac_probe",
+      "feature": "mac_stream",
+      "rtl_path": "road_mac_probe.v",
+      "description": "Three-output signed INT8 MAC with one streaming reduction context, signed 33-bit feedback, and terminal INT32 faulting.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "100 MHz work clock.", "clock_domain": "i_clk"},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Asynchronous active-low reset.", "clock_domain": "i_clk", "active_level": "low"},
+          {"name": "i_input_valid", "direction": "input", "width": 1, "role": "input_valid", "description": "Qualifies the complete input payload.", "clock_domain": "i_clk"},
+          {"name": "i_first", "direction": "input", "width": 1, "role": "sequence_first", "description": "Selects aligned bias instead of retained accumulator.", "clock_domain": "i_clk"},
+          {"name": "i_last", "direction": "input", "width": 1, "role": "sequence_last", "description": "Ends the active reduction sequence.", "clock_domain": "i_clk"},
+          {"name": "i_lane_mask", "direction": "input", "width": 8, "role": "lane_enable", "description": "Shared enable for eight activation lanes.", "clock_domain": "i_clk"},
+          {"name": "i_activation_data", "direction": "input", "width": 64, "role": "activation_payload", "description": "Eight little-endian signed INT8 activations.", "clock_domain": "i_clk"},
+          {"name": "i_weight_data", "direction": "input", "width": 192, "role": "weight_payload", "description": "Three groups of eight signed INT8 weights.", "clock_domain": "i_clk"},
+          {"name": "i_bias_data", "direction": "input", "width": 96, "role": "bias_payload", "description": "Three little-endian signed INT32 biases.", "clock_domain": "i_clk"},
+          {"name": "i_result_ready", "direction": "input", "width": 1, "role": "output_ready", "description": "Accepts the held terminal payload.", "clock_domain": "i_clk"},
+          {"name": "o_input_ready", "direction": "output", "width": 1, "role": "input_ready", "description": "Allows input groups until last is accepted.", "clock_domain": "i_clk"},
+          {"name": "o_result_valid", "direction": "output", "width": 1, "role": "output_valid", "description": "Qualifies a held result or fault terminal.", "clock_domain": "i_clk"},
+          {"name": "o_result_data", "direction": "output", "width": 96, "role": "result_payload", "description": "Three signed INT32 results or atomic zeros.", "clock_domain": "i_clk"},
+          {"name": "o_fault", "direction": "output", "width": 1, "role": "overflow_fault", "description": "Marks terminal signed INT32 overflow.", "clock_domain": "i_clk"}
+        ],
+        "handshake_channels": [
+          {"id": "input", "valid": "i_input_valid", "ready": "o_input_ready", "payload": ["i_first", "i_last", "i_lane_mask", "i_activation_data", "i_weight_data", "i_bias_data"]},
+          {"id": "result", "valid": "o_result_valid", "ready": "i_result_ready", "payload": ["o_result_data", "o_fault"]}
+        ]
+      },
+      "parameters": [],
+      "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Pipeline and result valid clear, accumulators clear, and input ready becomes one."},
+      "behavior": [
+        "An input transfers only when input valid and input ready are high on a rising edge.",
+        "A0 captures input, A1 registers 24 signed INT8 products, A2 reduces pairs to signed17, A3 reduces quads to signed18, A4 registers three signed19 dot products, and A5 performs signed34 accumulation.",
+        "At A5 first selects the aligned sign-extended bias; otherwise the current signed33 accumulator is selected.",
+        "Consecutive non-terminal groups may transfer every clock and their A5 commits retain order.",
+        "A last transfer closes input until its held terminal is accepted.",
+        "Only a last candidate is checked against signed INT32; any channel overflow forces all three result words to zero and suppresses that commit.",
+        "The terminal becomes visible exactly six rising-edge intervals after last acceptance and remains stable under backpressure; its earliest handshake is seven intervals after last."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001 only.",
+        "Only one reduction sequence may be active; no result queue or multiple context is implemented.",
+        "From one first/bias establishment through last, the caller keeps every legal prefix within signed33 and simultaneously limits the reduction to at most 24 groups and at most 192 enabled products per output.",
+        "Group initiation interval remains one; A0 through A5 arithmetic is unchanged and only three terminal alignment stages are removed.",
+        "The block contains no requantization, activation, shell, constraint, bitstream, or board behavior."
+      ],
+      "corner_cases": [
+        "A zero lane mask adds zero while preserving first and last behavior.",
+        "First replaces retained history with bias; first zero continues retained history, including reset history zero.",
+        "A terminal positive or negative INT32 overflow produces one held fault terminal with all-zero data.",
+        "Reset during any stage cancels all pending work and leaves input ready high."
+      ],
+      "verification_cases": [
+        "Compare product, pair, quad, dot, candidate, and accumulator values for signed and masked vectors.",
+        "Drive 24 groups on consecutive cycles and require every input handshake.",
+        "Require output valid exactly six cycles after last acceptance and earliest result acknowledgement at seven cycles.",
+        "Hold result ready low and require stable valid, data, and fault.",
+        "Assert asynchronous reset during active reduction and require no late terminal."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "stream_terminal",
+          "title": "II one reduction and six-cycle held terminal",
+          "scenario": "stream-terminal",
+          "description": "Consecutive groups enter each cycle; last at c2 closes input, safe terminal at c7, held output at c8 and earliest ACK at c9. Diagram is a contract illustration, not a captured waveform.",
+          "wavejson": {
+            "signal": [
+              {"name": "i_clk", "wave": "p..........."},
+              {"name": "i_input_valid", "wave": "0110........"},
+              {"name": "o_input_ready", "wave": "1.0......1.."},
+              {"name": "i_last", "wave": "0.10........"},
+              {"name": "last_accept", "wave": "0.10........", "node": "..A........."},
+              {"name": "dot_valid", "wave": "0....110....", "node": "......D....."},
+              {"name": "candidate_valid", "wave": "0.....110...", "node": ".......C...."},
+              {"name": "o_result_valid", "wave": "0.......10..", "node": "........V..."},
+              {"name": "o_result_data", "wave": "x.......3...", "data": "terminal"},
+              {"name": "i_result_ready", "wave": "1..........."},
+              {"name": "result_ack", "wave": "0........10.", "node": ".........H.."}
+            ],
+            "edge": ["A~>V 6 cycles", "A~>H 7 cycles", "D~>C current accumulator"]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "mode": "overlay",
+  "case": "unpacked_array_slice",
+  "actual": "inconclusive",
+  "applicable": true,
+  "message": "存在无法静态确定的模块接口或连接表达式位宽。",
+  "findings": [
+    {
+      "rule_id": "VG000",
+      "rule_key": "legacy_finding",
+      "severity": null,
+      "location": {
+        "scope": "file",
+        "file": "width_parent.v",
+        "line_start": 3,
+        "line_end": 3,
+        "column_start": null,
+        "column_end": null,
+        "exact": true,
+        "related_locations": [],
+        "note": null
+      },
+      "problem": "端口或连接表达式位宽无法静态确定。",
+      "evidence": {
+        "node_kind": "verilog_rtl",
+        "source_excerpt": "width_child.i_value port_width=4 signal_width=None expression=reg_values[3:0]",
+        "detail": "width_child.i_value port_width=4 signal_width=None expression=reg_values[3:0]"
+      },
+      "guidance": {
+        "instruction": "修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。",
+        "steps": [
+          "打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。",
+          "按 instruction 修改问题片段，保留模块接口、复位和时序契约。",
+          "重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。"
+        ],
+        "risk": "behavioral",
+        "human_review_required": true,
+        "examples": [
+          {
+            "kind": "verilog",
+            "bad": "width_child.i_value port_width=4 signal_width=None expression=reg_values[3:0]",
+            "good": "按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。",
+            "note": "示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。"
+          }
+        ]
+      },
+      "status": "failed",
+      "code": "VG000",
+      "rule": "legacy_finding",
+      "path": "width_parent.v",
+      "line": 3,
+      "message": "端口或连接表达式位宽无法静态确定。",
+      "metadata": {}
+    }
+  ],
+  "imports": {
+    "vg_instance_rules": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\checker_fact_closure_20261009\\checker_overlay\\scripts\\python\\quality\\vg_instance_rules.py",
+    "vg_instance_rules_sha256": "e62a33050e28727ffec531a1712ce1e6580db73b0cbc3b64f2aafded6161f77a",
+    "vg_instance_rules_upstream": "C:\\Users\\lenovo\\.codex\\skills\\readable-verilog-generator\\scripts\\python\\quality\\vg_instance_rules.py",
+    "vg_instance_rules_upstream_sha256": "6414a5ac2e97bcc05381de5eef33b4f67affa4229719e39e45d70ec48d245b87",
+    "vg_value_facts": "C:\\Users\\lenovo\\.codex\\skills\\readable-verilog-generator\\scripts\\python\\quality\\vg_value_facts.py",
+    "vg_value_facts_sha256": "2b0f5716678b486ad7379582baf2c05a34e57f53a0c1d292cdcaab3cd2fe17c1"
+  },
+  "fixture": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\checker_fact_closure_20261009\\analysis\\array_width_fixtures\\unpacked_array_slice",
+  "fixture_sha256": "d2b695c538a273e582ce799a13b17f9b1113755ec8cc7e270c129bfefe8ad0df"
+}

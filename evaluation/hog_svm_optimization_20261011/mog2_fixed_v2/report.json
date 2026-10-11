@@ -1,0 +1,220 @@
+{
+  "schema": "local_background_counterfactual_mog2_fixed_v1",
+  "scope": {
+    "source": "development scene 2415171 only",
+    "decoded_interval_inclusive": [
+      0,
+      1050
+    ],
+    "scored_frames": [
+      120,
+      150,
+      180,
+      210,
+      240,
+      270,
+      300,
+      330,
+      360,
+      390,
+      420,
+      450,
+      480,
+      510,
+      540,
+      570,
+      600,
+      630,
+      660,
+      690,
+      720,
+      750,
+      780,
+      810,
+      840,
+      870,
+      900,
+      930,
+      960,
+      990,
+      1020,
+      1050
+    ],
+    "moving_ped_vehicle_targets": 57,
+    "fixed_experiment_parameter_search": false,
+    "training_performed": false,
+    "rtl_modified": false,
+    "deployment_approved": false
+  },
+  "config": {
+    "history": 500,
+    "varThreshold": 16,
+    "detectShadows": false,
+    "learningRate": -1,
+    "cleanup": "3x3 center-preserving sum>=3",
+    "min_run": 2,
+    "min_area": 16,
+    "top_k": 4
+  },
+  "foreground_change_only": true,
+  "unchanged_downstream": "center-preserving cleanup3; min-run2; area>=16; area-top4; frozen HOG64/HOG324 models",
+  "coverage": {
+    "all_ccl_area16": {
+      "0.5": {
+        "targets": 57,
+        "baseline_matched": 15,
+        "mog2_matched": 5,
+        "paired": {
+          "same_missed": 40,
+          "gain": 2,
+          "same_matched": 3,
+          "loss": 12
+        },
+        "by_class": {
+          "ped": {
+            "targets": 46,
+            "baseline_matched": 12,
+            "mog2_matched": 3
+          },
+          "vehicle": {
+            "targets": 11,
+            "baseline_matched": 3,
+            "mog2_matched": 2
+          }
+        }
+      },
+      "0.25": {
+        "targets": 57,
+        "baseline_matched": 32,
+        "mog2_matched": 23,
+        "paired": {
+          "same_missed": 22,
+          "same_matched": 20,
+          "loss": 12,
+          "gain": 3
+        },
+        "by_class": {
+          "ped": {
+            "targets": 46,
+            "baseline_matched": 24,
+            "mog2_matched": 17
+          },
+          "vehicle": {
+            "targets": 11,
+            "baseline_matched": 8,
+            "mog2_matched": 6
+          }
+        }
+      }
+    },
+    "top4": {
+      "0.5": {
+        "targets": 57,
+        "baseline_matched": 14,
+        "mog2_matched": 3,
+        "paired": {
+          "same_missed": 41,
+          "gain": 2,
+          "same_matched": 1,
+          "loss": 13
+        },
+        "by_class": {
+          "ped": {
+            "targets": 46,
+            "baseline_matched": 11,
+            "mog2_matched": 2
+          },
+          "vehicle": {
+            "targets": 11,
+            "baseline_matched": 3,
+            "mog2_matched": 1
+          }
+        }
+      },
+      "0.25": {
+        "targets": 57,
+        "baseline_matched": 29,
+        "mog2_matched": 18,
+        "paired": {
+          "same_missed": 24,
+          "same_matched": 14,
+          "loss": 15,
+          "gain": 4
+        },
+        "by_class": {
+          "ped": {
+            "targets": 46,
+            "baseline_matched": 22,
+            "mog2_matched": 14
+          },
+          "vehicle": {
+            "targets": 11,
+            "baseline_matched": 7,
+            "mog2_matched": 4
+          }
+        }
+      }
+    }
+  },
+  "end_to_end_top4_iou05": {
+    "localized": 3,
+    "localized_ped": 2,
+    "hog64_prediction_correct": 2,
+    "hog64_prediction_correct_ped": 1,
+    "hog324_float_prediction_correct": 3,
+    "hog324_float_prediction_correct_ped": 2,
+    "hog324_q_prediction_correct": 3,
+    "hog324_q_prediction_correct_ped": 2,
+    "localized_vehicle": 1,
+    "hog64_prediction_correct_vehicle": 1,
+    "hog324_float_prediction_correct_vehicle": 1,
+    "hog324_q_prediction_correct_vehicle": 1,
+    "targets": 57
+  },
+  "candidate_load": {
+    "frames": 32,
+    "component_count_before_area": {
+      "min": 6,
+      "max": 280,
+      "mean": 55.59375
+    },
+    "area16_total": 232,
+    "top4_total": 113
+  },
+  "capacity": {
+    "production_max_label": 32,
+    "frames_component_lower_bound_exceeds32": [
+      150,
+      180,
+      210,
+      240,
+      270,
+      300,
+      330,
+      360,
+      390,
+      420,
+      450,
+      1020,
+      1050
+    ],
+    "count": 13,
+    "interpretation": "OpenCV CCL has no production label cap; component count is only a lower bound on temporary labels. These geometry results are not deployable RTL performance. Hardware feasibility requires RTL measurement."
+  },
+  "far": null,
+  "precision": null,
+  "missing_background_truth": "unmatched candidates are not labeled invalid",
+  "failure_panels": [
+    "failure_panels/f000150_failure.png",
+    "failure_panels/f000180_failure.png",
+    "failure_panels/f000210_failure.png",
+    "failure_panels/f000240_failure.png",
+    "failure_panels/f000270_failure.png",
+    "failure_panels/f000300_failure.png"
+  ],
+  "boundaries": [
+    "Fixed MOG2 algorithm diagnostic only; no approval to deploy MOG2 or any algorithm family.",
+    "One correlated development scene and 32 confirmed frames; no independent-test claim.",
+    "Only foreground generation changed; classifier models, thresholds and training are frozen."
+  ]
+}

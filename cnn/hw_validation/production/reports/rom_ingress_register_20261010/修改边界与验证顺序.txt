@@ -1,0 +1,34 @@
+参数入口寄存候选 / 2026-10-10
+
+原始对象：rom_down2_prefetch_20261010/rtl/road_rom_down2_top.v。
+修改类别：existing-RTL repair + validate；独立物理诊断，非生产交付。
+原 formatter-AST/门禁：冻结的 gates_attempt3/full.json；compile passed，parse_errors=0；
+ast/readability/comment/naming/profile failed，testbench/toolchain not_requested。
+原独立功能仿真通过、内部三条setup失败；不能以局部通过改写严格交付状态。
+
+唯一功能改动：预取runner参数加 valid/kind3/address11/data32 单笔保持寄存，
+外部halo所有权用寄存阶段位，末笔排空、pref_done及table_loaded且无fault后开放。
+不支持同拍出入替换，空时接收，下一拍或更晚消费；预取本来是多周期源，无需FIFO。
+握手前完整payload保持；故障取消待提交参数并锁住所有权，复位清空并重装表。
+外部halo、SiLU表仍使用原直通路径。原核11份复用RTL逐项哈希不变；
+其中8份原计算RTL保持字节不变。外部50位端口、内部接口、算术、II、异常和复位端口不变。
+预取器ready现在表示缓冲接收，不能再当runner提交；测试须分别计数和逐项比较。
+启动许可可能晚一拍，boot单独实测；小块core窗口必须仍1687。
+
+风险审查：
+1. 仅寄存data无法切断state/address到RAM WE，必须整笔寄存并替换裸pref_done选择。
+2. 允许缓冲接收不等于runner写完成；必须等待pending=0后的注册移交。
+3. runner DW weight另有pending写回；移交不与参数consume同拍，且表装载在参数后。
+4. fault优先清pending和owner，valid必须被当前故障禁止；fault传播可能仍形成关键路径，实际STA决定。
+5. 不缓冲外部halo，保留最后装载后下一拍start；越界halo仍锁故障，不以ready=0漏检。
+6. SiLU RAM、完整ROM和原参数缓存保留；不新增动态端口/ERAM/时序例外。
+
+执行漏斗：Python单笔守恒模型→参数边界压力TB→原64项及7次联合数值回归
+→同12模块严格门报告→综合→人工核对寄存/阶段锥→一次布局布线→全量内部四类检查。
+综合与布局布线拆为两个工具阶段，只在网表有预期结构变化时允许继续；
+同一结构不覆盖报告，不通过换seed或等价语法反复运行。
+最多两个真正结构候选；若需改冻结核、II、端口、数值、约束或真实接口，集中报告再决策。
+
+说明：技能目录中的 readable-python-generator/readable-script-generator 当前未在可用技能列表，
+使用项目现成运行工具并保留脚本检查边界，不宣称这些缺失技能的严格门已通过。
+不训练、不改生产、不生成位流、不上板、不写Flash、不扩展CRC。

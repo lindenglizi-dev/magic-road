@@ -1,0 +1,1192 @@
+{
+  "new_td_run": true,
+  "new_numeric_report": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/20261005T054038Z/report.json",
+  "new_checker_report": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/checker_20261005T054229Z/report.json",
+  "items": [
+    {
+      "evidence_and_gap": "E7实际字段Device=PH1P35MDG324、Speed=−3，TD版本6.2.168116。实物丝印和振荡器仍待板子确认",
+      "requirement": "确认器件完整型号、封装、速度等级和工程实际目标一致。历史器件记录为 PH1P35MDG324-3，须核对当前工程的实际器件字段；PH1P35 是器件系列名称，TD 是工具链，不应合并成器件型号。",
+      "verdict": "通过，工程配置范围",
+      "id": "1.2.1"
+    },
+    {
+      "evidence_and_gap": "E6固定512×288、S4/S8/S16、DW/PW、CSP24/48/96、head48；没有更改拓扑",
+      "requirement": "固定 RoadYOLO-S4-512 配置：输入 512×288；S4/S8/S16；CSPDW/PW 24/48/96；head 48。",
+      "verdict": "通过，模型契约范围",
+      "id": "1.2.2"
+    },
+    {
+      "evidence_and_gap": "本轮实例化`RoadYOLOS4`重新计数：118081参数、67卷积、113100卷积权重；契约记录61 SiLU、2501折叠偏置，图计数214465536 MAC/帧。权重、训练参数和包字节不混为一谈",
+      "requirement": "核对导出清单：67 个卷积、61 个 SiLU、113,100 个权重、118,081 个参数、214,465,536 MAC/帧。权重数、参数数与硬件实际存储字节数分开记录。",
+      "verdict": "通过，软件导出范围",
+      "id": "1.2.3"
+    },
+    {
+      "evidence_and_gap": "视频top=`design_top_wrapper`；当前算术top=`road_round_internal_probe`，子模块core/reset/round；SiLU单独top=`silu_shared_unit`。ROM、MAC和DDR是隔离原型，不是完整CNN；没有完整CNN调度top",
+      "requirement": "记录当前 top、已实现模块、占位模块和未连接接口。完整 CNN RTL 尚未完成，不能以局部模块结果代替全网络结果。",
+      "verdict": "通过，边界记录",
+      "id": "1.2.4"
+    },
+    {
+      "evidence_and_gap": "没有使用Gowin/RISC-V报告签核PH1P",
+      "requirement": "将旧 Gowin/RISC-V 工程从本次时序签核证据中排除。可以借用已验证的算法思路，不能混用器件资源、原语或时序报告。",
+      "verdict": "通过，本轮证据选取",
+      "id": "1.2.5"
+    },
+    {
+      "evidence_and_gap": "本报告只统计RoadYOLO和其模板/探针，不假定队友算法共同驻留；队友bitstream清单未提供，不做资源合并",
+      "requirement": "按当前安排分别统计各套算法的 bitstream。队友算法暂时独立实现，不设定必须与 RoadYOLO 同时驻留的资源要求；各自仍需满足所用板卡的真实接口条件。",
+      "verdict": "待验证",
+      "id": "1.2.6"
+    },
+    {
+      "evidence_and_gap": "无Git；E2保存输入、补丁和哈希。旧TD完整快照仍不足",
+      "requirement": "保存源码提交号；若有未提交改动，保存补丁和文件校验值。",
+      "verdict": "通过，本轮四模块快照",
+      "id": "2.1"
+    },
+    {
+      "evidence_and_gap": "E1冻结图、包、向量检查通过；E2绑定探针输入哈希。正式训练量化权重未冻结",
+      "requirement": "保存顶层参数、权重文件、量化参数、LUT 文件、RAM 初始化文件和测试向量的校验值。",
+      "verdict": "通过，已有测试包范围",
+      "id": "2.2"
+    },
+    {
+      "evidence_and_gap": "旧TD工具/器件可追溯；新CNN没有实现配置。器件数据库独立版本、完整策略和随机种子未闭合",
+      "requirement": "保存综合与实现工具名称、版本、器件数据库版本、器件型号、实现策略和随机种子。",
+      "verdict": "待验证",
+      "id": "2.3"
+    },
+    {
+      "evidence_and_gap": "E7列出pin.adc CompileOrder=1、视频SDC=2；旧算术build.tcl先read_adc再read_sdc。有脚本不等于当前完整CNN全部IP约束成功加载",
+      "requirement": "保存完整约束文件及其加载顺序；确认工具日志显示实际加载成功，没有只编辑但未启用的约束。",
+      "verdict": "待验证",
+      "id": "2.4"
+    },
+    {
+      "evidence_and_gap": "本轮重跑数值和四模块门禁，没有重新执行原TD完整流程；旧失败报告明确保留为历史",
+      "requirement": "用原始基线运行一次完整流程，保留退出状态、警告、资源、综合时序及布线后时序报告。失败也要原样保留。",
+      "verdict": "待验证",
+      "id": "2.5"
+    },
+    {
+      "evidence_and_gap": "E1探针168结果/68有意停顿/3故障与原版14解析诊断分开；E2修正版0错误不等于物理时序通过",
+      "requirement": "先复核 probe 解析：将预期 stall、数值比较失败、解析失败、真实结构诊断分栏记录。解析器错误不能作为硬件通过或失败的唯一依据。",
+      "verdict": "通过，四模块范围",
+      "id": "2.6"
+    },
+    {
+      "evidence_and_gap": "E2原版VG153=12、VG031=2；项目检查器结合子端口及驱动事实复核，28正反回归含真实多驱动与非法连接；未扩展到SiLU原语签核",
+      "requirement": "对 12 条子模块输出驱动诊断逐项核查端口方向、多驱动、层次引用和测试平台驱动方式。不能因为它们来自静态工具就全部忽略，也不能未经复核就全部判定为综合故障。",
+      "verdict": "通过，四模块范围",
+      "id": "2.7"
+    },
+    {
+      "evidence_and_gap": "已追到顶层PLL、MIPI和DDR源，但缺当前完整时钟报告、实物和fabric频率",
+      "requirement": "沿每个时钟追到输入引脚、PLL、分频或专用时钟资源，核对周期、相位、倍分频和波形定义。",
+      "verdict": "待验证",
+      "id": "3.1.1"
+    },
+    {
+      "evidence_and_gap": "已定位derive/rename和异步分组对象；没有本轮elaborated时钟覆盖报告，不能保证对象全匹配",
+      "requirement": "检查生成时钟是否遗漏、重复定义或源对象错误。两个域的标称频率相同，不代表它们同步。",
+      "verdict": "待验证",
+      "id": "3.1.2"
+    },
+    {
+      "evidence_and_gap": "旧重定标报告覆盖100%不代表其外部约束合理；完整视频/CNN未约束端点逐项处置缺失",
+      "requirement": "检查所有时序端点是否有合理约束；对每条未约束路径给出处理结论。",
+      "verdict": "待验证",
+      "id": "3.1.3"
+    },
+    {
+      "evidence_and_gap": "旧零I/O delay是未闭合边界假设；122/124缺用户显式位置约束，全部124端口已有最终物理位置，板卡合法性未验证",
+      "requirement": "区分内部时序、外部输入输出时序和异步跨域路径。输入输出的最小与最大延迟应有板级或接口依据，不能只填最大延迟。",
+      "verdict": "待验证",
+      "id": "3.1.4"
+    },
+    {
+      "evidence_and_gap": "顶层`S_rst_n`/`S_hdmi_rst_n`直接来自PLL lock；须核对各域释放及IP约束加载，不擅改DDR复位",
+      "requirement": "核对 PLL 锁定、复位释放顺序及厂商 IP 自带约束是否完整加载。",
+      "verdict": "待验证",
+      "id": "3.1.5"
+    },
+    {
+      "evidence_and_gap": "视频摄像头→DDR和DDR→HDMI边界已识别；完整配置/状态通道及新CNN列表尚未闭合",
+      "requirement": "列出每条跨域通道，区分单比特状态、脉冲、配置总线和连续数据流。",
+      "verdict": "待验证",
+      "id": "3.2.1"
+    },
+    {
+      "evidence_and_gap": "独立探针同域，CNN结果跨域尚未接入；旧快照方案不能直接证明新64框CDC安全",
+      "requirement": "检查单比特同步、脉冲握手、异步 FIFO 或其他 CDC 方案是否匹配信号语义；多比特总线不能仅逐位同步后假定一致。",
+      "verdict": "待验证",
+      "id": "3.2.2"
+    },
+    {
+      "evidence_and_gap": "缺CNN FIFO真实深宽、满空/溢出记录与复位次序；模板FIFO须按实际IP单独核查",
+      "requirement": "对跨域 FIFO 检查读写时钟、复位次序、满空判断、数据宽度与溢出处理；厂商模板和约束以 PH1P 对应工具版本为准。",
+      "verdict": "待验证",
+      "id": "3.2.3"
+    },
+    {
+      "evidence_and_gap": "新探针有两级复位释放寄存器；未有其recovery/removal物理结果；旧异步复位路径已失败",
+      "requirement": "若采用异步复位，核对每个域的释放同步方式及 recovery/removal 检查；不能随意改动 DDR 等 IP 要求的复位电路。",
+      "verdict": "待验证",
+      "id": "3.2.4"
+    },
+    {
+      "evidence_and_gap": "E3可见旧reset最大扇出512；未形成新全网reset/CE扇出及必要复位清单",
+      "requirement": "检查复位和时钟使能是否造成大量高扇出网络；记录哪些数据寄存器确实需要复位，哪些可用有效标志屏蔽初始化内容。",
+      "verdict": "待验证",
+      "id": "3.2.5"
+    },
+    {
+      "evidence_and_gap": "E3保留20条展开记录，两次各10条；其余453端点仍缺路径详情，未新跑STA",
+      "requirement": "重新取得 hold 最差路径及所有违例组，保存起点、终点、完整时钟路径、数据最小延迟、时钟偏斜、uncertainty、要求时间和 slack。",
+      "verdict": "待验证",
+      "id": "3.3.1"
+    },
+    {
+      "evidence_and_gap": "每次可见6条ASR/removal、1条CE/hold、3条ima/imb数据hold，起点均顶层输入；不能外推全部端点",
+      "requirement": "先确认路径属于同域、相关时钟域、异步跨域、I/O 还是复位路径；查清实际时钟关系后再决定修复方式。",
+      "verdict": "待验证",
+      "id": "3.3.2"
+    },
+    {
+      "evidence_and_gap": "已量出最差路径的时钟插入与数据到达差；实际外部相位、全部路径类别尚不明确，不归结为单一根因",
+      "requirement": "区分“数据路径过短”“时钟树偏斜过大”“时钟或 I/O 约束错误”“CDC 结构不正确”等根因，避免只看一个 slack 数字。",
+      "verdict": "待验证",
+      "id": "3.3.3"
+    },
+    {
+      "evidence_and_gap": "已核对fix_hold及PHY-5089；旧pr.db缺失，不从10个样本推断其他453端点",
+      "requirement": "阅读自动 hold 修复失败的完整日志，定位失败对象和工具给出的原因；不要只保留摘要。",
+      "verdict": "通过，仅日志审计；409条异常触发原因待验证",
+      "id": "3.3.4"
+    },
+    {
+      "evidence_and_gap": "日志建议用匹配pr.db导出abnormal target并评估hold fix high；本轮未执行物理修复",
+      "requirement": "在约束正确的前提下，检查目标工具支持的时钟网络、布局和 hold 修复方法；修复后重新检查 setup 与 hold 的相互影响。",
+      "verdict": "待验证",
+      "id": "3.3.5"
+    },
+    {
+      "evidence_and_gap": "没有添加HDL延迟或人为组合绕行",
+      "requirement": "不用 HDL `#delay`、无依据的组合延迟链或无约束的逻辑绕行模拟物理 hold 修复。",
+      "verdict": "通过，本轮行为范围",
+      "id": "3.3.6"
+    },
+    {
+      "evidence_and_gap": "保留旧hold失败，没有用setup为正、降频或流水变化冒充收敛",
+      "requirement": "不通过降低时钟频率、缩小网络、增加流水级或把 setup 改成正值，就宣布 hold 已解决。它们可能改变实现，但不是 hold 通过的证据。",
+      "verdict": "通过，本轮结论范围",
+      "id": "3.3.7"
+    },
+    {
+      "evidence_and_gap": "新探针短路径、reset/CE路径需新TD，无法由仿真判定",
+      "requirement": "检查新增流水级产生的短路径。流水线主要用于拆分长组合逻辑，并不保证改善 hold。",
+      "verdict": "待验证",
+      "id": "3.3.8"
+    },
+    {
+      "evidence_and_gap": "独立round位宽/范围已冻结；乘法、偏置及各层两次重定标完整RTL还未实现",
+      "requirement": "从当前 golden 模型提取输入、系数、偏置、累加器与输出的位宽、符号、量化比例和合法范围。",
+      "verdict": "待验证，全重定标",
+      "id": "4.1.1"
+    },
+    {
+      "evidence_and_gap": "独立舍入顺序明确；合法INT32累加到两级重定标的全链未对拍",
+      "requirement": "逐步写清运算顺序，包括乘法扩位、加偏置、舍入、移位、截断和饱和。以当前模型为准，不默认采用某种舍入规则。",
+      "verdict": "待验证，全重定标",
+      "id": "4.1.2"
+    },
+    {
+      "evidence_and_gap": "E1极值/半单位/负数/饱和/非法shift对拍通过，INT64_MIN明确故障而非合法数值",
+      "requirement": "明确负数、恰好半单位、零、最大正数和最小负数的处理；检查算术右移、显式符号扩展及混合有符号/无符号表达式。",
+      "verdict": "通过，独立round",
+      "id": "4.1.3"
+    },
+    {
+      "evidence_and_gap": "E1参考使用足够宽整数；100070乘积案例一致，4类非法输入拒绝；不是DSP映射证据",
+      "requirement": "用足够宽的整数参考计算检查每个中间量；若范围可能超过固定整数类型，参考模型使用任意精度整数。",
+      "verdict": "通过，CPU参考范围",
+      "id": "4.1.4"
+    },
+    {
+      "evidence_and_gap": "缺本轮乘法、舍入、饱和分别的routed关键路径分解",
+      "requirement": "在关键路径中分别量出乘加、舍入/移位、饱和比较与选择逻辑的延迟，确认真正瓶颈。",
+      "verdict": "待验证",
+      "id": "4.2.1"
+    },
+    {
+      "evidence_and_gap": "当前round已多级，但尚未取得新物理结果；本轮不强行改为三拍",
+      "requirement": "将“乘加 → 舍入与移位 → 饱和与输出”作为候选分段，依据实际表达式和目标 DSP 结构决定边界，不预设必须三拍。",
+      "verdict": "待验证",
+      "id": "4.2.2"
+    },
+    {
+      "evidence_and_gap": "`i_shift`确为运行时0..62，变量移位有真实需求；目标桶形移位器映射/延迟仍待TD",
+      "requirement": "检查常量移位与运行时可变移位是否被误写为同一大桶形移位器；确有可变移位需求时再考虑分段实现。",
+      "verdict": "通过，RTL表达范围",
+      "id": "4.2.3"
+    },
+    {
+      "evidence_and_gap": "局部tag随流水保持；没有完整frame_id/层号/通道/坐标契约贯通",
+      "requirement": "所有跨级量同时携带有效标志、通道或位置标签、帧号及必要的量化参数；不能只给数据加寄存器。",
+      "verdict": "待验证，全网元数据",
+      "id": "4.2.4"
+    },
+    {
+      "evidence_and_gap": "E1共同使能停顿1828次，中间值、tag、故障比较通过；不证明跨模块弹性链",
+      "requirement": "在有背压的流水线中，按实际握手更新各级数据和元数据；不能用固定拍数移动标签代替可停顿流水控制。",
+      "verdict": "通过，独立round",
+      "id": "4.2.5"
+    },
+    {
+      "evidence_and_gap": "本轮7042案例、14084中间比较通过，含5故障；尚无完整多帧CNN连续回归",
+      "requirement": "重跑 7,042 条历史向量，并补齐饱和阈值两侧、舍入边界、极值、随机输入和连续帧测试。",
+      "verdict": "待验证，完整清单要求",
+      "id": "4.2.6"
+    },
+    {
+      "evidence_and_gap": "INT16 Q7.8、1024项表、负尾0/正尾恒等；与现有golden一致",
+      "requirement": "确认当前 SiLU 的输入编码、LUT 地址生成、输出编码和数值范围，与 65,536 输入验证所用模型一致。",
+      "verdict": "通过，局部数值编码",
+      "id": "5.1"
+    },
+    {
+      "evidence_and_gap": "E1新执行65536码，延迟5、II=1，表1024词；官方模型下完整SiLU仍待运行",
+      "requirement": "对当前流水实现重跑完整数值输入域；若数值实现或量化契约改变，明确更新参考模型及批准依据，不能悄悄放宽误差。",
+      "verdict": "通过，本地RAM模型范围",
+      "id": "5.2"
+    },
+    {
+      "evidence_and_gap": "地址/返回/输出已分级；实际LUT路径和RAM周边延迟没有STA",
+      "requirement": "检查 LUT 地址、查表输出、后续选择或缩放逻辑是否形成单拍长路径；根据真实映射选择寄存边界。",
+      "verdict": "待验证",
+      "id": "5.3"
+    },
+    {
+      "evidence_and_gap": "源码flag_pipeline_enable为“输出无有效数据”与i_output_ready的逻辑或，再生成input_ready：反向路径仍组合；没有连接多模块后的完整锥和时序",
+      "requirement": "分别分析 data/valid 前向路径与 ready 反向路径，检查多个模块直连后的长 ready 组合链。",
+      "verdict": "待验证，集成路径",
+      "id": "5.4"
+    },
+    {
+      "evidence_and_gap": "ready未被新增寄存，本轮未引入ready传播延迟；若后续寄存必须一起证明吸收容量",
+      "requirement": "若需将 ready 寄存，配套设计 skid buffer 或弹性 FIFO，按反压传播延迟计算所需容量。不能只给 ready 打一拍而不吸收尚在途的数据。",
+      "verdict": "不适用，当前版本",
+      "id": "5.5"
+    },
+    {
+      "evidence_and_gap": "TB保持可见输出3拍，检查valid/data稳定和input_ready关闭；当前SiLU没有frame_id/tag端口，不能宣布全网标签通过",
+      "requirement": "检查 `valid && !ready` 时，输出 valid 保持有效，数据及全部标签保持稳定，直到握手成功或发生契约允许的复位。",
+      "verdict": "通过，局部定向测试",
+      "id": "5.6"
+    },
+    {
+      "evidence_and_gap": "valid/ready共同定义transfer已检查；TB样本驱动不能代替系统无死锁证明",
+      "requirement": "检查源端不会依赖 ready 才首次拉高 valid；同时确认系统没有相互等待形成死锁。",
+      "verdict": "待验证",
+      "id": "5.7"
+    },
+    {
+      "evidence_and_gap": "TB覆盖全速全域、定向3拍停顿、加载错误、在途重载及复位；未见独立随机背压及超过流水深度的长停顿全域scoreboard",
+      "requirement": "检查空转、满速输入、随机反压、连续长反压、反压解除、流水清空和复位期间的行为。",
+      "verdict": "待验证",
+      "id": "5.8"
+    },
+    {
+      "evidence_and_gap": "E1的68次stall属于探针，不是SiLU测试；168结果/3故障/取消分别保留，不算STA失败",
+      "requirement": "为 68 次有意 stall 以及复位取消测试保留预期说明，并确认它们没有造成丢数、重复、乱序或标签错位。stall 是协议事件，本身不是时序违例。",
+      "verdict": "通过，重定标探针范围",
+      "id": "5.9"
+    },
+    {
+      "evidence_and_gap": "下表分类与E5原始记录一致，未将未知接口或静态预算问题冒充物理违例",
+      "requirement": "将 174 条静态诊断按位宽/符号、组合环、多驱动、锁存器、未用信号、工具限制等实际类别处理；不将该计数当作物理失败条数。",
+      "verdict": "通过，仅分类完成；尚未整改，原门禁仍未通过",
+      "id": "5.10"
+    },
+    {
+      "evidence_and_gap": "ROM/LUT已列，生产tile、行缓存和FIFO未实现完",
+      "requirement": "对权重 ROM、SiLU LUT、行缓存、特征图缓存和 FIFO 分别记录深度、位宽、端口数、时钟、读延迟与读写模式。",
+      "verdict": "待验证，全存储清单",
+      "id": "6.1"
+    },
+    {
+      "evidence_and_gap": "E4绑定TD6.2.168116官方模型及UG1310_1.2文档页；参数不是其他厂商规则",
+      "requirement": "根据当前工具和 PH1P 系列官方文档选择可综合模板或存储器 IP。记录文档版本与实际生成配置，不猜测 IP 字段或照抄其他厂商原语。",
+      "verdict": "通过，已用LUT接口范围",
+      "id": "6.2"
+    },
+    {
+      "evidence_and_gap": "SiLU没有全数组复位或异步RTL数组读，但实际ERAM映射仍缺TD",
+      "requirement": "检查异步读、整个数组复位、不支持的端口访问模式或层次结构是否妨碍期望 RAM 映射；以目标工具报告为结论。",
+      "verdict": "待验证，物理映射",
+      "id": "6.3"
+    },
+    {
+      "evidence_and_gap": "局部5拍数值通过；生产地址/层号/frame_id返回配对未实现完",
+      "requirement": "若将组合读改为同步读，更新地址发出、返回 valid、通道索引、边界标志和 frame_id；上层控制必须接受新增读延迟。",
+      "verdict": "待验证，全网读延迟",
+      "id": "6.4"
+    },
+    {
+      "evidence_and_gap": "局部重载等待pending排空是避碰设计；实际控制与厂商模型完整回归及硬件语义仍需验证",
+      "requirement": "检查读写同地址时返回旧值、新值或未定义值的语义，与算法是否一致；必要时显式避免冲突或实现旁路。",
+      "verdict": "待验证，硬件同址保证",
+      "id": "6.5"
+    },
+    {
+      "evidence_and_gap": "没有当前LUT/ROM的物理网表数量、宽深配置和周边STA",
+      "requirement": "检查推断或实例化后的物理 RAM 类型、数量、宽深配置及输出寄存器，确认没有意外膨胀成大量逻辑和触发器。",
+      "verdict": "待验证",
+      "id": "6.6"
+    },
+    {
+      "evidence_and_gap": "E1校验包和golden一致；综合初始化加载与实际网表字节序未证明",
+      "requirement": "对权重初始化检查文件路径、字节序、地址顺序、缺失值和仿真/综合加载方式一致。",
+      "verdict": "待验证，综合一致性",
+      "id": "6.7"
+    },
+    {
+      "evidence_and_gap": "table_loaded只在完整装载后开放推理，复位使状态无效并要求重载；没有假定未写RAM有效",
+      "requirement": "若删去数据 RAM 的全量复位，验证未写地址不会被当作有效数据读取；用有效位、写入完成状态或正确初始化保证语义。",
+      "verdict": "通过，SiLU本地行为",
+      "id": "6.8"
+    },
+    {
+      "evidence_and_gap": "SiLU为同一i_clk、B关闭；未来双时钟缓存不能沿用该局部证据",
+      "requirement": "对跨域存储器明确使用支持的双时钟结构，不能仅因语法可综合就判定 CDC 正确。",
+      "verdict": "待验证，全网",
+      "id": "6.9"
+    },
+    {
+      "evidence_and_gap": "INT8乘积/INT32累加已约定；PW最大192输入，单点积绝对上界192×16384=3145728，但加任意INT32偏置仍可能越界，须限定偏置/故障规则",
+      "requirement": "固定乘数、乘积、部分和、偏置与累加器位宽；根据输入范围和实际累加项数证明不会发生意外溢出。",
+      "verdict": "待验证，合法整层范围",
+      "id": "7.1"
+    },
+    {
+      "evidence_and_gap": "E8是算术探针，E1三乘积为CPU测试；未证明完整24MAC及6重定标DSP真实映射",
+      "requirement": "查看乘法器与加法器是否映射到期望 DSP 或逻辑资源，以及器件支持的内部寄存级是否真正启用。",
+      "verdict": "待验证，真实DSP",
+      "id": "7.2"
+    },
+    {
+      "evidence_and_gap": "E8有24乘积→12 pair→6 quad→3 dot对拍历史证据；新生产层级加法树时序未测",
+      "requirement": "检查多项求和是否被写成串行长链；若改为平衡加法树，按层加入寄存，并同步操作标签。",
+      "verdict": "待验证，生产结构",
+      "id": "7.3"
+    },
+    {
+      "evidence_and_gap": "本轮未改变求和顺序或中间截断/饱和；未来变更前仍需证明宽整数等价",
+      "requirement": "改变求和顺序前核对数值契约：足够宽整数求和、逐项截断或逐项饱和不是同一语义，不能默认可任意重排。",
+      "verdict": "通过，契约保持范围",
+      "id": "7.4"
+    },
+    {
+      "evidence_and_gap": "E8单事务在途，不是每拍同上下文累加的生产反馈实现",
+      "requirement": "检查累加器反馈路径。不能在反馈环中直接插拍而仍按原先每拍更新同一个上下文的方式运行。",
+      "verdict": "待验证",
+      "id": "7.5"
+    },
+    {
+      "evidence_and_gap": "全网交错上下文、尾组归并和DW/PW上下文规则未有层级RTL证据",
+      "requirement": "若采用多组部分和交错累加，明确上下文数、选择顺序、末尾归并、通道切换、清零与尾部不足一组时的行为。",
+      "verdict": "待验证",
+      "id": "7.6"
+    },
+    {
+      "evidence_and_gap": "端口/ROM/DDR等待与24路有效利用率未测，不能按峰值下结论",
+      "requirement": "将吞吐所需并行度与 DSP 数、片上读端口、权重供给和特征图带宽一起核对，避免只有乘法器并行而数据供不上。",
+      "verdict": "待验证",
+      "id": "7.7"
+    },
+    {
+      "evidence_and_gap": "缺Stem/DW/PW/尾通道/padding/stride/残差/拼接完整生产层级对拍",
+      "requirement": "覆盖卷积边界、padding、尾通道、DW/PW 切换、不同 stride、残差或拼接的地址与时序。",
+      "verdict": "待验证",
+      "id": "7.8"
+    },
+    {
+      "evidence_and_gap": "旧reset扇出512及cell/net占比已记录；当前控制扇出没有新物理报告",
+      "requirement": "从报告提取高扇出 reset、enable、valid、状态译码和地址选择网络，区分逻辑延迟与布线延迟占比。",
+      "verdict": "待验证，完整网络",
+      "id": "8.1"
+    },
+    {
+      "evidence_and_gap": "SiLU ready路径及DDR state_next超预算已定位；是否为物理最差路径未测",
+      "requirement": "检查大型单拍状态译码、宽多路选择器和跨层级全局控制是否处在关键路径上。",
+      "verdict": "待验证",
+      "id": "8.2"
+    },
+    {
+      "evidence_and_gap": "没有在本轮改控制结构；新增延迟必须先定义并回归",
+      "requirement": "对确有瓶颈的控制信号考虑局部寄存、层次化控制或等价复制；确认新增控制延迟与数据路径一致。",
+      "verdict": "待验证",
+      "id": "8.3"
+    },
+    {
+      "evidence_and_gap": "使用posedge i_clk及时钟使能，不新增普通组合门控时钟；全网仍须复核",
+      "requirement": "不直接对时钟做普通组合逻辑门控；按器件支持的时钟使能或专用时钟资源实现需要的行为。",
+      "verdict": "通过，当前round/SiLU范围",
+      "id": "8.4"
+    },
+    {
+      "evidence_and_gap": "SiLU原语有FORCE_KEEP=ON/PACKABLE=NO；真实优化影响须看网表，未擅改",
+      "requirement": "检查为了调试保留的信号或属性是否限制综合优化；仅在明确用途和可追溯条件下调整。",
+      "verdict": "待验证，映射影响",
+      "id": "8.5"
+    },
+    {
+      "evidence_and_gap": "缺当前整网拥塞和互连长度报告，不猜拥塞根因或试种子冒充解决",
+      "requirement": "若报告显示拥塞，检查模块边界、互连长度、存储布局和资源利用率；先解决结构性问题，再比较实现策略或种子。",
+      "verdict": "待验证",
+      "id": "8.6"
+    },
+    {
+      "evidence_and_gap": "没有完整CNN集成top可执行P&R",
+      "requirement": "在模块单独通过之后运行真实集成 top，重新检查跨模块路径、跨域通道和布局布线。",
+      "verdict": "待验证",
+      "id": "8.7"
+    },
+    {
+      "evidence_and_gap": "模板摄像头写/显示读存在；CNN输入、特征DMA和后处理尚未实际接入，不添加虚构流量",
+      "requirement": "列出摄像头写入、显示读取、CNN 输入、特征图或权重搬运、后处理读取等所有实际 DDR 客户端；不添加当前设计没有的流量。",
+      "verdict": "待验证，完整客户清单",
+      "id": "9.1.1"
+    },
+    {
+      "evidence_and_gap": "RGB输入442368 B/帧、E6 raw head 169344 B（INT16）可算；DDR突发效率和每层服务开销未测",
+      "requirement": "按真实位宽和打包方式计算有效字节数，再考虑突发效率、刷新、读写切换、仲裁和最坏等待。不能把 DDR 标称峰值带宽当作可持续有效带宽。",
+      "verdict": "待验证",
+      "id": "9.1.2"
+    },
+    {
+      "evidence_and_gap": "mock控制器背压不代表实际DDR等待分布、最长等待、FIFO水位",
+      "requirement": "记录每个请求发出到数据返回的等待分布和最长等待；检查 FIFO 深度、最低水位和溢出/欠流计数。",
+      "verdict": "待验证",
+      "id": "9.1.3"
+    },
+    {
+      "evidence_and_gap": "视频优先/最多连续16单元是计划，没有完整仲裁与饥饿上界证明",
+      "requirement": "明确显示及时供数、采集不丢数和算法获取服务的规则，验证繁忙时算法仍有可量化进展，而不是无限饥饿。",
+      "verdict": "待验证",
+      "id": "9.1.4"
+    },
+    {
+      "evidence_and_gap": "隔离桥单时钟，未证明DDR与CNN跨域完整数据通路",
+      "requirement": "用异步 FIFO 或合适的握手隔离 DDR 与计算域，不假设 DDR 每拍固定返回一个像素。",
+      "verdict": "待验证",
+      "id": "9.1.5"
+    },
+    {
+      "evidence_and_gap": "缺CNN source_frame_id、timestamp、输入槽和结果表端到端匹配",
+      "requirement": "保护处理中的源帧，验证检测结果、图像、裁剪坐标和显示叠加使用相同 frame_id；禁止帧缓存读到一半被写端覆盖。",
+      "verdict": "待验证",
+      "id": "9.1.6"
+    },
+    {
+      "evidence_and_gap": "FREE→CAPTURING→READY→READING→FREE为计划；写可见性及最后读消费释放未硬件闭合",
+      "requirement": "明确使用双缓冲或多缓冲时的所有权切换及释放条件；只在完整帧边界提交可见结果。",
+      "verdict": "待验证",
+      "id": "9.1.7"
+    },
+    {
+      "evidence_and_gap": "Top128/类、NMS32/类和64框规格固定，完整后处理RTL周期/队列未测",
+      "requirement": "分别统计解码、阈值筛选、候选缓冲、排序或 NMS、结果输出的周期数和最长队列；检查候选数上限与溢出策略。",
+      "verdict": "待验证",
+      "id": "9.2.1"
+    },
+    {
+      "evidence_and_gap": "E6为静态图，不是67层含等待的周期仿真",
+      "requirement": "记录各层计算周期、填充/排空周期、RAM/DDR 等待周期和反压周期，避免只估算卷积 MAC。",
+      "verdict": "待验证",
+      "id": "9.2.2"
+    },
+    {
+      "evidence_and_gap": "显示75 MHz不是检测75 MHz或60 FPS；结果年龄500 ms规则尚未集成实测",
+      "requirement": "区分单帧延迟、稳态帧间隔、摄像头帧率、显示刷新率和检测 FPS；允许显示复用上一检测结果时，也要标明结果年龄。",
+      "verdict": "通过，指标区分；实测待验证",
+      "id": "9.2.3"
+    },
+    {
+      "evidence_and_gap": "没有各阶段实际重叠调度及占用轨迹，不能假定完全重叠",
+      "requirement": "若不同阶段重叠运行，用实际流水调度和缓冲占用验证；不能机械相加所有阶段，也不能未经证明完全重叠。",
+      "verdict": "待验证",
+      "id": "9.2.4"
+    },
+    {
+      "evidence_and_gap": "新数值与既定同向量比较；新门禁与原版同4模块闭包比较；旧STA仅作历史",
+      "requirement": "修改前后使用相同报告口径，优先比较同一来源、同一构建阶段、同一约束和同一工具配置的结果。",
+      "verdict": "通过，本轮比较口径",
+      "id": "11.1"
+    },
+    {
+      "evidence_and_gap": "本轮未改时钟、器件、约束、数值契约；无物理收益声明",
+      "requirement": "如更改了时钟、器件、约束、工具、参数或量化契约，明确说明这是新基线，不能将变化全部归功于 RTL 优化。",
+      "verdict": "通过",
+      "id": "11.2"
+    },
+    {
+      "evidence_and_gap": "本轮没有物理优化收益比较；后续变策略/种子必须重新建立同口径基线",
+      "requirement": "结果看似改善但来源不一致时，重新构建基线对照；记录工具非确定性或不同种子的影响。",
+      "verdict": "不适用，本轮",
+      "id": "11.3"
+    },
+    {
+      "evidence_and_gap": "原始失败报告保留，区分静态门禁、物理时序、控制器语义及整网吞吐阻塞",
+      "requirement": "对所有失败保留原始证据，并说明是否阻塞功能、物理实现或吞吐验收。",
+      "verdict": "通过",
+      "id": "11.4"
+    }
+  ],
+  "audit_date": "2026-10-05",
+  "silu_total_gate_errors": 174,
+  "silu_quality_findings": 160,
+  "scope": "Read-only source/report audit and rerun of existing numeric/checker tests; no RTL/constraint/training/TD/board changes",
+  "evidence": [
+    {
+      "sha256": "108e2c96820a908f552f927473f2b1bc6e2c4f74dc94ad01659e3bb2bf538964",
+      "path": "E:/EDownloads/RoadYOLO_时序优化检查清单.md"
+    },
+    {
+      "sha256": "ac9b431e8be54702bea63d1bc3e91e0b3ffd1821385776c89e36f2a12dca36e0",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/RoadYOLO_时序清单检查报告_20261005.md"
+    },
+    {
+      "sha256": "bf17e4270243d3e738cc6764601217b3e312bd91f99e2ea57df415fffcacf2c3",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/20261005T054038Z/report.json"
+    },
+    {
+      "sha256": "e87d2974c99ef54ce73a9e230dfdec2c18120613fd40f08f04fe56e0449372bf",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/checker_20261005T054229Z/report.json"
+    },
+    {
+      "sha256": "d77b071ca23be813b5a8fc32c8906149bbc2b22d8436af4fb8679084368a1ebd",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/hold_audit_20261005.json"
+    },
+    {
+      "sha256": "c950368b78d8157a285b157d52f49a3aa2f7b71d3b83956547c6dadb721b5220",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ph1p_behavior_audit_20261005.json"
+    },
+    {
+      "sha256": "3219e6c5a071cc4ad639e85c3f3771978ffa17ae049875f531252ee69d5bb7a5",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/silu/reports/gate_attempt_6.json"
+    },
+    {
+      "sha256": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/graph_artifacts/graph.json"
+    },
+    {
+      "sha256": "3520e3ca6e82b01b2cbf671630a9d236f7f6096681c69d0d85067c103fcff45d",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/numeric_artifacts/manifest.json"
+    },
+    {
+      "sha256": "cb8f1e308e5832eecc9d5a0cebb86df221ea5f12abe97a5796dc49bea04b382d",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/round/road_round_shift.v"
+    },
+    {
+      "sha256": "ee9beb80decb4f276b9ff81214c22f044a71ac1ffc8c72beb1378e6ddb07a7ed",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/silu/silu_shared_unit.v"
+    },
+    {
+      "sha256": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/model.py"
+    },
+    {
+      "sha256": "4ae4f6aad13d20809dc97ba28d3050f35e100a036e56ddb141dd5d3838f73572",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/baseline/hw_video_baseline.al"
+    },
+    {
+      "sha256": "457379c949a59da39579d996bea3c56f066f85be422cec9a3b320d558e8f5c0d",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/td_project/camera_to_dsi_display.sdc"
+    },
+    {
+      "sha256": "1137946f04514e440b6c6cfd6695715dd6ae48d213af0c7314932b9f5e671037",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/user_source/ip_source/PLL/PLL.v"
+    },
+    {
+      "sha256": "b25b7552c9b1861feb7408889ae5e198e069721a799398a70941cc427f44483d",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/rom/reports/final_readiness.json"
+    },
+    {
+      "sha256": "e04e479945f101548d7d77dfbd3b5af306c1926b515adb3686f492b4e5276b0f",
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/ddr/reports/strict_gate_attempt6.json"
+    }
+  ],
+  "board_test": false,
+  "status": "blocked_no_hardware_release",
+  "checklist_count": 90,
+  "silu_rule_groups": [
+    {
+      "rule": "assign_width_match",
+      "count": 1
+    },
+    {
+      "rule": "case_item_in_range_width",
+      "count": 1
+    },
+    {
+      "rule": "clk_only_clock_pin",
+      "count": 2
+    },
+    {
+      "rule": "comb_cone_max_three_sources",
+      "count": 9
+    },
+    {
+      "rule": "comb_operation_budget",
+      "count": 20
+    },
+    {
+      "rule": "comments.always",
+      "count": 12
+    },
+    {
+      "rule": "comments.definition_group",
+      "count": 1
+    },
+    {
+      "rule": "comments.instance",
+      "count": 1
+    },
+    {
+      "rule": "comments.procedural_assignment",
+      "count": 31
+    },
+    {
+      "rule": "comments.region_anchor",
+      "count": 17
+    },
+    {
+      "rule": "comments.repeated_semantic",
+      "count": 3
+    },
+    {
+      "rule": "conn_port_width_match",
+      "count": 1
+    },
+    {
+      "rule": "for_comb_operation_budget",
+      "count": 5
+    },
+    {
+      "rule": "literal_explicit_base_width",
+      "count": 38
+    },
+    {
+      "rule": "literal_width_match",
+      "count": 6
+    },
+    {
+      "rule": "naming.flag",
+      "count": 1
+    },
+    {
+      "rule": "op_no_arith_overflow",
+      "count": 4
+    },
+    {
+      "rule": "op_rel_width_match",
+      "count": 4
+    },
+    {
+      "rule": "read_without_driver",
+      "count": 1
+    },
+    {
+      "rule": "regions.declaration",
+      "count": 2
+    }
+  ],
+  "revision": "T0 v2; original 90 statuses retained, no added verification from prose changes",
+  "generated_utc": "2026-10-05T08:05:43.6542880Z",
+  "original_scope_preserved": true,
+  "p0_scope": "New registered round fixture only; no physical release",
+  "old_run": {
+    "directory": "td/round_shift_20261004",
+    "min_violation_endpoints": 463,
+    "detailed_distinct_min_endpoints": 10,
+    "undetailed_min_endpoints": 453,
+    "matching_pr_db_found": false,
+    "sample_removal": 6,
+    "sample_ce_hold": 1,
+    "sample_tag_hold": 3,
+    "explicit_pin_constraints_missing": 122,
+    "physical_io_locations_present": 124,
+    "clock_summary_skew_ns": 0.141
+  },
+  "new_run": {
+    "directory": "td/round_internal_baseline_20261005",
+    "exit_code": 0,
+    "setup_wns_ns": 1.326,
+    "min_wns_ns": -1.376,
+    "min_violations": 1,
+    "internal_setup_wns_ns": 3.808,
+    "internal_min_wns_ns": 0.025,
+    "internal_endpoints": 2802,
+    "internal_violations": 0,
+    "sta_coverage_percent": 99.56,
+    "slices": 1003,
+    "lut": 778,
+    "registers": 1104,
+    "io": 117,
+    "dsp": 0,
+    "eram": 0,
+    "clock_summary_skew_ns": 0.175,
+    "design_passed": false,
+    "exceptions_added": [],
+    "numerical_retest": false
+  },
+  "evidence_index_v2": [
+    {
+      "path": "E:/EDownloads/RoadYOLO_时序优化检查清单.md",
+      "sha256": "108e2c96820a908f552f927473f2b1bc6e2c4f74dc94ad01659e3bb2bf538964",
+      "bytes": 28661,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/EDownloads/RoadYOLO_AI审阅建议与执行任务_v2_原始时序复核.md",
+      "sha256": "f40df92038ef0baf67aff0c2447afdbc2f25a76912e786f45e6b7f3ab6fa71bb",
+      "bytes": 21941,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/baseline/hw_video_baseline.al",
+      "sha256": "4ae4f6aad13d20809dc97ba28d3050f35e100a036e56ddb141dd5d3838f73572",
+      "bytes": 25634,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/ddr/reports/H1B_VALIDATION_REPORT.md",
+      "sha256": "618695dd06e57cbd74c88d56c8e0566fbfc780333dc4ba11dd337ff23c802511",
+      "bytes": 8129,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/ddr/reports/strict_gate_attempt6.json",
+      "sha256": "e04e479945f101548d7d77dfbd3b5af306c1926b515adb3686f492b4e5276b0f",
+      "bytes": 1871145,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/mac/status.json",
+      "sha256": "ce6272416ce398a8b9b3f0e1d7b1fbea49b1c570c3abf537f1437f2adca3647c",
+      "bytes": 2455,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/deployment_contract.json",
+      "sha256": "5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681",
+      "bytes": 4183,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/graph_artifacts/graph.json",
+      "sha256": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738",
+      "bytes": 81149,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/numeric_artifacts/manifest.json",
+      "sha256": "3520e3ca6e82b01b2cbf671630a9d236f7f6096681c69d0d85067c103fcff45d",
+      "bytes": 139529,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/20261005T054038Z/report.json",
+      "sha256": "bf17e4270243d3e738cc6764601217b3e312bd91f99e2ea57df415fffcacf2c3",
+      "bytes": 38109,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/checker_20261005T054229Z/report.json",
+      "sha256": "e87d2974c99ef54ce73a9e230dfdec2c18120613fd40f08f04fe56e0449372bf",
+      "bytes": 49702,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/hold_audit_20261005.json",
+      "sha256": "d77b071ca23be813b5a8fc32c8906149bbc2b22d8436af4fb8679084368a1ebd",
+      "bytes": 82526,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ph1p_behavior_audit_20261005.json",
+      "sha256": "c950368b78d8157a285b157d52f49a3aa2f7b71d3b83956547c6dadb721b5220",
+      "bytes": 19597,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/RoadYOLO_时序清单检查报告_20261005.md",
+      "sha256": "ac9b431e8be54702bea63d1bc3e91e0b3ffd1821385776c89e36f2a12dca36e0",
+      "bytes": 29565,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/round/road_round_shift.v",
+      "sha256": "cb8f1e308e5832eecc9d5a0cebb86df221ea5f12abe97a5796dc49bea04b382d",
+      "bytes": 16759,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/silu/reports/gate_attempt_6.json",
+      "sha256": "3219e6c5a071cc4ad639e85c3f3771978ffa17ae049875f531252ee69d5bb7a5",
+      "bytes": 3808630,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/silu/silu_shared_unit.v",
+      "sha256": "ee9beb80decb4f276b9ff81214c22f044a71ac1ffc8c72beb1378e6ddb07a7ed",
+      "bytes": 25630,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/rom/report.md",
+      "sha256": "c1c23a5d31c08bd267bad1dd865a93e2bd6823e2136e15ad0d72e3e2178415fa",
+      "bytes": 8431,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/rom/reports/final_readiness.json",
+      "sha256": "b25b7552c9b1861feb7408889ae5e198e069721a799398a70941cc427f44483d",
+      "bytes": 9282780,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/model.py",
+      "sha256": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c",
+      "bytes": 15588,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/td_project/camera_to_dsi_display.sdc",
+      "sha256": "457379c949a59da39579d996bea3c56f066f85be422cec9a3b320d558e8f5c0d",
+      "bytes": 1156,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/user_source/ip_source/PLL/PLL.v",
+      "sha256": "1137946f04514e440b6c6cfd6695715dd6ae48d213af0c7314932b9f5e671037",
+      "bytes": 3911,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision/cnn/hw_validation/ddr/reports/H1B_VALIDATION_REPORT.md",
+      "sha256": "618695dd06e57cbd74c88d56c8e0566fbfc780333dc4ba11dd337ff23c802511",
+      "bytes": 8129,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision/cnn/hw_validation/mac/status.json",
+      "sha256": "ce6272416ce398a8b9b3f0e1d7b1fbea49b1c570c3abf537f1437f2adca3647c",
+      "bytes": 2455,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision/cnn/hw_validation/production/deployment_contract.json",
+      "sha256": "5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681",
+      "bytes": 4183,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision/cnn/hw_validation/production/reports/RoadYOLO_时序清单检查报告_20261005_v2.md",
+      "sha256": "47b450a4fe4b42794762b33ed6691077cfde0f5dce4dddf40f91fdacb6f098d7",
+      "bytes": 31236,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision/cnn/hw_validation/production/reports/RoadYOLO_时序清单检查报告_20261005.md",
+      "sha256": "ac9b431e8be54702bea63d1bc3e91e0b3ffd1821385776c89e36f2a12dca36e0",
+      "bytes": 29565,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision/cnn/hw_validation/production/reports/RoadYOLO_时序清单检查证据_20261005.json",
+      "sha256": "defc2a01bfd0614d5daf9e16dd22a0153a16361d10e3998d872c38387c890311",
+      "bytes": 38547,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision/cnn/hw_validation/production/reports/RoadYOLO_P0_内部时序基线_20261005.md",
+      "sha256": "f9b3e4ab2940affb5a6fd9d939244428d6be8708a20978486061d630037b7da3",
+      "bytes": 7390,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision/cnn/hw_validation/rom/report.md",
+      "sha256": "c1c23a5d31c08bd267bad1dd865a93e2bd6823e2136e15ad0d72e3e2178415fa",
+      "bytes": 8431,
+      "level": "identity verified; historical result not rerun"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\abnormal_targets.timing",
+      "sha256": "13d976c1e711a983025da5f0beb7aca4643d9fd8856c3ed7200f7c255f3fb93b",
+      "bytes": 288,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\all_violations.timing",
+      "sha256": "f40a9582d28a05403a53d0519ef5830fcccf0de407c91b185d75d44df83c5162",
+      "bytes": 7998,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\build.tcl",
+      "sha256": "3819b613bc59965f4ad4ea6149d700c764b76bfde267fb94ae21ada31936cd21",
+      "bytes": 946,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\check.timing",
+      "sha256": "af16c4264466e4a6a761c630be0326f922e4711a52bf3552248a3c6945fe1a1a",
+      "bytes": 3310,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\clocks.timing",
+      "sha256": "c7ebed0dbc9c3215e2fe7737ae61378244ebdc27aed76cdc474dfcbe5efc701b",
+      "bytes": 198,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\exceptions.timing",
+      "sha256": "00dc69d329e809aef8e6b609f201dc4fd65dfec61cd129302970c9409c218993",
+      "bytes": 1258,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\export_internal.tcl",
+      "sha256": "34ea0c9d41be15db0320b33f2994289cd645bce9b41b9b7795a3f2a14b8e7730",
+      "bytes": 451,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\export_result.json",
+      "sha256": "97c1b22ff8afc4193f462f51f9a459e54ef1d7e2c564e1f31f62859657b6b177",
+      "bytes": 75,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\final_timing.rpt",
+      "sha256": "ea54fb346774008edd0ff26b44dc1690aad01033e7f54cc337db4ec98e9aa611",
+      "bytes": 106149,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\gate.db",
+      "sha256": "27f404406ab87ab53f67af4dbc53d74604cd526dbfb8b179a5e778f3f1b32ba0",
+      "bytes": 1349016,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\gate.qor",
+      "sha256": "1726442d68fc85d8836507cc1f8fc15637c79d0a5b0b5a150b2b8a4e0693eed5",
+      "bytes": 4574,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\ignored.timing",
+      "sha256": "47bd0e2c732448d5741e8823a52d7970f2b6d1748a0db28d48f8d5bbee1b9f64",
+      "bytes": 1223,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\inputs.json",
+      "sha256": "7dd513be3192e0947fe2eca0e9d416d425886c30fc47f57f79cf5cd9d9616dd5",
+      "bytes": 1831,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\inputs\\road_round_internal_probe_core.v",
+      "sha256": "622ab5cc0d55b2cf2ab53c074b2bc678eeb1bc6885521201b5869d7c7a14c48a",
+      "bytes": 14315,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\inputs\\road_round_internal_probe.v",
+      "sha256": "292266bff88a91b45ac05e257403c4b194e74626685cfb298172d0346ce0c05f",
+      "bytes": 5348,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\inputs\\road_round_reset_gen.v",
+      "sha256": "fc75c65c8b022a50d058fc1b5a5c79743d6ebe784c4e9c320f296045de24fd74",
+      "bytes": 3364,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\inputs\\road_round_shift.v",
+      "sha256": "cb8f1e308e5832eecc9d5a0cebb86df221ea5f12abe97a5796dc49bea04b382d",
+      "bytes": 16759,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\internal_reg_to_reg_full.timing",
+      "sha256": "ac5d74016ed9fb51e6cf573ea63d2ec2fa5db028afc0d165aa82cfcc96b9737b",
+      "bytes": 35802979,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\internal_reg_to_reg.timing",
+      "sha256": "a8e0c0f6f4ddc995e41cbbcec9ecbff0eb29c25933fc57e3b59bcf7ef2c4af56",
+      "bytes": 116950,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\place.qor",
+      "sha256": "e1e61583f7a5032d20ddd236674b9d1a1a3d336dfa3ab405bc1832c4710fc939",
+      "bytes": 1924,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\pr.db",
+      "sha256": "3bf86a15c3b7665fa39767f53c5619bc416fdca4c221c0e2b35f2e9338d78bf5",
+      "bytes": 2087708,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\probe_route.area",
+      "sha256": "e46dc706a47293b112350124eb26eb45a1f3e552b3d238f6d8bcf6bd0cc15f21",
+      "bytes": 17617,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\probe_route.timing",
+      "sha256": "ea54fb346774008edd0ff26b44dc1690aad01033e7f54cc337db4ec98e9aa611",
+      "bytes": 106149,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\probe_route.ts",
+      "sha256": "b8a409f51d87fdfadaa22012cc5b8cd3aad745b38494f0ca0acf1ce9e2dbc636",
+      "bytes": 64,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\probe_rtl.area",
+      "sha256": "55ec8df090f58616110bddcf5b998bed5feef39a2b610afa5ba553220a126fe2",
+      "bytes": 1647,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\probe.adc",
+      "sha256": "39b27761e304bc279c2f563d27aa8be4c556436a291033293a3fb239a92944f2",
+      "bytes": 144,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\probe.sdc",
+      "sha256": "cda442cda6cd48dc3ec2e72d9598936aadc962ae8cd73a1e1a63c0418674a84c",
+      "bytes": 825,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\round_internal_probe.al",
+      "sha256": "036b2d8fac9ebfe1ca6d805d7586da732ff66698b65075f1ef1213fe3e129df1",
+      "bytes": 3503,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\route.qor",
+      "sha256": "efc75af6d85a3d6909f947ab33c1a9f3d4b7307576ec1604c020c2ca98d17514",
+      "bytes": 1313,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\run_result.json",
+      "sha256": "a271a28a4e838f268a557fa76b8bd106a3eaed74c5f308c89711bac3503b7f09",
+      "bytes": 75,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\td_20261005_155658.log",
+      "sha256": "6d77a322ca7fba10e87f72219bbdab4a7586d663cab24a7bceed29c961665745",
+      "bytes": 99711,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\td_20261005_155658.logw",
+      "sha256": "40b2ac885d1889cf33e3747b0f47efc9ce0415245b2d98d76f39689ff33823a8",
+      "bytes": 4290,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\td_20261005_160212.log",
+      "sha256": "aeae0512e195c41e4092599d8af1deceb3cb1498a0e9c5ca9050273d68a585f8",
+      "bytes": 2484,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\td_20261005_160212.logw",
+      "sha256": "fdfe7b5a5a5cb2217779237b524931cd8401ec986760d4d956e64d9cc0d13ee2",
+      "bytes": 419,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\td_console.log",
+      "sha256": "e3917f6bcfb8e8dc29046d7f51548316b92f3f149a7702ee83ecfa9d82d60919",
+      "bytes": 99720,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_internal_baseline_20261005\\td_export.log",
+      "sha256": "884d3155a3979bddf2673618bcb4d9ecdd5992463f895e1bcc8931bec320b72c",
+      "bytes": 2491,
+      "level": "new TD artifact"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_shift_20261004\\build.tcl",
+      "sha256": "9e11656bc584bd46c129fc179d874641beb9ba309c6a719452bc2978ee75bdf0",
+      "bytes": 451,
+      "level": "direct original report; old database binding incomplete"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_shift_20261004\\inputs.json",
+      "sha256": "4745dcfb594ee4451f84a658a31b60dcd82cc22ea4c9179552dbc2f947bd3a22",
+      "bytes": 1353,
+      "level": "direct original report; old database binding incomplete"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_shift_20261004\\probe_route.area",
+      "sha256": "d0e0fc7e7df3e1da44681b3394bfb8350d643a6ea806fcbbc6067adfecc218b4",
+      "bytes": 17479,
+      "level": "direct original report; old database binding incomplete"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_shift_20261004\\probe_route.timing",
+      "sha256": "2cae8175b08405ef81583c1ea262374ec9ef14083c795915fff63ea5e887cd8a",
+      "bytes": 91745,
+      "level": "direct original report; old database binding incomplete"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_shift_20261004\\probe.adc",
+      "sha256": "c3cc62d721ebaa21d843dbef43505febfc39aa826c639f804ffe40e35f4ba161",
+      "bytes": 184,
+      "level": "direct original report; old database binding incomplete"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_shift_20261004\\probe.sdc",
+      "sha256": "056a47ef7c4fbb7fa0fe458cc7266891f157a7269af8701a0727a43cab02ab40",
+      "bytes": 629,
+      "level": "direct original report; old database binding incomplete"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_shift_20261004\\round_shift_probe.al",
+      "sha256": "066ae811037a328bbad23605d3e463de57f81478cd155e6dc18b2f150e43e052",
+      "bytes": 2373,
+      "level": "direct original report; old database binding incomplete"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\td\\round_shift_20261004\\td_20261004_203728.log",
+      "sha256": "adbe268b6a8799245be8ce56f5ca957793940c4041fe8f20f8a0c36035864644",
+      "bytes": 96101,
+      "level": "direct original report; old database binding incomplete"
+    }
+  ],
+  "thirty_minute_requirement_source": "Prior user-approved hardware plan H4 in this conversation; no independent local conversation snapshot"
+}

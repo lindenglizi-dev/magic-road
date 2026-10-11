@@ -1,0 +1,65 @@
+本地地面道路数据就绪审计（2026-10-09）
+
+结论
+
+G_ready = false。
+
+磁盘上已有足量候选图像和框，但还没有一份已验证清单同时满足：train 128–256 张完整全帧 GT、至少 2 个非 SPD 来源；主 dev 32–64 张、与 train 按 camera/原片家族隔离；最好至少 2 个来源且 person/vehicle 各至少 100 个真值框。
+
+本次只读指定元数据和数据目录一级结构；未训练、未改 GT、未下载、未解码图像或大视频，也未读取 blind/reserve/newtest 目录。SPD:yizhuang09:1 未扫描且整机位禁止进 train；现有 SPD8 仅保留为二级固定 sanity/展示检查。
+
+一、目前最有价值的本地候选
+
+1. Intersection-Flow-5K
+
+- 本地 README 称其为 7 个城市固定路口、基础设施视角、完整交通参与者框，许可写为 CC BY-NC-SA 4.0。
+- 实际文件配对：train 5483 图/5483 YOLO 标签/5483 XML，val 722/722/722，test 723/723/723；缺失配对、孤儿标签和非法 YOLO 类别行均为 0。
+- train 框：pedestrian 19,005；vehicle+bus+truck 200,982。val 框：pedestrian 2,250；vehicle+bus+truck 24,646。数量远超每类 100 的目标。
+- 但当前检查到的包中没有“每张图属于哪个路口/摄像头/原片家族”的机器可读映射，也没有把 6.18GB 压缩包绑定到权威来源的本地下载/解压收据。因此不能从文件名推造 camera_id，也不能证明 train/dev 跨机位隔离。
+- README 的“完整标注”声明尚未用像素抽审独立确认。bicycle、engine、tricycle 还需要冻结骑行者/车辆映射；obstacle 暂应 ignore。
+
+判定：数量足、类别足，是首选本地候选；但在来源家族映射和完整性抽审前，不计入 G 已就绪数量。
+
+2. VIRAT Ground
+
+- 已有 6 个 catalog 绑定的地面视频/标注对；另有 Ground48 使用的 010107 本地扩展对。基础 catalog 有 69,310 条保留行、12 条越界终帧行被原样排除。
+- 既有 ROI 审计只有 429 个裁剪 ROI：train 360（ped 160、vehicle 200），val 69（ped 45、vehicle 24）。它可支持 ROI 分类研究，不是完整帧检测 GT，也没有 invalid/test 闭环。
+- “仅运动目标标注”不能作为已证实事实。随包 README 明写 object 可 moving 或 static，并称 all objects annotated；但 Ground48 来源复核确认四个停车场 clip 每帧只有 2–3 行，画面仍有明显未框车辆。因此现有行更适合作为轨迹/候选监督，不能把未列区域当负例。
+- 000205/000207 已因映射 QA 被查看，只能算 development holdout，不再是严格盲测。
+
+判定：是真实地面来源，但当前发布行不满足完整全帧 GT；若作为第二训练来源，需要人工完成选定帧的所有人、车、静止车和骑行者框。
+
+3. 旧 Ground48
+
+- 48 图，选择清单明确写 24 张 virat-parking-lot-camera-a、24 张 virat-010107-camera-b。
+- 48/48 来源行、图像哈希和视频帧对应复核通过；共 821 行：person 114、vehicle 682、ignore 25。
+- 但 selection_receipt 仍是 human_complete_count=0、pending_count=48、ground_val48_generated=false、formal_acceptance=false。
+- 其中四个停车场 clip 的 24 张图每帧仅 2–3 个来源框；程序未漏读不等于画面完整标注。教师候选也没有自动成为 GT。
+
+判定：张数和表面类别数达到 dev 目标，但完整性不合格；不能作为主 dev 或让旧门禁通过。
+
+二、不能计作地面来源的现有资产
+
+- COCO 2017：118,287 train、5,000 val；本地收据明确 formal_road_acceptance_eligible=false。没有固定道路机位/原片家族信息，不能把 image_id 当 camera_id。可服务 tiny-fit 学习链诊断，不计地面来源。
+- VisDrone2019-VID：合并清单为 19,049 train、5,151 val，46/10 个序列；它是航拍数据，只保留为旧回归/退化检查，不计地面来源。
+- public_clips：目录不存在，没有额外本地公开地面素材可直接补位。
+- SPD：yizhuang09:1 全机位禁入 train；SPD8 只作二级固定检查，不用于选模、早停、阈值扫描或主 dev。
+
+三、精确缺口
+
+1. train：缺一份 128–256 张完整全帧 GT 的冻结清单；至少 2 个非 SPD 来源。目前 Intersection-Flow-5K 只能算 1 个待验证来源，VIRAT 还缺完整全帧补标。
+2. dev：缺一份 32–64 张、与 train 按 camera/原片家族隔离的冻结清单。Ground48 虽有 48 张和两个项目声明 camera_id，但 0/48 完整；且只有 VIRAT 一个来源家族。
+3. 来源隔离：Intersection-Flow-5K 缺图像到 7 个路口/摄像头的权威映射；不能靠文件名补造。
+4. 标签完整性：Intersection 仍需小规模像素抽审；VIRAT/Ground48 需要全帧补全，尤其静止车辆、骑行者及未框可见目标。
+5. 类别契约：Intersection 的 pedestrian→person、vehicle/bus/truck→vehicle 可先作为候选；bicycle/engine/tricycle 的骑行分框和 obstacle→ignore 需单独冻结。
+6. 来源收据：Intersection 本地包缺权威下载身份/哈希收据；在用于训练前应补齐来源 URL、许可、压缩包 SHA256、提取清单哈希。
+
+四、最小下一步（不先下载）
+
+1. 先在 Intersection-Flow-5K 的现有包或权威随包元数据中找到图像→路口/摄像头/来源家族映射并做哈希收据；找不到就明确标记 camera_unknown，不从图像编号猜。
+2. 映射可用后，从其 train 候选 128–192 张、从与 train 不同机位/家族的 val 候选 24–32 张，做全帧漏标抽审和类别映射审计；先不改原 GT。
+3. 第二训练来源优先利用现有 VIRAT train 场景 000201/000206，另选 64–128 张并补全整帧人/车/静止车/骑行者；若不愿补标，则必须另找一个带完整框和 camera 元数据的非 SPD 固定机位来源。
+4. 主 dev 建议最终由两个来源各 24–32 张组成，总计 48–64 张；全部与 train 机位/原片家族隔离，并实际统计 person、vehicle 各至少 100 个完整 GT。
+5. Ground48 若继续使用，必须先完成人工全帧复核并发布 ground_val48.json；在此前不改变其旧门禁状态。SPD8 继续只作二级检查。
+
+机器可读证据、逐项 SHA256 和精确类别统计见同目录 evidence.json。

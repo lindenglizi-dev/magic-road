@@ -1,0 +1,482 @@
+{
+  "modules": [
+    {
+      "name": "down2_dynamic_tile_runner",
+      "feature": "r",
+      "rtl_path": "down2_dynamic_tile_runner.v",
+      "description": "Four-credit PW task stream; frozen A0-A5 arithmetic, separate result descriptors.",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "i_table_valid",
+            "description": "i_table_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_addr",
+            "direction": "input",
+            "width": 10,
+            "role": "i_table_addr",
+            "description": "i_table_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_data",
+            "direction": "input",
+            "width": 16,
+            "role": "i_table_data",
+            "description": "i_table_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "o_table_ready",
+            "description": "o_table_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "o_table_loaded",
+            "description": "o_table_loaded",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "o_table_fault",
+            "description": "o_table_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "i_load_valid",
+            "description": "i_load_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_kind",
+            "direction": "input",
+            "width": 3,
+            "role": "i_load_kind",
+            "description": "i_load_kind",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_addr",
+            "direction": "input",
+            "width": 11,
+            "role": "i_load_addr",
+            "description": "i_load_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_data",
+            "direction": "input",
+            "width": 32,
+            "role": "i_load_data",
+            "description": "i_load_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_load_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "o_load_ready",
+            "description": "o_load_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "i_start",
+            "description": "i_start",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pw_only",
+            "direction": "input",
+            "width": 1,
+            "role": "i_pw_only",
+            "description": "i_pw_only",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_commit_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "i_commit_ready",
+            "description": "i_commit_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "o_busy",
+            "description": "o_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "o_done",
+            "description": "o_done",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "o_fault",
+            "description": "o_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_export_start",
+            "direction": "input",
+            "width": 1,
+            "role": "i_export_start",
+            "description": "i_export_start",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "i_output_ready",
+            "description": "i_output_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "o_output_valid",
+            "description": "o_output_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "role": "o_output_data",
+            "description": "o_output_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_index",
+            "direction": "output",
+            "width": 9,
+            "role": "o_output_index",
+            "description": "o_output_index",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_export_done",
+            "direction": "output",
+            "width": 1,
+            "role": "o_export_done",
+            "description": "o_export_done",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "o_debug_valid",
+            "description": "o_debug_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_phase",
+            "direction": "output",
+            "width": 2,
+            "role": "o_debug_phase",
+            "description": "o_debug_phase",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_layer",
+            "direction": "output",
+            "width": 1,
+            "role": "o_debug_layer",
+            "description": "o_debug_layer",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_position",
+            "direction": "output",
+            "width": 4,
+            "role": "o_debug_position",
+            "description": "o_debug_position",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_channel",
+            "direction": "output",
+            "width": 5,
+            "role": "o_debug_channel",
+            "description": "o_debug_channel",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_value",
+            "direction": "output",
+            "width": 32,
+            "role": "o_debug_value",
+            "description": "o_debug_value",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_preload_writes",
+            "direction": "output",
+            "width": 32,
+            "role": "o_preload_writes",
+            "description": "o_preload_writes",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_core_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_core_cycles",
+            "description": "o_core_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_mac_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_mac_cycles",
+            "description": "o_mac_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_pre_cycles",
+            "description": "o_pre_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_silu_cycles",
+            "description": "o_silu_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_post_cycles",
+            "description": "o_post_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_writeback_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_writeback_cycles",
+            "description": "o_writeback_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_storage_wait_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_storage_wait_cycles",
+            "description": "o_storage_wait_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_scheduler_idle_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_scheduler_idle_cycles",
+            "description": "o_scheduler_idle_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_export_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "o_export_cycles",
+            "description": "o_export_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_result_queue_count",
+            "direction": "output",
+            "width": 2,
+            "role": "o_result_queue_count",
+            "description": "o_result_queue_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_result_reserved",
+            "direction": "output",
+            "width": 1,
+            "role": "o_result_reserved",
+            "description": "o_result_reserved",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_meta_count",
+            "direction": "output",
+            "width": 4,
+            "role": "o_meta_count",
+            "description": "o_meta_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_mac_result_count",
+            "direction": "output",
+            "width": 32,
+            "role": "o_mac_result_count",
+            "description": "o_mac_result_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_accept_count",
+            "direction": "output",
+            "width": 32,
+            "role": "o_pre_accept_count",
+            "description": "o_pre_accept_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_accept_count",
+            "direction": "output",
+            "width": 32,
+            "role": "o_silu_accept_count",
+            "description": "o_silu_accept_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_accept_count",
+            "direction": "output",
+            "width": 32,
+            "role": "o_post_accept_count",
+            "description": "o_post_accept_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_writeback_count",
+            "direction": "output",
+            "width": 32,
+            "role": "o_writeback_count",
+            "description": "o_writeback_count",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Asynchronous cancellation of credits, pipeline and descriptors; MAC ready=1 during reset exactly as frozen core, no valid transaction is accepted while reset asserted. Reload1024 table entries and parameters before runner start."
+      },
+      "behavior": [
+        "Keep signed33 reduction, max24 groups/192 products per lane, final INT32 atomic zero fault, bias once and reduction II1.",
+        "MAC first reserves one of four results until actual result pop, including time in A0-A5. Active reduction always accepts continuation.",
+        "PW last acceptance advances issue position/channel; first acceptance pushes the matching descriptor. MAC result pop and descriptor pop are identical.",
+        "PW parameters and tags come from descriptor head, never the new issue counters. Dynamic runtime TEST coefficients remain loaded through existing ports.",
+        "Fault pop bypasses postprocess, invalidates entire tile and stops issuance. Already accepted successors remain owned until common reset; no soft cancellation.",
+        "DW schedule unchanged. PW first operands prepared during previous last handshake; four-entry result and descriptor rings, no DDR or new external ports.",
+        "No-stall down2 endpoint2607: DW2015 plus PW592; these are test-block cycles, not full network FPS."
+      ],
+      "constraints": [
+        "No production edits, training, bitgen, board, Flash or additional timing exceptions.",
+        "Diagnostic input/output delays are not a real external-device timing contract."
+      ],
+      "corner_cases": [
+        "No partial parameter publication; negative multiplier and shift63 are rejected.",
+        "Output ownership under backpressure; reset cancels data and invalidates parameter banks."
+      ],
+      "verification_cases": [
+        "Same40 layer scenarios per revision, all640 values at each arithmetic stage and384 exports.",
+        "Random phase relative to core start; MAC/commit stability, four PW reset positions, full queue and final-lane overflow."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "pw_task_stream",
+          "title": "PW tasks overlap before prior result",
+          "scenario": "pw_task_stream",
+          "description": "First0/2/4/6, last1/3/5/7. First result pop8 can reuse credit. Sustained output depends on postprocess backpressure.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "MAC first accepted",
+                "wave": "1010101010"
+              },
+              {
+                "name": "MAC last accepted",
+                "wave": "0101010101"
+              },
+              {
+                "name": "first descriptor/result pop",
+                "wave": "0.......10"
+              },
+              {
+                "name": "reserved credits",
+                "wave": "=.=.=.=.=.",
+                "data": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  4
+                ]
+              }
+            ],
+            "head": {
+              "tick": 0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><title>SPD 7图可编辑草稿</title>
+<style>body{font-family:sans-serif;margin:18px}header{background:#fff;position:sticky;top:0;z-index:2;padding:10px;border:1px solid #aaa}main{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:12px}#viewport{overflow:auto;max-height:75vh}canvas{touch-action:none;border:1px solid #aaa}button,select{padding:8px;margin:3px}textarea{width:95%;height:60px}li{margin-bottom:8px}.warn{color:#a40}fieldset{margin:10px 0}</style>
+<header><h1>SPD 7图可编辑草稿：未验收GT</h1><p>绿色为可映射的官方来源框，橙色为待审来源；青色为已采用／手画草稿。骑行者整体框不能直接采用，需分别画人体和车体。Van可逐框确认作为vehicle。远处漏标需检查，不能因为小就忽略。</p>
+<select id="frame"></select><label>审核人 <input id="reviewer" value="1"></label><button id="export">导出7图草稿</button><label>导入草稿 <input id="import" type="file" accept=".json"></label><p>刷新前导出，不自动保存。所有导出均complete_gt=false；不会替换旧数据或训练。</p></header>
+<main><div><div><label>缩放 <select id="zoom"><option value="0.5">50%</option><option value="0.75">75%</option><option value="1">100%</option></select></label><button id="sources">隐藏来源框</button><button id="drafts">隐藏草稿框</button></div><div id="viewport"><canvas id="canvas"></canvas></div></div>
+<aside><p id="meta"></p><fieldset><legend>来源参考</legend><select id="source"></select><button id="adopt">采用当前来源框</button><button id="adoptDirect">采用全部直接映射框</button><p class="warn">批量仅person、Car/Bus/Truck，需人工核对后确认；不包含Van和骑行者。</p></fieldset>
+<fieldset><legend>画框／修改</legend><label>类别 <select id="class"><option value="person">person 人体</option><option value="vehicle">vehicle 车体</option><option value="ignore">ignore 无法确认区域</option></select></label><p>在原图拖出框。选择草稿后可重新拖框，按保存才会修改。骑行者补框前先选择它的来源ID。</p><input id="box" readonly placeholder="原图XYXY"><textarea id="reason" placeholder="新增／修改原因；ignore必须说明无法确认的原因"></textarea><button id="save">保存画框／修改</button></fieldset>
+<fieldset><legend>草稿框</legend><select id="draft"></select><button id="new">另画一个新框</button><button id="delete">删除当前草稿</button><p id="count"></p></fieldset><label>本图备注<textarea id="notes"></textarea></label><p class="warn">对骑行者分别补人体和车体；源框位置不合适时修改。对Van确认类别；补齐可辨认漏标。不要签署或宣称完成GT。</p><ul id="issues"></ul></aside></main>
+<script id="manifest" type="application/json">__MANIFEST__</script>
+<script id="core">__CORE__</script>
+<script id="draft-core">
+globalThis.SpDraftCore = {
+  validateDraft(value, manifest) {
+    if (!value || value.schema !== 'spd_label_draft_v1' || value.complete_gt !== false ||
+        value.archive_sha256 !== manifest.archive_sha256 || value.suitability_review_sha256 !== manifest.suitability_review_sha256 ||
+        typeof value.reviewer !== 'string' || !value.reviewer.trim() || !Array.isArray(value.reviews) ||
+        (value.reviews.length !== manifest.samples.length && !(manifest.samples.length===8 && value.reviews.length===7))) throw Error('草稿身份／来源／审核人不符');
+    const seen = new Set();
+    for (const row of value.reviews) {
+      const sample = manifest.samples.find(item => item.sample_id === row.sample_id);
+      if (!sample || seen.has(row.sample_id) || row.image_sha256 !== sample.image_sha256 ||
+          row.label_sha256 !== sample.label_sha256 || typeof row.notes !== 'string' || !Array.isArray(row.boxes)) throw Error('图片身份或框记录不符');
+      seen.add(row.sample_id); const ids = new Set();
+      for (const box of row.boxes) {
+        if (typeof box.id !== 'string' || !box.id || ids.has(box.id) || !['person','vehicle','ignore'].includes(box.class) ||
+            !WorkbenchCore.validBox(box.bbox, sample) || typeof box.reason !== 'string' || !box.reason.trim() ||
+            (box.source_id !== null && !sample.objects.some(obj => obj.source_id === box.source_id))) throw Error('框ID／类别／坐标／原因／来源非法');
+        ids.add(box.id);
+      }
+    }
+    const missing=manifest.samples.filter(s=>!seen.has(s.sample_id));
+    if(missing.length && !(missing.length===1 && missing[0].sample_id==='spd_inf_010907')) throw Error('草稿缺少非新增图片');
+    return JSON.parse(JSON.stringify(value));
+  }
+};
+</script>
+<script id="app">
+const manifest=JSON.parse(document.getElementById('manifest').textContent), $=id=>document.getElementById(id);
+let records=manifest.samples.map(s=>({sample_id:s.sample_id,image_sha256:s.image_sha256,label_sha256:s.label_sha256,notes:'',boxes:[]}));
+let index=0, showSources=true, showDrafts=true, currentBox=null, drag=null, imageToken=0, loaded=false;
+const image=new Image(), canvas=$('canvas'), ctx=canvas.getContext('2d');
+const sample=()=>manifest.samples[index], review=()=>records[index];
+function option(select,value,text){const o=document.createElement('option');o.value=value;o.textContent=text;select.append(o);}
+manifest.samples.forEach((s,i)=>option($('frame'),i,`${i+1}. ${s.sample_id}`));
+function setBox(box){currentBox=box?box.slice():null;$('box').value=box?box.map(x=>x.toFixed(2)).join(', '):'';draw();}
+function drawBox(box,color,label,dash=[]){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;ctx.setLineDash(dash);ctx.strokeRect(box[0],box[1],box[2]-box[0],box[3]-box[1]);ctx.setLineDash([]);ctx.font='20px sans-serif';const x=Math.max(0,Math.min(box[0],canvas.width-ctx.measureText(label).width-8)),y=Math.max(24,box[1]-4);ctx.fillStyle='#111';ctx.fillRect(x,y-20,ctx.measureText(label).width+6,24);ctx.fillStyle=color;ctx.fillText(label,x+2,y);}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);if(!loaded)return;ctx.drawImage(image,0,0,canvas.width,canvas.height);if(showSources)sample().objects.forEach(o=>drawBox(o.bbox_xyxy,o.proposed_class?'#00e676':'#ffa000',`${o.source_id} ${o.source_type}${o.proposed_class?'':' 待审'}`,[8,5]));if(showDrafts){review().boxes.forEach(b=>drawBox(b.bbox,'#00c8ff',`${b.id} ${b.class}`));if(currentBox)drawBox(currentBox,'#ff55ff','当前画框');}}
+function listDraft(){const keep=$('draft').value;$('draft').replaceChildren();option($('draft'),'','（新增框）');review().boxes.forEach(b=>option($('draft'),b.id,`${b.id} ${b.class} · ${b.source_id||'人工补漏'}`));$('draft').value=review().boxes.some(b=>b.id===keep)?keep:'';$('count').textContent=`草稿${review().boxes.length}框；未核验完整GT`;draw();}
+function load(){loaded=false;const token=++imageToken;$('source').replaceChildren();option($('source'),'','（无来源／补漏）');sample().objects.forEach(o=>option($('source'),o.source_id,`${o.source_id} ${o.source_type}`));$('draft').value='';$('reason').value='';$('notes').value=review().notes;$('issues').replaceChildren();sample().issues.forEach(t=>{const li=document.createElement('li');li.textContent=t;$('issues').append(li);});$('meta').textContent=`${sample().sample_id} · 同机位0058 · 官方${sample().source_count}对象`;canvas.width=sample().width;canvas.height=sample().height;canvas.style.width=sample().width*Number($('zoom').value)+'px';canvas.style.height=sample().height*Number($('zoom').value)+'px';setBox(null);listDraft();image.onload=()=>{if(token!==imageToken)return;loaded=true;draw();};image.onerror=()=>alert('原图加载失败');image.src='raw/'+sample().sample_id+'.jpg';}
+function adopt(o){const label=o.proposed_class||(o.source_type==='Van'?'vehicle':null);if(!label)throw Error('骑行者／未知类别不能采用整体框，请分别画人体和车体');if(review().boxes.some(b=>b.id==='source_'+o.source_id))return;review().boxes.push({id:'source_'+o.source_id,class:label,bbox:o.bbox_xyxy.slice(),source_id:o.source_id,reason:'人工核对采用来源 '+o.source_type});}
+$('adopt').onclick=()=>{try{const o=sample().objects.find(x=>x.source_id===$('source').value);if(!o)throw Error('先选择来源框');if(!o.proposed_class&&o.source_type!=='Van')throw Error('骑行者整体框不能直接采用');if(confirm(`确认框范围和类别${o.proposed_class||'vehicle（Van）'}正确？`)){adopt(o);listDraft();}}catch(e){alert(e.message);}};
+$('adoptDirect').onclick=()=>{if(confirm('已检查全部绿色直接映射框？确认采用；不包含Van、骑行者，不等于完整GT。')){sample().objects.filter(o=>o.proposed_class).forEach(adopt);listDraft();}};
+$('frame').onchange=()=>{index=Number($('frame').value);load();};$('zoom').onchange=()=>{canvas.style.width=sample().width*Number($('zoom').value)+'px';canvas.style.height=sample().height*Number($('zoom').value)+'px';};
+$('sources').onclick=()=>{showSources=!showSources;$('sources').textContent=showSources?'隐藏来源框':'显示来源框';draw();};$('drafts').onclick=()=>{showDrafts=!showDrafts;$('drafts').textContent=showDrafts?'隐藏草稿框':'显示草稿框';draw();};
+$('source').onchange=()=>{const o=sample().objects.find(x=>x.source_id===$('source').value);$('draft').value='';$('reason').value='';setBox(null);};
+$('draft').onchange=()=>{const b=review().boxes.find(x=>x.id===$('draft').value);if(b){$('class').value=b.class;$('source').value=b.source_id||'';$('reason').value=b.reason;setBox(b.bbox);}else setBox(null);};
+$('new').onclick=()=>{$('draft').value='';$('reason').value='';setBox(null);};
+$('delete').onclick=()=>{if($('draft').value&&confirm('删除此草稿框？不会改原始官方标签。')){review().boxes=review().boxes.filter(b=>b.id!==$('draft').value);$('draft').value='';setBox(null);listDraft();}};
+function point(e){return WorkbenchCore.clientToNative(e.clientX,e.clientY,canvas.getBoundingClientRect(),sample().width,sample().height).map((x,i)=>Math.max(0,Math.min(i?sample().height:sample().width,x)));}
+canvas.onpointerdown=e=>{if(!loaded)return;drag=point(e);canvas.setPointerCapture(e.pointerId);};canvas.onpointermove=e=>{if(!drag)return;const p=point(e);setBox([Math.min(drag[0],p[0]),Math.min(drag[1],p[1]),Math.max(drag[0],p[0]),Math.max(drag[1],p[1])]);};canvas.onpointerup=e=>{if(!drag)return;const p=point(e);setBox([Math.min(drag[0],p[0]),Math.min(drag[1],p[1]),Math.max(drag[0],p[0]),Math.max(drag[1],p[1])]);drag=null;};canvas.onpointercancel=()=>{drag=null;setBox(null);};
+$('save').onclick=()=>{try{if(!WorkbenchCore.validBox(currentBox,sample())||!$('reason').value.trim())throw Error('请画有效框并填写原因');let id=$('draft').value;if(!id){let n=1;while(review().boxes.some(b=>b.id==='manual_'+n))n++;id='manual_'+n;}const box={id,class:$('class').value,bbox:currentBox.slice(),reason:$('reason').value.trim(),source_id:$('source').value||null};const found=review().boxes.findIndex(b=>b.id===id);if(found<0)review().boxes.push(box);else review().boxes[found]=box;listDraft();$('draft').value=id;setBox(null);}catch(e){alert(e.message);}};
+$('notes').oninput=()=>{review().notes=$('notes').value;};
+function payload(){return {schema:'spd_label_draft_v1',archive_sha256:manifest.archive_sha256,suitability_review_sha256:manifest.suitability_review_sha256,reviewer:$('reviewer').value.trim(),exported_at_utc:new Date().toISOString(),complete_gt:false,reviews:records};}
+$('export').onclick=()=>{try{const data=SpDraftCore.validateDraft(payload(),manifest),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='spd_label_draft_'+Date.now()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){alert(e.message);}};
+$('import').onchange=async()=>{try{const file=$('import').files[0];if(!file)return;const data=SpDraftCore.validateDraft(JSON.parse(await file.text()),manifest);if(!confirm('用此草稿替换当前未导出编辑？请先导出备份。'))return;records=manifest.samples.map(s=>data.reviews.find(r=>r.sample_id===s.sample_id)||{sample_id:s.sample_id,image_sha256:s.image_sha256,label_sha256:s.label_sha256,notes:'',boxes:[]});$('reviewer').value=data.reviewer;load();}catch(e){alert(e.message);}};
+load();
+</script></html>

@@ -1,0 +1,43 @@
+ACK_LOCAL_XPROP_PASS pw_cases=7 dw_capture_cases=3
+CACHE_CONTROL_FAULT_PASS invalid_addr=256 x_addr=1 reset_no_write=1 idle_table_fault=1
+RESET_RESULT in_flight_cancel=pass ghost_window=20
+DW_POST_BACKPRESSURE_RESET_PASS lanes=3 hold_cycles_each=64 ghost_window=20
+JOB_TRACE job=0 storage=3 send=3 wait=10 post=5 accepts=3 total=21
+JOB_TURN_TRACE layer=DW first=7826 last=7830 ack=7840 next_first=7847 first_to_last=4 last_to_ack=10 ack_to_next=7
+JOB_TRACE job=1 storage=3 send=3 wait=10 post=5 accepts=3 total=21
+JOB_TURN_TRACE layer=DW first=7847 last=7851 ack=7861 next_first=7868 first_to_last=4 last_to_ack=10 ack_to_next=7
+JOB_TRACE job=2 storage=3 send=3 wait=10 post=5 accepts=3 total=21
+JOB_TRACE job=3 storage=3 send=3 wait=10 post=5 accepts=3 total=21
+JOB_TURN_TRACE layer=PW first=10285 last=10287 ack=10297 next_first=10299 first_to_last=2 last_to_ack=10 ack_to_next=2
+JOB_TURN_TRACE layer=PW first=10299 last=10301 ack=10311 next_first=10313 first_to_last=2 last_to_ack=10 ack_to_next=2
+CYCLE_RESULT case=0 preload=1864 core=4281 endpoint=4281 mac=4224 pre=3072 silu=2048 post=2816 writeback=640 storage_wait=0 scheduler_idle=56
+PRELOAD_RESULT case=0 endpoint=2894 table_writes=1024 cache_writes=1864
+OVERLAP_RESULT case=0 dw_endpoint=2460 pw_endpoint=1821 max_credit=2 max_meta=3 mac_results=256 pre_accepts=640 silu_accepts=640 post_accepts=640 writebacks=640
+TRIPLET_RESULT case=0 tasks=128 beats=384 scalars=256 tail_scalars=64 queue_wait=128 ready_wait=0
+EXPORT_RESULT case=0 transfers=384 cycles=449
+CYCLE_RESULT case=1 preload=1864 core=4281 endpoint=4281 mac=4224 pre=3072 silu=2048 post=2816 writeback=640 storage_wait=0 scheduler_idle=56
+PRELOAD_RESULT case=1 endpoint=2894 table_writes=1024 cache_writes=1864
+OVERLAP_RESULT case=1 dw_endpoint=2460 pw_endpoint=1821 max_credit=2 max_meta=3 mac_results=256 pre_accepts=640 silu_accepts=640 post_accepts=640 writebacks=640
+TRIPLET_RESULT case=1 tasks=128 beats=384 scalars=256 tail_scalars=64 queue_wait=128 ready_wait=0
+EXPORT_RESULT case=1 transfers=384 cycles=448
+CYCLE_RESULT case=2 preload=1864 core=4281 endpoint=4281 mac=4224 pre=3072 silu=2058 post=3051 writeback=882 storage_wait=242 scheduler_idle=53
+PRELOAD_RESULT case=2 endpoint=2894 table_writes=1024 cache_writes=1864
+OVERLAP_RESULT case=2 dw_endpoint=2460 pw_endpoint=1821 max_credit=2 max_meta=3 mac_results=256 pre_accepts=640 silu_accepts=640 post_accepts=640 writebacks=640
+TRIPLET_RESULT case=2 tasks=128 beats=384 scalars=256 tail_scalars=64 queue_wait=128 ready_wait=0
+RANDOM_COMMIT_RESULT case=2 seed=5eed stall_cycles=1030
+EXPORT_RESULT case=2 transfers=384 cycles=449
+CYCLE_RESULT case=3 preload=664 core=1822 endpoint=1822 mac=1792 pre=1536 silu=1024 post=1408 writeback=384 storage_wait=0 scheduler_idle=29
+PRELOAD_RESULT case=3 endpoint=1692 table_writes=1024 cache_writes=664
+OVERLAP_RESULT case=3 dw_endpoint=0 pw_endpoint=1822 max_credit=2 max_meta=3 mac_results=128 pre_accepts=384 silu_accepts=384 post_accepts=384 writebacks=384
+EXPORT_RESULT case=3 transfers=384 cycles=449
+FAULT_RESULT mac_overflow_atomic_publish=pass
+DW_TRIPLET_NUMERIC_RESULT lane=1 polarity=1 expected_fault=1 pass=1
+DW_TRIPLET_NUMERIC_RESULT lane=1 polarity=-1 expected_fault=1 pass=1
+DW_TRIPLET_NUMERIC_RESULT lane=2 polarity=1 expected_fault=1 pass=1
+DW_TRIPLET_NUMERIC_RESULT lane=2 polarity=-1 expected_fault=1 pass=1
+DW_TRIPLET_NUMERIC_RESULT lane=1 polarity=1 expected_fault=0 pass=1
+DW_TRIPLET_NUMERIC_RESULT lane=2 polarity=-1 expected_fault=0 pass=1
+ACK_LOCAL_TABLE_HIGH_PASS accepts=896
+CACHE_PORT_COMPARE_PASS writes=1539 loads=769 commits=770
+TB_PASS_DOWN2_TILE cases=4
+tb_down2_overlap_tile_runner.v:1168: $finish called at 525230000 (1ps)

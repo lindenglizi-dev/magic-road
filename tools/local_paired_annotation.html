@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>路口完整目标审核 · 32帧</title>
+<style>
+body{font:16px system-ui;background:#101823;color:#e9eef7;margin:20px auto;max-width:1320px;padding:0 16px}h1{font-size:24px}button,select,input{font:inherit;padding:7px;margin:4px;background:#203249;color:#fff;border:1px solid #607089;border-radius:5px}button{cursor:pointer}canvas{width:100%;height:auto;background:#222;touch-action:none;border:1px solid #607089}p{line-height:1.6;color:#c2cfe0}#items button{font-size:13px}#status{color:#7be3ce}label{white-space:nowrap} .alert{color:#ffd57e}
+</style>
+<h1>完整目标审核：先框出画面中的目标，再比较候选</h1>
+<p>共32帧。请框出所有可见行人和机动车，包括漏检目标与停放车辆；骑行者选 ignore 并填子类。框使用<strong>可见目标的紧框</strong>，不推测遮挡部分。相同目标跨帧填写相同轨迹ID；暂时无法判断运动时选“不确定”。完成一帧后勾选“本帧已全部检查”，空画面也需勾选。</p>
+<div><button id="prev">上一帧</button><strong id="position"></strong><button id="next">下一帧</button>
+<label><input type="checkbox" id="showCcl">显示基线CCL框（蓝色，仅参考）</label>
+<label><input type="checkbox" id="done">本帧已全部检查</label></div>
+<canvas id="canvas" width="1280" height="720"></canvas>
+<div><label>类别<select id="category"><option value="ped">行人 ped</option><option value="vehicle">机动车 vehicle</option><option value="ignore">其他 ignore</option></select></label>
+<label>轨迹ID<input id="track" placeholder="如 p01 / v01" size="10"></label>
+<label>状态<select id="motion"><option value="uncertain">运动不确定</option><option value="moving">移动</option><option value="stationary">静止</option></select></label>
+<label>可见性<select id="visibility"><option value="full">完整</option><option value="occluded">被遮挡</option><option value="frame_truncated">画面边缘截断</option></select></label>
+<label>子类<input id="subtype" placeholder="ignore必填，如 rider_bicycle" size="25"></label></div>
+<p>先填写属性，再在图上拖动绘框。框错时点击下方对应条目删除后重画。黄色框为你标注的目标；页面不显示分类分数。</p>
+<div id="items"></div><p id="status"></p>
+<div><label>审核者<input id="reviewer" placeholder="你的姓名或标识"></label><label>审核日期<input type="date" id="date"></label>
+<label><input type="checkbox" id="confirm">我已亲自核对全部目标与属性</label></div>
+<button id="save">导出审核 JSON</button><button id="importBtn">导入之前的 JSON</button><input type="file" id="importFile" accept=".json" hidden>
+<p class="alert">建议每完成几帧导出一次备份。浏览器本地缓存仅为便利功能，最终交付使用导出的 JSON。未确认的标注不会进入正式评分。所有操作在本机完成。</p>
+<script>
+const pkg=__PACKAGE_JSON__;
+const $=id=>document.getElementById(id), canvas=$('canvas'), ctx=canvas.getContext('2d');
+const cacheKey=pkg.contract_id+':'+pkg.source_sha256;
+let data={contract_id:pkg.contract_id,source_sha256:pkg.source_sha256,review_basis:'human_full_frame_review',reviewer:'',reviewed_at:'',human_confirmed:false,frames:pkg.frames.map(f=>({frame_index:f.frame_index,completed:false,targets:[]}))};
+let index=0, start=null, image=new Image(), ready=false;
+function validate(d){
+ if(d.contract_id!==pkg.contract_id||d.source_sha256!==pkg.source_sha256||d.review_basis!=='human_full_frame_review')throw Error('视频或合同不匹配');
+ if(!Array.isArray(d.frames)||d.frames.length!==pkg.frames.length)throw Error('帧数量不匹配');
+ d.frames.forEach((f,i)=>{if(f.frame_index!==pkg.frames[i].frame_index||!Array.isArray(f.targets))throw Error('帧身份不匹配');
+ const ids=new Set();f.targets.forEach(t=>{if(!['ped','vehicle','ignore'].includes(t.label)||!['moving','stationary','uncertain'].includes(t.motion)||!['full','occluded','frame_truncated'].includes(t.visibility))throw Error('非法属性');
+ if(!Array.isArray(t.box)||t.box.length!==4||!t.box.every(Number.isInteger)||t.box[0]<0||t.box[1]<0||t.box[2]>=1280||t.box[3]>=720||t.box[0]>t.box[2]||t.box[1]>t.box[3])throw Error('非法坐标');
+ if(!t.track_id||ids.has(t.track_id)||(t.label==='ignore'&&!t.subtype))throw Error('轨迹ID或子类缺失');ids.add(t.track_id);});});return d;
+}
+try{let cached=localStorage.getItem(cacheKey);if(cached)data=validate(JSON.parse(cached));}catch(e){$('status').textContent='本地缓存不可用，可通过导入恢复。';}
+function store(){data.reviewer=$('reviewer').value.trim();data.reviewed_at=$('date').value;data.human_confirmed=$('confirm').checked;try{localStorage.setItem(cacheKey,JSON.stringify(data));}catch(e){} }
+function invalidate(){data.frames[index].completed=false;$('done').checked=false;data.human_confirmed=false;$('confirm').checked=false;}
+function draw(){if(!ready)return;ctx.clearRect(0,0,1280,720);ctx.drawImage(image,0,0);ctx.font='18px sans-serif';ctx.lineWidth=3;
+ if($('showCcl').checked){ctx.strokeStyle='#268fff';pkg.frames[index].candidate_boxes.forEach(b=>ctx.strokeRect(b[0],b[1],b[2]-b[0]+1,b[3]-b[1]+1));}
+ data.frames[index].targets.forEach(t=>{ctx.strokeStyle='#fff244';ctx.fillStyle='#fff244';const b=t.box;ctx.strokeRect(b[0],b[1],b[2]-b[0]+1,b[3]-b[1]+1);ctx.fillText(t.track_id+' '+t.label,b[0],Math.max(20,b[1]-5));});
+}
+function refresh(){const f=data.frames[index];$('position').textContent=` ${index+1}/32 · frame ${f.frame_index} · ${(f.frame_index/(24000/1001)).toFixed(2)} 秒 `;$('done').checked=f.completed;
+ $('items').replaceChildren();f.targets.forEach((t,n)=>{let b=document.createElement('button');b.textContent=`删除 ${t.track_id} / ${t.label} / ${t.motion} [${t.box}]`;b.onclick=()=>{if(!confirm(`确定删除本帧的 ${t.track_id} 吗？`))return;f.targets.splice(n,1);invalidate();store();refresh();draw();};$('items').append(b);});
+ $('status').textContent=`已完成 ${data.frames.filter(f=>f.completed).length}/32 帧；本帧 ${f.targets.length} 个目标。`;
+}
+function load(){ready=false;start=null;refresh();image=new Image();image.onload=()=>{ready=true;draw();};image.src=pkg.frames[index].path;}
+function point(e){const r=canvas.getBoundingClientRect();return [Math.max(0,Math.min(1279,Math.floor((e.clientX-r.left)*1280/r.width))),Math.max(0,Math.min(719,Math.floor((e.clientY-r.top)*720/r.height)))];}
+canvas.onpointerdown=e=>{if(!ready)return;start=point(e);canvas.setPointerCapture(e.pointerId);};
+canvas.onpointermove=e=>{if(!start)return;draw();let p=point(e);ctx.strokeStyle='#ff9440';ctx.strokeRect(start[0],start[1],p[0]-start[0],p[1]-start[1]);};
+canvas.onpointerup=e=>{if(!start)return;let p=point(e),a=start;start=null;let b=[Math.min(a[0],p[0]),Math.min(a[1],p[1]),Math.max(a[0],p[0]),Math.max(a[1],p[1])];
+ let track=$('track').value.trim(),label=$('category').value,sub=$('subtype').value.trim();
+ if(!track||data.frames[index].targets.some(t=>t.track_id===track)){alert('请填写本帧唯一的轨迹ID。');draw();return;}
+ if(label==='ignore'&&!sub){alert('ignore需要子类，例如 rider_bicycle。');draw();return;}
+ if(b[2]-b[0]<2||b[3]-b[1]<2){draw();return;}
+ data.frames[index].targets.push({track_id:track,label,motion:$('motion').value,visibility:$('visibility').value,subtype:sub,box:b});invalidate();store();refresh();draw();};
+canvas.onpointercancel=()=>{start=null;draw();};
+$('prev').onclick=()=>{store();if(index>0){index--;load();}};$('next').onclick=()=>{store();if(index<31){index++;load();}};
+$('done').onchange=()=>{data.frames[index].completed=$('done').checked;$('confirm').checked=false;store();refresh();};$('showCcl').onchange=draw;
+$('reviewer').value=data.reviewer;$('date').value=data.reviewed_at;$('confirm').checked=data.human_confirmed;
+$('save').onclick=()=>{store();try{validate(data);}catch(e){alert(e.message);return;}
+ if(data.human_confirmed&&(!data.reviewer||!data.reviewed_at||data.frames.some(f=>!f.completed))){alert('确认完成需要审核者、日期和32帧全部检查。也可以取消确认，先导出草稿。');return;}
+ const a=document.createElement('a'),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=url;a.download='intersection_2415171_targets_review.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{try{if(!e.target.files.length)return;const d=validate(JSON.parse(await e.target.files[0].text()));if(!confirm('导入会替换当前全部标注。请先导出备份；确定继续导入吗？'))return;data=d;$('reviewer').value=d.reviewer||'';$('date').value=d.reviewed_at||'';$('confirm').checked=d.human_confirmed===true;store();load();}catch(err){alert(err.message);}finally{e.target.value='';}};
+load();
+</script></html>

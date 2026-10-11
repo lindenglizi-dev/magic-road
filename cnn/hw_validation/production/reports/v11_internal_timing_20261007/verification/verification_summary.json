@@ -1,0 +1,107 @@
+{
+  "status": "FUNCTIONAL_AND_LEGACY_REGRESSION_PASS",
+  "frozen_previous": {
+    "files": 4686,
+    "manifest_sha256": "7fa8cc8baa1cdd5451ae4eb3fa9953f36e6e46b5da4af97209bf1fd899616bb7",
+    "final_check": "FROZEN_FILES_UNCHANGED"
+  },
+  "rtl": {
+    "road_postprocess_stream_sha256": "a51590f53c62f3a6dc51eaded0c77301b692f0cf2ae95109bd1e73afb29193fb",
+    "down2_overlap_tile_runner_sha256": "c2d8e603855600d6c09579f285ff8a3f62d82f8c7509634dcc66786c3ad99405",
+    "change": "one-entry signed product, shift and tag elastic cut before the unchanged pre-round core",
+    "public_interface_changed": false,
+    "numeric_changed": false,
+    "scalar_ii": 1
+  },
+  "reference": {
+    "status": "REFERENCE_PASS",
+    "pass_log": "reference_self_check_attempt4.log",
+    "earlier_failed_logs_preserved": 3,
+    "valid_after_nba_cycles_from_scalar_accept": 24,
+    "first_write_edge_cycles_from_scalar_accept": 25,
+    "pre_structural_limit": 10,
+    "scalar_obligation_structural_upper_bound": 31,
+    "directed_observed_empty": 30,
+    "directed_observed_tail_model": 22,
+    "warning": "31 is not claimed as observed; the Python fault model proves external masking and recovery behavior, not internal clearing of frozen subcores"
+  },
+  "standalone_rtl": {
+    "status": "PASS",
+    "log": "regression_candidate/vsim_postprocess_attempt3.log",
+    "continuous_groups": 5,
+    "fixed_bubble_groups": 3,
+    "random_groups": 48,
+    "random_scalars": 96,
+    "random_gap_cycles": 175,
+    "random_ready_stalls": 69,
+    "reset_ages_executed": 25,
+    "fault_cases": 1,
+    "latency": "24 valid after NBA / 25 first transfer edge",
+    "elastic_payload_hold_asserted": true,
+    "pressure_empty": {
+      "response_edges_through_last_accept": 28,
+      "accepted_groups": 10,
+      "accepted_scalars": 30,
+      "deny_tail": 43
+    },
+    "pressure_existing_tail": {
+      "response_edges_through_last_accept": 19,
+      "accepted_groups": 7,
+      "accepted_scalars": 21,
+      "deny_tail": 52
+    },
+    "max_observed": {
+      "group_queue": 2,
+      "pre_cut_plus_round": 10,
+      "silu_metadata": 6,
+      "post_round": 9,
+      "scalar_obligations": 30
+    },
+    "warnings": 2,
+    "tool_errors": 0
+  },
+  "runner_rtl": {
+    "status": "PASS",
+    "log": "regression_candidate/vsim_runner_turnaround.log",
+    "cases": 4,
+    "checked_intermediate_and_writeback_values": 640,
+    "random_commit_stall_cycles": 1301,
+    "no_stall_endpoint_cycles": 5433,
+    "dw_endpoint_cycles": 3612,
+    "pw_endpoint_cycles": 1821,
+    "mac_state_cycles": 5376,
+    "scheduler_idle_cycles": 56,
+    "storage_wait_cycles": 0,
+    "max_credit": 2,
+    "max_metadata": 3,
+    "job_state_trace": "2 storage + 2 send + 10 wait = 14 cycles for measured G=2",
+    "turnaround_measured_dw_and_pw": "first-to-last 2, last-to-ack 10, ack-to-next-first 2",
+    "warnings": 2,
+    "tool_errors": 0
+  },
+  "legacy_regressions": {
+    "v9_mac": "PASS 123 vectors, 17 results, 9 faults",
+    "v9_serial_layers": "PASS 4 cases, DW 11008 plus PW 12929 equals 23937",
+    "v8_layers": "PASS 4 cases, DW 13312 plus PW 14081 equals 27393",
+    "low_io_shell": "PASS 14 cases",
+    "reset_shell": "PASS 6 cases",
+    "round": "PASS 7042 cases",
+    "silu": "PASS 65536 inputs"
+  },
+  "cycle_budget": "cycle_budget.json",
+  "turnaround_analysis": "turnaround_analysis.json",
+  "hash_manifest": "hash_manifest.json",
+  "preserved_nonpassing_evidence": [
+    "reference_self_check.log",
+    "reference_self_check_attempt2.log",
+    "reference_self_check_attempt3.log",
+    "regression_candidate/vsim_postprocess.log"
+  ],
+  "limitations": [
+    "physical timing closure is a separate gate owned by the physical verification task",
+    "full-frame cycles are projected from layer shapes and measured down2 behavior, not measured end to end",
+    "DDR, non-convolution work and NMS are excluded",
+    "busy counters overlap and are not summed with MAC endpoint cycles",
+    "G greater than two and both future scheduling savings are analytical only"
+  ]
+}

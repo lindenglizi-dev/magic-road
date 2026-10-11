@@ -1,0 +1,51 @@
+{
+  "status": "diagnosis_completed_no_training_started",
+  "scope": "FP32 public-video development validation, not formal acceptance",
+  "unchanged": ["checkpoint weights", "dataset labels", "deployment postprocessing", "RTL", "acceptance criteria"],
+  "evidence": ["saved_prediction_errors.json", "student12_decode_probe.json", "teacher_val256.json", "error_samples/receipt.json"],
+  "teacher_student_256_identity_verified": ["dataset_sha256", "evaluated_image_content_sha256", "image_count", "postprocess_contract", "truth", "ignores"],
+  "teacher_resolution": [1024, 576],
+  "student_resolution": [512, 288],
+  "teacher_comparison_limitation": "Teacher capacity and resolution both differ; this is not a resolution-controlled ablation.",
+  "supervised_epoch7_to_epoch12_full_ap50_percentage_point_change": {"person": -0.596014, "vehicle": -1.010864},
+  "person_epoch12_full_at_score_0_5": {
+    "TP": 7011, "FP": 8122, "FN": 71735,
+    "FN_low_score_one_to_one_recovery": 15990,
+    "FN_same_class_localization_IoU_0_25_to_0_5": 15295,
+    "FN_no_retained_candidate_support_unresolved": 39265,
+    "FP_overlap_vehicle_truth": 3097,
+    "FP_same_class_localization_IoU_0_25_to_0_5": 1977,
+    "FP_duplicate": 68,
+    "FP_no_truth_support_unresolved": 2980
+  },
+  "person_full_TP_at_saved_score_floor": {"epoch7": 24316, "epoch12": 23001},
+  "person_ground_truth_height_network_pixels": {"le_8": {"total": 13172, "TP": 40}, "gt_8_le_16": {"total": 48815, "TP": 4117}, "gt_16": {"total": 16759, "TP": 2854}},
+  "student12_256_floor_recall_percent": {"person_fixed_caps": 29.076367, "person_relaxed_caps": 32.843137, "vehicle_fixed_caps": 37.828063, "vehicle_relaxed_caps": 60.799406},
+  "relaxed_caps_limitation": "Top-K and final output capacity changed together for diagnosis only; not deployable or accepted results.",
+  "head_decode_float_vs_fixed_ap50_percentage_point_change": {"person": 0.036421, "vehicle": -0.015808},
+  "decode_limitation": "This checks FP32 CNN head decode, not an INT8 CNN implementation.",
+  "vehicle_full_validation_max32_per_frame_per_class_recall_upper_bound_percent": 64.678118,
+  "visual_review": {
+    "reviewed_fixed_examples": 6,
+    "selection": "First saved example per category, not a representative annotation audit",
+    "observations": [
+      "A missed person is truncated at the image border.",
+      "A vehicle false positive encloses only part of a truck cargo bed.",
+      "A vehicle localization error excludes part of the complete car extent.",
+      "A person false-positive example overlaps a source motor annotation; the visible rider requires separate-person label policy review before calling it class confusion.",
+      "Other visually ambiguous person examples require annotation review; no labels were changed."
+    ],
+    "rider_source": {"sequence": "uav0000076_00720_v", "frame": 324, "target_id": 16, "category_id": 10, "original_label": "motor"}
+  },
+  "recommendation": {
+    "continue_unchanged_supervised_recipe": false,
+    "reason": "Both class AP50 values declined and false positives increased; the predefined continuation gate failed.",
+    "distillation": "Worth a short independent controlled trial, not an unconditional long run or accuracy guarantee.",
+    "prerequisites": ["Review rider/person mapping and ignore policy on training data without modifying frozen validation truth", "Measure GT-supported teacher coverage on the training split before building a teacher cache", "Keep artificial teacher boxes out of human ground truth"],
+    "proposed_trial": "Initialize from frozen epoch7, run a separate two-epoch GT-gated distillation trial with a matched supervised control; compare both on full development validation and old256 before expanding to five epochs.",
+    "proposed_stop_rule": "Stop if person AP50 does not improve beyond the matched supervised control or vehicle AP50 regresses; do not extend blindly to 10/15/20 epochs.",
+    "data_scope": "A sparse ground-camera development baseline can be declared separately; selecting successful demo clips is not formal accuracy evidence.",
+    "authorization": "Recommendations only; no new training or label changes in this diagnostic turn."
+  },
+  "formal_P95_R85_pass": false
+}

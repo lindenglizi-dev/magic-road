@@ -1,0 +1,5 @@
+# Guarded fill-only T100 paired review
+
+Review each row using its group image. The three stacked sections are the first, middle and last members of the deterministic temporal group. Each section pairs the same-frame numbered baseline main boxes with the T100 final boxes; the selected small box is magenta and its raw component is yellow. T90/T100/T110 status and geometry are shown together.
+
+Allowed `review_class`: ped_full, ped_truncated, vehicle, merged_target, background_fragment, other_ignore. Set `same_frame_new_target`, `duplicate_of_baseline`, and `crop_usable` to yes/no/uncertain. When duplicate_of_baseline=yes, fill `duplicate_baseline_number` (M0..M3). Use `geometry_preference` values T90, T100, T110, equivalent, none, or uncertain. Record scene occlusion separately from box truncation. Background fragments, merged targets, other_ignore, unusable crops, and truncation require a note. Set `review_basis=human_visual_review`, reviewer and reviewed_at. All human fields start blank. This tool does not import any sample into training.

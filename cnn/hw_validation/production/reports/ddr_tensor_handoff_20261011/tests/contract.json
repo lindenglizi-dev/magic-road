@@ -1,0 +1,17 @@
+{
+  "modules": [{
+    "name": "tb_paxi_tensor_handoff",
+    "feature": "ddr_tensor_handoff",
+    "rtl_path": "tb_paxi_tensor_handoff.v",
+    "description": "Portless simulation: actual Stem outputs pass through the unchanged single-outstanding bridge and a conditional endpoint before down2",
+    "interfaces": {"protocol": "discrete", "ports": []},
+    "parameters": [],
+    "clock": {"name": "clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {"name": "ddr_rstn", "active": "low", "synchronous": false, "values": "Coordinated bridge/endpoint reset only; live cancellation drains accepted requests"},
+    "behavior": ["36864 writes, poison original tensor, 36864 reads, byte-exact comparison, then all 576 down2 tiles", "Explicit endpoint visibility event, never accept AW/W as a commit"],
+    "constraints": ["Conditional model, not actual DDR2 controller/chip execution", "The interface has no exposed read backpressure; real PAXI does have RREADY", "No synthesizable tensor DMA sequencer added"],
+    "corner_cases": ["AW/W/AR and result backpressure", "Cancellation before delayed read return and before delayed write visibility", "Missing visibility must never release or publish"],
+    "verification_cases": ["Original H1-B regression", "Normal and deterministic stalled full-tensor paths"],
+    "timing_diagrams": []
+  }]
+}

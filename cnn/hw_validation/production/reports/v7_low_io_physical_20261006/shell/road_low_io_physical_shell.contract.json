@@ -1,0 +1,106 @@
+{
+  "modules": [
+    {
+      "name": "road_low_io_physical_shell",
+      "feature": "low_io_physical",
+      "rtl_path": "road_low_io_physical_shell.v",
+      "description": "A 38-pin diagnostic wrapper that runtime-loads a frozen SiLU table and up to 96 complete dynamic compute packets over one 16-bit ready-valid input, runs the unmodified RoadYOLO minimum chain once per reset, and returns real cache values over one 16-bit ready-valid output.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "100 MHz diagnostic clock.", "clock_domain": "i_clk"},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Asynchronous active-low cancellation reset; the table and packets must be reloaded.", "clock_domain": "i_clk", "active_level": "low"},
+          {"name": "i_rx_valid", "direction": "input", "width": 1, "role": "receive_valid", "description": "Holds one command or payload word until accepted.", "clock_domain": "i_clk"},
+          {"name": "i_rx_data", "direction": "input", "width": 16, "role": "receive_payload", "description": "Command-framed low-word-first table and compute data.", "clock_domain": "i_clk"},
+          {"name": "o_rx_ready", "direction": "output", "width": 1, "role": "receive_ready", "description": "Accepts exactly one receive word on a valid-ready edge.", "clock_domain": "i_clk"},
+          {"name": "o_tx_valid", "direction": "output", "width": 1, "role": "transmit_valid", "description": "Holds one result, completion, or status word until accepted.", "clock_domain": "i_clk"},
+          {"name": "o_tx_data", "direction": "output", "width": 16, "role": "transmit_payload", "description": "Framed real-cache result, command completion, or stable status snapshot word.", "clock_domain": "i_clk"},
+          {"name": "i_tx_ready", "direction": "input", "width": 1, "role": "transmit_ready", "description": "Consumes one held transmit word.", "clock_domain": "i_clk"}
+        ],
+        "handshake_channels": [
+          {"id": "receive", "valid": "i_rx_valid", "ready": "o_rx_ready", "payload": ["i_rx_data"]},
+          {"id": "transmit", "valid": "o_tx_valid", "ready": "i_tx_ready", "payload": ["o_tx_data"]}
+        ]
+      },
+      "parameters": [],
+      "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Cancels partial table and packet frames, run and export transactions, held TX output, counters, table validity, packet validity, and the frozen compute chain."},
+      "behavior": [
+        "The top-level expansion is 38 I/O bits: two global pins, eighteen receive-channel bits, and eighteen transmit-channel bits.",
+        "TABLE_BEGIN is 0x1000 and is followed by exactly 1024 signed table words. A one-word skid register holds each word while the frozen SiLU table port is backpressured; computation remains blocked until the frozen chain asserts table loaded.",
+        "PACKET_BEGIN uses opcode 0x2 with first at bit 11, last at bit 10, lane mask at bits 9 through 2, and zero reserved bits. It is followed by four activation, twelve weight, and six bias words, all least-significant word first.",
+        "Up to 96 complete 362-bit packets are buffered as dynamic operands. Each of one through four positions has one through 24 groups and no more than 192 enabled terms.",
+        "RUN uses opcode 0x3 and an exact seven-bit packet count. Only one run is accepted per reset. Completion requires the last parallel input handshake, a later observation of frozen-chain input-ready low, and a later return to ready after normal commit or atomic fault handling.",
+        "EXPORT uses 0x4000 and reads exactly positions times three values through the original cache request-response port. Each result word carries address, cache fault, and actual INT8 data; an explicit 0x6 address command exposes uncommitted and out-of-range cache fault behavior.",
+        "STATUS uses 0x5000 and returns eighteen words from one frozen snapshot. The preload, core, and export cycle fields are endpoint differences for TABLE_BEGIN to RUN, first parallel input accept to full-position completion, and EXPORT accept to final result consumption.",
+        "The output checksum is auxiliary. Verification compares each result word and fault bit independently."
+      ],
+      "constraints": [
+        "The frozen signed33 MAC, round, SiLU, and road_onchip_chain sources and interfaces are not modified.",
+        "Fixed requantization coefficients remain inside the frozen chain; this physical result must not be generalized to arbitrary runtime multiplier cost.",
+        "The finite reduction contract is at most 24 groups and 192 active products per position, never an unbounded accumulator stream.",
+        "No UART, AXI, DDR, video, board pin assignment, production bitstream, Flash write, or new timing exception is part of this wrapper.",
+        "Automatic pins and diagnostic I/O delays are only for isolated PH1P physical validation."
+      ],
+      "corner_cases": [
+        "A partial table or partial 22-word packet never starts a run and is discarded by reset.",
+        "A twenty-fifth group is rejected without storing the packet or issuing a run; four positions of 24 groups exactly fill the 96-packet buffer.",
+        "RX words, buffered parallel operands, RUN completion, cache results, and status words remain stable under their respective backpressure intervals.",
+        "Reset during core work, cache response holding, or status response holding cancels the old transaction and requires a complete table reload.",
+        "An atomic MAC fault completes the run but exports three zero values with cache-fault bits because the position was not committed.",
+        "A second RUN before reset is rejected to prevent stale valid bits from a previous use of the frozen cache."
+      ],
+      "verification_cases": [
+        "The existing 16-channel, 13-channel tail, saturation, and terminal atomic-fault vectors are transmitted over the narrow protocol and compared item by item.",
+        "Frozen signed33 positive and negative temporary-excursion recovery cases are transmitted and compared after the full quantization chain.",
+        "Frozen maximum 24-group, 192-term legal and final-overflow cases verify the finite arithmetic boundary through the shell.",
+        "Four 24-group positions exercise all 96 packet slots and return twelve cache values.",
+        "Partial table, partial packet, duplicate run, uncommitted address, address 15, core reset, held export reset, held status reset, RX count, TX hold, and parallel payload hold are checked.",
+        "A cycle trace assigns each core interval to exactly one MAC, pre-requantization, SiLU, post-requantization, commit, or fault bucket without overlap."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "narrow_load",
+          "title": "Narrow packet load and atomic buffer commit",
+          "scenario": "narrow-load",
+          "description": "A packet header and 22 payload words transfer only on RX valid-ready edges. The packet count changes after the final payload has been checked and committed.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p..........."},
+            {"name": "i_rx_valid", "wave": "01.......0.."},
+            {"name": "o_rx_ready", "wave": "1.0.1.0.1.."},
+            {"name": "i_rx_data", "wave": "x=.=.=.=.x.", "data": ["header", "payload0", "...", "payload21"]},
+            {"name": "packet commit", "wave": "0........10"}
+          ]}
+        },
+        {
+          "id": "run_completion",
+          "title": "RUN completion after frozen-chain busy interval",
+          "scenario": "run-completion",
+          "description": "The last buffered packet is held to the parallel ready-valid port. RUN done is emitted only after input-ready is observed low and later returns high.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p.........."},
+            {"name": "chain valid", "wave": "01...0....."},
+            {"name": "chain ready", "wave": "1.0...1...."},
+            {"name": "last payload", "wave": "x.=...x....", "data": ["dynamic packet"]},
+            {"name": "o_tx_valid", "wave": "0......1..0"},
+            {"name": "o_tx_data", "wave": "x......=.x.", "data": ["RUN done"]}
+          ]}
+        },
+        {
+          "id": "cache_tx_backpressure",
+          "title": "Real cache result exported under TX backpressure",
+          "scenario": "cache-tx-backpressure",
+          "description": "One original cache response is captured into the transmit holding register. Result address, fault, and data remain unchanged until TX ready consumes the word.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p........."},
+            {"name": "cache request", "wave": "01.0......"},
+            {"name": "cache response", "wave": "0..10....."},
+            {"name": "o_tx_valid", "wave": "0...1...0."},
+            {"name": "o_tx_data", "wave": "x...=...x.", "data": ["addr fault data"]},
+            {"name": "i_tx_ready", "wave": "0......10."}
+          ]}
+        }
+      ]
+    }
+  ]
+}

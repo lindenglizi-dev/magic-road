@@ -1,0 +1,102 @@
+{
+  "modules": [
+    {
+      "name": "road_driven_probe",
+      "feature": "step1",
+      "rtl_path": "road_driven_probe.v",
+      "description": "Independent evidence probe; no production change.",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_data",
+            "direction": "input",
+            "width": 1,
+            "role": "i_data",
+            "description": "i_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_data",
+            "direction": "output",
+            "width": 1,
+            "role": "o_data",
+            "description": "o_data",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Cancel old transactions; reload table before calculation."
+      },
+      "behavior": [
+        "Verify runtime operands against frozen integer results; do not change the DUT."
+      ],
+      "constraints": [
+        "Diagnostic only; no bitgen, new timing exceptions or board claim."
+      ],
+      "corner_cases": [
+        "Output must remain stable during backpressure; reset cancels pending work."
+      ],
+      "verification_cases": [
+        "Use actual installed vendor models and retained logs."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "hold",
+          "title": "Payload ownership",
+          "scenario": "ready_valid",
+          "description": "Handshake protocol schematic, not measured pipeline latency.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "valid",
+                "wave": "0.1...0..."
+              },
+              {
+                "name": "ready",
+                "wave": "1.0..1...."
+              },
+              {
+                "name": "payload",
+                "wave": "x.=...x...",
+                "data": [
+                  "held until handshake"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

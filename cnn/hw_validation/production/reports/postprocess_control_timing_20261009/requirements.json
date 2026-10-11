@@ -1,0 +1,19 @@
+{
+  "task": "modify_validate_control_timing",
+  "baseline": "dw_weight_load_timing_20261009",
+  "approved_changes": ["PRE refill data selection outside ready feedback", "remove redundant fault guards only where accept already implies no fault"],
+  "unchanged": ["arithmetic RTL", "ports", "II", "pipeline latency", "reset", "atomic fault", "timing constraints", "production"],
+  "review": {
+    "interface": "All ports and cycle-level transactions unchanged",
+    "reset": "All existing reset targets and table reload requirements retained",
+    "timing": "Ready selects precomputed payload at final mux; no new registers",
+    "handshake": "No update when held; candidate and frozen selection equations exhaustive binary comparison",
+    "width": "Payload is exactly 32+31+6+16+1=86 bits; no numeric resizing",
+    "synthesis": "TD documented keep attribute prevents collapsing early payload boundaries; actual netlist and STA must verify",
+    "verification": "64 full cases plus DW load boundary, narrow shell RTL and routed functional simulation",
+    "risk": "Binary equivalence is not X/Z equivalence or physical timing proof; strict failures and external violations remain separate"
+  },
+  "public_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"],
+  "missing_companion_skills": ["readable-python-generator", "readable-script-generator"],
+  "helper_verification_fallback": "Python syntax, assertion model, actual local simulator and TD receipts; not strict companion readiness"
+}

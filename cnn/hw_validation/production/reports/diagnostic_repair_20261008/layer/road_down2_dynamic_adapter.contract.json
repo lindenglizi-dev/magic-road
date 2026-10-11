@@ -1,0 +1,339 @@
+{
+  "modules": [
+    {
+      "name": "road_down2_dynamic_adapter",
+      "feature": "down2_dynamic_tile",
+      "rtl_path": "road_down2_dynamic_adapter.v",
+      "description": "down2 DW16 stride2 与 PW16→24 固定4×4探针的接口",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {
+            "name": "i_clk",
+            "width": 1,
+            "direction": "input",
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "width": 1,
+            "direction": "input",
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_table_valid",
+            "description": "i_table_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_addr",
+            "width": 10,
+            "direction": "input",
+            "role": "i_table_addr",
+            "description": "i_table_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_data",
+            "width": 16,
+            "direction": "input",
+            "role": "i_table_data",
+            "description": "i_table_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_input_valid",
+            "description": "i_input_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_result_data",
+            "width": 96,
+            "direction": "input",
+            "role": "i_result_data",
+            "description": "i_result_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_result_fault",
+            "width": 1,
+            "direction": "input",
+            "role": "i_result_fault",
+            "description": "i_result_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_layer",
+            "width": 1,
+            "direction": "input",
+            "role": "i_layer",
+            "description": "i_layer",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_position",
+            "width": 4,
+            "direction": "input",
+            "role": "i_position",
+            "description": "i_position",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_channel_base",
+            "width": 5,
+            "direction": "input",
+            "role": "i_channel_base",
+            "description": "i_channel_base",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_lane_mask",
+            "width": 3,
+            "direction": "input",
+            "role": "i_lane_mask",
+            "description": "i_lane_mask",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "width": 1,
+            "direction": "input",
+            "role": "i_output_ready",
+            "description": "i_output_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_ready",
+            "description": "o_table_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_loaded",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_loaded",
+            "description": "o_table_loaded",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_fault",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_fault",
+            "description": "o_table_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_input_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_input_ready",
+            "description": "o_input_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "width": 1,
+            "direction": "output",
+            "role": "o_output_valid",
+            "description": "o_output_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "width": 8,
+            "direction": "output",
+            "role": "o_output_data",
+            "description": "o_output_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_tag",
+            "width": 16,
+            "direction": "output",
+            "role": "o_output_tag",
+            "description": "o_output_tag",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "width": 1,
+            "direction": "output",
+            "role": "o_fault",
+            "description": "o_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_result_queue_count",
+            "width": 2,
+            "direction": "output",
+            "role": "o_result_queue_count",
+            "description": "o_result_queue_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_meta_count",
+            "width": 4,
+            "direction": "output",
+            "role": "o_meta_count",
+            "description": "o_meta_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_busy",
+            "width": 1,
+            "direction": "output",
+            "role": "o_pre_busy",
+            "description": "o_pre_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_busy",
+            "width": 1,
+            "direction": "output",
+            "role": "o_silu_busy",
+            "description": "o_silu_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_busy",
+            "width": 1,
+            "direction": "output",
+            "role": "o_post_busy",
+            "description": "o_post_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_accept",
+            "width": 1,
+            "direction": "output",
+            "role": "o_pre_accept",
+            "description": "o_pre_accept",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_accept",
+            "width": 1,
+            "direction": "output",
+            "role": "o_silu_accept",
+            "description": "o_silu_accept",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_accept",
+            "width": 1,
+            "direction": "output",
+            "role": "o_post_accept",
+            "description": "o_post_accept",
+            "clock_domain": "i_clk"
+          }
+        ],
+        "handshake_channels": [
+          {
+            "id": "batch",
+            "valid": "i_input_valid",
+            "ready": "o_input_ready",
+            "payload": [
+              "i_result_data",
+              "i_result_fault",
+              "i_layer",
+              "i_position",
+              "i_channel_base",
+              "i_lane_mask"
+            ]
+          },
+          {
+            "id": "result",
+            "valid": "o_output_valid",
+            "ready": "i_output_ready",
+            "payload": [
+              "o_output_data",
+              "o_output_tag"
+            ]
+          }
+        ],
+        "streams": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "异步取消全部在途任务及装载计数；调用方提供同步释放，重新装满1024项表。"
+      },
+      "behavior": [
+        "DW接受单有效lane，PW接受三有效lane；tag={layer,position4,channel5,zeros6}。",
+        "一个在途批次；最后有效lane提交后释放pending，输出反压时数据和tag保持。",
+        "o_table_fault沿原有聚合故障，不是独立装表故障遥测。",
+        "兼容busy/accept六端口固定0，不作为真实活动率；量化核心与原串行接口保持一致。"
+      ],
+      "constraints": [
+        "TEST包系数为65536/24与16777216/31；未接真实QAT或运行时参数加载器。",
+        "single in-flight batch；所有消费采用valid与ready握手。"
+      ],
+      "corner_cases": [
+        "halo边界取零、完整装载前禁止启动、长反压、结果保持时复位、重新装表后无旧结果。"
+      ],
+      "verification_cases": [
+        "640 acc、1920 pre/SiLU/post、640唯一提交、384最终导出；DW256批、PW128批。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "stall",
+          "title": "结果反压与接收",
+          "scenario": "result_stall",
+          "description": "事件示意；运算期间经过多拍，图中省略中间计算拍，不声明固定延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "input accepted",
+                "wave": "010....."
+              },
+              {
+                "name": "compute",
+                "wave": "0.1..0.."
+              },
+              {
+                "name": "result valid",
+                "wave": "0....1.0"
+              },
+              {
+                "name": "result ready",
+                "wave": "1....01."
+              },
+              {
+                "name": "result payload",
+                "wave": "x....=..",
+                "data": [
+                  "held result"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

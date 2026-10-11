@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ROI 证据与人工审阅包</title>
+<style>
+:root{--ink:#20242a;--muted:#667085;--line:#d0d5dd;--accent:#155eef;--bg:#f7f8fa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,"Microsoft YaHei",sans-serif}
+main{max-width:1220px;margin:auto;padding:28px}section,article{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+h1,h2,h3{line-height:1.25}code{background:#eef2f6;padding:.12rem .3rem;border-radius:4px}.muted{color:var(--muted)}
+.roi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}figure{margin:0}.roi{width:256px;height:256px;max-width:100%;image-rendering:pixelated;border:1px solid #555}
+.review-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px}.review-card{margin:0}.panel{width:100%;height:auto;border:1px solid var(--line)}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}label{display:flex;flex-direction:column;gap:4px}.wide{grid-column:1/-1}
+input,select,textarea,button{font:inherit;padding:8px;border:1px solid #98a2b3;border-radius:6px}button{background:var(--accent);color:white;border:0;cursor:pointer;padding:10px 16px}
+.sticky{position:sticky;bottom:8px;display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);padding:12px;border-radius:10px;box-shadow:0 4px 16px #0002}
+@media(max-width:700px){main{padding:12px}.roi-grid,.fields{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>ROI 证据与人工审阅包</h1>
+<p>本页只重整已保存工件。未解码视频、未重裁剪、未重提特征、未重评分、未训练或扫描阈值。</p>
+<section><h2>三对 ROI 的已存观测</h2>
+<p>三例面积比分别为 <strong>1.57、1.56、2.37</strong>。六张 ROI 已作为 base64 数据嵌入本页，离线打开仍可见。</p></section>
+<section class="pair"><h2>f000360_p01</h2>
+<div class="roi-grid">
+<figure><img class="roi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAAAAABWESUoAAABgUlEQVQ4EWXBPUsUAAAG4Oc9As8PJOtyCAch0MDF+gXN/gPBpEGU0FWnhhxyOSEQuaWMwwYbavIHlIM2iJgktN7uORkk92XDDSL3PNlEDZeYwQFG0MA4sokaLjGDA4yggXHkLf7gLzooYQTBE2QVNdR1lTCKAsaQVdRQ11XCKAoYQ77gK/5hGL/RxDM8RzawiyEUcYFgALPIBnYxhCIuEAxgFnmN73oF88g2KujoNYlso4KOXpPIHt6hibh1g6dIGVW09ZpAyqiirdcE8gll3LiriGlkHidou2saV8g8TtB21zSukFf4ibhVwiPcQ46whAaCYBDrmEKOsIQGgmAQ65hCLvACLQTBIHZwHznFHFqIrn5sYRg5xRxaiK5+bGEY+YY36CC6iniPB8gZ1lBDBwUUUUWQM6yhhg4KKKKKIL/wAT+wiI8oooyHyDnqWMYO+rCAYA85Rx3L2EEfFhDsIWfo4CU+62phEY+RY1xjBRU00cIh9pFjXGMFFTTRwiH28R+orGjOfFGlhwAAAABJRU5ErkJggg==" alt="f000360_p01 baseline ROI"><figcaption>
+baseline · crop [154, 112, 161, 132]<br>
+8×21，面积 168<br>
+float -1.28174762494 → ped<br>
+Q -94508688 → ped</figcaption></figure>
+<figure><img class="roi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAAAAABWESUoAAAB3klEQVQ4EU3BMWxMARgA4O9/Dufd9Vw5HUpCNFEJkbJYzWISi4RGQirCqpOhN7RLJRIRC5WmhhqYbBYMGBAaEmtjVCr0Utp7904vbarfFzeZ5QcneUm3ZfYRZBwmRvhCg5wa3YI+lnX0EyN8oUFOjW5BH8s6+onrzPJdR40eCXvYwma6iUc85g8VPtF0lGMkLNFLjDFFmSJzhJSzzFOhixhjijJF5ggpZ5mnQhdxhec2Cgb5RokScYe75DbqZy8J+4lpRmkSVrU5yHZSeohpRmkSVrU5yHZSeohxJmnZ6ABFqmwjHjBO27oiA2ylwG5ikPe0rBtggSWqVIlB3tOyboAFlqhSJS7whrCmZhcFUmocIV5zmWWCoKTOITLK/CTmOEFGEJRMUKVJmxYxxwkygqBkgipN2rSID5wjI3Rsc5uKNZuIJ9wgJ3QU3WIHiY4gZhhmlpyEokmCICEjZhhmlpyEokmCICEjPnKPFwxxn6JxdvovPvOdq0ywlUuCaRrWxAw553moIzNEL3WChJgh5zwPdWSG6KVOkBBv+cs17tIk84qnXKRMQoyTM8UZGlT85hmnSCkQdb7yjtOUrZhnkZQCGVHnK+84TdmKeRZJKZARx0nZwmGqlP0iWKRByj9jaIbCIqgWNwAAAABJRU5ErkJggg==" alt="f000360_p01 min_run1 ROI"><figcaption>
+min_run1 · crop [154, 112, 164, 135]<br>
+11×24，面积 264<br>
+float 0.434055387746 → vehicle<br>
+Q 31963081 → vehicle</figcaption></figure>
+</div>
+<p><strong>已存裁剪面积比：</strong>264/168 = 1.57。</p>
+<p><strong>采样尺度事实：</strong>baseline：x轴 8→32，源列重复采样；y轴 21→32，源行重复采样；min_run1：x轴 11→32，源列重复采样；y轴 24→32，源行重复采样。两者都使用已记录的 pixel-centre Q8 最近邻 DDA 索引。</p>
+<p><strong>已存算术：</strong>Δfloat=1.71580301268；ΔQ=126471769，且等于 324 项已存乘积差之和。</p>
+</section><section class="pair"><h2>f000690_p02</h2>
+<div class="roi-grid">
+<figure><img class="roi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAAAAABWESUoAAABsElEQVQ4ETXBT0obYRwA0PebSWJqQTS6FLJSu7IHkCDSrYfQiOI1PEQv0b0X6KKH0LUblSA6mfzxm/lKAr4XZ7zS4oAnChI1jtkjznilxQFPFCRqHLNHjHijgy2mzGgZ4IgeMeKNDraYMqNlgCN6xC+eCXwjUZP5gYojYsSEjA4lNTucY8gLMWJCRoeSmh3OMeSFOGFirWWTd44ZYot74oSJtZZN3jlmiC3uiVOeaVBYGbDDLp6oiVOeaVBYGbDDLp6oiQv+EdYyP/lNi7/8IS6Z8IB9dilo+ESXDnHJhAfss0tBwye6dIgLekzRJ5P5ZI5ESVzQY4o+mcwncyRKYkzXWiZRMCMhk4gxXWuZRMGMhEwirqz0kVhSMmOOkkRcWekjsaRkxhwlibhizjbmZDIf1nosiTE1AyysLEksUFIQY2oGWFhZkligpCBumLKNRMOMhhJBQ9wwZRuJhhkNJYKGuKWh8OWDisAmmbilofDlg4rAJpm4pUuFLg01NYHvtMQ1PVr0eacisYFDHolrerTo805FYgOHPBJ3dKhQUVPTkK31iTs6VKioqWnI1vr8BxTKqEtETjY+AAAAAElFTkSuQmCC" alt="f000690_p02 baseline ROI"><figcaption>
+baseline · crop [0, 90, 9, 107]<br>
+10×18，面积 180<br>
+float -0.604131112368 → ped<br>
+Q -44521448 → ped</figcaption></figure>
+<figure><img class="roi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAAAAABWESUoAAABz0lEQVQ4ETXBu2pTARgA4O8/J4lpitLbopZ2EK0gVB1FVIqj4huIvaD0FQQd7As4uTsLjo4uHRylm6igIFa0N6VNT9LmXCQH+n2xwC4DtGjToU0HU3wmHvCdHC3ajLFLinu8J27zV22agvNss4N5vhIL7FDiIpsk5GSYZ4pYYIcSF9kkISfDPFPELf7RwBkO6VEygTlaxF22CIyQk1FxGV3miFvsUaFBSsY49zHLNnGTPbWSDvvMM4szvCPusEWBxNAE40xik4xY5AOhVnGVV5RY5w2xxB5fMM0kCQUDNGkQS+zxBdNMklAwQJMGsUiLQ7SpqBjQR05KLNNUq8hJ6JGjIidWDLWRc0xKjz5ScmKFPmPoU1FxoNbimFgmYwJHho7JOUJKQjzhkDHkFPQoSBEUxCoFiRMHdAl0qIhVChInDugS6FARqzTpoklBRkZglJJ4TIsSbfbpknMKl/hKvKBBF10yMgoqtTbxnLP8Qp9tBuQU6DJFvGacz/hJaegPA5TMEC9pqFV8osMPcjS4TqyRqM2wTp8ep/GMDWKNRG2Gdfr0OI1nbBCPmGAcI3xjjA5vcYNLxFN+00BKYWiUj7jGOeKhoRQpCUHBBWxzhf/27p6ibQ1g7AAAAABJRU5ErkJggg==" alt="f000690_p02 min_run1 ROI"><figcaption>
+min_run1 · crop [0, 87, 9, 114]<br>
+10×28，面积 280<br>
+float 0.102480580735 → vehicle<br>
+Q 7630269 → vehicle</figcaption></figure>
+</div>
+<p><strong>已存裁剪面积比：</strong>280/180 = 1.56。</p>
+<p><strong>采样尺度事实：</strong>baseline：x轴 10→32，源列重复采样；y轴 18→32，源行重复采样；min_run1：x轴 10→32，源列重复采样；y轴 28→32，源行重复采样。两者都使用已记录的 pixel-centre Q8 最近邻 DDA 索引。</p>
+<p><strong>已存算术：</strong>Δfloat=0.706611693102；ΔQ=52151717，且等于 324 项已存乘积差之和。</p>
+</section><section class="pair"><h2>f001050_p02</h2>
+<div class="roi-grid">
+<figure><img class="roi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAAAAABWESUoAAACtklEQVQ4EW3BO4hcVRwH4N/vPO7cuTszO9kdxqysQRJByKMQdzUpfJEYQcRObCyENAHBQlOnCLGSkCIQOwvBJmlC2qhELBQLZUkKH/gIiXnMTtaZ3Xtn7uOc888sccOw8fv43J6eskvDFZN1+mMlInN3AVuhqXRUmmD5RmfNVPV01AtIrHOGeh0T1ndHUAhNfv71+xfHN0dqnDIqUDNwJSZksbHwi3NRzleiIqpGMcdmtVbABi+i2hYMsUoK0/mDr/uiVhgJPtwHvIZXbd9SKCRxeSx+L1+mpYdHuIMJCrAza6pQmcAyMGnwcNbJgvZyW4iHZtqeAAuMG6I1D2cJhK5f4hEb1zW5YdZnDA0P6YhSubsaW4TzSikMlSjrNA8lllnPYRrnoXzutQ5JxYPdTAZDYpq0lXHCChGEBzu5+hPbtCSqCMlrynDZz6WDipgmnA/jmPnYNg1fcll3bQhimrBVWimb0qh4xFWVzlPBFq8x0XBJDIOQ880qtfiHAAVbvIbM09gQRsL3btTV6oDYRnWdpwvlAo+2i41eAcE2LRYIM3Pg0dt7B2kPj7PQUdndxxdbOr+F/2GjVinqPt+57lBzDo/RdRvGJXncXC/+9QAE20hUgcIz0Te/VtAegGAKnxw8f00XFU/2/r6XQrCJgv8QT8wOjlyG9jzvfpdvvccmEQGITclMuuPE1R/WDM9d49MXCngEJQIIQKGwW762svx99tSQX15dMS985QMEKiBggoDef6fY3XoXX2h+1E9vfHha04sGvHECgMI96QH9tlU/PsO+nP352NlyAx5i0EwdJuLa4uqzr64v3lv4i99dae5SP13JHTy0ag3hIJz9bDdEKKVV/GQXlrJTv3lMKLSHcGBn9uO60WV8a7FPfrozZLOnHbTXgHnrErywkXc/aIsqyihOHwCN5VEjQBEmpwAAAABJRU5ErkJggg==" alt="f001050_p02 baseline ROI"><figcaption>
+baseline · crop [0, 30, 53, 143]<br>
+54×114，面积 6156<br>
+float -3.42520839075 → ped<br>
+Q -252482169 → ped</figcaption></figure>
+<figure><img class="roi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAAAAABWESUoAAADcElEQVQ4ET3B22scVRwA4N9vzpy57s5OdtPNllzsupFUicbYNo1pqdqiD1qhglIr1oIPVkRfBH3QB/sniC/64ou+WRBBqFIIoiho8NLWNKnRStVtNtddZjM7M2fOTY2p34cnrQ5iU2e6DOdPv3UOOvbE4olPEiSjuObe/uaX+Ez9SoS9TIrp9vsnu5Y2zPyBOd7zwiQfXTvOGJ5YuefGaqYIOvz0D9EWZ54mR35dBu+5d61s31WGj439HKxxjYxn9kx11mpcLSToRjKwreDRi/7v+OyaXdm6VsjddmjzrJDRmNiQerpukJUnPm4M4avf3j30U6tdFMZdC04ta5PEUFQwoxaTqT/t2hIeH1m/2bfVQcnAIi72Cspx04Nf+ZvDHV3pjpt456CxkiqHOwkA9R2trNi0E63I7lb92KeVcXzy7AfX8p6p7QRA740yIkfTpLdFAtqt813zT+NRAJGvGxqwQiX15Z4fw8iJaSI8xz/1XpnjYVCWbAEA1ginKXEzGjn7v8ndma8HQt2ieCjIdEvCP8q21LlFh5p5hbe4W+QBn8ldPGJq0YJ/VcGMk5J0EwgZdHTJ9Oobpz7CAyFbhm26arYpsfjk5XK7KLSZDDtDfw3hVJAvw3/6SC6JiUEvpcKm6NMBi23hgdINjbAtoEJrapipz6FLvVCRqj2M+/qaAnb0aSYCy+opaiR5g3narNfwwZTFsKOoAytjaKrG6k1Xl0pJOG7hIyzpwA46oIA5UpsO3zRqfwxWDs518GHcjGCHUVb5HesUkfQ6VrlJPWYUcXLkega3lJjbaLtroOKxNGpcUmDsxokqW4ZbbEKnL1a1FE5saAClwcfJ6nX4n+MxmfULpeyeY0p/o3jIwZfnV0Bq2EG5GRoMwMzZC4uLm0eXbHzni3kA0LBtsLEQg59I2yqvFx7qXRi0AM/oOQmACgAB7pv4cCByVeZmA5OXBp96rd+O8HU1m4IypAbAfv/YZ23wKSS4d4mI8mqFSpxwvJbWiAIQShPFy2MpxmwZb/uNglQhAVz4RZzjYIAAhPDwVH/U/O7FV4Dsf54Va/YKcfBsYVbkGijX4Bbv31Wjm0fPgOdOP75HZVYmutg8f+9LHIGALOgLXbk6skFC93vXSloVX2OfgRuf228A2Ci4ab2dmBqJcDnNHBBmKZYR/Ru1Dp4TlJ9EvgAAAABJRU5ErkJggg==" alt="f001050_p02 min_run1 ROI"><figcaption>
+min_run1 · crop [0, 1, 101, 143]<br>
+102×143，面积 14586<br>
+float 0.786354750478 → vehicle<br>
+Q 57931908 → vehicle</figcaption></figure>
+</div>
+<p><strong>已存裁剪面积比：</strong>14586/6156 = 2.37。</p>
+<p><strong>采样尺度事实：</strong>baseline：x轴 54→32，源列间隔采样；y轴 114→32，源行间隔采样；min_run1：x轴 102→32，源列间隔采样；y轴 143→32，源行间隔采样。两者都使用已记录的 pixel-centre Q8 最近邻 DDA 索引。</p>
+<p><strong>已存算术：</strong>Δfloat=4.21156314123；ΔQ=310414077，且等于 324 项已存乘积差之和。</p>
+</section>
+<section><h2>观测、推断与缺失</h2>
+<p><strong>观测：</strong>All three saved baseline crops score ped and all three saved min_run1 crops score vehicle in both HOG324 float and quantized linear paths; each exact score delta is reconstructed from saved features/products.</p>
+<p><strong>推断：</strong>Crop-content change is sufficient to explain the arithmetic flips in these three instances.</p>
+<p><strong>不支持：</strong>The evidence does not justify a universal expand/shrink rule, retaining an old class, retraining, threshold changes, or RTL deployment of HOG324.</p>
+<h3>明确缺失</h3><ul><li>Full HOG64 feature vectors and per-feature contributions were not saved; only their feature hashes, scores, and predictions exist.</li><li>No verified semantic mapping from OpenCV HOG324 feature index to a named spatial/orientation bin was saved.</li><li>No integer-gradient/bin HOG324 or RTL feature/score trace exists for these pairs.</li><li>No saved evidence identifies the visual owner or semantic cause of each changed edge.</li></ul></section>
+<section><h2>人工待审入口：22 个 invalid 子类 + 5 个保护对照</h2>
+<p>所有人审字段初始为空，页面默认状态为 pending。背景目标只能选择既有五类；保护对照不得填写背景子类。填写后点击导出，浏览器会生成带版本、项目 ID、面板原哈希和来源清单哈希的 <code>review.json</code>。</p>
+<p><a href="human_review/README.md">原审阅说明</a> · <a href="human_review/review_manifest.csv">原空白清单</a> · <a href="human_review/contact_sheets/contact_sheet_01.jpg">联系表入口</a></p></section>
+<div class="review-grid"><article class="review-card" data-id="bs0000" data-role="background_subtype_target"
+ data-sample-id="vr00001" data-candidate-id="fill_only_T100:f000120:slot1:cc5"
+ data-panel-path="panels/panel_vr00001.png" data-panel-sha256="d97ff32f763ead44722938816cedc375b10a181d27943efd93c3bad9aee0e9a8">
+<h3>bs0000 · vr00001</h3>
+<p class="muted">background_subtype_target · frame 120 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00001.png" alt="bs0000 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0001" data-role="background_subtype_target"
+ data-sample-id="vr00008" data-candidate-id="fill_only_T100:f000138:slot2:cc1"
+ data-panel-path="panels/panel_vr00008.png" data-panel-sha256="4e5f40b69d804723728d434ea07c9239cb64dea774cc972412adf5187e64b8cf">
+<h3>bs0001 · vr00008</h3>
+<p class="muted">background_subtype_target · frame 138 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00008.png" alt="bs0001 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0002" data-role="background_subtype_target"
+ data-sample-id="vr00009" data-candidate-id="fill_only_T100:f000139:slot3:cc9"
+ data-panel-path="panels/panel_vr00009.png" data-panel-sha256="c86abc70ce0cc18c1514fe454a47cdd142de9afce7f96c8f86cbc4935e910e05">
+<h3>bs0002 · vr00009</h3>
+<p class="muted">background_subtype_target · frame 139 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00009.png" alt="bs0002 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0003" data-role="background_subtype_target"
+ data-sample-id="vr00016" data-candidate-id="fill_only_T100:f000158:slot1:cc8"
+ data-panel-path="panels/panel_vr00016.png" data-panel-sha256="9a7f6dde1f9979fbdd6d91a20271509e1e920a586dbf703b2fdf2fccaf05d045">
+<h3>bs0003 · vr00016</h3>
+<p class="muted">background_subtype_target · frame 158 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00016.png" alt="bs0003 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0004" data-role="background_subtype_target"
+ data-sample-id="vr00019" data-candidate-id="fill_only_T100:f000179:slot0:cc9"
+ data-panel-path="panels/panel_vr00019.png" data-panel-sha256="bd37376c17959e752d167303e61c4bd2cbca93f65ecab02919fc3046532f8d65">
+<h3>bs0004 · vr00019</h3>
+<p class="muted">background_subtype_target · frame 179 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00019.png" alt="bs0004 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0005" data-role="background_subtype_target"
+ data-sample-id="vr00024" data-candidate-id="fill_only_T100:f000192:slot2:cc11"
+ data-panel-path="panels/panel_vr00024.png" data-panel-sha256="8c39c936f9531a6a3cfe25e42b86519d24ab35362288946c401c62f4c4a386a1">
+<h3>bs0005 · vr00024</h3>
+<p class="muted">background_subtype_target · frame 192 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00024.png" alt="bs0005 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0006" data-role="background_subtype_target"
+ data-sample-id="vr00025" data-candidate-id="fill_only_T100:f000195:slot1:cc8"
+ data-panel-path="panels/panel_vr00025.png" data-panel-sha256="e0f73558ac6cf8cea14438e378ff06178b0ccc1ba93dc613b4b40fe8d8cff234">
+<h3>bs0006 · vr00025</h3>
+<p class="muted">background_subtype_target · frame 195 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00025.png" alt="bs0006 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0007" data-role="background_subtype_target"
+ data-sample-id="vr00048" data-candidate-id="fill_only_T100:f000290:slot3:cc7"
+ data-panel-path="panels/panel_vr00048.png" data-panel-sha256="f40b287d559e9ac3f13dac274197c7e0d18854fbcd737a6e0282063d1b2b1cce">
+<h3>bs0007 · vr00048</h3>
+<p class="muted">background_subtype_target · frame 290 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00048.png" alt="bs0007 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0008" data-role="background_subtype_target"
+ data-sample-id="vr00049" data-candidate-id="fill_only_T100:f000297:slot2:cc7"
+ data-panel-path="panels/panel_vr00049.png" data-panel-sha256="f81d11bc07e7f6e0e37c65f9668972fa75b3bc4cfbd04336211a825c9a284ecd">
+<h3>bs0008 · vr00049</h3>
+<p class="muted">background_subtype_target · frame 297 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00049.png" alt="bs0008 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0009" data-role="background_subtype_target"
+ data-sample-id="vr00052" data-candidate-id="fill_only_T100:f000301:slot3:cc10"
+ data-panel-path="panels/panel_vr00052.png" data-panel-sha256="14ae63ec68810ee676f82aaab3ced85bcb70cff8637878a93a01598606c41a14">
+<h3>bs0009 · vr00052</h3>
+<p class="muted">background_subtype_target · frame 301 · main_area_topk</p>
+<img class="panel" src="human_review/panels/panel_vr00052.png" alt="bs0009 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0010" data-role="background_subtype_target"
+ data-sample-id="vr00003" data-candidate-id="fill_only_T100:f000123:slot3:cc7"
+ data-panel-path="panels/panel_vr00003.png" data-panel-sha256="dfcc5d7b999c8a944ee275d26c106908c1b95fd7a7a9c5abb109fd1cba64d7e0">
+<h3>bs0010 · vr00003</h3>
+<p class="muted">background_subtype_target · frame 123 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00003.png" alt="bs0010 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0011" data-role="background_subtype_target"
+ data-sample-id="vr00067" data-candidate-id="fill_only_T100:f000388:slot3:cc9"
+ data-panel-path="panels/panel_vr00067.png" data-panel-sha256="ce23e5ae01c30266b9ff28b3628d8b7e365366bf2fa18f6981afe358c875f631">
+<h3>bs0011 · vr00067</h3>
+<p class="muted">background_subtype_target · frame 388 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00067.png" alt="bs0011 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0012" data-role="background_subtype_target"
+ data-sample-id="vr00038" data-candidate-id="fill_only_T100:f000259:slot3:cc3"
+ data-panel-path="panels/panel_vr00038.png" data-panel-sha256="c927d3de76cc50dbf96dba13b2bcf38a8fbdbe17fa772073f41e7bf8c5ea0883">
+<h3>bs0012 · vr00038</h3>
+<p class="muted">background_subtype_target · frame 259 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00038.png" alt="bs0012 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0013" data-role="background_subtype_target"
+ data-sample-id="vr00006" data-candidate-id="fill_only_T100:f000127:slot3:cc6"
+ data-panel-path="panels/panel_vr00006.png" data-panel-sha256="b6541f96bfc74c73de752218f70af85c24ceb5979653bbcfeb7853fc8c374bcc">
+<h3>bs0013 · vr00006</h3>
+<p class="muted">background_subtype_target · frame 127 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00006.png" alt="bs0013 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0014" data-role="background_subtype_target"
+ data-sample-id="vr00074" data-candidate-id="fill_only_T100:f000421:slot3:cc7"
+ data-panel-path="panels/panel_vr00074.png" data-panel-sha256="047433add867d859331dafc5bc09bbc9dd2eaa2dc82d61d56a5564f45e7b39eb">
+<h3>bs0014 · vr00074</h3>
+<p class="muted">background_subtype_target · frame 421 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00074.png" alt="bs0014 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0015" data-role="background_subtype_target"
+ data-sample-id="vr00043" data-candidate-id="fill_only_T100:f000270:slot3:cc3"
+ data-panel-path="panels/panel_vr00043.png" data-panel-sha256="ae6e2ca0eaf87d287fccd9b86f38c1571bc805d165ec00c1c1bcc49c238b3fa0">
+<h3>bs0015 · vr00043</h3>
+<p class="muted">background_subtype_target · frame 270 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00043.png" alt="bs0015 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0016" data-role="background_subtype_target"
+ data-sample-id="vr00007" data-candidate-id="fill_only_T100:f000130:slot2:cc6"
+ data-panel-path="panels/panel_vr00007.png" data-panel-sha256="d6e6facdf62a42eea58a05f037a9cf921b3443a1ea1b05b587bdbfd304dabb89">
+<h3>bs0016 · vr00007</h3>
+<p class="muted">background_subtype_target · frame 130 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00007.png" alt="bs0016 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0017" data-role="background_subtype_target"
+ data-sample-id="vr00055" data-candidate-id="fill_only_T100:f000329:slot3:cc4"
+ data-panel-path="panels/panel_vr00055.png" data-panel-sha256="75d9564c06b36cb88d3508756439aab41780d6cbb67c7e9f5663c19a78ad4689">
+<h3>bs0017 · vr00055</h3>
+<p class="muted">background_subtype_target · frame 329 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00055.png" alt="bs0017 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0018" data-role="background_subtype_target"
+ data-sample-id="vr00011" data-candidate-id="fill_only_T100:f000145:slot3:cc6"
+ data-panel-path="panels/panel_vr00011.png" data-panel-sha256="4ae3bd75a5972d5998cf09fce9e239f12ac59860799f93e374dd18675d6b30ad">
+<h3>bs0018 · vr00011</h3>
+<p class="muted">background_subtype_target · frame 145 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00011.png" alt="bs0018 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0019" data-role="background_subtype_target"
+ data-sample-id="vr00058" data-candidate-id="fill_only_T100:f000343:slot3:cc4"
+ data-panel-path="panels/panel_vr00058.png" data-panel-sha256="c3e155b52fc942922f6364ccdaece9b28b6b84f9305ced3bed4087d5c7c5801d">
+<h3>bs0019 · vr00058</h3>
+<p class="muted">background_subtype_target · frame 343 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00058.png" alt="bs0019 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0020" data-role="background_subtype_target"
+ data-sample-id="vr00018" data-candidate-id="fill_only_T100:f000170:slot3:cc8"
+ data-panel-path="panels/panel_vr00018.png" data-panel-sha256="29b4d39f00a342f7e63c647fb30757af2b7745970fd9bd0a05243f86e47922ad">
+<h3>bs0020 · vr00018</h3>
+<p class="muted">background_subtype_target · frame 170 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00018.png" alt="bs0020 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0021" data-role="background_subtype_target"
+ data-sample-id="vr00061" data-candidate-id="fill_only_T100:f000354:slot3:cc4"
+ data-panel-path="panels/panel_vr00061.png" data-panel-sha256="0ba3cec017065166de8720ebfa1e95f414a86240f2bc36aa66833829a7f6b753">
+<h3>bs0021 · vr00061</h3>
+<p class="muted">background_subtype_target · frame 354 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00061.png" alt="bs0021 review panel">
+<p>请选择背景子类；无法判断时选 uncertain，未审保持 pending。</p>
+<div class="fields"><label>背景子类<select class="subtype"><option value="">pending</option><option value="shadow">shadow</option><option value="parking_line_related">parking_line_related</option><option value="background_change">background_change</option><option value="other">other</option><option value="uncertain">uncertain</option></select></label><input class="control-status" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0022" data-role="protection_control"
+ data-sample-id="vr00002" data-candidate-id="fill_only_T100:f000120:slot2:cc7"
+ data-panel-path="panels/panel_vr00002.png" data-panel-sha256="950fcbe5e3578f7725c1655418133f434bae2f3f7129d83aac6ded809642504c">
+<h3>bs0022 · vr00002</h3>
+<p class="muted">protection_control · frame 120 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00002.png" alt="bs0022 review panel">
+<p>保护对照不得填写背景子类；可确认保护或标记需继续核对。</p>
+<div class="fields"><label>保护核对<select class="control-status"><option value="pending">pending</option><option value="confirmed_protection">confirmed_protection</option><option value="needs_followup">needs_followup</option></select></label><input class="subtype" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0023" data-role="protection_control"
+ data-sample-id="vr00015" data-candidate-id="fill_only_T100:f000157:slot3:cc5"
+ data-panel-path="panels/panel_vr00015.png" data-panel-sha256="a7847c7baed111c79369265b86299e7e7d3c78c0ee658292af84b4fbe3b63646">
+<h3>bs0023 · vr00015</h3>
+<p class="muted">protection_control · frame 157 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00015.png" alt="bs0023 review panel">
+<p>保护对照不得填写背景子类；可确认保护或标记需继续核对。</p>
+<div class="fields"><label>保护核对<select class="control-status"><option value="pending">pending</option><option value="confirmed_protection">confirmed_protection</option><option value="needs_followup">needs_followup</option></select></label><input class="subtype" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0024" data-role="protection_control"
+ data-sample-id="vr00035" data-candidate-id="fill_only_T100:f000240:slot3:cc7"
+ data-panel-path="panels/panel_vr00035.png" data-panel-sha256="ba2951c4db680edf90ed3ad3c96a66d06905195dcb22be44a8664cf9530e422b">
+<h3>bs0024 · vr00035</h3>
+<p class="muted">protection_control · frame 240 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00035.png" alt="bs0024 review panel">
+<p>保护对照不得填写背景子类；可确认保护或标记需继续核对。</p>
+<div class="fields"><label>保护核对<select class="control-status"><option value="pending">pending</option><option value="confirmed_protection">confirmed_protection</option><option value="needs_followup">needs_followup</option></select></label><input class="subtype" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0025" data-role="protection_control"
+ data-sample-id="vr00063" data-candidate-id="fill_only_T100:f000361:slot3:cc7"
+ data-panel-path="panels/panel_vr00063.png" data-panel-sha256="ecdf8778101b872909f9ffd98555197a5ba9b46eb2d936d3ff6f3d376a1188b4">
+<h3>bs0025 · vr00063</h3>
+<p class="muted">protection_control · frame 361 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00063.png" alt="bs0025 review panel">
+<p>保护对照不得填写背景子类；可确认保护或标记需继续核对。</p>
+<div class="fields"><label>保护核对<select class="control-status"><option value="pending">pending</option><option value="confirmed_protection">confirmed_protection</option><option value="needs_followup">needs_followup</option></select></label><input class="subtype" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article>
+<article class="review-card" data-id="bs0026" data-role="protection_control"
+ data-sample-id="vr00082" data-candidate-id="fill_only_T100:f000474:slot3:cc1"
+ data-panel-path="panels/panel_vr00082.png" data-panel-sha256="5b8ce8339aa85c870ccb526a7cb7faff50410d97a44f18b4a028eaca4c179e7f">
+<h3>bs0026 · vr00082</h3>
+<p class="muted">protection_control · frame 474 · small_component_experimental</p>
+<img class="panel" src="human_review/panels/panel_vr00082.png" alt="bs0026 review panel">
+<p>保护对照不得填写背景子类；可确认保护或标记需继续核对。</p>
+<div class="fields"><label>保护核对<select class="control-status"><option value="pending">pending</option><option value="confirmed_protection">confirmed_protection</option><option value="needs_followup">needs_followup</option></select></label><input class="subtype" type="hidden" value="">
+<label>审阅者<input class="reviewer" type="text" autocomplete="name"></label>
+<label>审阅时间<input class="reviewed-at" type="datetime-local"></label>
+<label class="wide">说明<textarea class="note" rows="2"></textarea></label></div>
+</article></div>
+<div class="sticky"><button id="export">导出 review.json</button><span id="status" class="muted">27 项均为 pending</span></div>
+<script id="source-meta" type="application/json">{"source_schema": "virat_background_subtype_review_v1", "review_schema_version": 1, "bundle_version": "roi_review_bundle_20261002_v2", "item_count": 27, "background_subtype_target_count": 22, "protection_control_count": 5, "source_manifest_path": "evaluation/scene_extensions/virat_010107_background_subtype_review_v1/review_manifest.csv", "source_manifest_sha256": "882fa4f531fbd170792dfb53a16c0dcbbfd6de586ed7e73dbdf620c2e4097d90", "source_receipt_sha256": "7063429571ca519dd4806879971cbb357c63b2b2f05e0ae5688705e073f54d14"}</script>
+<script>
+const ALLOWED = ["shadow", "parking_line_related", "background_change", "other", "uncertain"];
+const sourceMeta = JSON.parse(document.getElementById('source-meta').textContent);
+const cards = [...document.querySelectorAll('.review-card')];
+function collect() {
+  const errors = [], ids = new Set(), items = [];
+  for (const card of cards) {
+    const id = card.dataset.id, role = card.dataset.role;
+    const subtype = card.querySelector('.subtype').value;
+    const control = card.querySelector('.control-status').value;
+    if (ids.has(id)) errors.push(`duplicate id: ${id}`); ids.add(id);
+    if (role === 'background_subtype_target' && subtype && !ALLOWED.includes(subtype)) errors.push(`invalid subtype: ${id}`);
+    if (role === 'protection_control' && subtype) errors.push(`protection control has subtype: ${id}`);
+    const status = role === 'background_subtype_target' ? (subtype ? 'reviewed' : 'pending') : control;
+    items.push({
+      review_item_id:id, sample_id:card.dataset.sampleId, candidate_id:card.dataset.candidateId,
+      review_role:role, source_panel_path:card.dataset.panelPath, source_panel_sha256:card.dataset.panelSha256,
+      review_status:status || 'pending', background_subtype:subtype,
+      reviewer:card.querySelector('.reviewer').value.trim(), reviewed_at:card.querySelector('.reviewed-at').value,
+      review_note:card.querySelector('.note').value.trim()
+    });
+  }
+  const pending = items.filter(x => x.review_status === 'pending').length;
+  return {
+    schema:'ddr_roi_human_review_v1', schema_version:1,
+    source:sourceMeta, exported_at:new Date().toISOString(),
+    validation:{valid:errors.length===0, errors, expected_items:sourceMeta.item_count, actual_items:items.length, unique_ids:ids.size},
+    summary:{pending, reviewed:items.length-pending}, items
+  };
+}
+function updateStatus() { const r=collect(); document.getElementById('status').textContent=`${r.summary.pending} pending / ${r.summary.reviewed} 已填写`; }
+document.querySelectorAll('select,input,textarea').forEach(x=>x.addEventListener('input',updateStatus));
+document.getElementById('export').addEventListener('click',()=>{
+  const result=collect();
+  if (!result.validation.valid) { alert(result.validation.errors.join('\n')); return; }
+  const blob=new Blob([JSON.stringify(result,null,2)+'\n'],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='review.json'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000); updateStatus();
+});
+</script></main></body></html>

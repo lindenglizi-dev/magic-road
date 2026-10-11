@@ -1,0 +1,72 @@
+{
+  "modules": [
+    {
+      "name": "road_postprocess_low_io_top",
+      "feature": "v10_postprocess_physical",
+      "rtl_path": "road_postprocess_low_io_top.v",
+      "description": "A 38-bit diagnostic top that runtime-loads the complete overlap-runner state, starts the real DW/PW runner, and exports indexed result-cache values.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "100 MHz diagnostic clock.", "clock_domain": "i_clk"},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Asynchronous active-low assertion with two-stage synchronous release.", "clock_domain": "i_clk", "active_level": "low"},
+          {"name": "i_rx_valid", "direction": "input", "width": 1, "role": "receive_valid", "description": "Holds a command or payload word until accepted.", "clock_domain": "i_clk"},
+          {"name": "i_rx_data", "direction": "input", "width": 16, "role": "receive_payload", "description": "Command-framed little-endian runtime data.", "clock_domain": "i_clk"},
+          {"name": "o_rx_ready", "direction": "output", "width": 1, "role": "receive_ready", "description": "Accepts one RX word on a valid-ready edge.", "clock_domain": "i_clk"},
+          {"name": "o_tx_valid", "direction": "output", "width": 1, "role": "transmit_valid", "description": "Holds one response word until accepted.", "clock_domain": "i_clk"},
+          {"name": "o_tx_data", "direction": "output", "width": 16, "role": "transmit_payload", "description": "Indexed result framing or completion response.", "clock_domain": "i_clk"},
+          {"name": "i_tx_ready", "direction": "input", "width": 1, "role": "transmit_ready", "description": "Consumes one held response word.", "clock_domain": "i_clk"}
+        ],
+        "handshake_channels": [
+          {"id": "receive", "valid": "i_rx_valid", "ready": "o_rx_ready", "payload": ["i_rx_data"]},
+          {"id": "transmit", "valid": "o_tx_valid", "ready": "i_tx_ready", "payload": ["o_tx_data"]}
+        ]
+      },
+      "parameters": [],
+      "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Asynchronous assertion, two-stage synchronous release; cancels partial framing and requires complete dynamic reload."},
+      "behavior": [
+        "TABLE_BEGIN 0x1000 is followed by exactly 1024 signed 16-bit table words with implicit addresses zero through 1023.",
+        "LOAD_BEGIN 0x2000 is followed by a descriptor containing kind[15:13], zero reserved[12:11], address[10:0], then signed 32-bit data low word first.",
+        "START 0x3000 runs DW then PW; 0x3001 runs PW only. The command is accepted only after complete runtime preload and table activation.",
+        "EXPORT 0x4000 starts the runner cache export. Each held runner result produces metadata 0x8000|index then data 0x9000|unsigned_byte; the runner advances only when the data word transfers.",
+        "COMMIT_CONTROL 0x6000 or 0x6001 drives a retained runner commit-ready register low or high so writeback backpressure and queue-full behavior stay runtime-controllable.",
+        "The shell contains no arithmetic constants or test operands. All halo, activation, weight, bias, table, and result values cross real runtime ports."
+      ],
+      "constraints": [
+        "The external interface is exactly 38 bits and uses only ready-valid framing.",
+        "The top instantiates down2_overlap_tile_runner and the approved unchanged arithmetic cores in its source closure.",
+        "No timing exception, bit generation, board programming, Flash write, or training is permitted.",
+        "Zero diagnostic I/O delay is retained and is not external timing signoff."
+      ],
+      "corner_cases": [
+        "Reserved descriptor bits, unknown commands, premature start, and overlapping export requests latch a protocol fault until reset.",
+        "RX backpressure cannot drop an assembled load or table item.",
+        "TX backpressure cannot change result metadata or data, and reset cancels either held word.",
+        "A runner fault prevents a successful completion claim and is visible in the completion response."
+      ],
+      "verification_cases": [
+        "Python framing self-check covers signed load reconstruction, PW-only start, export, result encoding, and all 1024 implicit table addresses.",
+        "Simulator regression performs real runtime table and full PW-tile loading, then compares every indexed exported result bit-exactly.",
+        "Simulator regression toggles commit-ready while queues fill and drain, and injects RX/TX backpressure and reset at every parser and export holding state.",
+        "Routed audit proves 24 MAC DSPs plus dynamically discovered round, SiLU, storage, metadata, and result-cache structures."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "runtime_load",
+          "title": "Runtime 32-bit load under runner backpressure",
+          "scenario": "runtime-load",
+          "description": "Header, descriptor, low word, and high word transfer on RX handshakes. The assembled runner load remains valid until runner ready.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p.........."},
+            {"name": "i_rx_valid", "wave": "01......0.."},
+            {"name": "o_rx_ready", "wave": "1......0.1."},
+            {"name": "i_rx_data", "wave": "x====...x..", "data": ["2000", "descriptor", "data low", "data high"]},
+            {"name": "runner load valid", "wave": "0...1....0."},
+            {"name": "runner load ready", "wave": "0........10"}
+          ]}
+        }
+      ]
+    }
+  ]
+}

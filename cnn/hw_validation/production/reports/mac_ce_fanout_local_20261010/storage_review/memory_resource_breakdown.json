@@ -1,0 +1,282 @@
+{
+  "schema": "road-yolo-memory-resource-breakdown-v1",
+  "date": "2026-10-10",
+  "status": "read_only_existing_physical_evidence",
+  "device": "PH1P35MDG324-3",
+  "target_clock_mhz": 100,
+  "evidence_versions": {
+    "control_operand_hold_20261009": {
+      "runner_sha256": "67763933d200a5939a6271459e84c343f6392363a7698da28bc18157b8cb2020",
+      "shell_route_area_sha256": "f03ba2a198432593259a01ea9b280a82e676a82bb876582083dad209781e6775",
+      "shell_route_ram_sha256": "2532b483f1331161baa3360f6369ff429fce2797de8dccda35533d2f569c5d26",
+      "totals_including_shell": {
+        "slice": 7994,
+        "lut6": 7096,
+        "register": 5371,
+        "dsp": 30,
+        "eram20k": 1,
+        "dram_lut": 2016,
+        "shifter_lut": 16,
+        "io": 38
+      },
+      "runner_hierarchy": {
+        "logic_lut": 3411,
+        "ripple": 1368,
+        "seq": 4685,
+        "dsp": 30,
+        "eram20k": 1,
+        "dram_lut": 2016,
+        "shifter_lut": 16,
+        "f7mux": 19
+      },
+      "diagnostic_low_io_shell_delta": {
+        "logic_lut": 285,
+        "seq": 686,
+        "dsp": 0,
+        "eram20k": 0,
+        "dram_lut": 0,
+        "note": "top minus down2_dynamic_tile_runner hierarchy; includes the low-I/O diagnostic/control shell and is not a production-video merge. Slice cannot be additively recovered from hierarchy columns."
+      }
+    },
+    "scheduler_predecode_20261010": {
+      "runner_sha256": "0052d182f9d9358e3353eefb9fc9679826136911938bf91c43b91eb8ab9d8b2a",
+      "shell_route_area_sha256": "60e320df61b433968499b4b1d5eda1e61ff90e635346d34ab1ba4034b0f36d68",
+      "shell_route_ram_sha256": "f3c0b4a7ee08f59190432f7ad6f5ac84a939c6b9fd67f504db5388bbc78febbd",
+      "totals_including_shell": {
+        "slice": 7983,
+        "lut6": 7088,
+        "register": 5383,
+        "dsp": 30,
+        "eram20k": 1,
+        "dram_lut": 2040,
+        "shifter_lut": 16,
+        "io": 38
+      },
+      "runner_hierarchy": {
+        "logic_lut": 3344,
+        "ripple": 1368,
+        "seq": 4745,
+        "dsp": 30,
+        "eram20k": 1,
+        "dram_lut": 2040,
+        "shifter_lut": 16,
+        "f7mux": 19
+      },
+      "diagnostic_low_io_shell_delta": {
+        "logic_lut": 320,
+        "seq": 638,
+        "dsp": 0,
+        "eram20k": 0,
+        "dram_lut": 0,
+        "note": "top minus down2_dynamic_tile_runner hierarchy; includes the low-I/O diagnostic/control shell and is not a production-video merge. Slice cannot be additively recovered from hierarchy columns."
+      }
+    }
+  },
+  "source_closure_comparison": {
+    "same_files": [
+      "road_down2_dynamic_adapter.v",
+      "road_dynamic_overlap_low_io_top.v",
+      "road_dynamic_postprocess.v",
+      "road_dynamic_requant.v",
+      "road_round_shift.v",
+      "silu_shared_unit.v"
+    ],
+    "different_files": [
+      "down2_dynamic_tile_runner.v",
+      "road_mac_probe.v"
+    ],
+    "ram_allocation_delta": "scheduler_predecode has 24 more DRAM LUTs, all at the DW-weight read source (352 versus 328); other mapped memory source groups are unchanged. This does not imply all non-memory resources have the same cause."
+  },
+  "mapped_memory_breakdown": [
+    {
+      "category": "halo",
+      "rtl_object": "reg_halo[0:1295]",
+      "logical_capacity_bits": 10368,
+      "logical_capacity_bytes": 1296,
+      "evidence_lines": {"control_operand_hold_rtl": "down2_dynamic_tile_runner.v:68,420", "scheduler_predecode_rtl": "down2_dynamic_tile_runner.v:68,429"},
+      "control_operand_hold": {"dram_hardcon": 119, "dram_lut": 952},
+      "scheduler_predecode": {"dram_hardcon": 119, "dram_lut": 952},
+      "write_ports_source": 1,
+      "read_shape_source": "up to eight halo bytes are selected in parallel for the current DW group; synthesis replicates the distributed storage",
+      "read_latency": "source-level combinational selection feeding registered MAC operands; mapped report shows output register disabled, not a portable ERAM latency contract",
+      "collision_policy": "loads are accepted only while the runner is idle; compute reads occur after the full-load protocol, so source control excludes load/read overlap",
+      "mapping": "Dram Hardcon plus 952 Mslice DRAM LUTs",
+      "port_fit_for_one_single_port_eram": false
+    },
+    {
+      "category": "dw_weights_and_bias",
+      "rtl_objects": [
+        "reg_dw_weight[0:143]",
+        "reg_dw_bias[0:15]"
+      ],
+      "logical_capacity_bits": 1664,
+      "logical_capacity_bytes": 208,
+      "evidence_lines": {"control_operand_hold_rtl": "down2_dynamic_tile_runner.v:71,76,430,435", "scheduler_predecode_rtl": "down2_dynamic_tile_runner.v:71,76,439,444"},
+      "control_operand_hold": {
+        "dram_hardcon": 43,
+        "dram_lut": 344,
+        "detail_dram_lut": {"dw_weight": 328, "dw_bias": 16}
+      },
+      "scheduler_predecode": {
+        "dram_hardcon": 46,
+        "dram_lut": 368,
+        "detail_dram_lut": {"dw_weight": 352, "dw_bias": 16}
+      },
+      "write_ports_source": "one loader; DW weight uses a registered one-edge pending write owner",
+      "read_shape_source": "up to three spatial output lanes by eight DW weight bytes in parallel plus one replicated bias",
+      "read_latency": "source-level combinational selection feeding registered MAC operands; no explicit synchronous RAM latency",
+      "collision_policy": "full-load flags gate start; DW queued write is cancelled by reset and the start/storage boundary covers its extra edge",
+      "mapping": "replicated distributed RAM; scheduler_predecode adds three 8-bit hardcons / 24 DRAM LUTs at the DW-weight read site",
+      "port_fit_for_one_single_port_eram": false
+    },
+    {
+      "category": "pw_weights_and_bias",
+      "rtl_objects": [
+        "reg_pw_weight[0:383]",
+        "reg_pw_bias[0:23]"
+      ],
+      "logical_capacity_bits": 3840,
+      "logical_capacity_bytes": 480,
+      "evidence_lines": {"control_operand_hold_rtl": "down2_dynamic_tile_runner.v:77-78,445,449", "scheduler_predecode_rtl": "down2_dynamic_tile_runner.v:77-78,454,458"},
+      "control_operand_hold": {
+        "dram_hardcon": 30,
+        "dram_lut": 240,
+        "detail_dram_lut": {"pw_weight": 192, "pw_bias": 48}
+      },
+      "scheduler_predecode": {
+        "dram_hardcon": 30,
+        "dram_lut": 240,
+        "detail_dram_lut": {"pw_weight": 192, "pw_bias": 48}
+      },
+      "write_ports_source": "one loader while idle",
+      "read_shape_source": "three output lanes by eight PW weight bytes in parallel plus three biases",
+      "read_latency": "source-level combinational selection feeding registered MAC operands; no explicit synchronous RAM latency",
+      "collision_policy": "full-load flags gate start, so source control excludes load/compute overlap",
+      "mapping": "replicated distributed RAM; identical in the two saved shells",
+      "port_fit_for_one_single_port_eram": false
+    },
+    {
+      "category": "dw_intermediate_output",
+      "rtl_object": "reg_dw_cache[0:255]",
+      "logical_capacity_bits": 2048,
+      "logical_capacity_bytes": 256,
+      "evidence_lines": {"control_operand_hold_rtl": "down2_dynamic_tile_runner.v:69,442", "scheduler_predecode_rtl": "down2_dynamic_tile_runner.v:69,451"},
+      "control_operand_hold": {"dram_hardcon": 4, "dram_lut": 32},
+      "scheduler_predecode": {"dram_hardcon": 4, "dram_lut": 32},
+      "write_ports_source": "one selected write owner: committed DW result has priority over preload",
+      "read_shape_source": "eight bytes selected in parallel for a PW input group",
+      "read_latency": "source-level combinational read feeding registered MAC operands",
+      "collision_policy": "write owner is explicit; using a single-port synchronous ERAM would not satisfy the current eight-byte parallel read contract without banking or schedule change",
+      "mapping": "Dram Hardcon plus 32 Mslice DRAM LUTs",
+      "port_fit_for_one_single_port_eram": false
+    },
+    {
+      "category": "final_tile_output_cache",
+      "rtl_object": "reg_output_cache[0:383]",
+      "logical_capacity_bits": 3072,
+      "logical_capacity_bytes": 384,
+      "evidence_lines": {"control_operand_hold_rtl": "down2_dynamic_tile_runner.v:70,368,840", "scheduler_predecode_rtl": "down2_dynamic_tile_runner.v:70,377,833"},
+      "control_operand_hold": {"dram_hardcon": 8, "dram_lut": 64},
+      "scheduler_predecode": {"dram_hardcon": 8, "dram_lut": 64},
+      "write_ports_source": 1,
+      "read_shape_source": "one exported byte per cycle after compute",
+      "read_latency": "current source uses a combinational indexed read; a synchronous ERAM conversion would add an export-address/read stage unless proven otherwise",
+      "collision_policy": "writes happen on committed postprocess outputs; reads happen only in ST_EXPORT, so phases are mutually exclusive",
+      "mapping": "Dram Hardcon plus 64 Mslice DRAM LUTs",
+      "port_fit_for_one_single_port_eram": "candidate_only_after_latency_adaptation"
+    },
+    {
+      "category": "runtime_quant_parameters",
+      "rtl_objects": [
+        "reg_pre_multiplier[0:39]",
+        "reg_pre_shift[0:39]",
+        "reg_post_multiplier[0:1]",
+        "reg_post_shift[0:1]"
+      ],
+      "logical_capacity_bits": 1596,
+      "evidence_lines": {"control_operand_hold_rtl": "down2_dynamic_tile_runner.v:80-83,975-979", "scheduler_predecode_rtl": "down2_dynamic_tile_runner.v:80-83,968-972"},
+      "control_operand_hold": {"dram_hardcon": 17, "dram_lut": 136},
+      "scheduler_predecode": {"dram_hardcon": 17, "dram_lut": 136},
+      "write_ports_source": "one loader while idle",
+      "read_shape_source": "three pre-channel parameter reads plus one post-layer parameter read",
+      "read_latency": "source-level combinational parameter selection",
+      "collision_policy": "full parameter-load flags gate start; no load/compute overlap",
+      "mapping": "replicated distributed RAM",
+      "port_fit_for_one_single_port_eram": false
+    },
+    {
+      "category": "scheduler_postprocess_metadata_and_result_queues",
+      "rtl_objects": [
+        "road_dynamic_postprocess ingress/retire/meta arrays",
+        "road_mac_probe reg_result_queue[0:3]"
+      ],
+      "logical_array_capacity_bits": 2116,
+      "evidence_lines": {"postprocess_rtl": "road_dynamic_postprocess.v:40-63,105,153-155,298,326-327", "mac_rtl": "road_mac_probe.v:188,203"},
+      "control_operand_hold": {"dram_hardcon": 31, "dram_lut": 248},
+      "scheduler_predecode": {"dram_hardcon": 31, "dram_lut": 248},
+      "write_ports_source": "ring-buffer writes with explicit push/pop accounting; retire data has one result write owner",
+      "read_shape_source": "multiple independently indexed metadata/result fields",
+      "read_latency": "source-level combinational queue-head/indexed reads",
+      "collision_policy": "same-edge push/pop is explicitly counted; POST owns the retire result write edge over PRE RAW bypass",
+      "mapping": "distributed RAM; this is queue/control state, not model parameter storage",
+      "port_fit_for_one_single_port_eram": false,
+      "scope_note": "This DRAM-LUT count excludes non-array scheduler metadata that mapped to ordinary registers/LUT logic."
+    },
+    {
+      "category": "silu_lookup_table",
+      "rtl_object": "PH1P_LOGIC_ERAM_Inst_silu_table",
+      "logical_capacity_bits": 20480,
+      "evidence_lines": {"silu_rtl": "silu_shared_unit.v:522-575", "ram_report": "shell_route_ram.rpt:14"},
+      "control_operand_hold": {"eram20k": 1},
+      "scheduler_predecode": {"eram20k": 1},
+      "ports": "single-port mode; port B disabled",
+      "read_latency": "synchronous PH1P read consumed by the module's explicit RAM-return pipeline stage; primitive output register disabled",
+      "collision_policy": "table load is accepted only with an empty pipeline; a load handshake has address/write priority over lookup",
+      "mapping": "one ERAM20K, 1024 x 20, NORMAL write mode, no initialization file"
+    }
+  ],
+  "dram_lut_reconciliation": {
+    "control_operand_hold_sum": 2016,
+    "control_operand_hold_reported": 2016,
+    "scheduler_predecode_sum": 2040,
+    "scheduler_predecode_reported": 2040,
+    "exact": true
+  },
+  "video_template_arithmetic_only": {
+    "evidence_sha256": {
+      "cnn/template/output/template_route.area": "a6b44a46a54ea396ecdf4c20f43c358c5d4f67380fe89290ef1996f4ffb48165",
+      "cnn/template/verification_receipt.json": "3d3207a8a0b0a73952e141b3c40d19f1bee1c4fe4b22f4e4add7a2c9b1da1a60"
+    },
+    "template": {"slice": 12358, "dsp": 8, "eram20k": 40},
+    "device_limits": {"slice": 21216, "dsp": 40, "eram20k": 108},
+    "template_plus_control_operand_hold": {"slice": 20352, "slice_headroom": 864, "dsp": 38, "dsp_headroom": 2, "eram20k": 41, "eram_headroom": 67},
+    "template_plus_scheduler_predecode": {"slice": 20341, "slice_headroom": 875, "dsp": 38, "dsp_headroom": 2, "eram20k": 41, "eram_headroom": 67},
+    "boundary": "Arithmetic sum only. Separate routed designs include different shells, clocks, placement, routing, and duplicated/shared logic; this is not merged implementation evidence."
+  },
+  "first_cache_candidate": {
+    "object": "reg_output_cache[0:383]",
+    "why": "Its write and export-read phases are mutually exclusive and the access rate is one byte per export cycle, unlike halo, weights, DW cache, and parameter arrays that require parallel reads.",
+    "possible_trade": "one ERAM20K for up to 64 mapped DRAM LUTs in these shells",
+    "status": "candidate_not_implemented_not_synthesized",
+    "required_before_change": [
+      "prove the added synchronous read latency and export valid/index behavior",
+      "run the existing 384-byte export comparison",
+      "synthesize the same shell and confirm actual Slice/ERAM/timing change"
+    ]
+  },
+  "public_gate_matrix": {
+    "compile": "not_run_in_this_review",
+    "ast": "not_run_in_this_review",
+    "readability": "not_run_in_this_review",
+    "comment": "not_run_in_this_review",
+    "naming": "not_run_in_this_review",
+    "profile": "not_run_in_this_review",
+    "testbench": "not_requested",
+    "toolchain": "not_requested"
+  },
+  "evidence_boundary": [
+    "No RTL, simulation, synthesis, TD, training, ROM generation, bitstream, board, or Flash action was performed.",
+    "The mapped-memory counts are exact for each named saved physical report, but capacities and port descriptions come from that report's matched RTL source closure.",
+    "No existing shell report contains the 56-ERAM schema2 parameter ROM or a real video-template merge."
+  ]
+}

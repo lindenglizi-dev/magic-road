@@ -1,0 +1,272 @@
+{
+  "report_kind": "independent_read_only_epoch6_diagnostic_review",
+  "date": "2026-10-03",
+  "role": "verify",
+  "scope": {
+    "source_edits": false,
+    "gpu_used_by_reviewer": false,
+    "blind_or_newtest_pixels_read": false,
+    "owned_output_only": "cnn/reports/epoch6_diagnostic_review_20261003.json",
+    "reviewed": [
+      "cnn/evaluate.py",
+      "cnn/test_evaluate.py",
+      "cnn/metrics.py",
+      "cnn/runs/coco_full_pretrain300/last.pt",
+      "cnn/reports/epoch6_coco_val256_cpu_20261003.json",
+      "cnn/reports/epoch6_coco_val5000_cpu_20261003.json",
+      "cnn/reports/epoch6_visdrone_val256_cpu_20261003.json"
+    ]
+  },
+  "reviewed_source_snapshot": {
+    "cnn/evaluate.py": "b8b5fb9dc6bc2a4315a3a5f1a253c841627066fa191792a422c93b8f9adf3850",
+    "cnn/test_evaluate.py": "a885c934a57177df8864748541ffb56c2512379a8934b2a38b1195a80ba6f27e",
+    "cnn/metrics.py": "8cddbf6b713668edc4b4104f2054954ec0462e81efa6593d4c1e31866d1d7fb3"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "resume_checkpoint_eligible": true,
+    "diagnostic_implementation_acceptable": true,
+    "formal_accuracy_acceptance": false,
+    "summary": "The raw diagnostic path fails closed on manifest/schema/label/completeness errors, binds same-domain evaluation to the checkpoint manifest and declared content identity, rehashes every selected JPEG, and keeps default full evaluation behavior. Recomputed stored metrics and GT/ignore rows match. Results remain development diagnostics only."
+  },
+  "checkpoint": {
+    "path": "cnn/runs/coco_full_pretrain300/last.pt",
+    "sha256": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "format": "road-yolo-checkpoint-v2",
+    "epoch_zero_based": 5,
+    "completed_epoch_number": 6,
+    "trained_optimizer_steps": 11094,
+    "phase": "supervised",
+    "checkpoint_kind": "training",
+    "interrupted": false,
+    "resume_eligible": true,
+    "dataset_sha256": "0bee36fd90cc78fd48cfc5a8d80ace60b66ce72ebe8eafaeb116602561566100",
+    "dataset_content_sha256": "c1b9f929435fdb14d2c37946db44da66d8503ab903f56fe2b6c478f697c51906",
+    "last_modified_local": "2026-10-03T09:05:17+08:00",
+    "train_log_last_modified_local": "2026-10-03T09:05:17+08:00",
+    "final_process_check": "No python process whose executable path was the dedicated road_yolo_venv was present at the final review check."
+  },
+  "implementation_checks": {
+    "same_domain_subset": {
+      "manifest_binding": "The current full dataset JSON SHA-256 must equal checkpoint.dataset_sha256 before evaluation.",
+      "schema_and_labels": "audit(payload) scans every declared row and validates detection schema, class order, label/box alignment, finite positive half-open boxes, ignore metadata, and incomplete-frame count; the subset loader additionally restricts all rows to train/val raw_image rows with SHA-256 source hashes and rejects scene leakage.",
+      "declared_content_identity": "All declared (normalized image path, source_sha256) pairs reproduce checkpoint.dataset_content_sha256 without opening unselected pixels.",
+      "current_byte_scope": "Only selected validation JPEGs are rehashed and decoded. Train and unselected validation JPEG pixels are not read by the subset path.",
+      "report_scope": "image_verification_scope explicitly says selected_raw_val_bytes_only; other_hashes_manifest_declared. This is not a full current-content audit."
+    },
+    "development_domain_subset": {
+      "guard": "Requires explicit --development-domain together with positive --max-images; all rows must still be eligible raw train/val rows and selected JPEG hashes must match their manifest declarations.",
+      "identity_reporting": "The evaluation manifest SHA is separate from checkpoint training_dataset_sha256 and training_dataset_content_sha256; dataset_content_sha256 is null rather than pretending the development domain matches training content.",
+      "acceptance": "status remains diagnostic_not_formal_acceptance and acceptance_eligible is false."
+    },
+    "selection": {
+      "rule": "Sort validation rows by image string and choose floor(i*N/K), i=0..K-1.",
+      "label_and_prediction_independent": true,
+      "deterministic": true,
+      "coco_5000_choose_256": {
+        "first_index": 0,
+        "last_index": 4980,
+        "omitted_sorted_tail_count": 19,
+        "spacing": "19 or 20 positions"
+      },
+      "warning": "This is left-edge systematic sampling, not random, stratified, endpoint-symmetric, or an unbiased population sample. Sorted names can correlate with source/capture order. Subset metrics have no sampling confidence interval."
+    },
+    "preprocess_and_postprocess": {
+      "preprocess": "FullFrameDataset uses the training raw path: JPEG BGR decode, RGB conversion, explicit 1280x720 letterbox, bit-exact area resize to 512x288, then minus 128.",
+      "inference": "FP32 CNN outputs are quantized to Q7.8 before the frozen integer decoder; this is not an INT8-CNN accuracy result.",
+      "class_order_binding": "RoadYOLOS4 architecture_hash includes classes [person, vehicle] and output order [tx, ty, tw, th, objectness, person, vehicle].",
+      "postprocess_contract": {
+        "top_k_per_class": 128,
+        "max_boxes_per_class": 32,
+        "maximum_total_boxes_per_image": 64,
+        "nms_iou": 0.5,
+        "score_floor_uint16": 3276,
+        "score_floor_approx": 0.05
+      }
+    },
+    "metrics": "P/R at score 0.5 and AP50/AP50:95 are emitted even when no P95 operating threshold exists. The formal metrics field remains null when either class has no P95 threshold; the diagnostic report remains non-accepting.",
+    "default_full_mode": "With --max-images 0, the existing load_dataset_manifest path remains active and rehashes all manifest image bytes before evaluation. The final reviewed source only labels subset_selection and appends subset-bias text when image_count is less than total_validation_images.",
+    "output_safety": "Output uses exclusive creation mode and refuses an existing output path."
+  },
+  "independent_test_runs": [
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_evaluate -v",
+      "result": "1 passed"
+    },
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_evaluate cnn.test_metrics -v",
+      "result": "4 passed; repeated after the final metadata fix with the same result"
+    }
+  ],
+  "artifact_verification": {
+    "coco_val256": {
+      "path": "cnn/reports/epoch6_coco_val256_cpu_20261003.json",
+      "sha256": "359464bbcd9eedf7f8c52a371e6033e48c9e7af28ebff80a948b43000d531be0",
+      "device": "cpu",
+      "threads": 4,
+      "selected_images": 256,
+      "total_val_images": 5000,
+      "predictions": 2253,
+      "ground_truth_boxes": 647,
+      "ignore_boxes": 9,
+      "checks": {
+        "manifest_sha_matches_checkpoint": true,
+        "selected_current_jpeg_hashes_passed": true,
+        "evaluated_content_hash_recomputed_equal": true,
+        "truth_rows_exactly_match_selected_manifest": true,
+        "ignore_rows_exactly_match_selected_manifest": true,
+        "thresholds_recomputed_equal": true,
+        "diagnostic_metrics_recomputed_equal": true
+      },
+      "score_0_5": {
+        "person": {
+          "precision": 0.5036496350364964,
+          "recall": 0.1350293542074364,
+          "ap50": 0.17618228055355895,
+          "ap50_95": 0.0554137881914761
+        },
+        "vehicle": {
+          "precision": 0.5555555555555556,
+          "recall": 0.03676470588235294,
+          "ap50": 0.11912828025272879,
+          "ap50_95": 0.035038202865742274
+        }
+      },
+      "p95_thresholds": {
+        "person": 0.77,
+        "vehicle": null
+      }
+    },
+    "coco_val5000": {
+      "path": "cnn/reports/epoch6_coco_val5000_cpu_20261003.json",
+      "sha256": "6c758c2b139b761e223873a4470ae0ef006edccf8d852cb4f6aaeff82efa3c6c",
+      "device": "cpu",
+      "threads": 4,
+      "selected_images": 5000,
+      "total_val_images": 5000,
+      "predictions": 44986,
+      "ground_truth_boxes": 14073,
+      "ignore_boxes": 250,
+      "checks": {
+        "manifest_sha_matches_checkpoint": true,
+        "all_val_current_jpeg_hashes_passed": true,
+        "train_current_jpeg_hashes_reverified": false,
+        "declared_val_content_hash_matches_evaluated_hash": true,
+        "truth_rows_exactly_match_full_val_manifest": true,
+        "ignore_rows_exactly_match_full_val_manifest": true,
+        "thresholds_recomputed_equal": true,
+        "diagnostic_metrics_recomputed_equal": true
+      },
+      "score_0_5": {
+        "person": {
+          "precision": 0.5650172612197929,
+          "recall": 0.1366799665955275,
+          "ap50": 0.18616605745138154,
+          "ap50_95": 0.058751452608892606
+        },
+        "vehicle": {
+          "precision": 0.29411764705882354,
+          "recall": 0.00758495145631068,
+          "ap50": 0.05606134302753632,
+          "ap50_95": 0.014568103366363638
+        }
+      },
+      "map50_two_class": 0.12111370023945893,
+      "p95_thresholds": {
+        "person": 0.84,
+        "vehicle": null
+      },
+      "historical_metadata_note": "This run started before the final metadata-only source fix. Its validation_subset is correctly false, but subset_selection is still non-null and postprocess_contract is absent. This review records the actual contract; the stored predictions and recomputed metrics are unaffected. It used the raw max-images path, so all 5000 val bytes, but not train bytes, were currently reverified."
+    },
+    "visdrone_val256_development_domain": {
+      "path": "cnn/reports/epoch6_visdrone_val256_cpu_20261003.json",
+      "sha256": "db5dc5006d3448c1a987179b96d6e53fe358456cf53ad49c9be8b6cc6ab0449b",
+      "evaluation_manifest_sha256": "ad353c5bce5b0ecef0433c74515324bbfdb031e92aff964cd56c18ae069d9fe4",
+      "training_manifest_sha256": "0bee36fd90cc78fd48cfc5a8d80ace60b66ce72ebe8eafaeb116602561566100",
+      "device": "cpu",
+      "threads": 2,
+      "timing_note": "Threads=2 was intentionally used concurrently with the COCO full-val threads=4 run. Its timing is not threads=4 evidence; metric definitions are unchanged.",
+      "selected_images": 256,
+      "total_val_images": 5151,
+      "predictions": 6283,
+      "ground_truth_boxes": 14659,
+      "ignore_boxes": 1507,
+      "checks": {
+        "development_domain_explicit": true,
+        "selected_current_jpeg_hashes_passed": true,
+        "evaluated_content_hash_recomputed_equal": true,
+        "truth_rows_exactly_match_selected_manifest": true,
+        "ignore_rows_exactly_match_selected_manifest": true,
+        "thresholds_recomputed_equal": true,
+        "diagnostic_metrics_recomputed_equal": true
+      },
+      "score_0_5": {
+        "person": {
+          "precision": 0.18055555555555555,
+          "recall": 0.003353973168214654,
+          "ap50": 0.018980240729239598,
+          "ap50_95": 0.004606071122137566
+        },
+        "vehicle": {
+          "precision": 0.6,
+          "recall": 0.0002782157099137531,
+          "ap50": 0.01644498007367174,
+          "ap50_95": 0.005216829555071568
+        }
+      },
+      "p95_thresholds": {
+        "person": null,
+        "vehicle": null
+      },
+      "global_gt_comparison": {
+        "full_val": {
+          "images": 5151,
+          "person_boxes": 78746,
+          "vehicle_boxes": 216104,
+          "median_box_width_height_network_pixels": [11.428572000000003, 12.380952000000008],
+          "area_below_64_network_pixels_fraction": 0.22359504832965915
+        },
+        "selected_256": {
+          "person_boxes": 3876,
+          "vehicle_boxes": 10783,
+          "median_box_width_height_network_pixels": [11.466666999999973, 12.369748000000016],
+          "area_below_64_network_pixels_fraction": 0.2246401528071492
+        },
+        "interpretation": "The selected GT count and size mix is close to the full declared val distribution, but temporal/name correlation and lack of randomization still prevent a representative-sample claim."
+      },
+      "max32_structural_recall_ceiling": {
+        "person": 0.9858101135190919,
+        "vehicle": 0.6433274598905685,
+        "vehicle_images_with_more_than_32_gt": 147,
+        "warning": "Even a perfect ranker cannot reach R85 for vehicle on this subset under max_boxes_per_class=32. This development-domain result cannot be used for the P95/R85 acceptance gate."
+      }
+    }
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "topic": "systematic_subset_bias",
+      "evidence": "For COCO N=5000,K=256 the rule selects indices 0..4980 and omits the last 19 sorted rows. Vehicle score-0.5 precision/recall changed from 0.5556/0.0368 on 256 images to 0.2941/0.00758 on all 5000.",
+      "disposition": "Keep subset metrics diagnostic only; use the completed all-5000 report for COCO validation conclusions."
+    },
+    {
+      "severity": "warning",
+      "topic": "crowded_domain_postprocess_ceiling",
+      "evidence": "VisDrone selected vehicle GT=10783, and 147/256 images contain more than 32 vehicle GT. Per-class max32 yields a theoretical vehicle recall ceiling of 0.643327.",
+      "disposition": "Do not interpret VisDrone P95/R85 as an acceptance test unless the fixed deployment postprocess contract changes; retain it only as a domain diagnostic."
+    },
+    {
+      "severity": "info",
+      "topic": "no_p95_threshold",
+      "evidence": "COCO full validation found person threshold 0.84 with precision 1.0 but recall 0.0000928; vehicle has no P95 threshold. Formal metrics is therefore null and acceptance_eligible=false.",
+      "disposition": "The epoch-6 checkpoint has detection metrics now, but does not meet accuracy acceptance."
+    },
+    {
+      "severity": "info",
+      "topic": "historical_report_metadata",
+      "evidence": "The all-5000 report began before the final metadata-only fix, so it says subset_selection even though validation_subset=false and omits postprocess_contract.",
+      "disposition": "No inference or metric rerun is required. Use this companion review plus the final evaluate.py snapshot for the corrected scope/contract."
+    }
+  ],
+  "remaining_risk": "The evaluator hashes selected JPEG bytes before decoding them, so a concurrent file replacement between hash and decode is a residual local TOCTOU risk. No such drift was observed. The stored diagnostics are float-CNN plus fixed-point decoder results, not INT8-CNN, FPGA throughput, formal road acceptance, or newtest evidence."
+}

@@ -1,0 +1,111 @@
+{
+  "status": "CONDITIONAL_READY_FOR_RTL",
+  "scope": "Two unchanged round pipelines, one unchanged SiLU pipeline, external handshake metadata, atomic MAC-result buffering, and serialized INT8 writeback.",
+  "interface": {
+    "status": "PASS_WITH_PORT_NAMES_PENDING",
+    "requirements": [
+      "A MAC task reserves one of two atomic result slots on its accepted first beat; Q + R <= 2 and R <= 1 at every edge.",
+      "A terminal MAC handshake supplies signed alpha/beta/gamma, atomic fault, layer, position, and base/output channel identity.",
+      "i_channel_base is aligned to three lanes. DW uses a one-hot i_lane_mask and emits base+selected-lane; the 24-channel PW uses bases 0..21 in steps of three and mask 3'b111.",
+      "Output is ready/valid signed INT8 with the unchanged 16-bit tag layout {layer[0], position[3:0], channel[4:0], reserved[5:0]}.",
+      "Exact wrapper port names and hierarchical verification taps must be frozen before the testbench is compiled."
+    ]
+  },
+  "reset": {
+    "status": "PASS_IF_IMPLEMENTED",
+    "requirements": [
+      "Asynchronous low reset cancels both group entries, the reservation, all round valid/tag/fault stages, all SiLU valid stages, all eight metadata valid entries, and pending output valid.",
+      "Reset does not claim to clear RAM contents; the table-loaded state follows the unchanged SiLU contract and requires complete reload before inference.",
+      "A terminal MAC fault emits no scalar, latches tile fault, prevents tile publication, and recovery requires reset plus table reload.",
+      "Test reset independently while each pipeline stage, each FIFO slot, the reservation, and output hold contain valid state."
+    ]
+  },
+  "timing_pipeline": {
+    "status": "PASS_IF_IMPLEMENTED",
+    "requirements": [
+      "Both road_round_shift instances remain nine enabled register stages with II=1; silu_shared_unit remains six enabled stages with II=1 and no tag port.",
+      "With no stalls, scalar accepted by pre-round at edge t is visible final-valid after edge t+23 and writes on handshake edge t+24.",
+      "Pipeline busy intervals overlap and must not be summed as core latency.",
+      "A held final output must keep INT8 data and tag stable; downstream backpressure may fill empty upstream stages but may not create an extra handshake after capacity is exhausted."
+    ]
+  },
+  "handshake_fsm": {
+    "status": "PASS_IF_IMPLEMENTED",
+    "requirements": [
+      "The two-entry FIFO pushes only on actual terminal MAC result handshake and pops a group only after its last selected scalar is accepted by pre-round.",
+      "Metadata pushes only on actual SiLU input handshake and pops only on actual SiLU output handshake; clock-based tag shifting is forbidden.",
+      "Pre-round advance depends on whether its tail can enter SiLU; post-round advance depends on whether final output can transfer.",
+      "Simultaneous push/pop must preserve count and order. Queue-full handling must be proven with the reservation included, not only completed results.",
+      "A held table reload request blocks only new admission. It must not block draining already accepted queue/pre/SiLU/meta/post work; table ready asserts only after global drain.",
+      "The testbench scoreboard is keyed by tag and phase because independent stages can produce debug events on the same edge."
+    ]
+  },
+  "width": {
+    "status": "PASS_IF_IMPLEMENTED",
+    "requirements": [
+      "MAC inputs are signed INT32 and are sign-extended before multiplying by fixed pre factors 1, 3, and 5 in a signed 64-bit product.",
+      "Lane shifts are 0, 2, and 4; post factor is 1 and post shift is 4; both round stages use nearest-even and signed INT16 saturation.",
+      "Final INT8 saturation is combinational over the held post-round INT16 value.",
+      "Channel addition is checked before five-bit packing; the actual PW runner rejects base above 21 and DW rejects selected channels above 15.",
+      "The six reserved tag bits are opaque identity bits. Any temporary phase encoding must be explicitly stripped or contractually exposed at the final output."
+    ]
+  },
+  "synthesis": {
+    "status": "REQUIRES_LATER_EVIDENCE",
+    "requirements": [
+      "Instantiate two unchanged road_round_shift blocks and one unchanged silu_shared_unit; do not clone SiLU RAM or change MAC arithmetic.",
+      "Infer only two complete triple entries and eight 16-bit metadata entries; fixed coefficient optimization is tool evidence, not an RTL assumption.",
+      "No gated clocks, new timing exceptions, training, board programming, Flash changes, or production-core edits are in scope.",
+      "Physical evidence must use a new top containing the real runner, dynamic stores, MAC, both rounds, SiLU RAM, queues, writeback, readback, and narrow shell."
+    ]
+  },
+  "testbench_coverage": {
+    "status": "PLANNED",
+    "required_cases": [
+      "continuous scalar flow and PW three-lane ordering",
+      "input bubbles",
+      "long output backpressure with stable data/tag",
+      "both group slots full plus denied third reservation",
+      "all four FIFO push/pop combinations, including a second group push while alpha or beta of the head is consumed",
+      "1023-entry partial table denies input, and a held address-zero reload waits through global drain without deadlock",
+      "reset with valid state in every pipeline stage and FIFO position",
+      "terminal fault in alpha, beta, and gamma with atomic suppression",
+      "DW selected-lane changes and PW lane-specific coefficients",
+      "all four frozen v8 layer cases with acc/pre/silu/post/output checked by layer-position-channel-phase",
+      "original v9 MAC 123 vectors and original v8 four-layer regression rerun from copied inputs in the new stage"
+    ],
+    "invalid_pass_conditions": [
+      "readmem warning or missing vector file",
+      "X/Z value accepted as a comparison pass",
+      "assuming old single debug-port event order",
+      "claiming a tool or physical result that was not run"
+    ]
+  },
+  "risks": [
+    {
+      "severity": "HIGH",
+      "risk": "Result capacity can be overbooked while a MAC task is still in flight.",
+      "control": "Reserve on accepted first beat and assert Q + R <= 2, R <= 1 every edge."
+    },
+    {
+      "severity": "HIGH",
+      "risk": "SiLU has no tag port and stalls globally at its output.",
+      "control": "Use the external eight-entry FIFO driven only by actual SiLU input/output handshakes."
+    },
+    {
+      "severity": "HIGH",
+      "risk": "A fault after earlier internal writes can expose a partial tile.",
+      "control": "Latch tile fault and prohibit done/export; reset and complete table reload are the only recovery."
+    },
+    {
+      "severity": "MEDIUM",
+      "risk": "Fixed latency is incorrectly asserted while stalled.",
+      "control": "Assert +23/+24 only in the no-stall case; otherwise verify conservation, order, stability, and eventual progress after ready returns."
+    },
+    {
+      "severity": "MEDIUM",
+      "risk": "Old serial debug assumptions miss simultaneous stage handshakes.",
+      "control": "Expose independent stage handshakes to a tag-indexed scoreboard."
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+--- frozen/down2_dynamic_tile_runner.v
++++ candidate/down2_dynamic_tile_runner.v
+@@ -479,7 +479,8 @@
+ 				end
+ 			end
+ 			ST_DW_DRAIN:begin
+-				if(cnt_dw_writes == 9'd256)begin
++				// Other clear/increment cases already require a fault-qualified acceptance.
++				if((cnt_dw_writes == 9'd256) && (~pp_fault) && (~flag_load_fault))begin
+ 					flag_cnt_output_clear = 1'b1;
+ 				end
+ 			end
+@@ -722,8 +723,7 @@
+ 		if(i_rstn == 1'b0)begin
+ 			cnt_output <= 5'd0;
+ 		end else begin
+-			if(pp_fault || flag_load_fault)begin
+-			end else if(flag_cnt_output_clear)begin
++			if(flag_cnt_output_clear)begin
+ 				cnt_output <= 5'd0;
+ 			end else if(flag_cnt_output_increment)begin
+ 				cnt_output <= cnt_output + 1'b1;
+--- frozen/road_dynamic_postprocess.v
++++ candidate/road_dynamic_postprocess.v
+@@ -169,26 +169,28 @@
+     assign o_silu_accept = flag_silu_accept;
+     assign o_post_accept = flag_post_accept;
+ 
+-    // Refill selection on acceptance; a full queue may conservatively bubble.
+-    reg flag_select_valid;
+-    reg select_entry;
+-    reg [2:0]select_mask;
+-    reg [1:0]select_lane;
+-    always @(*) begin
+-        select_entry = reg_ingress_read;
+-        select_mask = reg_ingress_mask[reg_ingress_read];
+-        flag_select_valid = reg_ingress_count != 2'd0;
+-        if (flag_pre_accept) begin
+-            if (reg_pre_last) begin
+-                select_entry = !reg_ingress_read;
+-                select_mask = reg_ingress_mask[!reg_ingress_read];
+-                flag_select_valid = reg_ingress_count > 2'd1;
+-            end else begin
+-                select_mask = select_mask & ~(3'b001 << reg_pre_tag[1:0]);
+-            end
+-        end
+-        select_lane = select_mask[0] ? 2'd0 : select_mask[1] ? 2'd1 : 2'd2;
+-    end
++    // Select both payloads without ready feedback through the memory read address.
++    wire [2:0]wire_head_mask = reg_ingress_mask[reg_ingress_read];
++    wire [1:0]wire_head_lane = wire_head_mask[0] ? 2'd0 : wire_head_mask[1] ? 2'd1 : 2'd2;
++    wire wire_follow_entry = reg_pre_last ? !reg_ingress_read : reg_ingress_read;
++    wire [2:0]wire_follow_mask = reg_pre_last ? reg_ingress_mask[!reg_ingress_read] :
++        wire_head_mask & ~(3'b001 << reg_pre_tag[1:0]);
++    wire [1:0]wire_follow_lane = wire_follow_mask[0] ? 2'd0 : wire_follow_mask[1] ? 2'd1 : 2'd2;
++    wire flag_follow_valid = reg_pre_last ? reg_ingress_count > 2'd1 : reg_ingress_count != 2'd0;
++    wire flag_select_valid = flag_pre_accept ? flag_follow_valid : reg_ingress_count != 2'd0;
++    // TD SWUG106 keep preserves these combinational boundaries, not an extra pipeline stage.
++    (* keep *) wire [85:0]wire_head_payload = {
++        reg_ingress_acc[reg_ingress_read][wire_head_lane*32 +: 32],
++        reg_ingress_mul[reg_ingress_read][wire_head_lane*32 +: 31],
++        reg_ingress_shift[reg_ingress_read][wire_head_lane*6 +: 6],
++        11'd0,reg_ingress_slot[reg_ingress_read],wire_head_lane,
++        wire_head_mask == (3'b001 << wire_head_lane)};
++    (* keep *) wire [85:0]wire_follow_payload = {
++        reg_ingress_acc[wire_follow_entry][wire_follow_lane*32 +: 32],
++        reg_ingress_mul[wire_follow_entry][wire_follow_lane*32 +: 31],
++        reg_ingress_shift[wire_follow_entry][wire_follow_lane*6 +: 6],
++        11'd0,reg_ingress_slot[wire_follow_entry],wire_follow_lane,
++        wire_follow_mask == (3'b001 << wire_follow_lane)};
+ 
+     road_dynamic_requant u_pre(
+         .i_clk(i_clk),.i_rstn(i_rstn),
+@@ -295,11 +297,8 @@
+             if (!flag_pre_buffer_valid || flag_pre_accept) begin
+                 flag_pre_buffer_valid <= flag_select_valid;
+                 if (flag_select_valid) begin
+-                    reg_pre_acc <= reg_ingress_acc[select_entry][select_lane*32 +: 32];
+-                    reg_pre_mul <= reg_ingress_mul[select_entry][select_lane*32 +: 31];
+-                    reg_pre_shift <= reg_ingress_shift[select_entry][select_lane*6 +: 6];
+-                    reg_pre_tag <= {11'd0,reg_ingress_slot[select_entry],select_lane};
+-                    reg_pre_last <= select_mask == (3'b001 << select_lane);
++                    {reg_pre_acc,reg_pre_mul,reg_pre_shift,reg_pre_tag,reg_pre_last} <=
++                        flag_pre_accept ? wire_follow_payload : wire_head_payload;
+                 end
+             end
+             if (flag_pre_complete) begin

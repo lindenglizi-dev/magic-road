@@ -1,0 +1,1150 @@
+Created by          : Tang Dynasty v6.2.168116
+                    : Copyright (c) 2012-2025 Anlogic Inc.
+Generated           : Thu Oct  8 19:44:37 2026
+
+Top Model           : road_dynamic_low_io_top
+Device              : PH1P35MDG324
+Speed               : 3
+STA coverage        : 100.00%
+Constraint File     : E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/diagnostic_repair_20261008/candidate/physical/shell.sdc;
+Confidence          : Routed
+Check Corner        : Both (Slow and Fast)
+CRPR Enabled        : Yes
+Report Scheme       : 10 end point(s) per path group, 1 path(s) per end point
+
+
+Check Status
+-------------
+
+Corner   | Max      Min     
+------------------------------------
+Slow     | yes      yes     
+Fast     | yes      yes     
+
+
+Timing Status
+--------------------
+	SWNS: 0.001ns, STNS: 0.000ns
+	HWNS: -1.024ns, HTNS: -12.411ns
+	Period Check WNS: 0.000ns
+
+
+Clock Summary
+--------------------
+
+       Clock-Id:       C-Freq       Fanout   Clock-Name
+--------------------------------------------------------------------------------
+           clk0:      100.000         1181   probe_clk
+--------------------------------------------------------------------------------
+
+       Name            Type         Rise(ns)   Fall(ns)          C-Period(ns)     C-Freq(MHz)          R-Period(ns)     R-Freq(MHz)         SWNS(ns)   STNS(ns)         HWNS(ns)   HTNS(ns)         Skew(ns)           Fanout        Max-Level        CC-From    CC-To
+       clk0   Inferred GCLK            0.000      5.000                10.000         100.000                 9.999         100.010            0.001      0.000           -1.024    -12.411            0.175             1181                8             no       no
+
+Notes
+----------
+C-Period  :  constraint period
+C-Freq    :  constraint freq
+R-Period  :  report min period
+R-Freq    :  report fmax
+CC-From   :  has path(s) from cross-domain clock
+CC-To     :  has path(s) to cross-domain clock
+
+
+*   Clock R-Period data only takes intra-clock timing. SWNS/STNS/HWNS/HTNS take both intra-clock and inter-clock timing.
+*   If there is mismatch between R-Period and SWNS, check inter-clock timing of this clock as capture clock.
+*   SWNS/STNS/HWNS/HTNS of timing exception (SMCP/SMD) only counted in global Timing Status, not counted in Clock Summary.
+
+Intra clock domain timing
+--------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Path Group     :     probe_clk -> probe_clk
+Type           :     Self
+From Clock     :     probe_clk
+To Clock       :     probe_clk
+Min Period     :     9.999ns
+Fmax           :     100.010MHz
+
+Statistics:
+Max            : SWNS      0.001ns, STNS      0.000ns,         0 Viol Endpoints,      5331 Total Endpoints,    171677 Paths Analyzed
+Min            : HWNS     -1.024ns, HTNS    -12.411ns,        35 Viol Endpoints,      5331 Total Endpoints,    171677 Paths Analyzed
+----------------------------------------------------------------------------------------------------
+
+Max Paths
+----------------------------------------------------------------------------------------------------
+Slack               : 0.001ns
+Begin Point         : reg_table_addr_reg[2]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_rx_ready (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.972ns (cell 3.362ns (48%), net 3.610ns (52%))
+Clock Skew          : 2.977ns
+Logic Level         : 5 ( LUT6=2  HDIO=2  LUT5=1 )
+Max Fanout          : 7
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.633          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_table_addr_reg[2]_syn_2.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x013y027z0          0.137    r     3.114          pin: reg_table_addr_reg[2]_syn_2.oqb
+net (fo=7)                              0.628          3.742          net: reg_table_addr[3],  ../rtl/road_dynamic_low_io_top.v(20)
+                                                                      pin: reg_remaining_reg[2]_syn_44.id
+LUT6                x012y030z0          0.231    f     3.973       1  pin: reg_remaining_reg[2]_syn_44.ofb
+net (fo=2)                              0.349          4.322          net: reg_remaining_reg[2]_syn_13,  ../rtl/road_dynamic_low_io_top.v(55)
+                                                                      pin: reg_remaining_reg[2]_syn_48.ic
+LUT6                x012y031z3          0.287    r     4.609       2  pin: reg_remaining_reg[2]_syn_48.ofb
+net (fo=2)                              0.752          5.361          net: o_rx_ready_n3,  NOFILE(0)
+                                                                      pin: o_rx_ready_syn_5.id
+LUT5                x022y023z7          0.266    r     5.627       3  pin: o_rx_ready_syn_5.ofb
+net (fo=2)                              1.881          7.508          net: o_rx_ready_dup_1,  ../rtl/road_dynamic_low_io_top.v(8)
+                                                                      pin: o_rx_ready_syn_2.doq[0]
+HDIO                x026y078            0.911    r     8.419       4  pin: o_rx_ready_syn_2.sg09_do
+HDIO                x026y078            1.530    f     9.949       5  pin: o_rx_ready_syn_2.opad
+net (fo=1)                              0.000          9.949          net: o_rx_ready,  ../rtl/road_dynamic_low_io_top.v(8)
+                                                                      pin: o_rx_ready
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.949               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.001               
+
+Slack               : 0.031ns
+Begin Point         : reg_release_done_reg_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_valid (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.943ns (cell 3.483ns (50%), net 3.460ns (50%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT5=1 )
+Max Fanout          : 895
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_release_done_reg_syn_5.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x020y026z4          0.126    f     3.102          pin: reg_release_done_reg_syn_5.oqa
+net (fo=895)                            0.626          3.728          net: u_chain/i_rstn,  ../rtl/road_dynamic_postprocess.v(6)
+                                                                      pin: o_tx_valid_syn_4.ie
+LUT5                x016y028z0          0.189    r     3.917       1  pin: o_tx_valid_syn_4.ofb
+net (fo=1)                              2.834          6.751          net: o_tx_valid_dup_1,  ../rtl/road_dynamic_low_io_top.v(9)
+                                                                      pin: o_tx_valid_syn_2.doq[0]
+PAD                 x043y076            0.648    r     7.399       2  pin: o_tx_valid_syn_2.sg09_do
+PAD                 x043y076            2.520    r     9.919       3  pin: o_tx_valid_syn_2.opad
+net (fo=1)                              0.000          9.919          net: o_tx_valid,  ../rtl/road_dynamic_low_io_top.v(9)
+                                                                      pin: o_tx_valid
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.919               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.031               
+
+Slack               : 0.040ns
+Begin Point         : reg_tx_index_reg[0]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_data[0] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.934ns (cell 3.693ns (53%), net 3.241ns (47%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT5=1 )
+Max Fanout          : 19
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_tx_index_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x016y027z7          0.126    f     3.102          pin: reg_tx_index_reg[0]_syn_5.oqa
+net (fo=19)                             0.456          3.558          net: reg_tx_index[0],  ../rtl/road_dynamic_low_io_top.v(24)
+                                                                      pin: o_tx_data[0]_syn_4.ia
+LUT5                x018y027z5          0.399    f     3.957       1  pin: o_tx_data[0]_syn_4.ofb
+net (fo=1)                              2.785          6.742          net: o_tx_data[0]_dup_1,  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[0]_syn_2.doq[0]
+PAD                 x043y073            0.648    r     7.390       2  pin: o_tx_data[0]_syn_2.sg09_do
+PAD                 x043y073            2.520    r     9.910       3  pin: o_tx_data[0]_syn_2.opad
+net (fo=1)                              0.000          9.910          net: o_tx_data[0],  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[0]
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.910               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.040               
+
+Slack               : 0.061ns
+Begin Point         : reg_tx_data_reg[2]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_data[2] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.913ns (cell 3.693ns (53%), net 3.220ns (47%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT4=1 )
+Max Fanout          : 1
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_tx_data_reg[2]_syn_2.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x018y024z1          0.126    f     3.102          pin: reg_tx_data_reg[2]_syn_2.oqa
+net (fo=1)                              0.440          3.542          net: reg_tx_data[2],  ../rtl/road_dynamic_low_io_top.v(25)
+                                                                      pin: o_tx_data[2]_syn_4.ia
+LUT4                x016y024z7          0.399    f     3.941       1  pin: o_tx_data[2]_syn_4.ofb
+net (fo=1)                              2.780          6.721          net: o_tx_data[2]_dup_1,  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[2]_syn_2.doq[0]
+PAD                 x043y067            0.648    r     7.369       2  pin: o_tx_data[2]_syn_2.sg09_do
+PAD                 x043y067            2.520    r     9.889       3  pin: o_tx_data[2]_syn_2.opad
+net (fo=1)                              0.000          9.889          net: o_tx_data[2],  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[2]
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.889               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.061               
+
+Slack               : 0.064ns
+Begin Point         : reg_tx_index_reg[0]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_data[1] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.910ns (cell 3.702ns (53%), net 3.208ns (47%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT5=1 )
+Max Fanout          : 19
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_tx_index_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x016y027z7          0.126    f     3.102          pin: reg_tx_index_reg[0]_syn_5.oqa
+net (fo=19)                             0.435          3.537          net: reg_tx_index[0],  ../rtl/road_dynamic_low_io_top.v(24)
+                                                                      pin: o_tx_data[1]_syn_4.ib
+LUT5                x018y025z5          0.408    f     3.945       1  pin: o_tx_data[1]_syn_4.ofb
+net (fo=1)                              2.773          6.718          net: o_tx_data[1]_dup_1,  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[1]_syn_2.doq[0]
+PAD                 x043y070            0.648    r     7.366       2  pin: o_tx_data[1]_syn_2.sg09_do
+PAD                 x043y070            2.520    r     9.886       3  pin: o_tx_data[1]_syn_2.opad
+net (fo=1)                              0.000          9.886          net: o_tx_data[1],  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[1]
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.886               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.064               
+
+Slack               : 0.109ns
+Begin Point         : reg_tx_index_reg[0]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_data[3] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.865ns (cell 3.693ns (53%), net 3.172ns (47%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT4=1 )
+Max Fanout          : 19
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_tx_index_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x016y027z7          0.126    f     3.102          pin: reg_tx_index_reg[0]_syn_5.oqa
+net (fo=19)                             0.574          3.676          net: reg_tx_index[0],  ../rtl/road_dynamic_low_io_top.v(24)
+                                                                      pin: o_tx_data[3]_syn_4.ia
+LUT4                x016y025z2          0.399    f     4.075       1  pin: o_tx_data[3]_syn_4.ofb
+net (fo=1)                              2.598          6.673          net: o_tx_data[3]_dup_1,  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[3]_syn_2.doq[0]
+PAD                 x043y064            0.648    r     7.321       2  pin: o_tx_data[3]_syn_2.sg09_do
+PAD                 x043y064            2.520    r     9.841       3  pin: o_tx_data[3]_syn_2.opad
+net (fo=1)                              0.000          9.841          net: o_tx_data[3],  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[3]
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.841               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.109               
+
+Slack               : 0.133ns
+Begin Point         : reg_tx_index_reg[0]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_data[4] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.841ns (cell 3.704ns (54%), net 3.137ns (46%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT4=1 )
+Max Fanout          : 19
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_tx_index_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x016y027z7          0.137    r     3.113          pin: reg_tx_index_reg[0]_syn_5.oqb
+net (fo=19)                             0.674          3.787          net: reg_tx_index[1],  ../rtl/road_dynamic_low_io_top.v(24)
+                                                                      pin: o_tx_data[4]_syn_4.ia
+LUT4                x017y024z1          0.399    f     4.186       1  pin: o_tx_data[4]_syn_4.ofb
+net (fo=1)                              2.463          6.649          net: o_tx_data[4]_dup_1,  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[4]_syn_2.doq[0]
+PAD                 x043y061            0.648    r     7.297       2  pin: o_tx_data[4]_syn_2.sg09_do
+PAD                 x043y061            2.520    r     9.817       3  pin: o_tx_data[4]_syn_2.opad
+net (fo=1)                              0.000          9.817          net: o_tx_data[4],  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[4]
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.817               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.133               
+
+Slack               : 0.153ns
+Begin Point         : reg_tx_index_reg[0]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_data[7] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.821ns (cell 3.704ns (54%), net 3.117ns (46%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT4=1 )
+Max Fanout          : 19
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_tx_index_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x016y027z7          0.137    r     3.113          pin: reg_tx_index_reg[0]_syn_5.oqb
+net (fo=19)                             1.050          4.163          net: reg_tx_index[1],  ../rtl/road_dynamic_low_io_top.v(24)
+                                                                      pin: o_tx_data[7]_syn_4.ia
+LUT4                x018y027z0          0.399    f     4.562       1  pin: o_tx_data[7]_syn_4.ofb
+net (fo=1)                              2.067          6.629          net: o_tx_data[7]_dup_1,  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[7]_syn_2.doq[0]
+PAD                 x043y050            0.648    r     7.277       2  pin: o_tx_data[7]_syn_2.sg09_do
+PAD                 x043y050            2.520    r     9.797       3  pin: o_tx_data[7]_syn_2.opad
+net (fo=1)                              0.000          9.797          net: o_tx_data[7],  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[7]
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.797               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.153               
+
+Slack               : 0.158ns
+Begin Point         : reg_tx_index_reg[0]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_data[8] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.816ns (cell 3.588ns (52%), net 3.228ns (48%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT4=1 )
+Max Fanout          : 19
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_tx_index_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x016y027z7          0.137    r     3.113          pin: reg_tx_index_reg[0]_syn_5.oqb
+net (fo=19)                             1.192          4.305          net: reg_tx_index[1],  ../rtl/road_dynamic_low_io_top.v(24)
+                                                                      pin: o_tx_data[8]_syn_4.ic
+LUT4                x017y027z3          0.283    r     4.588       1  pin: o_tx_data[8]_syn_4.ofb
+net (fo=1)                              2.036          6.624          net: o_tx_data[8]_dup_1,  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[8]_syn_2.doq[0]
+PAD                 x043y047            0.648    r     7.272       2  pin: o_tx_data[8]_syn_2.sg09_do
+PAD                 x043y047            2.520    r     9.792       3  pin: o_tx_data[8]_syn_2.opad
+net (fo=1)                              0.000          9.792          net: o_tx_data[8],  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[8]
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.792               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.158               
+
+Slack               : 0.209ns
+Begin Point         : reg_tx_index_reg[0]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_tx_data[9] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 6.765ns (cell 3.704ns (54%), net 3.061ns (46%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( PAD=2  LUT4=1 )
+Max Fanout          : 19
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_tx_index_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x016y027z7          0.126    f     3.102          pin: reg_tx_index_reg[0]_syn_5.oqa
+net (fo=19)                             0.683          3.785          net: reg_tx_index[0],  ../rtl/road_dynamic_low_io_top.v(24)
+                                                                      pin: u_chain/reg_result_beta_reg[12]_syn_2.ic
+LUT4                x019y025z1          0.410    f     4.195       1  pin: u_chain/reg_result_beta_reg[12]_syn_2.ofa
+net (fo=1)                              2.378          6.573          net: o_tx_data[9]_dup_1,  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[9]_syn_2.doq[0]
+PAD                 x043y044            0.648    r     7.221       2  pin: o_tx_data[9]_syn_2.sg09_do
+PAD                 x043y044            2.520    r     9.741       3  pin: o_tx_data[9]_syn_2.opad
+net (fo=1)                              0.000          9.741          net: o_tx_data[9],  ../rtl/road_dynamic_low_io_top.v(10)
+                                                                      pin: o_tx_data[9]
+--------------------------------------------------------------------  ---------------
+Arrival                                                9.741               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.209               
+
+
+
+Min Paths
+----------------------------------------------------------------------------------------------------
+Slack               : -1.024ns
+Begin Point         : i_rx_data[7] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[6] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.350ns (cell 0.745ns (31%), net 1.605ns (69%))
+Clock Skew          : 3.047ns
+Logic Level         : 3 ( HDIO=2  ERAM=1 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[7]
+net (fo=1)                              0.000          0.000          net: i_rx_data[7],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[7]_syn_12.ipad
+HDIO                x013y001            0.745    r     0.745       1  pin: i_rx_data[7]_syn_12.sg09_di
+HDIO                x013y001            0.000    f     0.745       2  pin: i_rx_data[7]_syn_12.di
+net (fo=3)                              1.605          2.350          net: i_rx_data[7]_dup_11,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[6]
+ERAM (reg)          x023y028            0.000    f     2.350       3       
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.350               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.703          3.047          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     3.047               
+--------------------------------------------------------------------  ---------------
+hold                                    0.327          3.374               
+clock uncertainty                       0.000          3.374               
+clock pessimism                         0.000          3.374               
+--------------------------------------------------------------------  ---------------
+Required                                               3.374               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.024               
+
+Slack               : -1.014ns
+Begin Point         : i_rx_data[11] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : reg_packet_reg[299]_syn_2.ima (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.001ns (cell 0.823ns (41%), net 1.178ns (59%))
+Clock Skew          : 2.977ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[11]
+net (fo=1)                              0.000          0.000          net: i_rx_data[11],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[11]_syn_12.ipad
+HDIO                x008y000            0.745    r     0.745       1  pin: i_rx_data[11]_syn_12.sg09_di
+HDIO                x008y000            0.000    f     0.745       2  pin: i_rx_data[11]_syn_12.di
+net (fo=3)                              1.178          1.923          net: i_rx_data[11]_dup_11,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: reg_packet_reg[299]_syn_2.ima
+reg                 x013y022z6          0.078    f     2.001          net: reg_packet[299],  ../rtl/road_dynamic_low_io_top.v(22)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.001               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.633          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_packet_reg[299]_syn_2.clk
+capture edge                            0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.015               
+clock uncertainty                       0.000          3.015               
+clock pessimism                         0.000          3.015               
+--------------------------------------------------------------------  ---------------
+Required                                               3.015               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.014               
+
+Slack               : -0.986ns
+Begin Point         : i_rx_data[8] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : reg_packet_reg[296]_syn_2.ima (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.029ns (cell 0.823ns (40%), net 1.206ns (60%))
+Clock Skew          : 2.977ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[8]
+net (fo=1)                              0.000          0.000          net: i_rx_data[8],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[8]_syn_12.ipad
+HDIO                x012y000            0.745    r     0.745       1  pin: i_rx_data[8]_syn_12.sg09_di
+HDIO                x012y000            0.000    f     0.745       2  pin: i_rx_data[8]_syn_12.di
+net (fo=3)                              1.206          1.951          net: i_rx_data[8]_dup_11,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: reg_packet_reg[296]_syn_2.ima
+reg                 x013y026z4          0.078    f     2.029          net: reg_packet[296],  ../rtl/road_dynamic_low_io_top.v(22)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.029               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.633          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_packet_reg[296]_syn_2.clk
+capture edge                            0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.015               
+clock uncertainty                       0.000          3.015               
+clock pessimism                         0.000          3.015               
+--------------------------------------------------------------------  ---------------
+Required                                               3.015               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.986               
+
+Slack               : -0.983ns
+Begin Point         : i_rx_data[4] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia_extra[0] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.242ns (cell 0.745ns (33%), net 1.497ns (67%))
+Clock Skew          : 3.047ns
+Logic Level         : 3 ( HDIO=2  ERAM=1 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[4]
+net (fo=1)                              0.000          0.000          net: i_rx_data[4],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[4]_syn_12.ipad
+HDIO                x017y001            0.745    r     0.745       1  pin: i_rx_data[4]_syn_12.sg09_di
+HDIO                x017y001            0.000    f     0.745       2  pin: i_rx_data[4]_syn_12.di
+net (fo=3)                              1.497          2.242          net: i_rx_data[4]_dup_11,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia_extra[0]
+ERAM (reg)          x023y028            0.000    f     2.242       3       
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.242               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.703          3.047          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     3.047               
+--------------------------------------------------------------------  ---------------
+hold                                    0.178          3.225               
+clock uncertainty                       0.000          3.225               
+clock pessimism                         0.000          3.225               
+--------------------------------------------------------------------  ---------------
+Required                                               3.225               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.983               
+
+Slack               : -0.802ns
+Begin Point         : i_rx_data[5] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : reg_packet_reg[271]_syn_2.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.212ns (cell 0.811ns (36%), net 1.401ns (64%))
+Clock Skew          : 2.976ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[5]
+net (fo=1)                              0.000          0.000          net: i_rx_data[5],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[5]_syn_12.ipad
+HDIO                x016y000            0.745    r     0.745       1  pin: i_rx_data[5]_syn_12.sg09_di
+HDIO                x016y000            0.000    f     0.745       2  pin: i_rx_data[5]_syn_12.di
+net (fo=3)                              1.401          2.146          net: i_rx_data[5]_dup_11,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: reg_packet_reg[271]_syn_2.imb
+reg                 x016y026z4          0.066    f     2.212          net: reg_packet[293],  ../rtl/road_dynamic_low_io_top.v(22)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.212               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_packet_reg[271]_syn_2.clk
+capture edge                            0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.014               
+clock uncertainty                       0.000          3.014               
+clock pessimism                         0.000          3.014               
+--------------------------------------------------------------------  ---------------
+Required                                               3.014               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.802               
+
+Slack               : -0.793ns
+Begin Point         : i_rx_data[14] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : reg_packet_reg[302]_syn_2.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.222ns (cell 0.811ns (36%), net 1.411ns (64%))
+Clock Skew          : 2.977ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[14]
+net (fo=1)                              0.000          0.000          net: i_rx_data[14],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[14]_syn_6.ipad
+HDIO                x004y000            0.745    r     0.745       1  pin: i_rx_data[14]_syn_6.sg09_di
+HDIO                x004y000            0.000    f     0.745       2  pin: i_rx_data[14]_syn_6.di
+net (fo=3)                              1.411          2.156          net: i_rx_data[14]_dup_5,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: reg_packet_reg[302]_syn_2.imb
+reg                 x013y023z4          0.066    f     2.222          net: reg_packet[302],  ../rtl/road_dynamic_low_io_top.v(22)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.222               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.633          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_packet_reg[302]_syn_2.clk
+capture edge                            0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.015               
+clock uncertainty                       0.000          3.015               
+clock pessimism                         0.000          3.015               
+--------------------------------------------------------------------  ---------------
+Required                                               3.015               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.793               
+
+Slack               : -0.610ns
+Begin Point         : i_rx_data[13] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[11] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.764ns (cell 0.745ns (26%), net 2.019ns (74%))
+Clock Skew          : 3.047ns
+Logic Level         : 3 ( HDIO=2  ERAM=1 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[13]
+net (fo=1)                              0.000          0.000          net: i_rx_data[13],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[13]_syn_8.ipad
+HDIO                x005y001            0.745    r     0.745       1  pin: i_rx_data[13]_syn_8.sg09_di
+HDIO                x005y001            0.000    f     0.745       2  pin: i_rx_data[13]_syn_8.di
+net (fo=3)                              2.019          2.764          net: i_rx_data[13]_dup_7,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[11]
+ERAM (reg)          x023y028            0.000    f     2.764       3       
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.764               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.703          3.047          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     3.047               
+--------------------------------------------------------------------  ---------------
+hold                                    0.327          3.374               
+clock uncertainty                       0.000          3.374               
+clock pessimism                         0.000          3.374               
+--------------------------------------------------------------------  ---------------
+Required                                               3.374               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.610               
+
+Slack               : -0.593ns
+Begin Point         : i_rx_data[4] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : reg_packet_reg[292]_syn_2.ima (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.423ns (cell 0.823ns (33%), net 1.600ns (67%))
+Clock Skew          : 2.978ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[4]
+net (fo=1)                              0.000          0.000          net: i_rx_data[4],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[4]_syn_12.ipad
+HDIO                x017y001            0.745    r     0.745       1  pin: i_rx_data[4]_syn_12.sg09_di
+HDIO                x017y001            0.000    f     0.745       2  pin: i_rx_data[4]_syn_12.di
+net (fo=3)                              1.600          2.345          net: i_rx_data[4]_dup_11,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: reg_packet_reg[292]_syn_2.ima
+reg                 x015y023z6          0.078    f     2.423          net: reg_packet[292],  ../rtl/road_dynamic_low_io_top.v(22)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.423               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.634          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_packet_reg[292]_syn_2.clk
+capture edge                            0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.016               
+clock uncertainty                       0.000          3.016               
+clock pessimism                         0.000          3.016               
+--------------------------------------------------------------------  ---------------
+Required                                               3.016               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.593               
+
+Slack               : -0.471ns
+Begin Point         : i_rx_data[10] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[8] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.903ns (cell 0.745ns (25%), net 2.158ns (75%))
+Clock Skew          : 3.047ns
+Logic Level         : 3 ( HDIO=2  ERAM=1 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[10]
+net (fo=1)                              0.000          0.000          net: i_rx_data[10],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[10]_syn_12.ipad
+HDIO                x009y001            0.745    r     0.745       1  pin: i_rx_data[10]_syn_12.sg09_di
+HDIO                x009y001            0.000    f     0.745       2  pin: i_rx_data[10]_syn_12.di
+net (fo=3)                              2.158          2.903          net: i_rx_data[10]_dup_11,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[8]
+ERAM (reg)          x023y028            0.000    f     2.903       3       
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.903               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.703          3.047          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     3.047               
+--------------------------------------------------------------------  ---------------
+hold                                    0.327          3.374               
+clock uncertainty                       0.000          3.374               
+clock pessimism                         0.000          3.374               
+--------------------------------------------------------------------  ---------------
+Required                                               3.374               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.471               
+
+Slack               : -0.466ns
+Begin Point         : i_rx_data[8] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[7] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.908ns (cell 0.745ns (25%), net 2.163ns (75%))
+Clock Skew          : 3.047ns
+Logic Level         : 3 ( HDIO=2  ERAM=1 )
+Max Fanout          : 3
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rx_data[8]
+net (fo=1)                              0.000          0.000          net: i_rx_data[8],  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: i_rx_data[8]_syn_12.ipad
+HDIO                x012y000            0.745    r     0.745       1  pin: i_rx_data[8]_syn_12.sg09_di
+HDIO                x012y000            0.000    f     0.745       2  pin: i_rx_data[8]_syn_12.di
+net (fo=3)                              2.163          2.908          net: i_rx_data[8]_dup_11,  ../rtl/road_dynamic_low_io_top.v(7)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[7]
+ERAM (reg)          x023y028            0.000    f     2.908       3       
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.908               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_dynamic_low_io_top.v(4)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=705)                            0.703          3.047          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_chain/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     3.047               
+--------------------------------------------------------------------  ---------------
+hold                                    0.327          3.374               
+clock uncertainty                       0.000          3.374               
+clock pessimism                         0.000          3.374               
+--------------------------------------------------------------------  ---------------
+Required                                               3.374               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.466               
+
+
+Inter clock domain timing
+--------------------------------------------------
+
+IP timing
+--------------------------------------------------

@@ -1,0 +1,393 @@
+{
+  "modules": [
+    {
+      "name": "road_dynamic_postprocess",
+      "feature": "r",
+      "rtl_path": "road_dynamic_postprocess.v",
+      "description": "Approved control-only repair with unchanged ports, latency, II and numerical contract",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {
+            "name": "i_clk",
+            "width": 1,
+            "direction": "input",
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "width": 1,
+            "direction": "input",
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_table_valid",
+            "description": "i_table_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_addr",
+            "width": 10,
+            "direction": "input",
+            "role": "i_table_addr",
+            "description": "i_table_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_data",
+            "width": 16,
+            "direction": "input",
+            "role": "i_table_data",
+            "description": "i_table_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_ready",
+            "description": "o_table_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_loaded",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_loaded",
+            "description": "o_table_loaded",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_input_valid",
+            "description": "i_input_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_accumulators",
+            "width": 96,
+            "direction": "input",
+            "role": "i_accumulators",
+            "description": "i_accumulators",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pre_multipliers",
+            "width": 96,
+            "direction": "input",
+            "role": "i_pre_multipliers",
+            "description": "i_pre_multipliers",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pre_shifts",
+            "width": 18,
+            "direction": "input",
+            "role": "i_pre_shifts",
+            "description": "i_pre_shifts",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_post_multiplier",
+            "width": 32,
+            "direction": "input",
+            "role": "i_post_multiplier",
+            "description": "i_post_multiplier",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_post_shift",
+            "width": 6,
+            "direction": "input",
+            "role": "i_post_shift",
+            "description": "i_post_shift",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_activate",
+            "width": 1,
+            "direction": "input",
+            "role": "i_activate",
+            "description": "i_activate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_lane_mask",
+            "width": 3,
+            "direction": "input",
+            "role": "i_lane_mask",
+            "description": "i_lane_mask",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tags",
+            "width": 48,
+            "direction": "input",
+            "role": "i_tags",
+            "description": "i_tags",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_fault",
+            "width": 1,
+            "direction": "input",
+            "role": "i_input_fault",
+            "description": "i_input_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_input_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_input_ready",
+            "description": "o_input_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "width": 1,
+            "direction": "input",
+            "role": "i_output_ready",
+            "description": "i_output_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "width": 1,
+            "direction": "output",
+            "role": "o_output_valid",
+            "description": "o_output_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "width": 16,
+            "direction": "output",
+            "role": "o_output_data",
+            "description": "o_output_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_tag",
+            "width": 16,
+            "direction": "output",
+            "role": "o_output_tag",
+            "description": "o_output_tag",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_int16",
+            "width": 1,
+            "direction": "output",
+            "role": "o_output_int16",
+            "description": "o_output_int16",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "width": 1,
+            "direction": "output",
+            "role": "o_fault",
+            "description": "o_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_queue_count",
+            "width": 2,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "retire queue occupancy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pending_count",
+            "width": 4,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "pending input metadata occupancy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_meta_count",
+            "width": 4,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "accepted batch metadata occupancy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_busy",
+            "width": 1,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "dynamic pre-requant stage active",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_busy",
+            "width": 1,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "shared SiLU or identity stage active",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_busy",
+            "width": 1,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "dynamic post-requant stage active",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_accept",
+            "width": 1,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "pre stage transfer pulse",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_accept",
+            "width": 1,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "SiLU or identity stage transfer pulse",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_accept",
+            "width": 1,
+            "direction": "output",
+            "role": "diagnostic",
+            "description": "post stage transfer pulse",
+            "clock_domain": "i_clk"
+          }
+        ],
+        "handshake_channels": [
+          {
+            "id": "table",
+            "valid": "i_table_valid",
+            "ready": "o_table_ready",
+            "payload": [
+              "i_table_addr",
+              "i_table_data"
+            ]
+          },
+          {
+            "id": "batch",
+            "valid": "i_input_valid",
+            "ready": "o_input_ready",
+            "payload": [
+              "i_accumulators",
+              "i_pre_multipliers",
+              "i_pre_shifts",
+              "i_post_multiplier",
+              "i_post_shift",
+              "i_activate",
+              "i_lane_mask",
+              "i_tags",
+              "i_input_fault"
+            ]
+          },
+          {
+            "id": "result",
+            "valid": "o_output_valid",
+            "ready": "i_output_ready",
+            "payload": [
+              "o_output_data",
+              "o_output_tag",
+              "o_output_int16"
+            ]
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Cancel batch and all child valid immediately; clear fatal and require all 1024 table entries again. Caller synchronizes release."
+      },
+      "behavior": [
+        "A batch transfers only on valid and ready; capture all three coefficients, shifts, accumulators and opaque tags together.",
+        "Input ready remains zero until sequential table addresses 0..1023 have transferred.",
+        "Retirement ownership, mask, done, emit, seen, ordered head selection and eight-entry capacity remain unchanged.",
+        "Store retirement result data as alpha, beta and gamma arrays of eight complete signed16 elements instead of one eight-by-48 packed array; the POST and RAW paths each use a static if/else-if chain to select exactly one complete bank element.",
+        "Keep one result-write transaction per clock. POST completion has priority; when POST and RAW identity completion coincide, the existing ready gate and POST-first branch defer RAW rather than dual-writing, even for different slots or lanes.",
+        "Set the selected lane done bit and its complete signed16 bank element on the same accepted completion edge.",
+        "Output selects the head entry emit lane from the corresponding bank and holds valid, tag, data and int16 mode under backpressure.",
+        "Reset cancellation, sticky fault behavior, arithmetic, interface II, acceptance sequence and visible cycle behavior remain unchanged.",
+        "MAC A0 retains activation, weight, bias and mask on nonaccept; valid, first and last clear. Reset still clears all A0 registers.",
+        "PRE selection computes the successor whenever buffer valid; only !buffer_valid or real PRE acceptance updates the buffer.",
+        "No additional pipeline stage; all numerical operations and valid-qualified retirement remain unchanged."
+      ],
+      "constraints": [
+        "Bounded structural candidate only; it is not a new FIFO and does not increase retirement capacity beyond eight entries or 384 result bits.",
+        "All module ports, ready-valid ownership, POST-over-RAW priority, arithmetic source, numeric behavior and reset semantics are immutable.",
+        "No same-cycle dual retirement-data write is permitted; performance claims require the unchanged regression and actual implementation evidence.",
+        "No ROM parameter loader, DDR, model weights, production integration, bitstream or board validation is introduced."
+      ],
+      "corner_cases": [
+        "POST and RAW identity completion target the same or different slot/lane on the same cycle: POST completes first and RAW remains pending.",
+        "Sparse lane masks, ring wrap, simultaneous queue push/pop, long output backpressure, sticky fault and reset with every bank occupied.",
+        "Output valid data and tags must remain known and stable while ready is low."
+      ],
+      "verification_cases": [
+        "Run the frozen 330-batch core regression with sparse masks, retire wrap, RAW/POST collision, faults and eight reset positions.",
+        "Compare every output datum, tag, order, mode, acceptance count, queue high-water mark and visible cycle count with the packed baseline.",
+        "Check no X or Z reaches valid output; classify synthesis drive warnings by exact baseline differential.",
+        "Re-run the actual runtime and layer physical tops plus the strict eight-gate matrix without suppressing prior failures."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "control_hold",
+          "title": "Accepted input and bubble",
+          "scenario": "control_hold",
+          "description": "Payload retained through bubble; only accepted input has valid ownership.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p...."
+              },
+              {
+                "name": "accept",
+                "wave": "01010"
+              },
+              {
+                "name": "A0_payload",
+                "wave": "x=.=.",
+                "data": [
+                  "A",
+                  "B"
+                ]
+              },
+              {
+                "name": "A0_valid",
+                "wave": "00101"
+              }
+            ],
+            "head": {
+              "text": "Same latency and II; bubble carries no transaction"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

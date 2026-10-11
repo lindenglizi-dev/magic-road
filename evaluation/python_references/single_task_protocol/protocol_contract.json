@@ -1,0 +1,30 @@
+{
+  "status": "executable_protocol_reference_not_RTL",
+  "single_outstanding": true,
+  "mailbox_payload_stability": "source holds transaction/frame/bank/payload until matching synchronized ack",
+  "publish_payload": "frame/object payload is frozen at source EOF publication; SOF payload is capture metadata/default only",
+  "destination_copy_point": "request arrival after request synchronizer",
+  "ack_point": "destination explicit RAM-last-read; ack arrival releases only the source bank while the copied task may remain in HOG/SVM",
+  "busy_destination_mailbox": "one synchronized request remains visible and stable while the old copied task finishes; it is accepted immediately when the executor becomes idle",
+  "algorithm_done": "may occur only after RAM-last-read and creates display CDC update",
+  "same_cycle_priority": [
+    "coordinated reset",
+    "CDC arrivals",
+    "source SOF",
+    "source EOF",
+    "HDMI VSYNC"
+  ],
+  "busy_policy": "a free second bank may capture while one task is outstanding; if matching ack has not arrived by EOF, that whole captured frame is discarded instead of queued",
+  "duplicate_policy": "duplicates whose full identity differs are counted and ignored; finite-width full-tuple wrap cannot distinguish an arbitrarily delayed old ack",
+  "reset": "coordinated reset clears banks, mailboxes, destination task, queued CDC events and display tables",
+  "nominal_identity_widths": {
+    "source_frame_id": 32,
+    "transaction_id": 32,
+    "bank_generation": 32
+  },
+  "identity_width_status": "Python nominal values only; arch_lead must freeze RTL widths from frame rate and maximum stale-message lifetime",
+  "frame_wrap": "frame IDs compare modulo 4294967296; transaction identity remains independent until the complete identity tuple aliases",
+  "bank_generation": "each round-robin bank allocation increments its own generation modulo 4294967296; transaction/frame/bank/generation all participate in ack matching",
+  "wrap_safety_requirement": "the maximum lifetime of any synchronized request/ack must be strictly shorter than the minimum full-identity alias interval; use a level/toggle handshake plus coordinated reset flushing, and prove this bound before RTL",
+  "HDMI": "CDC result writes pending; the latest completed snapshot before the modeled VSYNC boundary event wins; VSYNC atomically replaces active, records both display/source frame IDs plus frame_id_modulo_delta, and active is frozen until another VSYNC; the delta is not latency unless the two counters share a measured epoch/cadence; RTL must freeze the physical VSYNC edge/polarity"
+}

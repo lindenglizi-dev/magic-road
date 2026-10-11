@@ -1,0 +1,6 @@
+首次TD生成返回0，产生bit文件，但run.py后置验证失败，因此首次文件不是本阶段交付文件。
+具体失败：run.py第77行 imported.ts 与冻结route.ts不一致；首次报告覆盖率0.00%，没有时钟组。
+根因：import_db已经恢复原SDC，再read_sdc同一约束导致sys_clk_50m重复定义。td.log中的USR-6122/USR-8170/USR-8159给出直接证据。
+不是RTL时序恶化，也不是原布局覆盖率变成0；旧334项冻结文件前后校验无变化。
+修正：保留首次脚本和generation全部记录，在generation_attempt2中仅移除重复read_sdc，使用数据库原约束。不添加例外、不改SDC、不重综合/布局。
+第二次须同时通过实际C7 PAD/资源、99.98%覆盖率及全量端点/角点/余量与冻结报告完全一致检查，方发布bitstream_receipt.json。

@@ -1,0 +1,1009 @@
+{
+  "schema": "ddr_roi_pair_explanation_v1",
+  "scope": "Historical saved-artifact re-index only; no video decode, crop, feature extraction, model run, training, or threshold scan.",
+  "model_contract": {
+    "artifact_status": "diagnostic_float_model_not_frozen_not_rtl",
+    "positive_class": "vehicle",
+    "decision_rule": "score >= 0 is vehicle; score < 0 is ped",
+    "float_score": "sum(weight_float[i] * saved_feature_float[i]) + bias_float",
+    "integer_score": "bias_q followed by feature_q[i] * weight_q[i], i=0..323, signed int64 reference",
+    "feature_quantization": "round-to-nearest Q1.12 (scale 4096)",
+    "weight_quantization": "round(weight * (32767 / max_abs_weight)) to signed 16-bit",
+    "deployment_boundary": "The hash-bound HOG324 artifact declares diagnostic_float_model_not_frozen_not_rtl."
+  },
+  "crop_contract": {
+    "input": "inclusive crop on the saved 256x144 stride-5 analysis grayscale plane",
+    "source_mapping": "[x0*5,y0*5,min(1279,x1*5+4),min(719,y1*5+4)] inclusive sample footprint",
+    "resize": "32x32 uint8 via fpga_resize_roi pixel-centre Q8 nearest-neighbour DDA",
+    "axis_index_formula": "min((input_size * (4 + 8 * output_index)) >> 8, input_size - 1)"
+  },
+  "pairs": [
+    {
+      "identity": "f000360_p01",
+      "ground_truth": {
+        "class": "ped",
+        "visibility": "full",
+        "source_bbox_inclusive": [
+          766,
+          554,
+          816,
+          681
+        ]
+      },
+      "observed": {
+        "component_relation": "merged_multiple_old_components",
+        "overlapping_baseline_component_labels": [
+          46,
+          62,
+          70
+        ],
+        "shape_relation": "minrun_box_contains_baseline_box",
+        "baseline": {
+          "candidate_id": "local_baseline_main4:f000360:slot2:cc46",
+          "component_label": 46,
+          "component_area": 96,
+          "candidate_rank": 3,
+          "analysis_crop": {
+            "inclusive_box": [
+              154,
+              112,
+              161,
+              132
+            ],
+            "width": 8,
+            "height": 21,
+            "resize_output": [
+              32,
+              32
+            ],
+            "resize_contract": "pixel-centre Q8 nearest-neighbour DDA",
+            "x_source_indices_within_crop": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              2,
+              2,
+              2,
+              2,
+              3,
+              3,
+              3,
+              3,
+              4,
+              4,
+              4,
+              4,
+              5,
+              5,
+              5,
+              5,
+              6,
+              6,
+              6,
+              6,
+              7,
+              7,
+              7,
+              7
+            ],
+            "y_source_indices_within_crop": [
+              0,
+              0,
+              1,
+              2,
+              2,
+              3,
+              4,
+              4,
+              5,
+              6,
+              6,
+              7,
+              8,
+              8,
+              9,
+              10,
+              10,
+              11,
+              12,
+              12,
+              13,
+              14,
+              14,
+              15,
+              16,
+              16,
+              17,
+              18,
+              18,
+              19,
+              20,
+              20
+            ]
+          },
+          "source_sample_footprint_inclusive": [
+            770,
+            560,
+            809,
+            664
+          ],
+          "iou_with_ground_truth": 0.6433823529411765,
+          "saved_roi": {
+            "copied_path": "images/f000360_p01_baseline_roi32.png",
+            "source_path": "evaluation/local_scene_pilots/intersection_2415171_crop_change_v2/rois/t001_f000360_p01_baseline_roi32.png",
+            "png_sha256": "66eff3398efa6e547bd116c744509e534a964b5245ffabaf11046d9030685610",
+            "pixel_sha256": "d50004bce7b62848e9fec99f1f7fa3eef3fcc4dfa7307531a1bfc5f93c32360a"
+          },
+          "saved_scores": {
+            "hog64_feature_sha256": "ba51fde580239d3f0b79a84faa067b7ff7dcf23560d84af420863ba7474466ac",
+            "hog64_score": "3.35560399551",
+            "hog64_prediction": "vehicle",
+            "hog324_feature_sha256": "a7559d21da38a187dfa49dc772a6d7bedde62149dc382751cd9d9f24280df5e2",
+            "hog324_float_score": "-1.28174762494",
+            "hog324_float_prediction": "ped",
+            "hog324_q_score_integer": "-94508688",
+            "hog324_q_score_normalized": "-1.28195514745",
+            "hog324_q_prediction": "ped"
+          },
+          "saved_hog324_vectors": {
+            "npz_prefix": "f000360_p01_before",
+            "dimension": 324,
+            "float_feature_sha256": "a7559d21da38a187dfa49dc772a6d7bedde62149dc382751cd9d9f24280df5e2",
+            "quantized_feature_sha256": "1bccaf3dc692a476a3ebb611da2fa3d926c4b4c109d98de10770e49c27ceb6d5",
+            "quantized_products_sha256": "7585b3d082ab10c7f2286db8888b25b2e6a9054cd6efa01ffd1c88433f59e425",
+            "bias_first_accumulator_sha256": "2b5becab1b7f9b11cf86d2a152c98d56847f04cb3bcd1fe79a9ba1005c44031a"
+          }
+        },
+        "min_run1": {
+          "candidate_id": "min_run1:f000360:rank3:cc52",
+          "component_label": 52,
+          "component_area": 110,
+          "candidate_rank": 3,
+          "analysis_crop": {
+            "inclusive_box": [
+              154,
+              112,
+              164,
+              135
+            ],
+            "width": 11,
+            "height": 24,
+            "resize_output": [
+              32,
+              32
+            ],
+            "resize_contract": "pixel-centre Q8 nearest-neighbour DDA",
+            "x_source_indices_within_crop": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              2,
+              2,
+              2,
+              3,
+              3,
+              3,
+              4,
+              4,
+              4,
+              5,
+              5,
+              6,
+              6,
+              6,
+              7,
+              7,
+              7,
+              8,
+              8,
+              8,
+              9,
+              9,
+              9,
+              10,
+              10,
+              10
+            ],
+            "y_source_indices_within_crop": [
+              0,
+              1,
+              1,
+              2,
+              3,
+              4,
+              4,
+              5,
+              6,
+              7,
+              7,
+              8,
+              9,
+              10,
+              10,
+              11,
+              12,
+              13,
+              13,
+              14,
+              15,
+              16,
+              16,
+              17,
+              18,
+              19,
+              19,
+              20,
+              21,
+              22,
+              22,
+              23
+            ]
+          },
+          "source_sample_footprint_inclusive": [
+            770,
+            560,
+            824,
+            679
+          ],
+          "iou_with_ground_truth": 0.7532051282051282,
+          "saved_roi": {
+            "copied_path": "images/f000360_p01_min_run1_roi32.png",
+            "source_path": "evaluation/local_scene_pilots/intersection_2415171_crop_change_v2/rois/t001_f000360_p01_minrun_roi32.png",
+            "png_sha256": "659dc88e2b09754be479f6acfcd761527096744d65aa07a5924f624626274d2a",
+            "pixel_sha256": "8f36d2a72ece52874756392c126b0c8f45351ca1d0363175eecbb68e9de7cb2a"
+          },
+          "saved_scores": {
+            "hog64_feature_sha256": "a9b07b78d1fa089bd70f8d7aee6461d25693e33a4b783e95b74fe0785ce878fc",
+            "hog64_score": "-3.58516283078",
+            "hog64_prediction": "ped",
+            "hog324_feature_sha256": "eee217d96afd0fecc32b619b41774c3f9fbbcfcf788851ee9757d335cb2c2bdf",
+            "hog324_float_score": "0.434055387746",
+            "hog324_float_prediction": "vehicle",
+            "hog324_q_score_integer": "31963081",
+            "hog324_q_score_normalized": "0.433560523202",
+            "hog324_q_prediction": "vehicle"
+          },
+          "saved_hog324_vectors": {
+            "npz_prefix": "f000360_p01_after",
+            "dimension": 324,
+            "float_feature_sha256": "eee217d96afd0fecc32b619b41774c3f9fbbcfcf788851ee9757d335cb2c2bdf",
+            "quantized_feature_sha256": "4e13c3538c6434b5b7dac9f0ce06348c49eb6987db9c54fde3cc7c92b59ac21a",
+            "quantized_products_sha256": "94047360ea8cbab32299f6610478a3a44282dec96c43252ebe61756571c3858b",
+            "bias_first_accumulator_sha256": "9110ad6af3a202f25f820d35b713f479750ce588d12aeb8164765415074e900f"
+          }
+        },
+        "hog324_float_score_delta": 1.7158030126827486,
+        "hog324_integer_score_delta": 126471769,
+        "hog324_integer_delta_reconstructed_from_324_saved_products": 126471769,
+        "changed_quantized_feature_count": 324,
+        "largest_saved_integer_product_delta_terms": [
+          {
+            "feature_index": 230,
+            "product_delta": 14445396
+          },
+          {
+            "feature_index": 304,
+            "product_delta": 13955828
+          },
+          {
+            "feature_index": 128,
+            "product_delta": 13754832
+          },
+          {
+            "feature_index": 295,
+            "product_delta": 11677766
+          },
+          {
+            "feature_index": 255,
+            "product_delta": 10957511
+          },
+          {
+            "feature_index": 221,
+            "product_delta": -10529001
+          },
+          {
+            "feature_index": 302,
+            "product_delta": 10147224
+          },
+          {
+            "feature_index": 320,
+            "product_delta": 9722740
+          },
+          {
+            "feature_index": 288,
+            "product_delta": -9060678
+          },
+          {
+            "feature_index": 264,
+            "product_delta": 8434019
+          },
+          {
+            "feature_index": 231,
+            "product_delta": 7832991
+          },
+          {
+            "feature_index": 242,
+            "product_delta": -7511637
+          }
+        ],
+        "top12_absolute_product_delta_share": 0.23481228848090144
+      },
+      "inference": "The changed inclusive crop and saved ROI pixels changed the stored HOG324 features; their linear contributions exactly reconstruct the ped-to-vehicle score crossing.",
+      "inference_limit": "Feature indices are raw OpenCV descriptor order. They are not assigned a visual or spatial meaning here, and the evidence does not identify which object owns an edge."
+    },
+    {
+      "identity": "f000690_p02",
+      "ground_truth": {
+        "class": "ped",
+        "visibility": "occluded",
+        "source_bbox_inclusive": [
+          0,
+          429,
+          61,
+          569
+        ]
+      },
+      "observed": {
+        "component_relation": "merged_multiple_old_components",
+        "overlapping_baseline_component_labels": [
+          38,
+          41,
+          46,
+          48
+        ],
+        "shape_relation": "minrun_box_contains_baseline_box",
+        "baseline": {
+          "candidate_id": "local_baseline_main4:f000690:slot2:cc41",
+          "component_label": 41,
+          "component_area": 79,
+          "candidate_rank": 3,
+          "analysis_crop": {
+            "inclusive_box": [
+              0,
+              90,
+              9,
+              107
+            ],
+            "width": 10,
+            "height": 18,
+            "resize_output": [
+              32,
+              32
+            ],
+            "resize_contract": "pixel-centre Q8 nearest-neighbour DDA",
+            "x_source_indices_within_crop": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              2,
+              2,
+              2,
+              2,
+              3,
+              3,
+              3,
+              4,
+              4,
+              4,
+              5,
+              5,
+              5,
+              6,
+              6,
+              6,
+              7,
+              7,
+              7,
+              7,
+              8,
+              8,
+              8,
+              9,
+              9,
+              9
+            ],
+            "y_source_indices_within_crop": [
+              0,
+              0,
+              1,
+              1,
+              2,
+              3,
+              3,
+              4,
+              4,
+              5,
+              5,
+              6,
+              7,
+              7,
+              8,
+              8,
+              9,
+              9,
+              10,
+              10,
+              11,
+              12,
+              12,
+              13,
+              13,
+              14,
+              14,
+              15,
+              16,
+              16,
+              17,
+              17
+            ]
+          },
+          "source_sample_footprint_inclusive": [
+            0,
+            450,
+            49,
+            539
+          ],
+          "iou_with_ground_truth": 0.5147563486616334,
+          "saved_roi": {
+            "copied_path": "images/f000690_p02_baseline_roi32.png",
+            "source_path": "evaluation/local_scene_pilots/intersection_2415171_crop_change_v2/rois/t003_f000690_p02_baseline_roi32.png",
+            "png_sha256": "7b287ab98a57a6737d4a707262bd95cef5160143ce8dedad784cadffbb59678a",
+            "pixel_sha256": "91cb1b51ccf98da68201f077109f0ee8ae17e41830b70a576316a95a85e8dc07"
+          },
+          "saved_scores": {
+            "hog64_feature_sha256": "47d30909621d2692d3aed92c52cb43181e0dc96ebf0f8080137b01548138da0d",
+            "hog64_score": "-0.522660023387",
+            "hog64_prediction": "ped",
+            "hog324_feature_sha256": "26aceaefd439480956450a8299ec8fdc96a2f2d73f3e9c3c47b01de49e369636",
+            "hog324_float_score": "-0.604131112368",
+            "hog324_float_prediction": "ped",
+            "hog324_q_score_integer": "-44521448",
+            "hog324_q_score_normalized": "-0.603907435851",
+            "hog324_q_prediction": "ped"
+          },
+          "saved_hog324_vectors": {
+            "npz_prefix": "f000690_p02_before",
+            "dimension": 324,
+            "float_feature_sha256": "26aceaefd439480956450a8299ec8fdc96a2f2d73f3e9c3c47b01de49e369636",
+            "quantized_feature_sha256": "9c8ec11b92bca63bbbca9afcc6e46b49623ee656e1166a57adcbbec47486b1d9",
+            "quantized_products_sha256": "9e777c80ca9cf389c40f0969d15bdd272f6046d1f1d5daea096165e904891fa3",
+            "bias_first_accumulator_sha256": "566b41669bb949ece2cbc619753b49104120eeb03c2c5e53871d5d384af95f9d"
+          }
+        },
+        "min_run1": {
+          "candidate_id": "min_run1:f000690:rank3:cc46",
+          "component_label": 46,
+          "component_area": 114,
+          "candidate_rank": 3,
+          "analysis_crop": {
+            "inclusive_box": [
+              0,
+              87,
+              9,
+              114
+            ],
+            "width": 10,
+            "height": 28,
+            "resize_output": [
+              32,
+              32
+            ],
+            "resize_contract": "pixel-centre Q8 nearest-neighbour DDA",
+            "x_source_indices_within_crop": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              2,
+              2,
+              2,
+              2,
+              3,
+              3,
+              3,
+              4,
+              4,
+              4,
+              5,
+              5,
+              5,
+              6,
+              6,
+              6,
+              7,
+              7,
+              7,
+              7,
+              8,
+              8,
+              8,
+              9,
+              9,
+              9
+            ],
+            "y_source_indices_within_crop": [
+              0,
+              1,
+              2,
+              3,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              24,
+              25,
+              26,
+              27
+            ]
+          },
+          "source_sample_footprint_inclusive": [
+            0,
+            435,
+            49,
+            574
+          ],
+          "iou_with_ground_truth": 0.7506672597864769,
+          "saved_roi": {
+            "copied_path": "images/f000690_p02_min_run1_roi32.png",
+            "source_path": "evaluation/local_scene_pilots/intersection_2415171_crop_change_v2/rois/t003_f000690_p02_minrun_roi32.png",
+            "png_sha256": "49ae591a47e214fcfe477bbf571629cdd03b2900978439c05e1dd33cab47b439",
+            "pixel_sha256": "f74df48e9ba0b3a2863683e6e04f15bfddec9378fdb92ec07cb1ebf33b93329b"
+          },
+          "saved_scores": {
+            "hog64_feature_sha256": "1e59b35e276e81b0c6085fb135b37890e9cd4449b5ef9a1ccacd9137bfccb57c",
+            "hog64_score": "1.97325113024",
+            "hog64_prediction": "vehicle",
+            "hog324_feature_sha256": "90c6fece9346677491fcfe8f9de072fc1ddd0a009d7bf58b9afe284b2cbfbc1d",
+            "hog324_float_score": "0.102480580735",
+            "hog324_float_prediction": "vehicle",
+            "hog324_q_score_integer": "7630269",
+            "hog324_q_score_normalized": "0.103500141924",
+            "hog324_q_prediction": "vehicle"
+          },
+          "saved_hog324_vectors": {
+            "npz_prefix": "f000690_p02_after",
+            "dimension": 324,
+            "float_feature_sha256": "90c6fece9346677491fcfe8f9de072fc1ddd0a009d7bf58b9afe284b2cbfbc1d",
+            "quantized_feature_sha256": "fd97639eee9f82dae62f03a640a81a829600112802dc874d71be1404753f60ee",
+            "quantized_products_sha256": "483c90a1ff3bf1fd2af02b52ebb6b2c91242bf1e818a60f5c2bada44f2a727e2",
+            "bias_first_accumulator_sha256": "67a070d72be47d1c45775e05431f3e49f76080c366c747ccf81478ac75b63b3e"
+          }
+        },
+        "hog324_float_score_delta": 0.7066116931024206,
+        "hog324_integer_score_delta": 52151717,
+        "hog324_integer_delta_reconstructed_from_324_saved_products": 52151717,
+        "changed_quantized_feature_count": 324,
+        "largest_saved_integer_product_delta_terms": [
+          {
+            "feature_index": 320,
+            "product_delta": 18923772
+          },
+          {
+            "feature_index": 212,
+            "product_delta": 17079125
+          },
+          {
+            "feature_index": 194,
+            "product_delta": 10486944
+          },
+          {
+            "feature_index": 146,
+            "product_delta": -7700245
+          },
+          {
+            "feature_index": 105,
+            "product_delta": 6166944
+          },
+          {
+            "feature_index": 89,
+            "product_delta": -5237088
+          },
+          {
+            "feature_index": 288,
+            "product_delta": -4808320
+          },
+          {
+            "feature_index": 215,
+            "product_delta": -4678554
+          },
+          {
+            "feature_index": 128,
+            "product_delta": 4648488
+          },
+          {
+            "feature_index": 79,
+            "product_delta": 4417842
+          },
+          {
+            "feature_index": 195,
+            "product_delta": 4380876
+          },
+          {
+            "feature_index": 80,
+            "product_delta": -4255029
+          }
+        ],
+        "top12_absolute_product_delta_share": 0.2987111737231626
+      },
+      "inference": "The changed inclusive crop and saved ROI pixels changed the stored HOG324 features; their linear contributions exactly reconstruct the ped-to-vehicle score crossing.",
+      "inference_limit": "Feature indices are raw OpenCV descriptor order. They are not assigned a visual or spatial meaning here, and the evidence does not identify which object owns an edge."
+    },
+    {
+      "identity": "f001050_p02",
+      "ground_truth": {
+        "class": "ped",
+        "visibility": "frame_truncated",
+        "source_bbox_inclusive": [
+          0,
+          3,
+          316,
+          719
+        ]
+      },
+      "observed": {
+        "component_relation": "merged_multiple_old_components",
+        "overlapping_baseline_component_labels": [
+          1,
+          7,
+          10,
+          13,
+          15,
+          17,
+          35,
+          38,
+          40,
+          47,
+          49,
+          52,
+          58,
+          66,
+          71
+        ],
+        "shape_relation": "minrun_box_contains_baseline_box",
+        "baseline": {
+          "candidate_id": "local_baseline_main4:f001050:slot0:cc13",
+          "component_label": 13,
+          "component_area": 2674,
+          "candidate_rank": 1,
+          "analysis_crop": {
+            "inclusive_box": [
+              0,
+              30,
+              53,
+              143
+            ],
+            "width": 54,
+            "height": 114,
+            "resize_output": [
+              32,
+              32
+            ],
+            "resize_contract": "pixel-centre Q8 nearest-neighbour DDA",
+            "x_source_indices_within_crop": [
+              0,
+              2,
+              4,
+              5,
+              7,
+              9,
+              10,
+              12,
+              14,
+              16,
+              17,
+              19,
+              21,
+              22,
+              24,
+              26,
+              27,
+              29,
+              31,
+              32,
+              34,
+              36,
+              37,
+              39,
+              41,
+              43,
+              44,
+              46,
+              48,
+              49,
+              51,
+              53
+            ],
+            "y_source_indices_within_crop": [
+              1,
+              5,
+              8,
+              12,
+              16,
+              19,
+              23,
+              26,
+              30,
+              33,
+              37,
+              40,
+              44,
+              48,
+              51,
+              55,
+              58,
+              62,
+              65,
+              69,
+              73,
+              76,
+              80,
+              83,
+              87,
+              90,
+              94,
+              97,
+              101,
+              105,
+              108,
+              112
+            ]
+          },
+          "source_sample_footprint_inclusive": [
+            0,
+            150,
+            269,
+            719
+          ],
+          "iou_with_ground_truth": 0.6771115188152528,
+          "saved_roi": {
+            "copied_path": "images/f001050_p02_baseline_roi32.png",
+            "source_path": "evaluation/local_scene_pilots/intersection_2415171_crop_change_v2/rois/t004_f001050_p02_baseline_roi32.png",
+            "png_sha256": "cb4a3d2e66b71d7811c3c70ac1ee70e30f222815a09ba5215c0042675768f5a1",
+            "pixel_sha256": "60aec25334a26e52a988839e1b904c0439b3520400746a885de4702de32bf969"
+          },
+          "saved_scores": {
+            "hog64_feature_sha256": "e8fd5bc41a96fc8133d767131c8e86f04fa1e61a13d092549998fe5d39db207e",
+            "hog64_score": "0.789848209581",
+            "hog64_prediction": "vehicle",
+            "hog324_feature_sha256": "39580da835816918a0ac37bb2059365125878f674b029da087fb1b4a2789a646",
+            "hog324_float_score": "-3.42520839075",
+            "hog324_float_prediction": "ped",
+            "hog324_q_score_integer": "-252482169",
+            "hog324_q_score_normalized": "-3.42477314033",
+            "hog324_q_prediction": "ped"
+          },
+          "saved_hog324_vectors": {
+            "npz_prefix": "f001050_p02_before",
+            "dimension": 324,
+            "float_feature_sha256": "39580da835816918a0ac37bb2059365125878f674b029da087fb1b4a2789a646",
+            "quantized_feature_sha256": "aa177221d2de3fce5d4b3195253a373400fc802e34f776253a88157187209ab2",
+            "quantized_products_sha256": "f71d041f9865a12c9dc4a64f3f4ce69d79ea204855486ae28362017ce1a709f8",
+            "bias_first_accumulator_sha256": "1170b8582f8eddd361efa88443c72eeb9de32cb5e0299ad90f500954f4e7e7d4"
+          }
+        },
+        "min_run1": {
+          "candidate_id": "min_run1:f001050:rank1:cc1",
+          "component_label": 1,
+          "component_area": 3465,
+          "candidate_rank": 1,
+          "analysis_crop": {
+            "inclusive_box": [
+              0,
+              1,
+              101,
+              143
+            ],
+            "width": 102,
+            "height": 143,
+            "resize_output": [
+              32,
+              32
+            ],
+            "resize_contract": "pixel-centre Q8 nearest-neighbour DDA",
+            "x_source_indices_within_crop": [
+              1,
+              4,
+              7,
+              11,
+              14,
+              17,
+              20,
+              23,
+              27,
+              30,
+              33,
+              36,
+              39,
+              43,
+              46,
+              49,
+              52,
+              55,
+              58,
+              62,
+              65,
+              68,
+              71,
+              74,
+              78,
+              81,
+              84,
+              87,
+              90,
+              94,
+              97,
+              100
+            ],
+            "y_source_indices_within_crop": [
+              2,
+              6,
+              11,
+              15,
+              20,
+              24,
+              29,
+              33,
+              37,
+              42,
+              46,
+              51,
+              55,
+              60,
+              64,
+              69,
+              73,
+              78,
+              82,
+              87,
+              91,
+              96,
+              100,
+              105,
+              109,
+              113,
+              118,
+              122,
+              127,
+              131,
+              136,
+              140
+            ]
+          },
+          "source_sample_footprint_inclusive": [
+            0,
+            5,
+            509,
+            719
+          ],
+          "iou_with_ground_truth": 0.6204898106678639,
+          "saved_roi": {
+            "copied_path": "images/f001050_p02_min_run1_roi32.png",
+            "source_path": "evaluation/local_scene_pilots/intersection_2415171_crop_change_v2/rois/t004_f001050_p02_minrun_roi32.png",
+            "png_sha256": "59c90c1f7b81f95b3e7012a5d16543a108420466d9543ac1c770b8ee9c1f94de",
+            "pixel_sha256": "22402a1feadc316e9c9d8e538dd7e017dc905a8de64d68180acb82be00824ce4"
+          },
+          "saved_scores": {
+            "hog64_feature_sha256": "249d4f6e4119141f144fda83e7f77e6d140a2d935f94c46000f090b3dc5c1f65",
+            "hog64_score": "3.15370546419",
+            "hog64_prediction": "vehicle",
+            "hog324_feature_sha256": "97f569b0f94d764397b967ab5ea19d4750de5fb939f0023b647ffb9df186fa0e",
+            "hog324_float_score": "0.786354750478",
+            "hog324_float_prediction": "vehicle",
+            "hog324_q_score_integer": "57931908",
+            "hog324_q_score_normalized": "0.785812492312",
+            "hog324_q_prediction": "vehicle"
+          },
+          "saved_hog324_vectors": {
+            "npz_prefix": "f001050_p02_after",
+            "dimension": 324,
+            "float_feature_sha256": "97f569b0f94d764397b967ab5ea19d4750de5fb939f0023b647ffb9df186fa0e",
+            "quantized_feature_sha256": "a03c01d77ce184334f57e6df53193697cee496fe36f5a67fe3f0a2206e5c7cdc",
+            "quantized_products_sha256": "fb3a76bb721c7a9382e85dc28e53c2769d6474d55e75709da464171543482c1a",
+            "bias_first_accumulator_sha256": "0e778563f0041763379f6c70283e7ef5190d809d7d3a7e05649f67f55ac99b41"
+          }
+        },
+        "hog324_float_score_delta": 4.211563141228461,
+        "hog324_integer_score_delta": 310414077,
+        "hog324_integer_delta_reconstructed_from_324_saved_products": 310414077,
+        "changed_quantized_feature_count": 324,
+        "largest_saved_integer_product_delta_terms": [
+          {
+            "feature_index": 168,
+            "product_delta": 22678737
+          },
+          {
+            "feature_index": 212,
+            "product_delta": 16725250
+          },
+          {
+            "feature_index": 302,
+            "product_delta": 16050280
+          },
+          {
+            "feature_index": 60,
+            "product_delta": 14521870
+          },
+          {
+            "feature_index": 128,
+            "product_delta": 13769496
+          },
+          {
+            "feature_index": 151,
+            "product_delta": -13688232
+          },
+          {
+            "feature_index": 69,
+            "product_delta": 13318144
+          },
+          {
+            "feature_index": 78,
+            "product_delta": 12292938
+          },
+          {
+            "feature_index": 320,
+            "product_delta": 11359006
+          },
+          {
+            "feature_index": 2,
+            "product_delta": 10736874
+          },
+          {
+            "feature_index": 146,
+            "product_delta": 10354372
+          },
+          {
+            "feature_index": 86,
+            "product_delta": -10050534
+          }
+        ],
+        "top12_absolute_product_delta_share": 0.20743747382365757
+      },
+      "inference": "The changed inclusive crop and saved ROI pixels changed the stored HOG324 features; their linear contributions exactly reconstruct the ped-to-vehicle score crossing.",
+      "inference_limit": "Feature indices are raw OpenCV descriptor order. They are not assigned a visual or spatial meaning here, and the evidence does not identify which object owns an edge."
+    }
+  ],
+  "missing_saved_evidence": [
+    "Full HOG64 feature vectors and per-feature contributions were not saved; only their feature hashes, scores, and predictions exist.",
+    "No verified semantic mapping from OpenCV HOG324 feature index to a named spatial/orientation bin was saved.",
+    "No integer-gradient/bin HOG324 or RTL feature/score trace exists for these pairs.",
+    "No saved evidence identifies the visual owner or semantic cause of each changed edge."
+  ],
+  "conclusion": {
+    "observed": "All three saved baseline crops score ped and all three saved min_run1 crops score vehicle in both HOG324 float and quantized linear paths; each exact score delta is reconstructed from saved features/products.",
+    "inferred": "Crop-content change is sufficient to explain the arithmetic flips in these three instances.",
+    "not_supported": "The evidence does not justify a universal expand/shrink rule, retaining an old class, retraining, threshold changes, or RTL deployment of HOG324."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "title": "schema2 ROM readback tests",
+  "modules": [
+    {
+      "name": "tb_road_yolo_numeric_rom_probe",
+      "rtl_path": "tests/tb_road_yolo_numeric_rom_probe.v",
+      "description": "ModelSim 厂商模型整链读回，非 Icarus stand-in。",
+      "interfaces": {"ports": [{"name": "o_test_done", "direction": "output", "width": 1, "role": "status", "description": "完成全部比较后置一", "clock_domain": "i_clk"}]},
+      "clock": {"name": "i_clk", "edge": "posedge"},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false},
+      "behavior": ["10003 个负边沿后再次复位；保持四个负边沿后释放，丢弃旧部分读回文件，从 word0 重新比较7168词。", "黄金数据来自 schema2 words.dath；CRC期望值1bbd0dce由Python zlib在仿真前计算，TB只比较，不声称独立重算CRC。"],
+      "constraints": ["时钟100MHz。只改测试时钟的等效写法；DUT接口、控制和数值不变。", "先全词逐项比较，再核对CRC，不能以CRC代替逐项比较。"],
+      "corner_cases": ["覆盖0/511/512/7025/7026/7167词；复位后done和checksum立即清零。"],
+      "verification_cases": ["全部143360字节和393字段一致；任何次序、数据、计数、CRC不符立即失败。"],
+      "timing_diagrams": [{"id": "reset_restart", "title": "复位取消与重新扫描", "scenario": "compressed reset and restart", "description": "缩略事件图，长扫描段被压缩，不把每格当作一个完整扫描周期。", "wavejson": {"signal": [{"name": "i_clk", "wave": "p......."}, {"name": "i_rstn", "wave": "1.0...1."}, {"name": "word_compare", "wave": "=x....=.", "data": ["partial discarded", "restart word0"]}, {"name": "o_done", "wave": "0......."}]}}]
+    },
+    {
+      "name": "tb_mapped_rom_readback",
+      "rtl_path": "tests/tb_mapped_rom_readback.v",
+      "description": "直接验证TD导出的56个物理ERAM参数与全地址内容；不是完整综合网表控制链回归。",
+      "interfaces": {"ports": [{"name": "o_test_done", "direction": "output", "width": 1, "role": "status", "description": "56乘512地址完成比较后置一", "clock_domain": "i_clk"}]},
+      "clock": {"name": "i_clk", "edge": "posedge"},
+      "reset": {},
+      "behavior": ["启动等待200ns；负边沿送地址，下一正边沿后1ns逐项比较56路40位数据。", "80个INIT及INITP参数逐字从真实TD网表复制；只把输出线重命名接到测试观察总线。", "原始实例参数、端口连接与提取映射全部保存在extraction.json；不进入综合源码清单。"],
+      "constraints": ["只读，512个地址；不能代替CRC状态机、复位、选择树或SDF验证。"],
+      "corner_cases": ["所有组交界、lane、未对齐字段和2838个padding字节均在全量比较范围内。"],
+      "verification_cases": ["要求56乘512条无重复读回记录，重构物理包143360字节完全一致。"],
+      "timing_diagrams": [{"id": "native_read", "title": "物理ERAM直接读回", "scenario": "address sample and compare", "description": "地址在负边沿改变；正边沿后1ns比较真实模型的输出。", "wavejson": {"signal": [{"name": "i_clk", "wave": "p...."}, {"name": "cnt_word_addr", "wave": "x345x", "data": ["0", "1", "2"]}, {"name": "observed_after_edge", "wave": "x345x", "data": ["M0", "M1", "M2"]}]}}]
+    }
+  ]
+}

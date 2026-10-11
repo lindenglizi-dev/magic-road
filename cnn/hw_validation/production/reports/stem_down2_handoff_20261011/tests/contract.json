@@ -1,0 +1,71 @@
+{
+  "modules": [
+    {
+      "name": "tb_stem_down2",
+      "feature": "stem_handoff",
+      "rtl_path": "tb_stem_down2.v",
+      "description": "Portless testbench with actual intermediate tensor handoff, not DDR",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "立即取消状态、所有loaded标志、输出有效性；缓存不清零；完整重装表和参数后再启动。"
+      },
+      "behavior": [
+        "加载243项halo，432权重、16偏置、16乘数、16移位、2项post；依序加载各类，重新从地址0加载即撤销完整标志。",
+        "4×4×16输出；每像素六个输出batch，前三路并行，最后仅一路；每路27项四组归约。",
+        "PREPARE注册操作数，SEND保持到MAC接受，末组转MAC_WAIT；结果握手进入POST_WAIT；真实提交完成后ADVANCE。",
+        "输入与输出保持到ready；done不能视为export接受；必须IDLE发起导出。",
+        "核心周期按busy计数，不含load、done和export；无跨batch重叠。"
+      ],
+      "constraints": [
+        "外部MAC、后处理及本调度器同复位；单batch最多27有效乘积，未扩大192上限。",
+        "TEST_ONLY系数；不代表QAT模型精度，无物理时序或DDR保证。"
+      ],
+      "corner_cases": [
+        "部分halo、尾输出mask001、末输入mask07、边界operator-zero、反压和复位取消。"
+      ],
+      "verification_cases": [
+        "2304个Stem tile全阶段及完整589824字节输出，再输入真实576个down2 tile。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "partial",
+          "title": "完整性准入",
+          "scenario": "partial",
+          "description": "压缩示意，不表示真实核心延迟；第一次start被拒绝，完整后接受。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "halo_complete",
+                "wave": "0...1..."
+              },
+              {
+                "name": "start",
+                "wave": "010.10.."
+              },
+              {
+                "name": "busy",
+                "wave": "0....1.0"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

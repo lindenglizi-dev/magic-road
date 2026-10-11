@@ -1,0 +1,96 @@
+{
+  "modules": [
+    {
+      "name": "silu_shared_unit",
+      "rtl_path": "silu_shared_unit.v",
+      "description": "Runtime-loaded shared signed Q7.8 SiLU lookup unit with fail-closed table validity and a globally stalled ready-valid pipeline.",
+      "parameters": [],
+      "clock": {"name": "i_clk", "edge": "posedge"},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "memory_effect": "Table bits are not reset; metadata is reset and a complete reload is required."},
+      "interfaces": {
+        "handshake_channels": [
+          {"id": "table_load", "valid": "i_table_valid", "ready": "o_table_ready", "payload": ["i_table_addr", "i_table_data"]},
+          {"id": "sample_input", "valid": "i_input_valid", "ready": "o_input_ready", "payload": ["i_input_data"]},
+          {"id": "sample_output", "valid": "o_output_valid", "ready": "i_output_ready", "payload": ["o_output_data"]}
+        ],
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "Single pipeline and table clock."},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "active_level": "low", "description": "Asynchronous active-low metadata and pipeline reset."},
+          {"name": "i_table_valid", "direction": "input", "width": 1, "role": "valid", "description": "Runtime table word is presented."},
+          {"name": "o_table_ready", "direction": "output", "width": 1, "role": "ready", "description": "Runtime table word can be accepted."},
+          {"name": "i_table_addr", "direction": "input", "width": 10, "role": "address", "description": "Strictly ascending table word address."},
+          {"name": "i_table_data", "direction": "input", "width": 16, "signed": true, "role": "data", "description": "Signed Q7.8 table word."},
+          {"name": "i_input_valid", "direction": "input", "width": 1, "role": "valid", "description": "Signed Q7.8 input sample is presented."},
+          {"name": "o_input_ready", "direction": "output", "width": 1, "role": "ready", "description": "Input sample can be accepted."},
+          {"name": "i_input_data", "direction": "input", "width": 16, "signed": true, "role": "data", "description": "Signed Q7.8 input sample."},
+          {"name": "o_output_valid", "direction": "output", "width": 1, "role": "valid", "description": "Signed Q7.8 result is available."},
+          {"name": "i_output_ready", "direction": "input", "width": 1, "role": "ready", "description": "Consumer can accept the result."},
+          {"name": "o_output_data", "direction": "output", "width": 16, "signed": true, "role": "data", "description": "Signed Q7.8 SiLU result."},
+          {"name": "o_table_loaded", "direction": "output", "width": 1, "role": "status", "description": "A complete ordered table image is active."},
+          {"name": "o_table_fault", "direction": "output", "width": 1, "role": "status", "description": "The current image violated load order."}
+        ]
+      },
+      "behavior": [
+        "Accept a runtime table only as addresses 0 through 1023 in order; address 0 explicitly starts or restarts the image when the result pipeline is empty.",
+        "Keep inference fail-closed until the final legal word is accepted and block inference whenever load valid is presented.",
+        "Return zero for raw <= -2048, identity for raw >= 2048, otherwise use signed RNE raw/4 plus 512.",
+        "Use hardwired signed value 2047 when the rounded middle-domain address is 1024.",
+        "Advance all sample pipeline registers under one common enable and hold output during backpressure.",
+        "Accept one sample per cycle when unstalled; the measured no-stall input-to-output latency is five cycles.",
+        "Reset cancels samples and invalidates load metadata without clearing the array."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; no DUT initial block or initialization file.",
+        "One PH1P_LOGIC_ERAM instance in SP mode with a 1024 by 20 A port and disabled B port.",
+        "Runtime writes sign-extend each 16-bit word to 20 bits; no primitive initialization or table reset is used.",
+        "The exact-interface Icarus primitive model is not TD mapping, timing, or silicon evidence.",
+        "Every ready-valid transfer consumer tests valid and ready."
+      ],
+      "corner_cases": [
+        "Modulo-four tie chooses an even signed quotient.",
+        "Raw 2046 and 2047 address the hardwired upper endpoint.",
+        "Unexpected load address is not written and requires restart at zero.",
+        "Reset leaves table bits but revokes loaded state and pending results.",
+        "A restart waits for a visible result to drain."
+      ],
+      "verification_cases": [
+        "Compare all 65536 signed codes with cnn.integer.silu.",
+        "Check stable output across multi-cycle backpressure.",
+        "Inject load-order fault and complete a clean restart.",
+        "Reset with samples in flight and prove cancellation.",
+        "Prove inference ready stays low until complete reload."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "ordered_load",
+          "title": "Ordered runtime table load and activation",
+          "scenario": "load",
+          "description": "Address zero starts the image and the edge accepting address 1023 activates inference; table bits are never reset.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p......."},
+            {"name": "i_table_valid", "wave": "011..10."},
+            {"name": "o_table_ready", "wave": "011..10."},
+            {"name": "i_table_addr", "wave": "x34..5x.", "data": ["0", "1", "1023"]},
+            {"name": "o_table_loaded", "wave": "0.....1."},
+            {"name": "o_input_ready", "wave": "0.....1."}
+          ]}
+        },
+        {
+          "id": "pipeline_backpressure",
+          "title": "Global pipeline clock enable under backpressure",
+          "scenario": "inference",
+          "description": "Output stall freezes every sample stage and holds the visible result until ready returns.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p........."},
+            {"name": "i_input_valid", "wave": "0110......"},
+            {"name": "o_input_ready", "wave": "1110..1111"},
+            {"name": "i_input_data", "wave": "x34x......", "data": ["A", "B"]},
+            {"name": "o_output_valid", "wave": "0..1..1.0."},
+            {"name": "i_output_ready", "wave": "1..0..1..."},
+            {"name": "o_output_data", "wave": "x..5..6.x.", "data": ["SiLU(A)", "SiLU(B)"]}
+          ]}
+        }
+      ]
+    }
+  ]
+}

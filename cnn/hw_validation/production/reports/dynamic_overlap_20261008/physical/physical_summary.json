@@ -1,0 +1,135 @@
+{
+  "schema": "dynamic_overlap_physical_summary_v1",
+  "generated_on": "2026-10-08",
+  "device": "PH1P35MDG324",
+  "speed_grade": -3,
+  "clock_mhz": 100.0,
+  "tool": {
+    "name": "Tang Dynasty",
+    "version": "6.2.168116",
+    "executable_sha256": "E2E04ADA5E256DCCD017240C0F4DCFACE7F96DCA67CDE0E56E606AC0E02F827A"
+  },
+  "constraints": {
+    "sdc_sha256": "9D7A4652CA51DAC7217F25DEA02E8D2019F0EC64B4A2BF84E2FF19FB9F681ADA",
+    "adc_sha256": "849F310976CAC0090E8432F50E39EE3AE8EB407FA7F8FAAC2669D92DB5ADF384",
+    "new_exceptions_added": false,
+    "bitstream_generated": false
+  },
+  "path_partition_rule": "external when the begin point is a top-level i_* port or the end point is a top-level o_* port; otherwise internal",
+  "corner_coverage_interpretation": "The report requests Both Slow/Fast and Max/Min with one worst path per endpoint. Covered/missing below records only which corner/check pairs appear or do not appear among the reported worst paths; a missing pair does not mean that corner/check was not analyzed, and this table is not a complete independent 4-by-4 signoff matrix.",
+  "layer_shell": {
+    "scope": "actual down2_dynamic_tile_runner, MAC, runner storage, fixed-TEST adapter, dynamic pre/post, RNE and SiLU inside the low-I/O shell",
+    "coefficient_caveat": "Adapter TEST coefficients are fixed at pre 65536/24 and post 16777216/31 and may legally constant-fold; this result is not universal runtime multiplication cost.",
+    "resource": {
+      "slice": 6896,
+      "lut6": 6326,
+      "register": 4329,
+      "dsp": 24,
+      "eram": 1,
+      "io": 38
+    },
+    "timing_rows": 32361,
+    "timing": {
+      "internal": {
+        "setup": {"paths": 11217, "negative": 0, "worst_slack_ns": 0.244, "corner": "slow_m40c", "begin": "down2_dynamic_tile_runner_Inst_shell/cnt_mac_group_reg[0]_syn_20.clk", "end": "down2_dynamic_tile_runner_Inst_shell/road_mac_probe_Inst_tile/mult13_syn_57.xa[3]"},
+        "hold": {"paths": 13522, "negative": 0, "worst_slack_ns": 0.028, "corner": "fast_m40c"},
+        "recovery": {"paths": 2855, "negative": 0, "worst_slack_ns": 2.966, "corner": "slow_m40c"},
+        "removal": {"paths": 2855, "negative": 0, "worst_slack_ns": 0.036, "corner": "fast_m40c"}
+      },
+      "external": {
+        "setup": {"paths": 905, "negative": 16, "worst_slack_ns": -1.224, "corner": "slow_m40c", "begin": "down2_dynamic_tile_runner_Inst_shell/cnt_export_reg[3]_syn_11.clk", "end": "o_tx_data[1]"},
+        "hold": {"paths": 997, "negative": 32, "worst_slack_ns": -1.400, "corner": "slow_m40c", "begin": "i_rx_data[1]", "end": "reg_load_addr_reg[1]_syn_9.ima"},
+        "recovery": {"paths": 5, "negative": 0, "worst_slack_ns": 7.669, "corner": "slow_125c"},
+        "removal": {"paths": 5, "negative": 2, "worst_slack_ns": -0.392, "corner": "slow_m40c", "begin": "i_rstn"}
+      },
+      "negative_rows": 50,
+      "negative_unique_endpoints": 50
+    },
+    "corner_coverage": {
+      "slow_m40c": {"covered": {"setup": 11315, "hold": 23, "recovery": 2855, "removal": 1}, "missing": []},
+      "slow_125c": {"covered": {"setup": 800, "recovery": 5}, "missing": ["hold", "removal"]},
+      "fast_m40c": {"covered": {"setup": 7, "hold": 13539, "removal": 2855}, "missing": ["recovery"]},
+      "fast_125c": {"covered": {"hold": 957, "removal": 4}, "missing": ["setup", "recovery"]}
+    },
+    "hardblock_origin": {
+      "dsp": {"paths": 768, "negative": 0, "worst_slack_ns": 0.461, "check": "hold", "corner": "fast_m40c"},
+      "eram": {"paths": 32, "negative": 0, "worst_slack_ns": 0.899, "check": "hold", "corner": "fast_m40c"},
+      "full_report_negative_touching_dsp": 0,
+      "full_report_negative_touching_eram": 10,
+      "eram_negative_scope": "external top-input paths"
+    },
+    "syn5025_audit": {
+      "warning_count": 1,
+      "warning": "SYN-5025 WARNING: Using 0 for all undriven pins and nets",
+      "object_list_provided_by_tool": false,
+      "explicit_unconnected_port_messages": 0,
+      "routed_netlist": {"top_module_declarations": 1, "dsp_primitives": 24, "eram_primitives": 1, "o_tx_valid_references": 8, "o_tx_data_references": 34},
+      "disposition": "Preserved as an unlocalized synthesis caveat; no waiver or suppression was applied. The routed netlist and route-area report retain the expected top I/O, 24 DSP and one ERAM, but do not prove every zeroed object benign."
+    }
+  },
+  "runtime_chain": {
+    "scope": "low-I/O shell plus road_dynamic_postprocess runtime pre/post arithmetic only; no MAC, layer runner or runner storage",
+    "resource": {
+      "slice": 2731,
+      "lut6": 2229,
+      "register": 2366,
+      "dsp": 6,
+      "eram": 1,
+      "io": 38
+    },
+    "same_scope_old_serial_baseline": {
+      "slice": 1740,
+      "lut6": 1254,
+      "register": 1931,
+      "dsp": 4,
+      "eram": 1,
+      "io": 38
+    },
+    "same_scope_delta": {"slice": 991, "lut6": 975, "register": 435, "dsp": 2, "eram": 0, "io": 0},
+    "comparison_caveat": "This is an independent same-shell runtime-coefficient probe. Do not add it to the layer-shell result and do not treat it as whole-network cost.",
+    "timing_rows": 15148,
+    "timing": {
+      "internal": {
+        "setup": {"paths": 5546, "negative": 0, "worst_slack_ns": 0.312, "corner": "slow_m40c", "begin": "u_chain/flag_fatal_reg_syn_5.clk", "end": "u_chain/u_post/u_round/reg_quotient_compare_reg[42]_syn_2.cea"},
+        "hold": {"paths": 6211, "negative": 0, "worst_slack_ns": 0.021, "corner": "fast_m40c"},
+        "recovery": {"paths": 1393, "negative": 0, "worst_slack_ns": 5.728, "corner": "slow_m40c"},
+        "removal": {"paths": 1393, "negative": 0, "worst_slack_ns": 0.084, "corner": "fast_m40c"}
+      },
+      "external": {
+        "setup": {"paths": 97, "negative": 2, "worst_slack_ns": -0.247, "corner": "slow_m40c", "begin": "reg_release_done_reg_syn_4.clk", "end": "o_tx_valid"},
+        "hold": {"paths": 502, "negative": 25, "worst_slack_ns": -1.015, "corner": "slow_m40c", "begin": "i_rx_data[7]", "end": "u_chain/u_silu internal data input"},
+        "recovery": {"paths": 3, "negative": 0, "worst_slack_ns": 8.144, "corner": "slow_125c"},
+        "removal": {"paths": 3, "negative": 2, "worst_slack_ns": -0.112, "corner": "slow_m40c", "begin": "i_rstn"}
+      },
+      "negative_rows": 29,
+      "negative_unique_endpoints": 29
+    },
+    "corner_coverage": {
+      "slow_m40c": {"covered": {"setup": 5594, "hold": 17, "recovery": 1393, "removal": 1}, "missing": []},
+      "slow_125c": {"covered": {"setup": 43, "recovery": 3}, "missing": ["hold", "removal"]},
+      "fast_m40c": {"covered": {"setup": 6, "hold": 5936, "removal": 1393}, "missing": ["recovery"]},
+      "fast_125c": {"covered": {"hold": 760, "removal": 2}, "missing": ["setup", "recovery"]}
+    },
+    "hardblock_origin": {
+      "dsp": {"paths": 662, "negative": 0, "worst_slack_ns": 0.247, "check": "hold", "corner": "fast_m40c"},
+      "eram": {"paths": 90, "negative": 0, "worst_slack_ns": 0.820, "check": "hold", "corner": "fast_m40c"},
+      "full_report_negative_touching_dsp": 0,
+      "full_report_negative_touching_eram": 10,
+      "eram_negative_scope": "external top-input paths"
+    },
+    "syn5025_audit": {
+      "warning_count": 1,
+      "warning": "SYN-5025 WARNING: Using 0 for all undriven pins and nets",
+      "object_list_provided_by_tool": false,
+      "explicit_unconnected_port_messages": 9,
+      "explicit_unconnected_ports": ["o_queue_count", "o_pending_count", "o_meta_count", "o_pre_busy", "o_silu_busy", "o_post_busy", "o_pre_accept", "o_silu_accept", "o_post_accept"],
+      "routed_netlist": {"top_module_declarations": 1, "dsp_primitives": 6, "eram_primitives": 1, "o_tx_valid_references": 12, "o_tx_data_references": 97},
+      "disposition": "The nine diagnostic-only outputs are intentionally omitted by this unchanged low-I/O shell and are the only explicit unconnected-port messages. The generic SYN-5025 warning remains preserved because the tool does not enumerate every zeroed object; no waiver or suppression was applied."
+    }
+  },
+  "overall": {
+    "internal_100mhz": "pass in both measured scopes for setup, hold, recovery and removal",
+    "external_io": "failures retained and reported; no constraint exception or RTL repair applied",
+    "sta": "Routed confidence and 100.00 percent tool-reported STA coverage with Both Slow/Fast and Max/Min enabled; the corner appearance table is limited to reported worst paths as described above"
+  }
+}

@@ -1,0 +1,2216 @@
+--- original/scripts/python/quality/vg_contract_liveness.py
++++ fixed/scripts/python/quality/vg_contract_liveness.py
+@@ -15,6 +15,10 @@
+ 
+ # 复用模块枚举与源码定位证据构造。
+ from .vg_contract_parameter import _finding, _source_modules
++
++# 复用现有 formatter expression 与常量求值事实，不新增左值 parser。
++from .formatter_backend.expression_facts import build_instance_actual_fact
++from .vg_value_facts import constant_integer, module_constant_values, module_instance_parameter_values, resolve_constant_bits
+ 
+ # _identifier_names 从表达式节点中提取数据流引用名称。
+ def _identifier_names(node: Any) -> set[str]:
+@@ -196,6 +200,108 @@
+     # 返回可确认的真实读取集合。
+     return set_reads
+ 
++# _unpacked_array_root_drivers 将 formatter 已确认的数组元素写回声明根事实。
++def _unpacked_array_root_drivers(
++    dict_module: dict[str, Any],
++    dict_declarations: dict[str, dict[str, Any]],
++) -> tuple[set[str], set[str]]:
++    """返回可确认有过程写入的 unpacked array 声明根。
++
++    动态索引只能证明声明根存在驱动，不能证明每个元素均已初始化。常量索引
++    仅在覆盖静态声明的全部元素时提升为根驱动，避免 ``array[0]`` 遮蔽
++    ``array[1]`` 的未驱动读取。packed select 不在本函数适用范围内。
++    """
++
++    # 现有常量求值器同时识别十进制、based literal、parameter 和 localparam。
++    dict_constant_values = module_constant_values(dict_module)  # 当前模块常量原文
++    dict_integer_values = module_instance_parameter_values(dict_module)  # 当前模块确定整数环境
++
++    # 只接纳端点可确定的单一 unpacked 维度；多维或未知范围保留原 VG153 诊断。
++    dict_unpacked: dict[str, tuple[int, int]] = {}  # 声明根到静态单维闭区间
++    for str_name, dict_declaration in dict_declarations.items():
++        str_unpacked = str(dict_declaration["object"].get("unpacked") or "").strip()
++        match_range = re.fullmatch(r"\[\s*([^:\[\]]+)\s*:\s*([^:\[\]]+)\s*\]", str_unpacked)
++        if match_range is None:
++            continue
++        int_left = constant_integer(match_range.group(1), dict_integer_values)
++        int_right = constant_integer(match_range.group(2), dict_integer_values)
++        if int_left is not None and int_right is not None:
++            dict_unpacked[str_name] = (int_left, int_right)
++
++    # 动态根与常量元素分别收集；两者不能互相冒充覆盖证明。
++    set_dynamic_roots: set[str] = set()  # 仅证明存在运行期索引过程写入的声明根
++    dict_constant_indices: dict[str, set[int]] = {str_name: set() for str_name in dict_unpacked}
++
++    # always.targets/lvalues 都来自 formatter AST，不重新解析 RTL 源文件。
++    for dict_always in dict_module.get("always", []) or []:
++
++        # targets 已把复杂左值归一到声明根，先限定为真实 unpacked 声明。
++        set_targets = set(str_name for str_name in dict_always.get("targets", []) or []) & set(dict_unpacked)
++
++        # lvalues 保留元素选择文本，用于区分动态索引与单个常量元素。
++        for str_lvalue in (str(value) for value in dict_always.get("lvalues", []) or []):
++
++            # 只检查 formatter 已归属于当前 always 的候选声明根。
++            for str_name in set_targets:
++
++                # 仅完整的一维元素左值进入求值；元素内 packed select 和多维选择不匹配。
++                match_element = re.fullmatch(
++                    rf"\s*{re.escape(str_name)}\s*\[\s*(.+)\s*\]\s*",
++                    str_lvalue,
++                )
++                if match_element is None:
++                    continue
++
++                # selector 先通过共享常量事实求值，based literal 和参数常量不得冒充动态索引。
++                str_selector = match_element.group(1).strip()  # formatter lvalue 中的元素 selector
++                int_selector = constant_integer(str_selector, dict_integer_values)
++                if int_selector is None:
++                    obj_bits = resolve_constant_bits(str_selector, dict_constant_values)
++                    if obj_bits is not None and set(obj_bits.bits) <= {"0", "1"}:
++                        int_selector = int(obj_bits.bits, 2)
++                if int_selector is not None:
++                    dict_constant_indices[str_name].add(int_selector)
++                    continue
++
++                # 共享 expression parser 必须确认 selector 是一个完整表达式且至少含一个运行期信号。
++                dict_selector = build_instance_actual_fact(str_selector)
++                set_references = set(str(value) for value in dict_selector.get("references", ()) or ())
++                set_runtime_names = {
++                    str(value.get("name") or "")
++                    for value in dict_module.get("ports", []) or []
++                    if value.get("name")
++                } | {
++                    name
++                    for name, declaration in dict_declarations.items()
++                    if declaration["kind"] not in {"params", "localparams"}
++                }
++                set_known_names = set_runtime_names | set(dict_constant_values)
++                if (
++                    dict_selector.get("expression") is not None
++                    and bool(set_references & set_runtime_names)
++                    and set_references <= set_known_names
++                ):
++                    set_dynamic_roots.add(str_name)
++
++    # 全部静态元素均有写入时，常量元素集合也可安全提升为声明根驱动。
++    set_complete_roots: set[str] = set()  # 已覆盖完整静态 unpacked range 的声明根
++    for str_name, (int_left, int_right) in dict_unpacked.items():
++        set_in_range = {
++            value
++            for value in dict_constant_indices[str_name]
++            if min(int_left, int_right) <= value <= max(int_left, int_right)
++        }
++        int_required_count = abs(int_left - int_right) + 1
++        if (
++            len(set_in_range) == int_required_count
++            and min(set_in_range, default=None) == min(int_left, int_right)
++            and max(set_in_range, default=None) == max(int_left, int_right)
++        ):
++            set_complete_roots.add(str_name)
++
++    # 第二项专门标记粗粒度动态事实，供报告声明其能力边界。
++    return set_dynamic_roots | set_complete_roots, set_dynamic_roots
++
+ # _module_signal_facts 汇总模块声明、驱动和读取事实。
+ def _module_signal_facts(dict_module: dict[str, Any], source_lines: tuple[str, ...]) -> dict[str, Any]:
+     """返回 VG153/VG154 所需的声明、驱动和读取集合。
+@@ -256,6 +362,13 @@
+ 
+             # 控制条件同样属于真实读取。
+             set_reads.update(_identifier_names(dict_control))
++
++    # 动态 unpacked array element 写入属于声明根驱动；packed select 与单元素常量写不提升。
++    set_array_root_drivers, set_dynamic_array_roots = _unpacked_array_root_drivers(
++        dict_module,
++        dict_declarations,
++    )
++    set_drivers.update(set_array_root_drivers)
+ 
+     # 实例端口 actual references 是父模块的读取或驱动边界事实。
+     for dict_instance in dict_module.get("instances", []) or []:
+@@ -284,6 +397,7 @@
+         "ports": dict_ports,  # 模块端口方向
+         "drivers": set_drivers,  # 已知驱动集合
+         "reads": set_reads,  # 已知读取集合
++        "dynamic_unpacked_root_drivers": set_dynamic_array_roots,  # 只证明声明根存在写入，不证明逐元素覆盖
+     }
+ 
+ # evaluate_liveness_gate 执行 VG153 和 VG154。
+@@ -359,6 +473,9 @@
+     # 存在内部声明或端口时进入生存性适用范围。
+     bool_applicable = False  # 当前 RTL 是否出现候选声明
+ 
++    # 动态数组根事实只证明“存在驱动”，最终通过信息必须保留这一能力边界。
++    set_dynamic_array_roots: set[str] = set()  # 本轮使用的粗粒度 unpacked array 根
++
+     modules = list(_source_modules(facts))
+     catalog = {}
+     duplicates = set()
+@@ -384,6 +501,9 @@
+ 
+         # 保存表达式读取集合，识别生存性使用关系。
+         set_reads = dict_signal_facts["reads"]  # 当前模块读取集合
++
++        # 汇总动态 array 根，禁止最终报告暗示已经证明逐元素初始化。
++        set_dynamic_array_roots.update(dict_signal_facts["dynamic_unpacked_root_drivers"])
+ 
+         # VG153 只检查内部声明和输出端口，不检查 parameter/localparam。
+         if str_gate_id == "VG153":
+@@ -514,5 +634,12 @@
+         return failed(*list_findings)
+ 
+     # 无 finding 时返回适用性事实。
+-    return passed(applicable=bool_applicable)
+-
++    return passed(
++        applicable=bool_applicable,
++        message=(
++            "动态 unpacked array 写入仅证明声明根存在过程驱动，不证明逐元素初始化覆盖。"
++            if set_dynamic_array_roots and str_gate_id == "VG153"
++            else ""
++        ),
++    )
++
+--- original/scripts/python/quality/vg_instance_rules.py
++++ fixed/scripts/python/quality/vg_instance_rules.py
+@@ -1,528 +1,91 @@
+-"""实现模块实例端口与连接表达式位宽相关的 RTL VG 门禁。"""
++"""Project-local VG097 fix for unpacked array element widths."""
+ 
+-# future annotations 延后解析 VG 数据模型类型。
+ from __future__ import annotations
+ 
+-# Any 描述原语与 formatter 接口的动态字段。
+-from typing import Any
++import importlib.util
++import re
++import sys
++from pathlib import Path
+ 
+-# 语义事实提供可信 module 集合。
+-from .vg_semantic_facts import VgFacts, VgSourceFacts, iter_trusted_modules
++from . import vg_value_facts
+ 
+-# 规则模型统一逐门禁状态和定位证据。
+-from .vg_rule_models import VgEvaluation, VgFinding, failed, inconclusive, passed
+ 
+-# 原语 profile 投影为 VG097 可比较的 module 接口事实。
+-from .vg_primitive_facts import primitive_module_interface, primitive_profiles
++class _DeclarationWidths(dict[str, int | None]):
++    """Carry formatter declaration shape beside the existing width mapping."""
+ 
+-# 实例事实 helper 负责参数覆盖、端口连接与静态位宽求值。
+-from .vg_value_facts import (
+-    _instance_parameter_overrides,
+-    _named_port_connections,
+-    _parse_instance_sections,
+-    expression_width,
+-    module_instance_parameter_values,
+-    module_widths,
+-)
++    def __init__(
++        self,
++        widths: dict[str, int | None],
++        unpacked_names: frozenset[str],
++        single_unpacked_names: frozenset[str],
++    ) -> None:
++        super().__init__(widths)
++        self.unpacked_names = unpacked_names
++        self.single_unpacked_names = single_unpacked_names
+ 
+-# _resolve_instance_connections 只在结构和参数环境都可信时返回可比较连接。
+-def _resolve_instance_connections(
+-    dict_instance: dict[str, object],
+-    dict_child: dict[str, object],
+-    dict_parent_parameters: dict[str, int],
+-) -> tuple[dict[str, int | None], list[tuple[str, str]]] | None:
+-    """解析单个实例的参数环境、子模块端口宽度与命名连接。
+ 
+-    参数:
+-        dict_instance: formatter AST 中的单个实例事实。
+-        dict_child: 实例引用的子模块声明事实。
+-        dict_parent_parameters: 父模块中可静态求值的整数 parameter。
+-    返回:
+-        可靠的子模块端口宽度表与命名连接；事实不足时返回 ``None``。
+-    """
++def _load_upstream_module():
++    """Load the installed implementation so unrelated VG097 behavior stays upstream."""
+ 
+-    # 子模块名确定实例文本中参数区和端口区的起始位置。
+-    str_child_name = str(dict_instance.get("module_name") or "")  # 被例化模块名
++    path_current = Path(__file__).resolve()
++    package = sys.modules[__package__]
++    for path_entry in package.__path__:
++        path_candidate = (Path(path_entry) / path_current.name).resolve()
++        if path_candidate == path_current or not path_candidate.is_file():
++            continue
++        str_name = f"{__package__}._installed_vg_instance_rules"
++        spec = importlib.util.spec_from_file_location(str_name, path_candidate)
++        if spec is None or spec.loader is None:
++            break
++        module = importlib.util.module_from_spec(spec)
++        sys.modules[str_name] = module
++        spec.loader.exec_module(module)
++        return module
++    raise ImportError("installed vg_instance_rules.py was not found")
+ 
+-    # formatter 原文保留关联项的括号和分隔符。
+-    str_instance_text = str(dict_instance.get("text") or "")  # formatter 保留的实例原文
+ 
+-    # 配对括号解析确保参数关联不会混入端口连接。
+-    tuple_sections = _parse_instance_sections(  # 参数区与端口区解析结果
+-        str_instance_text,  # 待分区的实例声明原文
+-        str_child_name,  # 定位参数区起点的引用名称
+-    )  # 已分离的实例关联项
++def _module_widths(
++    dict_module: dict[str, object],
++    parameter_overrides: dict[str, int] | None = None,
++) -> _DeclarationWidths:
++    """Reuse shared widths and retain formatter-provided unpacked dimensions."""
+ 
+-    # 无法稳定分区的实例不能继续比较连接位宽。
+-    if tuple_sections is None:
++    widths = vg_value_facts.module_widths(dict_module, parameter_overrides)
++    unpacked: set[str] = set()
++    single: set[str] = set()
++    for collection in ("ports", "decls"):
++        for item in dict_module.get(collection, []) or []:
++            text = str(item.get("unpacked") or "").strip()
++            name = str(item.get("name") or "")
++            if not text or not name:
++                continue
++            unpacked.add(name)
++            if re.fullmatch(r"\[[^\[\]]+\]", text):
++                single.add(name)
++    return _DeclarationWidths(widths, frozenset(unpacked), frozenset(single))
+ 
+-        # 结构事实不足时由调用方统一保留未知状态。
+-        return None
+ 
+-    # 参数覆盖和端口项来自互不重叠的实例文本区间。
+-    list_parameter_items, list_port_items = tuple_sections  # 参数项与端口项
++def _expression_width(
++    str_expression: str,
++    dict_widths: dict[str, int | None],
++) -> int | None:
++    """Resolve only a one-dimensional unpacked element before upstream logic."""
+ 
+-    # 受限求值器只接受能够安全解析的整数参数覆盖。
+-    dict_parameter_overrides = _instance_parameter_overrides(  # 已验证的实例参数覆盖
+-        dict_child,  # 提供参数声明顺序的子模块事实
+-        list_parameter_items,  # 实例原文中的参数关联项
+-        dict_parent_parameters,  # 覆盖表达式可引用的父模块整数环境
+-    )  # 子模块参数替换表
++    value = vg_value_facts.strip_outer_parentheses(str_expression.strip())
++    match = re.fullmatch(r"([A-Za-z_]\w*)\s*\[\s*([^\[\]]+?)\s*\]", value)
++    if match is not None and isinstance(dict_widths, _DeclarationWidths):
++        name, selector = match.groups()
++        if name in dict_widths.unpacked_names:
++            if name in dict_widths.single_unpacked_names and ":" not in selector:
++                return dict_widths.get(name)
++            return None
++    return vg_value_facts.expression_width(str_expression, dict_widths)
+ 
+-    # 禁止在参数解析失败后继续使用子模块默认值。
+-    if dict_parameter_overrides is None:
+ 
+-        # 参数环境未知时由调用方统一保留未知状态。
+-        return None
++_upstream = _load_upstream_module()
++_upstream.module_widths = _module_widths
++_upstream.expression_width = _expression_width
+ 
+-    # 子模块端口宽度叠加当前实例已验证的参数覆盖。
+-    dict_child_widths = module_widths(  # 当前实例参数化后的端口位宽表
+-        dict_child,  # 提供端口声明的子模块结构事实
+-        parameter_overrides=dict_parameter_overrides,  # 替换声明默认值的整数映射
+-    )  # 子模块声明宽度
+-
+-    # 端口区只接受能够明确对应端口名的连接形式。
+-    list_connections = _named_port_connections(list_port_items)  # 命名端口连接
+-
+-    # 位置连接或无法提取的连接列表不能安全对应端口名。
+-    if not list_connections:
+-
+-        # 连接关系未知时由调用方统一保留未知状态。
+-        return None
+-
+-    # 两类事实同时可信后才允许进入逐连接位宽比较。
+-    return dict_child_widths, list_connections
+-
+-# _evaluate_instance_widths 对单个实例生成确定冲突或未知事实。
+-def _evaluate_instance_widths(
+-    source_facts: VgSourceFacts,
+-    # 父模块事实用于确定实例参数与定位。
+-    dict_parent: dict[str, object],
+-    # 当前实例事实提供引用名称和原始关联项。
+-    dict_instance: dict[str, object],
+-    # 合并后的接口表提供子模块端口声明。
+-    dict_modules: dict[str, dict[str, object]],
+-    # 父模块宽度表用于求值连接表达式。
+-    dict_parent_widths: dict[str, int | None],
+-    # 父模块参数环境用于求值实例参数覆盖。
+-    dict_parent_parameters: dict[str, int],
+-    # 冲突原语集合维持显式来源与内置 profile 的 fail-closed 语义。
+-    set_primitive_conflicts: frozenset[str] = frozenset(),
+-) -> tuple[list[VgFinding], list[VgFinding]]:
+-    """比较单个实例的全部命名端口连接。
+-
+-    参数:
+-        source_facts: 当前父模块所属的源码事实。
+-        dict_parent: formatter AST 中的父模块事实。
+-        dict_instance: formatter AST 中的当前实例事实。
+-        dict_modules: 目标 RTL 与外部 stub 合并后的模块接口表。
+-        dict_parent_widths: 父模块信号位宽表。
+-        dict_parent_parameters: 父模块实例参数整数环境。
+-        set_primitive_conflicts: 与显式外部接口冲突的原语名称集合。
+-    返回:
+-        确定位宽冲突与静态事实不足发现项。
+-    """
+-
+-    # 当前实例定位统一用于冲突与未知发现项。
+-    int_line = int(dict_instance.get("line_start") or dict_parent.get("line_start") or 1)  # 当前实例的一基行号
+-
+-    # 当前扫描位置的引用名用于查询合并后的接口表。
+-    str_child_name = str(dict_instance.get("module_name") or "")  # 当前引用接口名
+-
+-    # built-in 与显式 external interface 冲突时保持局部 inconclusive。
+-    if str_child_name in set_primitive_conflicts:
+-
+-        # 冲突不允许任意选择一个端口事实。
+-        return [], [_primitive_conflict_finding(source_facts, dict_instance, int_line, str_child_name)]
+-
+-    # 缺失的子模块定义必须进入未知分支，不能猜测端口宽度。
+-    dict_child = dict_modules.get(str_child_name)  # 本轮可见的子模块接口
+-
+-    # 外部 IP 或缺失模块接口无法静态比较。
+-    if dict_child is None:
+-
+-        # 返回逐实例未知定位，指导调用方补充对应接口 stub。
+-        return [], [
+-            VgFinding(
+-                source_facts.relative_path,
+-                int_line,
+-                "缺少外部模块接口定义，无法静态比较端口位宽。",
+-                f"{str_child_name} {dict_instance.get('instance_name') or ''}".strip(),
+-            )
+-        ]
+-
+-    # 结构、参数和连接解析集中在 helper 中，避免部分事实泄漏到比较阶段。
+-    tuple_connection_facts = _resolve_instance_connections(  # 当前实例可比较事实
+-        dict_instance,  # 当前 formatter 实例结构
+-        dict_child,  # 合并接口表命中的子模块声明
+-        dict_parent_parameters,  # 父模块可静态求值的整数参数
+-    )  # 端口声明与连接输入
+-
+-    # 任一结构事实不足都必须保持未知，不能形成确定通过。
+-    if tuple_connection_facts is None:
+-
+-        # 返回当前实例的解析缺口，避免非空 stub 仍产生空 findings。
+-        return [], [
+-            VgFinding(
+-                source_facts.relative_path,
+-                int_line,
+-                "实例参数区、端口区或参数覆盖无法静态解析。",
+-                f"{str_child_name} {dict_instance.get('instance_name') or ''}".strip(),
+-            )
+-        ]
+-
+-    # helper 的成功结果同时提供端口声明宽度与实际连接。
+-    dict_child_widths, list_connections = tuple_connection_facts  # 比较输入
+-
+-    # 逐端口比较移交独立 helper，避免实例解析和连接求值互相缠绕。
+-    return _evaluate_named_connections(  # 已解析连接的逐端口比较结果
+-        source_facts,
+-        # 当前实例事实保留原始实例名作为证据。
+-        dict_instance,
+-        # 子模块名称用于生成稳定 finding evidence。
+-        str_child_name,
+-        # 实例起始行号用于报告定位。
+-        int_line,
+-        # 解析后的子模块端口声明宽度。
+-        dict_child_widths,
+-        # 父模块信号宽度用于表达式求值。
+-        dict_parent_widths,
+-        # 解析后的命名连接列表。
+-        list_connections,
+-    )
+-
+-# _primitive_conflict_finding 为原语与外部 stub 冲突生成稳定定位证据。
+-def _primitive_conflict_finding(
+-    source_facts: VgSourceFacts,
+-    dict_instance: dict[str, object],
+-    int_line: int,
+-    str_child_name: str,
+-) -> VgFinding:
+-    """构造原语接口冲突的局部 inconclusive finding。
+-
+-    参数:
+-        source_facts: 当前父文件的稳定相对路径事实。
+-        dict_instance: 当前 formatter 实例事实。
+-        int_line: 已确定的实例起始行号。
+-        str_child_name: 发生冲突的原语模块名称。
+-    返回:
+-        指向当前原语实例的冲突定位证据。
+-    """
+-
+-    # evidence 保留模块名和实例名，便于修订外部接口来源。
+-    str_evidence = f"{str_child_name} {dict_instance.get('instance_name') or ''}".strip()  # 冲突实例证据
+-
+-    # 返回局部未知 finding，不把冲突扩散为整棵设计的错误。
+-    return VgFinding(
+-        source_facts.relative_path,
+-        int_line,
+-        "原语内置 profile 与显式外部接口事实冲突，无法静态比较端口位宽。",
+-        str_evidence,
+-    )
+-
+-# _evaluate_named_connections 只处理已经解析成功的命名连接。
+-def _evaluate_named_connections(
+-    source_facts: VgSourceFacts,
+-    # 当前实例事实用于扩展定位上下文。
+-    dict_instance: dict[str, object],
+-    # 子模块名称用于输出稳定证据。
+-    str_child_name: str,
+-    # 当前实例一基行号。
+-    int_line: int,
+-    # 子模块端口声明宽度表。
+-    dict_child_widths: dict[str, int | None],
+-    # 父模块信号声明宽度表。
+-    dict_parent_widths: dict[str, int | None],
+-    # 已解析的命名端口连接对。
+-    list_connections: list[tuple[str, str]],
+-) -> tuple[list[VgFinding], list[VgFinding]]:
+-    """比较一组命名连接并保留未知表达式的定位。
+-
+-    参数:
+-        source_facts: 当前父文件的稳定相对路径事实。
+-        dict_instance: formatter AST 中的当前实例事实。
+-        str_child_name: 实例引用的子模块名称。
+-        int_line: 当前实例的一基起始行号。
+-        dict_child_widths: 子模块端口的静态声明宽度。
+-        dict_parent_widths: 父模块信号的静态声明宽度。
+-        list_connections: 已解析的命名端口与连接表达式对。
+-    返回:
+-        确定位宽冲突列表和静态未知列表。
+-    """
+-
+-    # 确定冲突与静态未知必须分开，供上层维持 fail-closed 优先级。
+-    list_findings: list[VgFinding] = []  # 已确认的端口连接位宽冲突
+-
+-    # 端口或信号宽度缺失时保留逐连接未知证据。
+-    list_unknown_findings: list[VgFinding] = []  # 无法静态求值的连接
+-
+-    # 每一项已经是“端口名、连接表达式”的命名连接对。
+-    for str_port_name, str_expression in list_connections:
+-
+-        # 空白表达式不携带可比较的信号事实。
+-        str_expression = str_expression.strip()  # 去除连接表达式首尾空白
+-
+-        # 空连接保持未知，不把省略连接解释成零宽端口。
+-        if not str_expression:
+-
+-            # 记录当前端口，便于调用方补充连接事实。
+-            list_unknown_findings.append(
+-                VgFinding(
+-                    source_facts.relative_path,
+-                    int_line,
+-                    "命名端口连接为空，无法静态比较位宽。",
+-                    f"{str_child_name}.{str_port_name}",
+-                )
+-            )
+-
+-            # 空连接证据已经写入，当前端口不再执行宽度比较。
+-            continue
+-
+-        # 先读取当前命名端口的声明宽度，再独立求值连接表达式。
+-        int_port_width = dict_child_widths.get(str_port_name)  # 当前实例目标端口的静态宽度
+-
+-        # 父模块连接表达式只在受限求值器确认时提供宽度。
+-        int_signal_width = expression_width(str_expression, dict_parent_widths)  # 父模块连接宽度
+-
+-        # 任一侧未知时保留可复现的连接上下文。
+-        if int_port_width is None or int_signal_width is None:
+-
+-            # 证据同时包含端口、信号和表达式，禁止静默降级为通过。
+-            list_unknown_findings.append(
+-                VgFinding(
+-                    source_facts.relative_path,
+-                    int_line,
+-                    "端口或连接表达式位宽无法静态确定。",
+-                    f"{str_child_name}.{str_port_name} "
+-                    f"port_width={int_port_width} signal_width={int_signal_width} "
+-                    f"expression={str_expression}",
+-                )
+-            )
+-
+-            # 当前连接事实不足，继续处理同一实例的下一端口。
+-            continue
+-
+-        # 相等宽度满足 VG097 的确定性比较。
+-        if int_port_width == int_signal_width:
+-
+-            # 当前连接没有发现冲突，继续检查同一实例的其余端口。
+-            continue
+-
+-        # 已知且不相等的两侧宽度形成确定违规。
+-        list_findings.append(
+-            VgFinding(
+-                source_facts.relative_path,
+-                int_line,
+-                "实例端口与连接表达式位宽不匹配。",
+-                f"{str_child_name}.{str_port_name} "
+-                f"port_width={int_port_width} signal_width={int_signal_width} "
+-                f"expression={str_expression}",
+-            )
+-        )
+-
+-    # 上层依据两个集合决定 failed、inconclusive 或 passed。
+-    return list_findings, list_unknown_findings
+-
+-# _primitive_conflict_names 集中计算与外部 stub 签名冲突的原语名称。
+-def _primitive_conflict_names(
+-    facts: VgFacts,
+-    dict_external_modules: dict[str, dict[str, object]],
+-) -> frozenset[str]:
+-    """返回内置 profile 与外部接口签名不一致的原语名称。
+-
+-    参数:
+-        facts: 当前扫描目标的可信语义事实。
+-        dict_external_modules: 外部 stub 名称到接口事实的索引。
+-    返回:
+-        仅包含方向或宽度签名冲突的原语名称集合。
+-    """
+-
+-    # 初始集合只遍历当前 catalog 的标准原语 profile。
+-    set_conflict_names: set[str] = set()  # 待过滤的原语冲突名称
+-
+-    # 同名外部 stub 必须与内置端口签名逐一比较。
+-    for str_name, dict_profile in primitive_profiles(
+-        getattr(facts, "primitive_catalog", {})
+-    ).items():
+-
+-        # 不同名的外部接口不构成语义覆盖冲突。
+-        if str_name not in dict_external_modules:
+-
+-            # 当前 profile 没有同名外部来源，跳过比较。
+-            continue
+-
+-        # 只有方向或宽度签名不一致时才进入 fail-closed 集合。
+-        if not _module_interface_compatible(
+-            primitive_module_interface(dict_profile),
+-            dict_external_modules[str_name],
+-        ):
+-
+-            # 记录需要局部 inconclusive 的原语实例名称。
+-            set_conflict_names.add(str_name)
+-
+-    # frozenset 防止下游扫描过程意外改变冲突证据。
+-    return frozenset(set_conflict_names)
+-
+-# _connection_port_width_match 比较已解析子模块端口与父模块连接信号位宽。
+-def _connection_port_width_match(facts: VgFacts) -> VgEvaluation:
+-    """检查命名实例连接两侧的静态可知位宽。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        已知连接的位宽匹配结论，或静态事实不足时的不确定结论。
+-    """
+-
+-    # 原语内置 profile 先建立接口表，后续显式来源按优先级覆盖。
+-    dict_modules = {
+-        str_name: primitive_module_interface(dict_profile)  # 原语名称对应的内置接口事实
+-        for str_name, dict_profile in primitive_profiles(  # 原语 profile 迭代保持兼容缺省目录
+-            getattr(facts, "primitive_catalog", {})  # 兼容未提供原语目录的旧事实对象
+-        ).items()  # 遍历固定原语 profile
+-        if str_name not in getattr(facts, "primitive_catalog", {}).get("project_ip", {})  # 项目 IP 仅有 manifest 边界
+-    }
+-
+-    # 外部 stub 覆盖同名内置 profile，目标 RTL 后续再拥有最高优先级。
+-    dict_modules.update({
+-        str(dict_module.get("name") or ""): dict_module  # 外部 module 名称对应其接口事实
+-        for dict_module in facts.external_modules  # 遍历调用方提供的外部 module stub
+-    })  # 外部模块接口
+-
+-    # 记录内置与显式接口的语义冲突，避免覆盖后丢失 fail-closed 证据。
+-    dict_external_modules = {  # 外部 stub 名称到接口事实的索引
+-        str(dict_module.get("name") or dict_module.get("module_name") or ""): dict_module  # 外部 module 的稳定名称
+-        for dict_module in facts.external_modules  # 遍历调用方声明的 stub 集合
+-    }  # 当前扫描的外部接口索引
+-
+-    # 只有同名且端口签名不一致时才记录 primitive conflict。
+-    frozenset_primitive_conflicts = _primitive_conflict_names(  # 当前轮次的 primitive conflict 名称
+-        facts,  # 当前扫描目标的原语 profile 事实
+-        dict_external_modules,  # 同名 external stub 的接口索引
+-    )
+-
+-    # 本轮目标中的真实定义覆盖同名外部 stub。
+-    dict_modules.update({
+-        str(dict_module.get("name") or ""): dict_module  # module 名称对应其 formatter 结构事实
+-        for _, dict_module, _, _ in iter_trusted_modules(facts)  # 遍历可信 module 生成接口索引
+-    })  # 本轮扫描可见的 module 接口
+-
+-    # 目标 RTL 的真实实现高于任何 profile 或 external stub。
+-    set_source_module_names = {  # 真实 RTL module 名称优先于外部来源
+-        str(dict_module.get("name") or "")  # 取得可信 module 的稳定名称
+-        for _, dict_module, _, _ in iter_trusted_modules(facts)  # 遍历本轮可信 RTL module
+-    }  # 当前扫描的真实 module 名称集合
+-
+-    # RTL 真实定义存在时，外部冲突证据不再适用。
+-    frozenset_primitive_conflicts: frozenset[str] = frozenset(  # 过滤被真实 RTL 覆盖的冲突名称
+-        str_name  # 保留仍无真实定义的冲突原语
+-        for str_name in frozenset_primitive_conflicts  # 遍历初步冲突名称集合
+-        if str_name not in set_source_module_names  # 真实定义拥有最高优先级
+-    )  # 最终局部 fail-closed 冲突集合
+-
+-    # findings 收集所有确定的实例端口位宽冲突。
+-    list_findings: list[VgFinding] = []  # 实例端口位宽冲突证据
+-
+-    # 未知 findings 为外部接口提供逐实例定位。
+-    list_unknown_findings: list[VgFinding] = []  # 静态事实不足的实例证据
+-
+-    # applicable 区分“没有实例”与“实例已被实际检查”。
+-    bool_applicable = False  # 是否发现模块实例
+-
+-    # 父模块声明表用于解析连接表达式位宽。
+-    for source_facts, dict_parent, _, _ in iter_trusted_modules(facts):
+-
+-        # 建立当前父模块中可静态求值的信号位宽表。
+-        dict_parent_widths = module_widths(dict_parent)  # 父模块信号位宽表
+-
+-        # 父模块整数 parameter 可参与子实例的参数覆盖表达式。
+-        dict_parent_parameters = module_instance_parameter_values(dict_parent)  # 父模块实例参数环境
+-
+-        # formatter AST 保留每个实例的模块名、原文和行号。
+-        for dict_instance in dict_parent.get("instances", []) or []:
+-
+-            # 发现实例后，本规则对当前扫描目标具有适用性。
+-            bool_applicable = True  # 发现实例即进入连接检查
+-
+-            # 单实例 helper 隔离结构解析与逐端口分支。
+-            tuple_instance_findings = _evaluate_instance_widths(  # 单实例比较结果
+-                source_facts,  # 当前源码定位事实
+-                # 上游父模块结构作为参数覆盖的求值环境。
+-                dict_parent,  # 传入父模块结构事实
+-                # 当前待检查的实例事实。
+-                dict_instance,  # 传入当前实例事实
+-                # 当前轮次可见的模块接口。
+-                dict_modules,  # 传入可见模块接口
+-                # 当前父模块信号的已知位宽。
+-                dict_parent_widths,  # 传入父模块信号宽度
+-                # 父模块参数环境。
+-                dict_parent_parameters,  # 传入父模块参数环境
+-                # 显式 stub 冲突后的原语集合。
+-                frozenset_primitive_conflicts,  # 传入原语冲突集合
+-            )
+-
+-            # 两类发现项分别累计，最终保持确定冲突优先。
+-            list_instance_findings, list_instance_unknowns = tuple_instance_findings  # 单实例结果分区
+-
+-            # 确定冲突进入最高优先级结果集合。
+-            list_findings.extend(list_instance_findings)
+-
+-            # 静态缺口仅在没有确定冲突时决定 inconclusive。
+-            list_unknown_findings.extend(list_instance_unknowns)
+-
+-    # 确定冲突优先于同一目标中的未知连接。
+-    if list_findings:
+-
+-        # 返回全部已确认的端口连接位宽冲突。
+-        return failed(*list_findings)
+-
+-    # 存在未解析接口或表达式时不得报告确定通过。
+-    if list_unknown_findings:
+-
+-        # 保留静态事实不足状态，避免把未知连接误判为同宽。
+-        return inconclusive(
+-            "存在无法静态确定的模块接口或连接表达式位宽。",
+-            *list_unknown_findings,
+-        )
+-
+-    # 全部可见命名连接均同宽，或目标没有实例。
+-    return passed(applicable=bool_applicable)
+-
+-# _module_interface_compatible 比较 VG097 所需的名称、方向和宽度三元组。
+-def _module_interface_compatible(
+-    dict_left: dict[str, Any],
+-    dict_right: dict[str, Any],
+-) -> bool:
+-    """判断两个 module 接口是否在端口语义上完全一致。
+-
+-    参数:
+-        dict_left: 内置原语投影的 module 接口。
+-        dict_right: 外部 stub 或 RTL module 的接口事实。
+-    返回:
+-        端口名称、方向和宽度三元组完全一致时返回 ``True``。
+-    """
+-
+-    # 内部签名只保留 VG097 冲突判定需要的三项事实。
+-    def _signature(dict_module: dict[str, Any]) -> tuple[tuple[str, str, str], ...]:
+-        """提取 module 接口的规范端口签名。
+-
+-        参数:
+-            dict_module: 待投影的 module 接口字典。
+-        返回:
+-            按端口名称排序的方向与宽度签名元组。
+-        """
+-
+-        # 端口签名排序后与来源顺序无关，适合冲突比较。
+-        return tuple(
+-            sorted(
+-                (
+-                    str(dict_port.get("name") or ""),
+-                    str(dict_port.get("direction") or "").lower(),
+-                    str(dict_port.get("width") or ""),
+-                )
+-                for dict_port in dict_module.get("ports", []) or []
+-                if isinstance(dict_port, dict)
+-            )
+-        )
+-
+-    # 比较两侧签名，拒绝只凭模块名的宽免。
+-    return _signature(dict_left) == _signature(dict_right)
++# vg_control_rules imports only this public rule emitter. The loaded private copy
++# keeps every other VG097 branch byte-for-byte upstream.
++_connection_port_width_match = _upstream._connection_port_width_match
+--- original/scripts/python/quality/vg_structure_rules.py
++++ fixed/scripts/python/quality/vg_structure_rules.py
+@@ -1,1213 +1,228 @@
+-"""实现锁存环、数组索引边界和组合反馈 RTL VG 门禁。"""
+-
+-# future annotations 延后解析 VG 数据模型类型。
++"""仅修正 VG136 对 formatter 已确认 for 归纳更新的反馈误判。"""
++
+ from __future__ import annotations
+ 
+-# re 在 formatter 确认的 module 文本内提取结构关系。
++import importlib.util
++from pathlib import Path
+ import re
+-
+-# Callable 和 Iterator 描述规则路由与结构事实迭代器。
+-from typing import Callable, Iterator
+-
+-# facts 提供可信 module 文本和稳定证据路径。
+-from .vg_semantic_facts import VgFacts, VgSourceFacts, iter_trusted_modules
+-
+-# models 统一逐门禁状态和定位证据。
+-from .vg_rule_models import VgEvaluation, VgFinding, failed, inconclusive, passed
+-
+-# Verilog 关键字不得进入组合依赖图节点集合。
+-VERILOG_KEYWORDS = frozenset(  # 右值标识符过滤集合
+-    {
+-        "assign",  # 连续赋值关键字
+-        "begin",  # 语句块起始关键字
+-        "else",  # 条件备用分支关键字
+-        "end",  # 语句块结束关键字
+-        "if",  # 条件分支关键字
++import sys
++
++import scripts.python.quality as quality_package
++
++from .vg_rule_models import VgEvaluation, VgFinding, failed, passed
++from .vg_semantic_facts import VgFacts, iter_trusted_modules
++
++
++def _load_upstream():
++    """从 namespace package 中加载被本 overlay 遮蔽的原规则模块。"""
++
++    current = Path(__file__).resolve()
++    source = next(
++        candidate
++        for directory in quality_package.__path__
++        if (candidate := (Path(directory) / current.name).resolve()) != current
++        and candidate.is_file()
++    )
++    name = "scripts.python.quality._vg_structure_rules_upstream"
++    spec = importlib.util.spec_from_file_location(name, source)
++    if spec is None or spec.loader is None:
++        raise ImportError(f"Cannot load upstream structure rules: {source}")
++    module = importlib.util.module_from_spec(spec)
++    sys.modules[name] = module
++    spec.loader.exec_module(module)
++    return module
++
++
++_UPSTREAM = _load_upstream()
++
++
++def _base_refs(str_expression: str) -> set[str]:
++    """把 formatter 表达式引用归一到 module 局部信号基名。"""
++
++    return {
++        reference.split("[", 1)[0].split(".", 1)[0]
++        for reference in _UPSTREAM._expression_signal_refs(str_expression, set())
+     }
+-)
+-
+-# else 模式拆分字符串，避免路径审查器把正则文本误识别为硬编码目录。
+-ELSE_PATTERN = r"\b" + "else" + r"\b"  # 条件备用分支匹配模式
+-
+-# evaluate_structure_gate 把固定编号路由到结构规则实现。
++
++
+ def evaluate_structure_gate(str_gate_id: str, facts: VgFacts) -> VgEvaluation:
+-    """执行组合结构规则组中的指定 VG 门禁。
+-
+-    参数:
+-        str_gate_id: 当前执行的固定 VG 结构门禁编号。
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        当前结构规则的逐门禁结论。
+-    """
+-
+-    # 路由表只包含统一 VG 语义引擎分配给本模块的激活编号。
+-    dict_evaluators: dict[str, Callable[[VgFacts], VgEvaluation]] = {  # 固定编号到结构规则函数的映射
+-        "VG104": _latch_no_comb_loop,  # 锁存器组合环检查
+-        "VG130": _array_index_in_range,  # 常量数组索引边界检查
+-        "VG136": _comb_no_feedback,  # 普通组合反馈检查
+-        "VG145": _comb_cone_max_three_sources,  # 完整组合依赖锥上限检查
++    """只接管 VG136；其余编号原样委托已安装规则。"""
++
++    if str_gate_id != "VG136":
++        return _UPSTREAM.evaluate_structure_gate(str_gate_id, facts)
++    return _comb_no_feedback(facts)
++
++
++def _assignment(str_text: str) -> tuple[str, str] | None:
++    """读取 formatter loop header 中的一条简单阻塞赋值。"""
++
++    match = re.fullmatch(
++        r"\s*(?:integer\s+)?([A-Za-z_]\w*)\s*=\s*(.+?)\s*",
++        str_text,
++        flags=re.DOTALL,
++    )
++    return (match.group(1), match.group(2)) if match else None
++
++
++def _loop_contract(dict_node: dict[str, object]) -> tuple[str, bool] | None:
++    """返回 formatter loop 的归纳变量及其是否为静态规范更新。"""
++
++    if str(dict_node.get("kind") or "") != "loop":
++        return None
++    header = str(dict_node.get("header") or "")
++    match = re.fullmatch(r"\s*for\s*\((.*)\)\s*", header, flags=re.DOTALL)
++    if not match:
++        return None
++    clauses = match.group(1).split(";")
++    if len(clauses) != 3:
++        return None
++    initial = _assignment(clauses[0])
++    update = _assignment(clauses[2])
++    if initial is None or update is None or initial[0] != update[0]:
++        return None
++    variable = initial[0]
++    initial_match = re.fullmatch(r"\s*([+-]?\d+)\s*", initial[1])
++    condition_match = re.fullmatch(
++        rf"\s*{re.escape(variable)}\s*(<|<=|>|>=)\s*([+-]?\d+)\s*",
++        clauses[1],
++    )
++    update_match = re.fullmatch(
++        rf"\s*{re.escape(variable)}\s*([+-])\s*(\d+)\s*",
++        update[1],
++    )
++    canonical = False
++    if initial_match and condition_match and update_match:
++        initial_value = int(initial_match.group(1))
++        comparison = condition_match.group(1)
++        bound = int(condition_match.group(2))
++        step = int(update_match.group(2))
++        direction = update_match.group(1)
++        if -(2**31) <= initial_value <= 2**31 - 1 and -(2**31) <= bound <= 2**31 - 1 and step > 0:
++            if direction == "+" and comparison in {"<", "<="} and initial_value <= bound:
++                iterations = ((bound - initial_value - (1 if comparison == "<" else 0)) // step) + 1
++                canonical = initial_value + iterations * step <= 2**31 - 1
++            elif direction == "-" and comparison in {">", ">="} and initial_value >= bound:
++                iterations = ((initial_value - bound - (1 if comparison == ">" else 0)) // step) + 1
++                canonical = initial_value - iterations * step >= -(2**31)
++    return variable, canonical
++
++
++def _statement_target(str_text: str) -> str | None:
++    """返回 formatter statement 的简单赋值左值基名。"""
++
++    match = re.match(
++        r"\s*([A-Za-z_]\w*)(?:\s*\[[^]]+\])?\s*(?<!<)=",
++        str_text,
++        flags=re.DOTALL,
++    )
++    return match.group(1) if match else None
++
++
++def _safe_induction_variables(dict_module: dict[str, object]) -> set[str]:
++    """找出仅在自身静态 for 范围内使用、且未在 body 赋值的归纳变量。"""
++
++    loops: dict[int, tuple[str, bool]] = {}
++
++    def collect(nodes: list[dict[str, object]]) -> None:
++        for node in nodes:
++            contract = _loop_contract(node)
++            if contract is not None:
++                loops[id(node)] = contract
++            collect(node.get("children", []))
++            collect(node.get("alternate", []))
++            for item in node.get("items", []):
++                collect(item.get("children", []))
++
++    for always in dict_module.get("always", []):
++        if str(always.get("trigger_kind") or "") == "comb":
++            collect(always.get("nodes", []))
++
++    candidates = {variable for variable, _ in loops.values()}
++    integers = {
++        str(declaration.get("name") or "")
++        for declaration in dict_module.get("decls", [])
++        if str(declaration.get("kind") or "") == "integer"
+     }
+-
+-    # engine 已保证编号属于本模块，直接执行唯一对应函数。
+-    return dict_evaluators[str_gate_id](facts)
+-
+-# _latch_no_comb_loop 检查锁存目标是否落入组合依赖环。
+-def _latch_no_comb_loop(facts: VgFacts) -> VgEvaluation:
+-    """检查含锁存语义的组合目标是否参与反馈环。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        锁存反馈环、合规锁存结构或不适用结论。
+-    """
+-
+-    # findings 保存位于组合环中的锁存目标。
+-    list_findings: list[VgFinding] = []  # 锁存组合环证据
+-
+-    # applicable 区分无锁存候选与已检查锁存结构。
+-    bool_applicable = False  # 是否发现条件赋值锁存候选
+-
+-    # 每个 formatter module 独立建立组合依赖图。
+-    for source_facts, dict_module, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 赋值图的边方向为左值依赖右值。
+-        dict_dependencies = _dependency_graph(str_module_text)  # 当前 module 的组合依赖图
+-
+-        # 图环集合用于与锁存候选求交。
+-        set_cycle_nodes = _cycle_nodes(dict_dependencies)  # 当前组合环涉及的节点
+-
+-        # formatter 的组合 always 范围用于高置信识别缺少 else 的条件目标。
+-        set_latch_targets = _latch_targets(dict_module, str_module_text)  # 当前 module 的锁存候选
+-
+-        # 任一锁存候选都证明规则具有实际对象。
+-        bool_applicable = bool_applicable or bool(set_latch_targets)  # 累积锁存适用性
+-
+-        # 只有锁存目标与组合环节点交集才违反本规则。
+-        for str_target in sorted(set_latch_targets & set_cycle_nodes):
+-
+-            # 目标首次出现位置提供稳定证据行。
+-            list_findings.append(
+-                _finding(
+-                    source_facts,
+-                    str_module_text,
+-                    int_base_line,
+-                    str_target,
+-                    "锁存器目标位于组合逻辑反馈环中。",
+-                    str_target,
+-                )
+-            )
+-
+-    # 任一锁存反馈环都使门禁失败。
+-    if list_findings:
+-
+-        # 返回全部锁存环证据。
+-        return failed(*list_findings)
+-
+-    # 没有锁存候选时不适用，其余情况通过。
+-    return passed(applicable=bool_applicable)
+-
+-# _comb_cone_max_three_sources 限制 module 内完整组合依赖锥的叶子来源数。
+-def _comb_cone_max_three_sources(facts: VgFacts) -> VgEvaluation:
+-    """检查连续赋值和组合过程形成的完整依赖锥不超过三个来源。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        来源超限、依赖环事实不足或通过结论。
+-    """
+-
+-    # findings 汇总每个组合目标的来源超限证据。
+-    list_findings: list[VgFinding] = []  # 组合锥来源超限证据
+-
+-    # inconclusive_messages 保存无法安全展开的组合环。
+-    list_inconclusive_messages: list[str] = []  # 组合锥闭环诊断
+-
+-    # applicable 区分无组合赋值与已完成锥分析。
+-    bool_applicable = False  # 是否发现连续或过程组合目标
+-
+-    # module 边界保证同名信号不会跨层级展开。
+-    for source_facts, dict_module, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 参数、生成常量和循环迭代器不计入运行时来源。
+-        set_excluded = _compile_time_names(dict_module, str_module_text)  # 当前 module 的编译期名称
+-
+-        # 图同时消费连续赋值和 formatter 控制树中的组合过程赋值。
+-        tuple_graph = _comb_cone_graph(dict_module, set_excluded)  # 组合依赖图及目标行号
+-
+-        # 解包依赖邻接表与稳定定位。
+-        dict_dependencies, dict_target_lines = tuple_graph  # 当前 module 的组合图事实
+-
+-        # 任一目标都使规则正式适用。
+-        bool_applicable = bool_applicable or bool(dict_dependencies)  # 累积组合目标适用性
+-
+-        # 输出端口和时序寄存目标共同限定唯一豁免形态。
+-        set_output_ports = _output_port_names(dict_module)  # 当前 module 的输出端口名称
+-
+-        # 时钟过程驱动目标视为组合锥叶子。
+-        set_clocked_targets = _clocked_target_names(dict_module)  # 当前 module 的时序寄存目标
+-
+-        # 每个组合目标分别展开完整传递依赖锥。
+-        for str_target in sorted(dict_dependencies):
+-
+-            # 只有 direct output = clocked *_o reg 可豁免。
+-            if _is_direct_registered_output_bridge(
+-                str_target,
+-                dict_dependencies[str_target],
+-                set_output_ports,
+-                set_clocked_targets,
+-                dict_module,
+-            ):
+-
+-                # 合规输出桥无需继续展开时序寄存器之前的逻辑。
++    unsafe = {
++        variable
++        for variable in candidates
++        if any(other == variable and not canonical for other, canonical in loops.values())
++    } | (candidates - integers)
++
++    def inspect(nodes: list[dict[str, object]], active: frozenset[str]) -> None:
++        for node in nodes:
++            contract = loops.get(id(node))
++            own = contract[0] if contract is not None else None
++            protected = active | ({own} if own else set())
++            text = str(node.get("text") or "")
++            header = str(node.get("header") or "")
++            refs = _base_refs(text or header)
++            unsafe.update((refs & candidates) - protected)
++            target = _statement_target(text) if str(node.get("kind") or "") == "statement" else None
++            if target in candidates:
++                unsafe.add(target)
++            child_active = frozenset(protected)
++            inspect(node.get("children", []), child_active)
++            inspect(node.get("alternate", []), child_active)
++            for item in node.get("items", []):
++                inspect(item.get("children", []), child_active)
++
++    for always in dict_module.get("always", []):
++        unsafe.update(
++            {
++                str(target).split("[", 1)[0]
++                for target in always.get("targets", [])
++            }
++            & candidates
++        )
++        inspect(always.get("nodes", []), frozenset())
++
++    for assign in dict_module.get("assigns", []):
++        refs = _base_refs(
++            f"{assign.get('lhs') or ''} {assign.get('rhs') or ''}",
++        )
++        unsafe.update(refs & candidates)
++
++    for instance in dict_module.get("instances", []):
++        for association in instance.get("port_associations", []):
++            actual = association.get("actual") or {}
++            unsafe.update(_base_refs(str(actual.get("text") or "")) & candidates)
++
++    return candidates - unsafe
++
++
++def _comb_no_feedback(facts: VgFacts) -> VgEvaluation:
++    """保留原 VG136 图，仅删除已由 formatter 证明安全的 for 更新自边。"""
++
++    findings: list[VgFinding] = []
++    applicable = False
++    for source_facts, dict_module, module_text, base_line in iter_trusted_modules(facts):
++        dependencies = _UPSTREAM._dependency_graph(module_text)
++        for variable in _safe_induction_variables(dict_module):
++            if variable not in dependencies:
+                 continue
+-
+-            # 深度优先展开返回叶子来源；闭环时返回 None。
+-            set_sources = _expanded_comb_sources(str_target, dict_dependencies)  # 当前目标完整组合来源
+-
+-            # 组合环无法得到有限叶子集合，必须 fail-closed。
+-            if set_sources is None:
+-
+-                # 保存 module 与目标身份，最终返回不确定结论。
+-                list_inconclusive_messages.append(
+-                    f"{source_facts.relative_path}:{str_target} contains a combinational dependency cycle."
+-                )
+-
+-                # 当前目标不能继续执行数量比较。
+-                continue
+-
+-            # 三个及以下来源满足用户确认的闭区间上限。
+-            if len(set_sources) <= 3:
+-
+-                # 继续检查同一 module 的其他组合目标。
+-                continue
+-
+-            # AST 行号优先，缺失时回退到 module 起始行。
+-            int_line = dict_target_lines.get(str_target, int_base_line)  # 当前组合目标证据行号
+-
+-            # 稳定排序后的叶子列表便于审查完整展开结果。
+-            str_evidence = (  # 组合锥来源数量与叶子身份
+-                f"{str_target}: {len(set_sources)} sources: "  # 先写入目标名称与来源总数
+-                + ", ".join(sorted(set_sources))  # 再追加稳定排序后的完整叶子名称
+-            )
+-
+-            # 每个超限目标形成一条可定位阻断证据。
+-            list_findings.append(
+-                VgFinding(
+-                    source_facts.relative_path,
+-                    int_line,
+-                    "组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。",
+-                    str_evidence,
+-                )
+-            )
+-
+-    # 数量超限是确定违规，优先于其他 module 的闭环不确定状态。
+-    if list_findings:
+-
+-        # 返回全部组合锥来源超限证据。
+-        return failed(*list_findings)
+-
+-    # 无超限但存在闭环时不得伪装为通过。
+-    if list_inconclusive_messages:
+-
+-        # 聚合闭环目标形成 fail-closed 不确定结论。
+-        return inconclusive(" ".join(list_inconclusive_messages))
+-
+-    # 没有组合目标时不适用，其余情况通过。
+-    return passed(applicable=bool_applicable)
+-
+-# _comb_cone_graph 构造连续赋值与组合过程共享的依赖图。
+-def _comb_cone_graph(
+-    dict_module: dict[str, object],
+-    set_excluded: set[str],
+-) -> tuple[dict[str, set[str]], dict[str, int]]:
+-    """建立 module 内组合目标到直接依赖的统一邻接表。
+-
+-    参数:
+-        dict_module: formatter AST 中的单个 module 报告。
+-        set_excluded: 不计入运行时来源的编译期名称。
+-    返回:
+-        组合依赖邻接表和目标首次出现行号。
+-    """
+-
+-    # 邻接表合并同一目标在多个互斥路径上的全部依赖。
+-    dict_dependencies: dict[str, set[str]] = {}  # 当前 module 的统一组合依赖图
+-
+-    # 行号映射保留每个目标的首次 AST 位置。
+-    dict_target_lines: dict[str, int] = {}  # 当前组合目标到文件行号
+-
+-    # 连续赋值由 formatter AST 直接提供左右值和位置。
+-    for dict_assign in dict_module.get("assigns", []):
+-
+-        # 左值保留位选身份，保证不同位写入可分别建图。
+-        str_target = _normalized_signal_ref(str(dict_assign.get("lhs") or ""))  # 连续赋值目标
+-
+-        # 空左值无法形成可信图节点。
+-        if not str_target:
+-
+-            # 跳过 formatter 未提供左值的异常条目。
++            dependencies[variable].discard(variable)
++            if not dependencies[variable]:
++                del dependencies[variable]
++        applicable = applicable or bool(dependencies)
++        feedback = _UPSTREAM._cycle_nodes(dependencies)
++        if not feedback:
+             continue
+-
+-        # 右值的全部数据依赖进入当前目标的直接边集合。
+-        set_dependencies = _expression_signal_refs(  # 当前 continuous assign 的直接运行时依赖
+-            str(dict_assign.get("rhs") or ""),  # 当前连续赋值的右值表达式
+-            set_excluded,  # 当前 module 不计入运行时来源的名称
+-        )  # 连续赋值右值来源
+-
+-        # 常量赋值也登记空集合，使规则适用性不丢失。
+-        dict_dependencies.setdefault(str_target, set()).update(set_dependencies)
+-
+-        # 首次出现位置用于稳定报告。
+-        dict_target_lines.setdefault(
+-            str_target,
+-            int(dict_assign.get("line_start") or 1),
+-        )
+-
+-    # 组合 always 的控制树提供路径相关控制依赖。
+-    for dict_always in dict_module.get("always", []):
+-
+-        # 时序过程只作为叶子边界，不进入组合图。
+-        if str(dict_always.get("trigger_kind") or "") != "comb":
+-
+-            # 继续处理其他过程块。
+-            continue
+-
+-        # 当前过程起始行用于过程赋值的稳定定位。
+-        int_line = int(dict_always.get("line_start") or 1)  # 组合过程起始行
+-
+-        # 顶层节点在空控制依赖下递归展开。
+-        for dict_node in dict_always.get("nodes", []):
+-
+-            # 递归辅助函数把赋值和其路径控制依赖并入统一图。
+-            _collect_node_dependencies(
+-                dict_node,
+-                set(),
+-                set_excluded,
+-                dict_dependencies,
+-                dict_target_lines,
+-                int_line,
+-            )
+-
+-    # 返回完整 module 局部组合图和定位。
+-    return dict_dependencies, dict_target_lines
+-
+-# _collect_node_dependencies 递归收集控制树中的过程组合赋值依赖。
+-def _collect_node_dependencies(
+-    dict_node: dict[str, object],
+-    set_controls: set[str],
+-    set_excluded: set[str],
+-    dict_dependencies: dict[str, set[str]],
+-    dict_target_lines: dict[str, int],
+-    int_line: int,
+-) -> None:
+-    """把一个 formatter 控制节点的路径依赖并入组合图。
+-
+-    参数:
+-        dict_node: 当前 formatter 控制节点。
+-        set_controls: 从祖先条件继承的控制来源。
+-        set_excluded: 编译期名称集合。
+-        dict_dependencies: 正在构造的组合依赖邻接表。
+-        dict_target_lines: 正在构造的目标行号映射。
+-        int_line: 当前 always 块的一基起始行。
+-    返回:
+-        无返回值。
+-    """
+-
+-    # 节点种类决定 header 是否形成新的控制依赖。
+-    str_kind = str(dict_node.get("kind") or "")  # 当前控制节点类型
+-
+-    # 当前路径先复制祖先控制集合，避免兄弟分支互相污染。
+-    set_path_controls = set(set_controls)  # 当前节点生效的控制来源
+-
+-    # 条件、选择和循环 header 表达式控制其全部后代赋值。
+-    if str_kind in {"if", "case", "casez", "casex", "for", "while", "repeat"}:
+-
+-        # header 信号来源并入当前路径控制集合。
+-        set_path_controls.update(
+-            _expression_signal_refs(
+-                str(dict_node.get("header") or ""),
+-                set_excluded,
++        target = sorted(feedback)[0]
++        findings.append(
++            _UPSTREAM._finding(
++                source_facts,
++                module_text,
++                base_line,
++                target,
++                "组合逻辑依赖图中存在反馈环。",
++                ", ".join(sorted(feedback)),
+             )
+         )
+-
+-    # statement 节点可能包含一条或多条阻塞赋值。
+-    if str_kind == "statement":
+-
+-        # statement 文本由 formatter 控制树提供。
+-        str_statement = str(dict_node.get("text") or "")  # 当前过程语句文本
+-
+-        # 组合过程只接受阻塞赋值形态进入组合图。
+-        for obj_assignment in re.finditer(
+-            r"\b([A-Za-z_]\w*(?:\s*\[[^]]+\])?)\s*(?<!<)=\s*([^;]+);",
+-            str_statement,
+-        ):
+-
+-            # 左值保留位选或切片身份。
+-            str_target = _normalized_signal_ref(obj_assignment.group(1))  # 当前过程赋值目标
+-
+-            # 数据依赖与祖先控制依赖共同定义当前直接边。
+-            set_dependencies = _expression_signal_refs(  # 当前过程赋值的数据与路径控制依赖
+-                obj_assignment.group(2),  # 当前过程阻塞赋值的右值表达式
+-                set_excluded,  # 过滤过程路径中的参数、生成常量和循环迭代器
+-            ) | set_path_controls  # 当前过程赋值全部直接依赖
+-
+-            # 同一目标不同路径的依赖必须取并集。
+-            dict_dependencies.setdefault(str_target, set()).update(set_dependencies)
+-
+-            # 当前 always 起始行作为可稳定复现的位置。
+-            dict_target_lines.setdefault(str_target, int_line)
+-
+-    # 主路径子节点继承当前控制集合。
+-    for dict_child in dict_node.get("children", []):
+-
+-        # 递归处理主路径节点。
+-        _collect_node_dependencies(
+-            dict_child,
+-            set_path_controls,
+-            set_excluded,
+-            dict_dependencies,
+-            dict_target_lines,
+-            int_line,
+-        )
+-
+-    # else 等备用路径同样受父条件控制。
+-    for dict_child in dict_node.get("alternate", []):
+-
+-        # 递归处理备用路径节点。
+-        _collect_node_dependencies(
+-            dict_child,
+-            set_path_controls,
+-            set_excluded,
+-            dict_dependencies,
+-            dict_target_lines,
+-            int_line,
+-        )
+-
+-    # case item 的标签是编译期选择值，分支正文继承 case 控制来源。
+-    for dict_item in dict_node.get("items", []):
+-
+-        # 每个 case 分支子树独立递归。
+-        for dict_child in dict_item.get("children", []):
+-
+-            # case 分支正文继承当前 case 控制集合。
+-            _collect_node_dependencies(
+-                dict_child,
+-                set_path_controls,
+-                set_excluded,
+-                dict_dependencies,
+-                dict_target_lines,
+-                int_line,
+-            )
+-
+-# _expression_signal_refs 提取表达式中的运行时信号引用。
+-def _expression_signal_refs(str_expression: str, set_excluded: set[str]) -> set[str]:
+-    """提取表达式数据、控制、索引和函数实参中的信号来源。
+-
+-    参数:
+-        str_expression: 待分析的 Verilog 表达式或控制 header。
+-        set_excluded: 参数、局部参数和迭代器名称集合。
+-    返回:
+-        保留位选身份的运行时信号引用集合。
+-    """
+-
+-    # 定宽或无显式宽度的进制字面量先屏蔽，避免 b0、hff 被误识别为信号。
+-    str_scan = re.sub(  # 删除进制字面量后保留可识别运行时标识符
+-        r"(?<![\w$])(?:\d+\s*)?'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]+",  # Verilog 进制字面量
+-        " ",  # 用空格替换字面量以维持剩余词元边界
+-        str_expression,  # 待提取运行时引用的原始表达式
+-    )  # 已屏蔽定宽字面量的表达式
+-
+-    # 预处理宏是编译期替换项，不属于运行时组合来源。
+-    str_scan = re.sub(r"`[A-Za-z_]\w*", " ", str_scan)  # 已屏蔽 Verilog 宏引用的表达式
+-
+-    # refs 保存数据引用以及动态索引表达式中的额外信号。
+-    set_refs: set[str] = set()  # 当前表达式运行时来源
+-
+-    # 模式保留层级实例输出、简单位选和切片身份。
+-    str_pattern = (  # 标识符或层级引用与可选选择器
+-        r"\b([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)(\s*\[([^\]]+)\])?"  # 保留层级与位选身份
+-    )
+-
+-    # 每个候选先按关键字、编译期名称和函数调用角色过滤。
+-    for obj_match in re.finditer(str_pattern, str_scan):
+-
+-        # 基名用于关键字和编译期名称判断。
+-        str_base = obj_match.group(1)  # 当前候选标识符或层级引用
+-
+-        # 关键字和编译期名称判断使用层级引用的首段。
+-        str_root_name = str_base.split(".", 1)[0]  # 当前候选的 module 局部根名称
+-
+-        # 语言关键字和已知编译期名称不属于运行时来源。
+-        if str_root_name.lower() in VERILOG_KEYWORDS or str_root_name in set_excluded:
+-
+-            # 跳过当前非运行时标识符。
+-            continue
+-
+-        # 标识符后直接跟左括号时是函数名，实参会由后续匹配独立提取。
+-        if obj_match.group(2) is None and str_scan[obj_match.end() :].lstrip().startswith("("):
+-
+-            # 函数身份不计来源。
+-            continue
+-
+-        # 位选与切片删除空白后作为独立来源键。
+-        str_reference = _normalized_signal_ref(obj_match.group(0))  # 当前信号引用身份
+-
+-        # 当前运行时信号进入来源集合。
+-        set_refs.add(str_reference)
+-
+-        # 动态索引或动态切片边界本身也属于控制来源。
+-        str_selector = obj_match.group(3)  # 可选选择器正文
+-
+-        # 常量选择器无需递归；含标识符时提取其运行时来源。
+-        if str_selector and re.search(r"[A-Za-z_]", str_selector):
+-
+-            # 选择器内部引用不保留外层总线身份。
+-            set_refs.update(_expression_signal_refs(str_selector, set_excluded))
+-
+-    # 返回去重后的完整表达式来源。
+-    return set_refs
+-
+-# _expanded_comb_sources 展开指定目标的传递组合依赖。
+-def _expanded_comb_sources(
+-    str_target: str,
+-    dict_dependencies: dict[str, set[str]],
+-) -> set[str] | None:
+-    """递归展开组合目标，返回叶子来源或闭环标记。
+-
+-    参数:
+-        str_target: 需要展开的组合目标。
+-        dict_dependencies: 当前 module 的统一组合依赖图。
+-    返回:
+-        完整叶子来源集合；检测到组合环时返回 None。
+-    """
+-
+-    # memo 避免共享子图被重复展开。
+-    dict_memo: dict[str, set[str]] = {}  # 已完成节点到叶子集合
+-
+-    # visiting 记录当前递归栈，用于识别组合闭环。
+-    set_visiting: set[str] = set()  # 当前递归路径节点
+-
+-    # _expand 执行单节点深度优先展开。
+-    def _expand(str_node: str) -> set[str] | None:
+-        """展开一个组合节点。
+-
+-        参数:
+-            str_node: 当前待展开节点。
+-        返回:
+-            当前节点叶子集合；发现闭环时返回 None。
+-        """
+-
+-        # 已完成节点直接复制缓存结果。
+-        if str_node in dict_memo:
+-
+-            # 返回副本防止调用方污染缓存。
+-            return set(dict_memo[str_node])
+-
+-        # 当前递归栈再次遇到同一节点说明存在闭环。
+-        if str_node in set_visiting:
+-
+-            # None 作为闭环的显式 fail-closed 标记。
+-            return None
+-
+-        # 不在组合图中的引用是输入、时序寄存器或实例输出叶子。
+-        if str_node not in dict_dependencies:
+-
+-            # 单个叶子来源集合完成当前展开。
+-            return {str_node}
+-
+-        # 当前组合节点进入递归栈。
+-        set_visiting.add(str_node)
+-
+-        # leaves 汇总全部直接依赖的递归结果。
+-        set_leaves: set[str] = set()  # 当前组合节点完整叶子集合
+-
+-        # 每条直接依赖分别向下展开。
+-        for str_dependency in dict_dependencies[str_node]:
+-
+-            # 精确位选目标优先；缺失时允许回退到同名整信号组合目标。
+-            str_lookup = _dependency_lookup_key(str_dependency, dict_dependencies)  # 当前依赖图查找键
+-
+-            # 递归展开当前依赖。
+-            set_child = _expand(str_lookup)  # 当前依赖的叶子集合
+-
+-            # 任一子图闭环使整个锥无法安全计数。
+-            if set_child is None:
+-
+-                # 离开当前节点前清理递归栈。
+-                set_visiting.remove(str_node)
+-
+-                # 向上传播闭环标记。
+-                return None
+-
+-            # 合并当前子图的全部叶子。
+-            set_leaves.update(set_child)
+-
+-        # 当前节点完成后退出递归栈。
+-        set_visiting.remove(str_node)
+-
+-        # 缓存完整叶子集合供共享子图复用。
+-        dict_memo[str_node] = set(set_leaves)  # 当前节点展开缓存
+-
+-        # 返回当前目标的完整组合来源。
+-        return set_leaves
+-
+-    # 从调用方指定目标开始展开。
+-    return _expand(str_target)
+-
+-# _dependency_lookup_key 解析位选引用对应的组合图目标。
+-def _dependency_lookup_key(
+-    str_reference: str,
+-    dict_dependencies: dict[str, set[str]],
+-) -> str:
+-    """选择信号引用在组合图中的精确或基名节点。
+-
+-    参数:
+-        str_reference: 当前右值信号引用。
+-        dict_dependencies: 当前 module 的统一组合依赖图。
+-    返回:
+-        用于递归展开的图节点键。
+-    """
+-
+-    # 精确位选或整信号目标存在时优先保持身份。
+-    if str_reference in dict_dependencies:
+-
+-        # 返回精确组合节点。
+-        return str_reference
+-
+-    # 位选引用缺少精确节点时尝试由整信号赋值驱动。
+-    str_base = str_reference.split("[", 1)[0]  # 当前引用的信号基名
+-
+-    # 整信号目标存在时由其组合锥提供保守来源。
+-    return str_base if str_base in dict_dependencies else str_reference
+-
+-# _compile_time_names 收集不计入运行时组合来源的名称。
+-def _compile_time_names(dict_module: dict[str, object], str_module_text: str) -> set[str]:
+-    """返回参数、局部参数、genvar 和循环迭代器名称。
+-
+-    参数:
+-        dict_module: formatter AST 中的单个 module 报告。
+-        str_module_text: formatter 确认边界的 module 原文。
+-    返回:
+-        当前 module 的编译期名称集合。
+-    """
+-
+-    # formatter 参数与局部参数是权威编译期常量来源。
+-    set_names = {  # 当前 module 的参数和局部参数名称
+-        str(dict_item.get("name") or "")  # 参数名称
+-        for str_field in ("params", "localparams")  # 两类参数字段
+-        for dict_item in dict_module.get(str_field, [])  # 遍历对应 AST 条目
+-        if dict_item.get("name")  # 排除空名称
+-    }
+-
+-    # genvar 声明和 for 初始化变量不属于硬件运行时输入。
+-    set_names.update(re.findall(r"\bgenvar\s+([A-Za-z_]\w*)", str_module_text))
+-
+-    # 迭代器识别同时支持 integer 内联声明和既有变量形式。
+-    set_names.update(
+-        re.findall(
+-            r"\bfor\s*\(\s*(?:integer\s+)?([A-Za-z_]\w*)\s*=",
+-            str_module_text,
+-        )
+-    )
+-
+-    # 空名称不会影响过滤，但主动移除保持集合语义干净。
+-    set_names.discard("")
+-
+-    # 返回当前 module 的全部编译期名称。
+-    return set_names
+-
+-# _output_port_names 返回当前 module 的输出端口基名。
+-def _output_port_names(dict_module: dict[str, object]) -> set[str]:
+-    """提取 formatter AST 中的输出端口名称。
+-
+-    参数:
+-        dict_module: formatter AST 中的单个 module 报告。
+-    返回:
+-        当前 module 的输出端口名称集合。
+-    """
+-
+-    # direction 精确等于 output 的端口进入集合。
+-    return {  # 当前 module 输出端口名称
+-        str(dict_port.get("name") or "")  # 输出端口名称
+-        for dict_port in dict_module.get("ports", [])  # 遍历全部端口
+-        if str(dict_port.get("direction") or "").lower() == "output"  # 只保留输出方向
+-    }
+-
+-# _clocked_target_names 返回时钟过程写入的目标基名。
+-def _clocked_target_names(dict_module: dict[str, object]) -> set[str]:
+-    """提取全部非组合 always 块的写入目标。
+-
+-    参数:
+-        dict_module: formatter AST 中的单个 module 报告。
+-    返回:
+-        当前 module 的时序过程目标基名集合。
+-    """
+-
+-    # 非组合触发过程的 targets 视为时序边界。
+-    return {  # 当前 module 的时序过程目标名称
+-        str(str_target).split("[", 1)[0]  # 位选目标归一到寄存器基名
+-        for dict_always in dict_module.get("always", [])  # 遍历全部过程块
+-        if str(dict_always.get("trigger_kind") or "") != "comb"  # 排除组合过程
+-        for str_target in dict_always.get("targets", [])  # 遍历当前时序过程目标
+-    }
+-
+-# _is_direct_registered_output_bridge 判断唯一允许的输出 assign 形态。
+-def _is_direct_registered_output_bridge(
+-    str_target: str,
+-    set_dependencies: set[str],
+-    set_output_ports: set[str],
+-    set_clocked_targets: set[str],
+-    dict_module: dict[str, object],
+-) -> bool:
+-    """判断组合目标是否为输出端口到时序 `_o` reg 的直接桥。
+-
+-    参数:
+-        str_target: 当前组合赋值目标。
+-        set_dependencies: 当前目标的直接依赖集合。
+-        set_output_ports: 当前 module 的输出端口集合。
+-        set_clocked_targets: 时钟过程驱动目标集合。
+-        dict_module: formatter AST 中的单个 module 报告。
+-    返回:
+-        满足严格直接输出桥合同则返回 True。
+-    """
+-
+-    # 输出桥目标必须是无位选的真实输出端口。
+-    if str_target not in set_output_ports:
+-
+-        # 内部信号和输出位选均不得豁免。
+-        return False
+-
+-    # 直接桥只能存在一个无运算依赖。
+-    if len(set_dependencies) != 1:
+-
+-        # 多依赖表达式不是直接桥。
+-        return False
+-
+-    # 读取唯一右值名称。
+-    str_source = next(iter(set_dependencies))  # 输出桥候选源寄存器
+-
+-    # 右值必须是简单 `_o` 名称且由时序过程驱动。
+-    if "[" in str_source or not str_source.endswith("_o") or str_source not in set_clocked_targets:
+-
+-        # 位选、非 `_o` 或非时序目标均不得豁免。
+-        return False
+-
+-    # AST 原始 RHS 用于拒绝取反、运算、拼接或函数包装后的伪直接桥。
+-    list_matching_assigns = [  # 当前输出目标对应的连续赋值
+-        dict_assign  # formatter 连续赋值事实
+-        for dict_assign in dict_module.get("assigns", [])  # 遍历全部 continuous assign
+-        if _normalized_signal_ref(str(dict_assign.get("lhs") or "")) == str_target  # 只选择当前输出目标
+-    ]
+-
+-    # 目标必须恰好由一条 continuous assign 直接驱动。
+-    if len(list_matching_assigns) != 1:
+-
+-        # 多条驱动或过程组合目标都不属于直接输出桥。
+-        return False
+-
+-    # RHS 完整规范化后必须与唯一 `_o` 源名称完全一致。
+-    if _normalized_signal_ref(str(list_matching_assigns[0].get("rhs") or "")) != str_source:
+-
+-        # 任何额外运算均取消输出豁免。
+-        return False
+-
+-    # 内部声明必须明确为 reg，避免仅凭命名放行 wire。
+-    set_reg_names = {  # 输出 bridge 源信号必须命中的内部 reg 名单
+-        str(dict_decl.get("name") or "")  # 读取输出 bridge 候选的内部声明名称
+-        for dict_decl in dict_module.get("decls", [])  # 逐条检查当前 module 的内部信号声明
+-        if str(dict_decl.get("kind") or "").lower() == "reg"  # 只有 reg 类型可获得时序 bridge 豁免
+-    }
+-
+-    # 同时满足声明、命名和时序驱动才获得豁免。
+-    return str_source in set_reg_names
+-
+-# _normalized_signal_ref 规范化信号引用中的空白。
+-def _normalized_signal_ref(str_reference: str) -> str:
+-    """返回保持位选语义但移除空白的信号引用。
+-
+-    参数:
+-        str_reference: 左值或右值中的信号引用文本。
+-    返回:
+-        简单标识符或规范化位选文本；无法识别时返回空字符串。
+-    """
+-
+-    # 接受普通或层级标识符和单层选择器。
+-    obj_match = re.fullmatch(  # 验证完整文本只有信号名称和可选选择器
+-        r"\s*([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)(?:\s*\[([^\]]+)\])?\s*",  # 合法信号引用
+-        str_reference,  # 待规范化的单个左值或右值引用
+-    )  # 信号引用完整匹配
+-
+-    # 复杂层级或拼接引用不作为单个图节点。
+-    if obj_match is None:
+-
+-        # 返回空文本让调用方显式跳过。
+-        return ""
+-
+-    # 无选择器时直接返回基名。
+-    if obj_match.group(2) is None:
+-
+-        # 简单名称无需额外格式化。
+-        return obj_match.group(1)
+-
+-    # 选择器内部删除全部空白，保持不同位选身份。
+-    str_selector = re.sub(r"\s+", "", obj_match.group(2))  # 规范化选择器正文
+-
+-    # 返回基名与规范化选择器。
+-    return f"{obj_match.group(1)}[{str_selector}]"
+-
+-# _array_index_in_range 检查常量数组访问是否落在声明边界内。
+-def _array_index_in_range(facts: VgFacts) -> VgEvaluation:
+-    """检查数组的常量索引是否超出声明范围。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        常量索引越界、边界内访问或不适用结论。
+-    """
+-
+-    # findings 保存每个确定越界的常量访问。
+-    list_findings: list[VgFinding] = []  # 数组常量越界证据
+-
+-    # applicable 区分无数组声明与已检查数组边界。
+-    bool_applicable = False  # 是否发现可解析的数组声明
+-
+-    # 每个可信 module 的数组作用域互相隔离。
+-    for source_facts, _, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 声明映射保存数组名称和闭区间边界。
+-        dict_ranges = _array_ranges(str_module_text)  # 当前 module 的数组声明范围
+-
+-        # 任一可解析声明都证明规则适用。
+-        bool_applicable = bool_applicable or bool(dict_ranges)  # 累积数组适用性
+-
+-        # 独立辅助函数把每个数组访问的嵌套判断限制在单一职责内。
+-        list_findings.extend(
+-            _array_access_findings(
+-                source_facts,
+-                str_module_text,
+-                int_base_line,
+-                dict_ranges,
+-            )
+-        )
+-
+-    # 任一常量越界都使门禁失败。
+-    if list_findings:
+-
+-        # 返回全部数组边界违规。
+-        return failed(*list_findings)
+-
+-    # 没有数组声明时不适用，其余情况通过。
+-    return passed(applicable=bool_applicable)
+-
+-# _array_access_findings 为单个 module 生成常量索引越界证据。
+-def _array_access_findings(
+-    source_facts: VgSourceFacts,
+-    str_module_text: str,
+-    int_base_line: int,
+-    dict_ranges: dict[str, tuple[int, int]],
+-) -> list[VgFinding]:
+-    """检查一个 module 中全部已声明数组的常量访问。
+-
+-    参数:
+-        source_facts: 当前 RTL 文件事实。
+-        str_module_text: formatter 确认边界的 module 原文。
+-        int_base_line: module 在文件中的一基起始行。
+-        dict_ranges: 数组名称到声明两端整数的映射。
+-    返回:
+-        当前 module 内全部确定越界证据。
+-    """
+-
+-    # 局部列表只汇总当前 module 的数组边界违规。
+-    list_findings: list[VgFinding] = []  # 当前 module 的越界访问证据
+-
+-    # 每个数组分别检查全部十进制常量访问。
+-    for str_name, tuple_bounds in dict_ranges.items():
+-
+-        # 声明两端顺序不影响合法闭区间。
+-        int_lower = min(tuple_bounds)  # 当前数组合法下界
+-
+-        # 上界与下界共同定义允许索引集合。
+-        int_upper = max(tuple_bounds)  # 当前数组合法上界
+-
+-        # 访问模式拒绝声明中的冒号范围，只接受单个整数索引。
+-        str_pattern = rf"\b{re.escape(str_name)}\s*\[\s*(\d+)\s*\]"  # 当前数组的常量访问模式
+-
+-        # module 范围内的每次常量访问独立核对闭区间。
+-        for obj_access in re.finditer(str_pattern, str_module_text):
+-
+-            # 十进制文本可直接转换为确定整数索引。
+-            int_index = int(obj_access.group(1))  # 当前数组访问索引
+-
+-            # 边界内索引满足规则。
+-            if int_lower <= int_index <= int_upper:
+-
+-                # 继续检查同一数组的其他访问。
+-                continue
+-
+-            # 访问起始偏移转换为文件一基行号。
+-            int_line = int_base_line + str_module_text[: obj_access.start()].count("\n")  # 越界访问文件行号
+-
+-            # evidence 同时保留数组名、索引和声明范围。
+-            str_evidence = f"{str_name}[{int_index}] outside [{int_lower}:{int_upper}]"  # 越界访问对照
+-
+-            # 每次确定越界形成独立 finding。
+-            list_findings.append(
+-                VgFinding(
+-                    source_facts.relative_path,
+-                    int_line,
+-                    "数组常量索引超出声明范围。",
+-                    str_evidence,
+-                )
+-            )
+-
+-    # 返回当前 module 的全部常量越界结果。
+-    return list_findings
+-
+-# _comb_no_feedback 检查连续和组合过程赋值形成的依赖环。
+-def _comb_no_feedback(facts: VgFacts) -> VgEvaluation:
+-    """检查组合赋值依赖图中是否存在反馈环。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        组合反馈环、无环组合图或不适用结论。
+-    """
+-
+-    # findings 保存每个 module 的稳定首个反馈节点。
+-    list_findings: list[VgFinding] = []  # 组合反馈环证据
+-
+-    # applicable 区分无组合赋值与已检查依赖图。
+-    bool_applicable = False  # 是否发现组合依赖边
+-
+-    # module 边界保证层级间同名信号不会形成伪环。
+-    for source_facts, _, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 普通反馈检查同时合并连续和过程组合赋值。
+-        dict_dependencies = _dependency_graph(str_module_text)  # 普通反馈规则使用的依赖图
+-
+-        # 非空图证明规则具有实际检查对象。
+-        bool_applicable = bool_applicable or bool(dict_dependencies)  # 累积组合图适用性
+-
+-        # 所有参与任一有向环的节点构成确定违规集合。
+-        set_feedback_nodes = _cycle_nodes(dict_dependencies)  # 当前 module 的反馈节点
+-
+-        # 每个 module 只报告排序后的首个节点，避免同一环重复诊断。
+-        if not set_feedback_nodes:
+-
+-            # 当前依赖图无环，继续检查后续 module。
+-            continue
+-
+-        # 排序消除集合遍历顺序差异。
+-        str_target = sorted(set_feedback_nodes)[0]  # 当前 module 的稳定反馈节点
+-
+-        # 首个节点提供可追溯的组合环位置。
+-        list_findings.append(
+-            _finding(
+-                source_facts,
+-                str_module_text,
+-                int_base_line,
+-                str_target,
+-                "组合逻辑依赖图中存在反馈环。",
+-                ", ".join(sorted(set_feedback_nodes)),
+-            )
+-        )
+-
+-    # 任一组合反馈图都使门禁失败。
+-    if list_findings:
+-
+-        # 返回每个违规 module 的反馈证据。
+-        return failed(*list_findings)
+-
+-    # 没有组合赋值时不适用，其余情况通过。
+-    return passed(applicable=bool_applicable)
+-
+-# _dependency_graph 从简单组合赋值构造左值到右值标识符的边。
+-def _dependency_graph(str_module_text: str) -> dict[str, set[str]]:
+-    """返回 module 内简单组合赋值的依赖邻接表。
+-
+-    参数:
+-        str_module_text: formatter 确认边界的 module 原文。
+-    返回:
+-        左值信号到其右值依赖信号集合的映射。
+-    """
+-
+-    # 图只登记具有至少一个标识符依赖的赋值左值。
+-    dict_dependencies: dict[str, set[str]] = {}  # 当前 module 的组合依赖邻接表
+-
+-    # 统一迭代器排除非组合时序块并保留简单赋值。
+-    for str_lhs, str_rhs in _comb_assignments(str_module_text):
+-
+-        # 右值标识符集合排除 Verilog 控制关键字和左值字面重复。
+-        set_dependencies = {  # 当前赋值的信号依赖集合
+-            str_name  # 当前右值标识符
+-            for str_name in re.findall(r"\b[A-Za-z_]\w*\b", str_rhs)  # 提取右值候选名称
+-            if str_name.lower() not in VERILOG_KEYWORDS  # 排除语言关键字
+-        }
+-
+-        # 空依赖常量赋值不产生组合图边。
+-        if not set_dependencies:
+-
+-            # 继续检查其他组合赋值。
+-            continue
+-
+-        # 同一左值的多个条件分支合并全部可能依赖。
+-        dict_dependencies.setdefault(str_lhs, set()).update(set_dependencies)
+-
+-    # 返回供反馈和锁存规则共享的邻接表。
+-    return dict_dependencies
+-
+-# _comb_assignments 迭代连续赋值与组合 always 中的简单赋值。
+-def _comb_assignments(str_module_text: str) -> Iterator[tuple[str, str]]:
+-    """遍历 module 中可确定属于组合逻辑的简单赋值。
+-
+-    参数:
+-        str_module_text: formatter 确认边界的 module 原文。
+-    返回:
+-        逐个产生组合赋值左值基名和右值文本。
+-    """
+-
+-    # 字符串和注释不属于 Verilog 表达式，扫描前先保持换行地屏蔽。
+-    str_scan_text = _masked_non_code_text(str_module_text)  # 仅保留可执行 Verilog 文本
+-
+-    # 连续 assign 天然属于组合依赖图。
+-    for obj_assign in re.finditer(
+-        r"\bassign\s+([A-Za-z_]\w*)(?:\s*\[[^]]+\])?\s*=\s*([^;]+);",
+-        str_scan_text,
+-    ):
+-
+-        # 调用方消费左值基名和分号前右值。
+-        yield obj_assign.group(1), obj_assign.group(2)
+-
+-    # always @(*) 范围限定过程阻塞赋值的组合语义。
+-    for str_always_body in _comb_always_bodies(str_scan_text):
+-
+-        # 非阻塞赋值不属于本规则的组合依赖入口。
+-        for obj_assignment in re.finditer(
+-            r"\b([A-Za-z_]\w*)(?:\s*\[[^]]+\])?\s*(?<!<)=\s*([^;]+);",
+-            str_always_body,
+-        ):
+-
+-            # 调用方逐项建立过程组合依赖边。
+-            yield obj_assignment.group(1), obj_assignment.group(2)
+-
+-# _masked_non_code_text 屏蔽字符串与注释并保留原始换行布局。
+-def _masked_non_code_text(str_module_text: str) -> str:
+-    """返回移除字符串和注释内容的等行数 module 文本。
+-
+-    参数:
+-        str_module_text: formatter 确认边界的 module 原文。
+-    返回:
+-        保留换行、但屏蔽字符串和注释字符的扫描文本。
+-    """
+-
+-    # 替换器保留命中文本中的换行并把其他字符改为空格。
+-    def _preserve_newlines(obj_match: re.Match[str]) -> str:
+-        """把一个非代码片段替换为等换行数空白。
+-
+-        参数:
+-            obj_match: 当前字符串或注释正则匹配。
+-        返回:
+-            与原片段换行布局相同的空白文本。
+-        """
+-
+-        # 每个非换行字符变为空格，保证后续位置关系稳定。
+-        return "".join("\n" if str_char == "\n" else " " for str_char in obj_match.group(0))
+-
+-    # 模式同时覆盖双引号字符串、行注释和块注释。
+-    str_pattern = r'"(?:\\.|[^"\\])*"|//[^\n]*|/\*.*?\*/'  # 非代码词法片段模式
+-
+-    # DOTALL 使块注释可以跨行，同时由替换器保留换行数。
+-    return re.sub(str_pattern, _preserve_newlines, str_module_text, flags=re.DOTALL)
+-
+-# _comb_always_bodies 提取简单 always @(*) 到对应 end 的主体。
+-def _comb_always_bodies(str_module_text: str) -> Iterator[str]:
+-    """遍历 module 内的简单组合 always 主体。
+-
+-    参数:
+-        str_module_text: formatter 确认边界的 module 原文。
+-    返回:
+-        逐个产生 always @(*) 的 begin/end 主体文本。
+-    """
+-
+-    # 当前规则只在完整 begin/end 组合块上建立过程依赖。
+-    for obj_always in re.finditer(
+-        r"\balways\s*@\s*\(\s*\*\s*\)\s*begin(?P<body>.*?)\bend\b",
+-        str_module_text,
+-        flags=re.IGNORECASE | re.DOTALL,
+-    ):
+-
+-        # formatter module 边界内的主体可安全交给赋值提取器。
+-        yield obj_always.group("body")
+-
+-# _latch_targets 识别无 else 条件组合块中的写入目标。
+-def _latch_targets(dict_module: dict[str, object], str_module_text: str) -> set[str]:
+-    """返回具有明确不完整条件赋值形状的组合目标。
+-
+-    参数:
+-        dict_module: formatter AST 中的单个 module 报告。
+-        str_module_text: formatter 确认边界的 module 原文。
+-    返回:
+-        可能综合为锁存器的过程赋值目标集合。
+-    """
+-
+-    # 候选集合只接受 formatter 明确分类的组合过程目标。
+-    set_targets: set[str] = set()  # 不完整条件赋值产生的候选目标
+-
+-    # 文本主体与 formatter always 顺序共同限定高置信候选。
+-    list_bodies = list(_comb_always_bodies(str_module_text))  # 当前 module 的组合块主体
+-
+-    # formatter always 顺序与词法主体顺序用于当前简单 fixture 和生成路径。
+-    list_comb_always = [  # formatter 确认的组合 always
+-        dict_always  # formatter 已确认组合触发语义的过程事实
+-        for dict_always in dict_module.get("always", [])  # 从 module 全部过程筛选锁存分析对象
+-        if str(dict_always.get("trigger_kind") or "") == "comb"  # 只保留组合分类
+-    ]
+-
+-    # 配对范围取两类事实的共同长度，避免缺失 span 时猜测。
+-    for dict_always, str_body in zip(list_comb_always, list_bodies):
+-
+-        # 必须存在 if 且没有 else 才能确定不完整条件赋值形状。
+-        if re.search(r"\bif\s*\(", str_body) is None or re.search(ELSE_PATTERN, str_body):
+-
+-            # 完整条件或无条件块不进入锁存候选集合。
+-            continue
+-
+-        # formatter targets 提供当前组合块的写入目标基名。
+-        set_targets.update(str(str_target).split("[")[0] for str_target in dict_always.get("targets", []))
+-
+-    # 返回供锁存反馈规则与组合环集合求交的目标。
+-    return set_targets
+-
+-# _array_ranges 提取 Verilog-2001 非打包数组的常量闭区间。
+-def _array_ranges(str_module_text: str) -> dict[str, tuple[int, int]]:
+-    """返回 module 内常量边界数组声明映射。
+-
+-    参数:
+-        str_module_text: formatter 确认边界的 module 原文。
+-    返回:
+-        数组名称到声明两端整数的映射。
+-    """
+-
+-    # 映射只收录可确定为十进制常量边界的声明。
+-    dict_ranges: dict[str, tuple[int, int]] = {}  # 当前 module 的数组范围
+-
+-    # 模式覆盖可选 packed 位宽和必需 unpacked 数组范围。
+-    str_pattern = (  # Verilog-2001 数组声明模式
+-        r"\b(?:reg|wire|integer)\b(?:\s+signed)?"
+-        r"(?:\s*\[[^]]+\])?\s+([A-Za-z_]\w*)"
+-        r"\s*\[\s*(\d+)\s*:\s*(\d+)\s*\]\s*;"
+-    )
+-
+-    # 每条匹配声明分别转换两端十进制边界。
+-    for obj_declaration in re.finditer(str_pattern, str_module_text, flags=re.IGNORECASE):
+-
+-        # 数组名是当前 module 作用域内的映射键。
+-        str_name = obj_declaration.group(1)  # 当前数组声明名称
+-
+-        # 两端保持声明顺序，调用方按 min/max 解释闭区间。
+-        tuple_bounds = (int(obj_declaration.group(2)), int(obj_declaration.group(3)))  # 当前数组声明边界
+-
+-        # 同名声明以后出现者覆盖属于非法 RTL，由其他门禁处理。
+-        dict_ranges[str_name] = tuple_bounds  # 登记当前常量数组范围
+-
+-    # 返回供所有静态常量访问共享的边界映射。
+-    return dict_ranges
+-
+-# _cycle_nodes 返回依赖图中参与任一闭环的节点集合。
+-def _cycle_nodes(dict_dependencies: dict[str, set[str]]) -> set[str]:
+-    """计算有向依赖图中所有参与环的节点。
+-
+-    参数:
+-        dict_dependencies: 左值到右值依赖集合的邻接表。
+-    返回:
+-        至少位于一个有向环中的节点集合。
+-    """
+-
+-    # 每个图节点分别验证是否存在回到自身的路径。
+-    set_cycles = {  # 当前依赖图的全部反馈节点
+-        str_start  # 当前能够回到自身的起点
+-        for str_start in dict_dependencies  # 遍历全部有出边节点
+-        if _path_returns_to_start(str_start, dict_dependencies)  # 只保留闭环起点
+-    }
+-
+-    # 返回供两条反馈规则共享的环节点集合。
+-    return set_cycles
+-
+-# _path_returns_to_start 从指定节点搜索返回自身的非空路径。
+-def _path_returns_to_start(str_start: str, dict_dependencies: dict[str, set[str]]) -> bool:
+-    """判断依赖图是否存在从指定节点返回自身的路径。
+-
+-    参数:
+-        str_start: 当前搜索起点。
+-        dict_dependencies: 左值到右值依赖集合的邻接表。
+-    返回:
+-        存在非空闭环路径时返回 True。
+-    """
+-
+-    # 待搜索集合从起点的直接依赖开始，保证路径非空。
+-    list_pending = list(dict_dependencies.get(str_start, set()))  # 尚未展开的依赖节点
+-
+-    # visited 防止无环图中的重复展开。
+-    set_visited: set[str] = set()  # 已展开的中间节点
+-
+-    # 深度优先搜索直到找到起点或耗尽路径。
+-    while list_pending:
+-
+-        # 列表尾部弹出保持实现紧凑且顺序不影响布尔结论。
+-        str_current = list_pending.pop()  # 当前展开节点
+-
+-        # 返回起点证明存在组合闭环。
+-        if str_current == str_start:
+-
+-            # 当前起点属于反馈环。
+-            return True
+-
+-        # 已展开节点无需再次处理。
+-        if str_current in set_visited:
+-
+-            # 继续搜索其他待处理路径。
+-            continue
+-
+-        # 首次展开节点进入访问集合。
+-        set_visited.add(str_current)
+-
+-        # 当前节点的后继依赖加入待搜索列表。
+-        list_pending.extend(dict_dependencies.get(str_current, set()))
+-
+-    # 搜索耗尽说明当前起点不在有向环内。
+-    return False
+-
+-# _finding 统一结构规则的路径和行号定位策略。
+-def _finding(
+-    source_facts: VgSourceFacts,
+-    str_module_text: str,
+-    int_base_line: int,
+-    str_token: str,
+-    str_message: str,
+-    str_evidence: str,
+-) -> VgFinding:
+-    """构造绑定到 module 内首个目标词元的稳定证据。
+-
+-    参数:
+-        source_facts: 当前 RTL 文件事实。
+-        str_module_text: formatter 确认边界的 module 原文。
+-        int_base_line: module 在文件中的一基起始行。
+-        str_token: 用于定位证据行的最小词元。
+-        str_message: 面向审查者的中文诊断。
+-        str_evidence: 当前违规的最小可追溯事实。
+-    返回:
+-        包含稳定相对路径、行号和诊断的证据对象。
+-    """
+-
+-    # 首个词元偏移用于换算 module 局部行号。
+-    int_offset = str_module_text.find(str_token)  # 目标词元在 module 文本中的偏移
+-
+-    # 未找到词元时仍安全定位到 module 起始行。
+-    int_line = int_base_line + str_module_text[: max(0, int_offset)].count("\n")  # 证据的一基文件行号
+-
+-    # 返回统一的不可变证据模型。
+-    return VgFinding(
+-        source_facts.relative_path,
+-        int_line,
+-        str_message,
+-        str_evidence,
+-    )
++    return failed(*findings) if findings else passed(applicable=applicable)
++
++
++def __getattr__(name: str):
++    """保持私有诊断辅助函数对既有调用方可见。"""
++
++    return getattr(_UPSTREAM, name)

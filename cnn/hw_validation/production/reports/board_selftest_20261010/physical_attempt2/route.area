@@ -1,0 +1,136 @@
+standard
+***Report Model: road_board_selftest_top Device: PH1P35MDG324***
+
+Design Statistics
+#IO                         6   out of    160    3.75%
+  #input                    2
+  #output                   4
+  #inout                    0
+#lut6                    8377   out of  21216   39.48%
+#reg                     7553
+  #slice reg             7553   out of  42432   17.80%
+  #pad reg                  0
+
+Utilization Statistics
+#mslice                  4660   out of   8112   57.45%
+  #mreg                  2850
+  #mle                   4201
+#lslice                  5036   out of  13104   38.43%
+  #lreg                  4703
+  #lle                   4176
+#plb                     1800   out of   2652   67.87%
+#slice                   9696   out of  21216   45.70%
+  #used ram              2072
+    #dram lut            2040
+    #shifter lut           32
+  #used logic            7624
+    #with luts           4729
+    #with adder          1576
+    #reg only            1319
+#feedthrough             1292
+#f7mux                     34   out of  10608    0.32%
+#f8mux                      0   out of   5304    0.00%
+#eram                      38   out of    108   35.19%
+  #eram20k                 38
+  #fifo20k                  0
+#dsp                       30   out of     40   75.00%
+#ddr_byte                   0   out of     12    0.00%
+#mipi_tx                    0   out of      2    0.00%
+#mipi_rx                    0   out of      2    0.00%
+#pad                       10   out of    160    6.25%
+#pll                        1   out of      6   16.67%
+#gclk                       3   out of     32    9.38%
+#lclk                       0   out of     12    0.00%
+#sclk                       9   out of     48   18.75%
+#mlclk                      0   out of      6    0.00%
+#ioclk                      0   out of     18    0.00%
+
+
+Detailed IO Report
+
+        Name           Direction    Location    IOStandard    IOType    DriveStrength    PullType    PackReg  
+       i_rstn            INPUT        R10        LVCMOS33      HDIO          N/A          PULLUP      NONE    
+      i_sys_clk          INPUT         C4        LVCMOS33      HDIO          N/A          PULLUP      NONE    
+    o_tmds_blue_p       OUTPUT        G16         TMDS33       HRIO          N/A           NONE       DDRX1   
+  o_tmds_blue_p(n)      OUTPUT        H16         TMDS33       HRIO          N/A           NONE       NONE    
+   o_tmds_clock_p       OUTPUT        C17         TMDS33       HRIO          N/A           NONE       DDRX1   
+  o_tmds_clock_p(n)     OUTPUT        D18         TMDS33       HRIO          N/A           NONE       NONE    
+   o_tmds_green_p       OUTPUT        F17         TMDS33       HRIO          N/A           NONE       DDRX1   
+  o_tmds_green_p(n)     OUTPUT        E18         TMDS33       HRIO          N/A           NONE       NONE    
+    o_tmds_red_p        OUTPUT        H14         TMDS33       HRIO          N/A           NONE       DDRX1   
+   o_tmds_red_p(n)      OUTPUT        H13         TMDS33       HRIO          N/A           NONE       NONE    
+
+Report Clock Domain Luts:
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Index   |  Name                                                                 |  Frequency   |  LUT As Logic   |  LUT As Shifter   |  LUT As Dram   |  BRAM   |  DSP
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  #1      |  u_PLL/ph1p_phy_pll_wrapper_25a56e5ce2f9_Inst/u_PH1P_PHY_PLL.clkc[0]  |  100MHz      |  6795           |  30               |  2296          |  33     |  30
+  #2      |  u_PLL/ph1p_phy_pll_wrapper_25a56e5ce2f9_Inst/u_PH1P_PHY_PLL.clkc[4]  |  75MHz       |  1203           |  32               |  0             |  5      |  0
+  #3      |  u_PLL/ph1p_phy_pll_wrapper_25a56e5ce2f9_Inst/u_PH1P_PHY_PLL.clkc[5]  |  375MHz      |  70             |  0                |  0             |  0      |  0
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Clock Resource Statistics
+Index     ClockNet                                                      Type            DriverType         Driver                                                               ClockFanout        GclkLocation
+#1        u_PLL/clk0_buf                                                UserGclk        pll                u_PLL/ph1p_phy_pll_wrapper_25a56e5ce2f9_Inst/u_PH1P_PHY_PLL.clkc0    4203               x23y39z16
+#2        road_selftest_display_Inst/i_pixel_clk                        InferredGclk    pll                u_PLL/ph1p_phy_pll_wrapper_25a56e5ce2f9_Inst/u_PH1P_PHY_PLL.clkc4    935                x23y39z17
+#3        u_hdmi_tx/u_hdmi2phy_wrapper/u0_lane_lvds_8_1/I_serial_clk    InferredGclk    pll                u_PLL/ph1p_phy_pll_wrapper_25a56e5ce2f9_Inst/u_PH1P_PHY_PLL.clkc5    38                 x23y39z18
+
+Report Hierarchy Area:
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|Instance                                    |Module                             |logic lut |ripple  |seq     |eram    |dsp     |dram lut |shifter lut |f7mux   |f8mux   |pll     |ddr     |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|top                                         |road_board_selftest_top            |4729      |1576    |7553    |38      |30      |2040     |32          |34      |0       |1       |0       |
+|  road_board_selftest_player_Inst           |road_board_selftest_player         |336       |168     |326     |32      |0       |0        |0           |15      |0       |0       |0       |
+|  road_dynamic_overlap_low_io_top_Inst      |road_dynamic_overlap_low_io_top    |3542      |1368    |5411    |1       |30      |2040     |16          |19      |0       |0       |0       |
+|    down2_dynamic_tile_runner_Inst_shell    |down2_dynamic_tile_runner          |3363      |1368    |4754    |1       |30      |2040     |16          |19      |0       |0       |0       |
+|      road_mac_probe_Inst_tile              |road_mac_probe                     |320       |468     |1421    |0       |24      |56       |0           |0       |0       |0       |0       |
+|      road_postprocess_stream_Inst_tile     |road_down2_dynamic_adapter         |1421      |413     |1947    |1       |6       |192      |16          |11      |0       |0       |0       |
+|        u_chain                             |road_dynamic_postprocess           |1421      |413     |1947    |1       |6       |192      |16          |11      |0       |0       |0       |
+|          u_post                            |road_dynamic_requant               |398       |160     |724     |0       |2       |0        |8           |0       |0       |0       |0       |
+|            u_round                         |road_round_shift                   |397       |160     |701     |0       |0       |0        |0           |0       |0       |0       |0       |
+|          u_pre                             |road_dynamic_requant               |492       |238     |880     |0       |4       |0        |8           |0       |0       |0       |0       |
+|            u_round                         |road_round_shift                   |488       |191     |835     |0       |0       |0        |0           |0       |0       |0       |0       |
+|          u_silu                            |silu_shared_unit                   |56        |15      |166     |1       |0       |0        |0           |0       |0       |0       |0       |
+|  road_selftest_display_Inst                |road_selftest_display              |209       |0       |574     |0       |0       |0        |0           |0       |0       |0       |0       |
+|  u_PLL                                     |PLL                                |1         |0       |0       |0       |0       |0        |0           |0       |0       |1       |0       |
+|    ph1p_phy_pll_wrapper_25a56e5ce2f9_Inst  |ph1p_phy_pll_wrapper_25a56e5ce2f9  |1         |0       |0       |0       |0       |0        |0           |0       |0       |1       |0       |
+|  u_hdmi_tx                                 |hdmi_tx                            |613       |28      |1199    |5       |0       |0        |16          |0       |0       |0       |0       |
+|    u_hdmi_1_4b_transmitter_core_wrapper    |hdmi_1_4b_transmitter_core_wrapper |585       |28      |1119    |5       |0       |0        |16          |0       |0       |0       |0       |
+|      u_hdmi_tx_controller_wrapper          |hdmi_tx_controller_wrapper         |583       |28      |1117    |5       |0       |0        |16          |0       |0       |0       |0       |
+|        u0_hdmi_tmds_encode                 |hdmi_tmds_encode                   |78        |0       |157     |0       |0       |0        |0           |0       |0       |0       |0       |
+|        u1_hdmi_tmds_encode                 |hdmi_tmds_encode                   |62        |0       |106     |0       |0       |0        |0           |0       |0       |0       |0       |
+|        u2_hdmi_tmds_encode                 |hdmi_tmds_encode                   |63        |0       |112     |0       |0       |0        |0           |0       |0       |0       |0       |
+|        u_hdmi_island_data_gen              |hdmi_island_data_gen               |146       |0       |242     |3       |0       |0        |0           |0       |0       |0       |0       |
+|          u_audio_clock_regeneration_packet |audio_clock_regeneration_packet    |32        |0       |80      |0       |0       |0        |0           |0       |0       |0       |0       |
+|            u_BCH_64_56_encode              |BCH_64_56_encode                   |7         |0       |10      |0       |0       |0        |0           |0       |0       |0       |0       |
+|          U_audio_sample_packet_2_channel   |audio_sample_packet_2_channel      |8         |0       |11      |3       |0       |0        |0           |0       |0       |0       |0       |
+|            u_w96_d1024_fifo                |w96_d1024_fifo                     |7         |0       |10      |3       |0       |0        |0           |0       |0       |0       |0       |
+|        u_hdmi_video_source                 |hdmi_video_source                  |34        |28      |38      |0       |0       |0        |0           |0       |0       |0       |0       |
+|        u_video_axi_stream_receiver         |video_axi_stream_receiver          |19        |0       |54      |2       |0       |0        |0           |0       |0       |0       |0       |
+|          u_w24_d1024_fifo                  |w24_d1024_fifo                     |17        |0       |52      |2       |0       |0        |0           |0       |0       |0       |0       |
+|        u_hdmi_island_data_assemble         |hdmi_island_data_assemble          |168       |0       |335     |0       |0       |0        |0           |0       |0       |0       |0       |
+|        u_hdmi_video_data_assemble          |hdmi_video_data_assemble           |7         |0       |35      |0       |0       |0        |16          |0       |0       |0       |0       |
+|        u_hdmi_data_distribution            |hdmi_data_distribution             |6         |0       |38      |0       |0       |0        |0           |0       |0       |0       |0       |
+|      u0_reset_sync                         |hdmi_1_4b_tx_reset_sync            |2         |0       |2       |0       |0       |0        |0           |0       |0       |0       |0       |
+|    u_hdmi2phy_wrapper                      |hdmi_phy_wrapper                   |25        |0       |55      |0       |0       |0        |0           |0       |0       |0       |0       |
+|      u0_lane_lvds_8_1                      |lane_lvds_10_1                     |8         |0       |20      |0       |0       |0        |0           |0       |0       |0       |0       |
+|      u1_lane_lvds_8_1                      |lane_lvds_10_1                     |6         |0       |13      |0       |0       |0        |0           |0       |0       |0       |0       |
+|      u3_lane_lvds_8_1                      |lane_lvds_10_1                     |5         |0       |10      |0       |0       |0        |0           |0       |0       |0       |0       |
+|      u2_lane_lvds_8_1                      |lane_lvds_10_1                     |6         |0       |12      |0       |0       |0        |0           |0       |0       |0       |0       |
+|  u_hdmi_vtc                                |uivtc                              |18        |12      |29      |0       |0       |0        |0           |0       |0       |0       |0       |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
+DataNet Average Fanout:
+
+   Index     Fanout     Nets   
+    #1          1       17253  
+    #2          2       2097   
+    #3          3        561   
+    #4          4        226   
+    #5        5-10      3447   
+    #6        11-50      610   
+    #7       51-100      83    
+    #8       101-500      8    
+  Average     3.01             

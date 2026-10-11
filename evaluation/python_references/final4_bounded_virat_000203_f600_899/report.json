@@ -1,0 +1,816 @@
+{
+  "status": "python_fixed_budget_post_cleanup_diagnostic_not_rtl_or_acceptance_evidence",
+  "clip_id": "VIRAT_S_000203_03_000736_000785",
+  "scored_frame_interval_inclusive": [
+    600,
+    899
+  ],
+  "warmup_contract": "decode and process causally from source frame 0; score only requested interval",
+  "processed_frames_including_warmup": 900,
+  "processed_scoring_frames": 300,
+  "annotation_labels": [
+    "ped",
+    "vehicle"
+  ],
+  "parameters": {
+    "sample_stride": 5,
+    "learn_frames": 4,
+    "threshold": 20,
+    "min_neighbors": 3,
+    "min_run": 2,
+    "main_min_area": 16,
+    "main_slots": 4,
+    "total_budget": 8,
+    "small_min_area": 2,
+    "small_max_area": 15,
+    "minimum_small_box": [
+      4,
+      4
+    ],
+    "small_box_mode": "perspective",
+    "perspective_y_threshold": 110,
+    "perspective_minimum_box": [
+      6,
+      16
+    ],
+    "perspective_top_margin": 2,
+    "fixed_small_slot_count": 4,
+    "nms_iou": 0.3,
+    "annotation_match_iou": 0.25,
+    "scorers": [
+      "peak_difference"
+    ],
+    "final_output_strategies": [
+      "main3_small1",
+      "main2_small2",
+      "internal8_to4"
+    ],
+    "effective_final_output_budget": 4,
+    "internal_pool_budget": 8,
+    "bounded_small_pool_budget": 4
+  },
+  "hashes": {
+    "source_video_sha256": "c85ced4e6984bb4a2d97109a7f9e45cf7b398530c0eebc0eba3dcd30c68477ad",
+    "annotations_csv_sha256": "e3c32ee80cd7d37d7ee8b1f5fc79a22d05b7e5e6fb2c9f61dbe512b6e711840e",
+    "script_sha256": "ec45a958cf05942dbae4655b0a6d7a4bd1acb7bc70acea0d182a1a7887a39486",
+    "candidate_chain_reference_sha256": "6ed7652dd51db9eb1a1debede3cfb74f8ca862f261e96fa4557fb30969ab766d",
+    "candidates_csv_sha256": "9db3366fc00f0eb64aed4e4d5fe2e41ae898dc40af76a62279098f7b80bcb3c5",
+    "annotation_row_coverage_csv_sha256": "73badcb89a433159d973194503f092b9cdb6e29e379029dd8b25d07d209ac519",
+    "development_catalog_sha256": "2c5fc1323e66bdb144dd56e08aeb6b1afe52ec2904e2e72fd439de1496e92ae3"
+  },
+  "inputs": {
+    "source_video": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\public_data\\raw\\virat_ground_v2\\video_original\\VIRAT_S_000203_03_000736_000785.mp4",
+    "annotations_csv": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\public_data\\virat_ground_v2\\annotations.csv",
+    "development_catalog": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\public_data\\virat_ground_v2\\catalog.json",
+    "catalog_split": "val"
+  },
+  "scoring_contract": {
+    "contrast_fill": "0.60*normalized(mean_difference-threshold) + 0.25*component_fill_ratio + 0.15*min(area/main_min_area,1)",
+    "area": "component foreground-pixel area; deterministic label tie-break",
+    "peak_difference": "component maximum absolute gray/background difference",
+    "tie_break": "higher score, then larger area, then lower component label"
+  },
+  "final_output_contracts": {
+    "existing_budget": "Backward-compatible configurable main_slots plus total_budget-main_slots small slots; output is not reduced to four.",
+    "main3_small1": "Area-ranked main top3 plus one peak-difference-ranked small candidate. The internal small pool is capped at peak top4. Small expansion precedes NMS; rejected candidates are refilled only from that bounded pool.",
+    "main2_small2": "Area-ranked main top2 plus two peak-difference-ranked small candidates. The internal small pool is capped at peak top4. Small expansion precedes NMS; rejected candidates are refilled only from that bounded pool.",
+    "internal8_to4": "Build an internal pool of area top4 main boxes and peak-difference top4 expanded small boxes without pre-NMS. Sort the unified pool by integer key (-peak_difference,-area,+component_label), then greedily accept in that order when IoU<=nms_iou against every accepted box, continuing after rejection until four outputs or pool exhaustion. A high-peak small box can therefore replace a conflicting main box. This requires only fixed-width comparators, a four-entry accepted set and IoU logic."
+  },
+  "selection_contract": "Main branch exactly keeps area>=main_min_area components sorted by (-area,label), capped at main_slots. The experimental branch only considers small_min_area<=area<=small_max_area. In square mode it center-expands to minimum_small_box. In perspective mode, components whose center_y reaches perspective_y_threshold use a top-anchored perspective_minimum_box; components above the threshold retain square expansion. Expansion occurs before NMS; after a conflict the rank scan continues to refill the fixed small slots. NMS rejects IoU>nms_iou against main and accepted small boxes. Its fixed slot allocation is total_budget-main_slots; unused main slots are not reassigned, so the per-frame count may be below the total budget.",
+  "coordinate_contract": "All analysis boxes are inclusive. Source extent is [stride*xmin,stride*ymin,stride*(xmax+1)-1,stride*(ymax+1)-1], clipped.",
+  "results": [
+    {
+      "scorer": "peak_difference",
+      "candidate_count": 1195,
+      "candidate_count_by_branch": {
+        "main_area_topk": 895,
+        "small_component_experimental": 300
+      },
+      "frames_at_total_budget": 295,
+      "minimum_candidates_per_frame": 3,
+      "maximum_candidates_per_frame": 4,
+      "annotation_coverage": {
+        "all": {
+          "annotation_rows": 755,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 186,
+          "incremental_rows_from_small_branch": 186,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.24635761589403973
+        },
+        "ped": {
+          "annotation_rows": 455,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 183,
+          "incremental_rows_from_small_branch": 183,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.4021978021978022
+        },
+        "vehicle": {
+          "annotation_rows": 300,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 3,
+          "incremental_rows_from_small_branch": 3,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.01
+        }
+      },
+      "annotation_coverage_iou_sweep": [
+        {
+          "iou_threshold": 0.1,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 378,
+          "added_vs_baseline_rows": 378,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 378,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.5006622516556292
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 215,
+          "added_vs_baseline_rows": 215,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 215,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.4725274725274725
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 13,
+          "added_vs_baseline_rows": 13,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 13,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.22413793103448276
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 163,
+          "added_vs_baseline_rows": 163,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 163,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.5433333333333333
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 186,
+          "added_vs_baseline_rows": 186,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 186,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.24635761589403973
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 183,
+          "added_vs_baseline_rows": 183,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 183,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.4021978021978022
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 9,
+          "added_vs_baseline_rows": 9,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 9,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.15517241379310345
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 3,
+          "added_vs_baseline_rows": 3,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 3,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.01
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 99,
+          "added_vs_baseline_rows": 99,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 99,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.13112582781456952
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 99,
+          "added_vs_baseline_rows": 99,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 99,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.2175824175824176
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 9,
+          "added_vs_baseline_rows": 9,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 9,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.15517241379310345
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 0,
+          "added_vs_baseline_rows": 0,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 0,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.0
+        }
+      ],
+      "final_strategy": "main3_small1",
+      "final_empty_slots": 5,
+      "raw_main_top4_retained_count": 895,
+      "raw_main_top4_possible_count": 1118,
+      "raw_main_top4_retention_rate": 0.8005366726296959,
+      "raw_main_top4_retention_by_rank": [
+        {
+          "rank": 0,
+          "retained": 300,
+          "possible": 300,
+          "rate": 1.0
+        },
+        {
+          "rank": 1,
+          "retained": 300,
+          "possible": 300,
+          "rate": 1.0
+        },
+        {
+          "rank": 2,
+          "retained": 295,
+          "possible": 295,
+          "rate": 1.0
+        },
+        {
+          "rank": 3,
+          "retained": 0,
+          "possible": 223,
+          "rate": 0.0
+        }
+      ]
+    },
+    {
+      "scorer": "peak_difference",
+      "candidate_count": 1200,
+      "candidate_count_by_branch": {
+        "main_area_topk": 600,
+        "small_component_experimental": 600
+      },
+      "frames_at_total_budget": 300,
+      "minimum_candidates_per_frame": 4,
+      "maximum_candidates_per_frame": 4,
+      "annotation_coverage": {
+        "all": {
+          "annotation_rows": 755,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 215,
+          "incremental_rows_from_small_branch": 215,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.2847682119205298
+        },
+        "ped": {
+          "annotation_rows": 455,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 212,
+          "incremental_rows_from_small_branch": 212,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.46593406593406594
+        },
+        "vehicle": {
+          "annotation_rows": 300,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 3,
+          "incremental_rows_from_small_branch": 3,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.01
+        }
+      },
+      "annotation_coverage_iou_sweep": [
+        {
+          "iou_threshold": 0.1,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 408,
+          "added_vs_baseline_rows": 408,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 408,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.5403973509933775
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 244,
+          "added_vs_baseline_rows": 244,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 244,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.5362637362637362
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 16,
+          "added_vs_baseline_rows": 16,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 16,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.27586206896551724
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 164,
+          "added_vs_baseline_rows": 164,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 164,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.5466666666666666
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 215,
+          "added_vs_baseline_rows": 215,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 215,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.2847682119205298
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 212,
+          "added_vs_baseline_rows": 212,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 212,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.46593406593406594
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 12,
+          "added_vs_baseline_rows": 12,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 12,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.20689655172413793
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 3,
+          "added_vs_baseline_rows": 3,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 3,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.01
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 110,
+          "added_vs_baseline_rows": 110,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 110,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.1456953642384106
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 110,
+          "added_vs_baseline_rows": 110,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 110,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.24175824175824176
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 12,
+          "added_vs_baseline_rows": 12,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 12,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.20689655172413793
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 0,
+          "added_vs_baseline_rows": 0,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 0,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.0
+        }
+      ],
+      "final_strategy": "main2_small2",
+      "final_empty_slots": 0,
+      "raw_main_top4_retained_count": 600,
+      "raw_main_top4_possible_count": 1118,
+      "raw_main_top4_retention_rate": 0.5366726296958855,
+      "raw_main_top4_retention_by_rank": [
+        {
+          "rank": 0,
+          "retained": 300,
+          "possible": 300,
+          "rate": 1.0
+        },
+        {
+          "rank": 1,
+          "retained": 300,
+          "possible": 300,
+          "rate": 1.0
+        },
+        {
+          "rank": 2,
+          "retained": 0,
+          "possible": 295,
+          "rate": 0.0
+        },
+        {
+          "rank": 3,
+          "retained": 0,
+          "possible": 223,
+          "rate": 0.0
+        }
+      ]
+    },
+    {
+      "scorer": "peak_difference",
+      "candidate_count": 1200,
+      "candidate_count_by_branch": {
+        "main_area_topk": 473,
+        "small_component_experimental": 727
+      },
+      "frames_at_total_budget": 300,
+      "minimum_candidates_per_frame": 4,
+      "maximum_candidates_per_frame": 4,
+      "annotation_coverage": {
+        "all": {
+          "annotation_rows": 755,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 224,
+          "incremental_rows_from_small_branch": 224,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.29668874172185433
+        },
+        "ped": {
+          "annotation_rows": 455,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 221,
+          "incremental_rows_from_small_branch": 221,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.4857142857142857
+        },
+        "vehicle": {
+          "annotation_rows": 300,
+          "covered_by_baseline_main4_rows": 0,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 3,
+          "incremental_rows_from_small_branch": 3,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.01
+        }
+      },
+      "annotation_coverage_iou_sweep": [
+        {
+          "iou_threshold": 0.1,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 417,
+          "added_vs_baseline_rows": 417,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 417,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.552317880794702
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 253,
+          "added_vs_baseline_rows": 253,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 253,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.5560439560439561
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 17,
+          "added_vs_baseline_rows": 17,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 17,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.29310344827586204
+        },
+        {
+          "iou_threshold": 0.1,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 164,
+          "added_vs_baseline_rows": 164,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 164,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.5466666666666666
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 224,
+          "added_vs_baseline_rows": 224,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 224,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.29668874172185433
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 221,
+          "added_vs_baseline_rows": 221,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 221,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.4857142857142857
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 13,
+          "added_vs_baseline_rows": 13,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 13,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.22413793103448276
+        },
+        {
+          "iou_threshold": 0.25,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 3,
+          "added_vs_baseline_rows": 3,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 3,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.01
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "all",
+          "annotation_rows": 755,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 113,
+          "added_vs_baseline_rows": 113,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 113,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.14966887417218544
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "ped",
+          "annotation_rows": 455,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 113,
+          "added_vs_baseline_rows": 113,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 113,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.24835164835164836
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "ped_analysis_h_le_6",
+          "annotation_rows": 58,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 13,
+          "added_vs_baseline_rows": 13,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 13,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.22413793103448276
+        },
+        {
+          "iou_threshold": 0.5,
+          "label": "vehicle",
+          "annotation_rows": 300,
+          "baseline_main4_covered_rows": 0,
+          "main_covered_rows": 0,
+          "combined_covered_rows": 0,
+          "added_vs_baseline_rows": 0,
+          "lost_vs_baseline_rows": 0,
+          "incremental_rows": 0,
+          "baseline_main4_coverage_rate": 0.0,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.0
+        }
+      ],
+      "final_strategy": "internal8_to4",
+      "final_empty_slots": 0,
+      "raw_main_top4_retained_count": 473,
+      "raw_main_top4_possible_count": 1118,
+      "raw_main_top4_retention_rate": 0.4230769230769231,
+      "raw_main_top4_retention_by_rank": [
+        {
+          "rank": 0,
+          "retained": 216,
+          "possible": 300,
+          "rate": 0.72
+        },
+        {
+          "rank": 1,
+          "retained": 97,
+          "possible": 300,
+          "rate": 0.3233333333333333
+        },
+        {
+          "rank": 2,
+          "retained": 128,
+          "possible": 295,
+          "rate": 0.43389830508474575
+        },
+        {
+          "rank": 3,
+          "retained": 32,
+          "possible": 223,
+          "rate": 0.14349775784753363
+        }
+      ]
+    }
+  ],
+  "boundary": "Only the main area-top4 branch represents current selection behavior. The small branch, box expansion and NMS are Python proposals. VIRAT annotations are not exhaustive background truth, so candidate count is processing load, not a false-positive count. No blind-reserve input is accepted."
+}

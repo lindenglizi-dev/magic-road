@@ -1,0 +1,17 @@
+{
+  "cwd": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/v7_minimal_chain_20261006",
+  "python": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe",
+  "python_version": "3.13.12",
+  "iverilog_version": "12.0 (devel) (s20150603-1539-g2693dd32b)",
+  "runs": [
+    {"command": "python reference.py", "log": "reference_run.log", "exit_code": 0, "scope": "first numerical reference using original MAC reference"},
+    {"command": "iverilog -g2001 -Wall -s tb_road_mac_probe -o counterexample.vvp ../../../../mac/road_mac_probe.v ../../../../mac/tb_road_mac_probe.v", "exit_code": 1, "stdout": "No such file or directory; Unable to find root module tb_road_mac_probe; 1 error(s) during elaboration", "scope": "wrong relative source path; no valid DUT compile"},
+    {"command": "iverilog -g2001 -Wall -s tb_road_mac_probe -o counterexample.vvp E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/mac/road_mac_probe.v E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/mac/tb_road_mac_probe.v", "exit_code": 0, "log": "counterexample_compile.log"},
+    {"command": "vvp counterexample.vvp +VECTORS=counterexample_legacy.txt", "exit_code": 0, "log": "counterexample_rtl.log", "dut_result": "PASS cases=1 errors=0 reset=1; expected legacy first-group fault with zero triplet reproduced"},
+    {"command": "python reference.py", "exit_code": 1, "log": "reference_frozen_run.log", "cause": "directory __pycache__ was incorrectly included among files to hash"},
+    {"command": "python reference.py", "exit_code": 0, "log": "reference_frozen_retry.log", "scope": "hash enumeration fixed, frozen reference passed"},
+    {"command": "python reference.py", "exit_code": 0, "log": "reference_final.log", "scope": "final base/tail vectors, exact scale assertions, golden checks and manifest"},
+    {"command": "vvp counterexample.vvp +VECTORS=mac_16_channels.txt", "exit_code": 0, "log": "base_mac_rtl.log", "dut_result": "PASS cases=8 errors=0 reset=1"},
+    {"command": "vvp counterexample.vvp +VECTORS=mac_13_channels.txt", "exit_code": 0, "log": "tail_mac_rtl.log", "dut_result": "PASS cases=8 errors=0 reset=1"}
+  ]
+}

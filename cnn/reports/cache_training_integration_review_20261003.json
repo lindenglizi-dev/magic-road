@@ -1,0 +1,232 @@
+{
+  "report_kind": "independent_read_only_cache_training_integration_review",
+  "date": "2026-10-03",
+  "role": "verify",
+  "scope": {
+    "reviewed": [
+      "cnn/train.py",
+      "cnn/disk_cache.py",
+      "cnn/evaluate.py",
+      "cnn/profile_preprocess.py",
+      "cnn/test_disk_cache.py",
+      "cnn/check_cache_training.py",
+      "cnn/reports/cache_training_contract_cpu_final_20261003.json",
+      "cnn/reports/cache_training_contract_coco_cpu_20261003.json"
+    ],
+    "source_edits": false,
+    "gpu_used_by_reviewer": false,
+    "optimizer_or_training_steps_run_by_reviewer": 0,
+    "newtest_or_blind_pixels_read": false,
+    "owned_output_only": "cnn/reports/cache_training_integration_review_20261003.json"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "default_compatibility": "passed",
+    "qa_manifest_isolation": "passed",
+    "receipt_binding": "passed",
+    "cpu_first_batch_equivalence": "passed",
+    "resume_protocol_unchanged": true,
+    "production_training_or_speed_claim": false,
+    "summary": "The cache is opt-in, paired with an exact index-byte receipt, and defaults to the original FullFrameDataset path. Known cache-QA manifests are rejected by training, teacher and accuracy evaluation while only explicit CPU QA tools opt in. Road and COCO CPU first-batch reports bind current manifests/caches; an independent road rerun reproduced exact inputs, heads, losses, 195 gradients and all model/BN state for Mosaic off/on."
+  },
+  "source_snapshot": {
+    "cnn/train.py": "be96d7639de7de75157088ddda9cdd947e8d53c81efd076c7fb1cc6273442d65",
+    "cnn/disk_cache.py": "5868117b458e57f9e1a4f663587165a9e36a3f488c29d0ec9871f1edd48fc9ea",
+    "cnn/evaluate.py": "b7ec8925a9436c28b4f936ce9469824122c177675d5663fc5aab05de989406f6",
+    "cnn/profile_preprocess.py": "bf9e67b37ca6eefcf27f8381aae3047140c0f4e623afb2cec94e09b1802a6ab8",
+    "cnn/check_cache_training.py": "1c600e11fd81ab8b6ee1aff9998e2cd8dbe937df4f7af042485cb0ba3ab25c93",
+    "cnn/test_disk_cache.py": "4a1d9086097abdbea3bbc7b3089f81a46122fc81377593e0e3261c0d498010a3",
+    "cnn/model.py_unchanged": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c",
+    "checkpoint_unchanged": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4"
+  },
+  "default_and_protocol_review": {
+    "default_dataset_factory": "make_frame_dataset with no cache arguments returns an exact FullFrameDataset instance.",
+    "paired_options": "cache_root and cache_index_sha256 must either both be absent or both be supplied; a 64-hex receipt is required.",
+    "lazy_import": "disk_cache is imported only on the opt-in branch, so the default data path and class remain unchanged.",
+    "cli_defaults": {
+      "input_cache": null,
+      "input_cache_index_sha256": null
+    },
+    "training_protocol_cache_fields": "none",
+    "training_protocol_sha256_recomputed": "1f56ba977034e67f0738f34dcc36d508c68fa062bdf95d519284e9abfe35fc6a",
+    "checkpoint_training_protocol_sha256_recomputed": "1f56ba977034e67f0738f34dcc36d508c68fa062bdf95d519284e9abfe35fc6a",
+    "checkpoint_epoch_zero_based": 5,
+    "checkpoint_completed_epoch_number": 6,
+    "checkpoint_trained_steps": 11094,
+    "checkpoint_resume_eligible": true,
+    "ordering_reasoning": "Cache construction/validation consumes no training RNG. A resumed run restores checkpoint RNG after datasets and optimizer are created, and per-epoch shuffle remains explicitly seeded by seed+epoch. Mosaic selection remains index/epoch/seed deterministic.",
+    "validate_only": "Pinned COCO cache validation exited successfully without creating cnn/runs/cache_validate_only_not_created."
+  },
+  "qa_manifest_entrypoint_review": {
+    "guard_markers": [
+      "cache_pilot_provenance present",
+      "manifest_status equals development_cache_pilot",
+      "purpose starts with CPU_disk_cache_QA"
+    ],
+    "default_rejecting_entrypoints": [
+      "cnn.train train() through load_dataset_manifest",
+      "cnn.teacher through load_dataset_manifest",
+      "cnn.evaluate full mode through load_dataset_manifest",
+      "cnn.evaluate raw subset/development-domain mode through explicit reject_cache_qa"
+    ],
+    "explicit_cpu_qa_allowlist": [
+      "cnn.disk_cache standalone cache QA",
+      "cnn.check_cache_training first-batch CPU equivalence",
+      "cnn.profile_preprocess legacy in-memory CPU preprocessing QA"
+    ],
+    "dynamic_checks": {
+      "unit_test_train_loader_rejects_qa": true,
+      "unit_test_evaluate_subset_rejects_qa": true,
+      "actual_train_validate_only_qa_exit": 1,
+      "actual_evaluate_development_domain_qa_exit": 1,
+      "error": "cache QA manifest is forbidden for training or accuracy evaluation",
+      "outputs_created": false
+    },
+    "conclusion": "The earlier training_eligible=true pilot ambiguity is now fail-closed at actual training and accuracy-evaluation entrypoints. Only named, bounded CPU QA tools can opt in."
+  },
+  "receipt_and_integrity_review": {
+    "check_timing": "DiskCachedDataset reads index.json once, hashes those exact bytes against the required receipt before JSON parsing and before source/blob reads, then parses the already-verified bytes.",
+    "receipt_mismatch": "fails before cache use",
+    "manifest_and_content_binding": "After receipt verification, the reader checks cache contract/status, exact manifest SHA, dataset-content identity, preprocessing contract/source/library identity, every row/source/offset, blob size and whole-blob hash.",
+    "runtime_record_check": "Every record read verifies exact length and its per-record SHA-256.",
+    "train_and_val": "The same required receipt is used independently when constructing both train and val datasets.",
+    "direct_script_compatibility": "python cnn/train.py imports the opt-in cache through the fallback module path; --help and the recorded direct-script validate-only check succeed.",
+    "qa_cache_separation": "QA caches cannot be paired with a non-QA/full manifest because manifest/content/row counts and hashes fail; their QA manifest is independently rejected by the real trainer."
+  },
+  "independent_cpu_checks": [
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_disk_cache -v",
+      "result": "1 passed in 0.540 seconds"
+    },
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B cnn/train.py --help",
+      "result": "exit 0; direct-script imports and cache CLI arguments available"
+    },
+    {
+      "kind": "checkpoint_protocol_and_default_factory",
+      "result": {
+        "protocol_hash_equal": true,
+        "resume_eligible": true,
+        "default_dataset_type": "FullFrameDataset"
+      }
+    },
+    {
+      "kind": "road_existing_cache_first_batch_forward_backward_rerun",
+      "device": "cpu",
+      "cpu_threads": 2,
+      "optimizer_steps": 0,
+      "mosaic_false_exact": true,
+      "mosaic_true_exact": true,
+      "inputs_exact": true,
+      "heads_exact": true,
+      "losses_exact": true,
+      "gradient_tensors_exact": 195,
+      "model_and_bn_state_exact": true,
+      "matches_stored_report_values": true
+    }
+  ],
+  "road_report_verification": {
+    "path": "cnn/reports/cache_training_contract_cpu_final_20261003.json",
+    "sha256": "fdc139283ddd164f224e11a0588bdc20da97b4d3bbfd1da136722d8dde12f46b",
+    "dataset_sha256": "e75c1f53a882e5177c9b0d24fbcc4075cdffe7e0dffdff53925697aabb6ec179",
+    "cache_index_sha256": "1cb6af5a9e384667c88c074eca56cca22a92580f7de91b19ee4ada72c4e95f08",
+    "cache_blob_sha256": "b357057be321c46175d16927e425224533efc2d46b578d55401f3d74bf0ed4d6",
+    "manifest_index_blob_and_preprocess_identity_match": true,
+    "device": "cpu",
+    "cpu_threads": 2,
+    "amp": false,
+    "optimizer_steps": 0,
+    "mosaic_false": {
+      "microbatch": 2,
+      "loss": 10.008563995361328,
+      "iou_loss": 0.7379518747329712,
+      "object_loss": 5.099604606628418,
+      "class_loss": 1.2192003726959229,
+      "num_foreground": 248.0,
+      "num_gt": 76.0,
+      "compared_gradient_tensors": 195,
+      "max_difference": 0
+    },
+    "mosaic_true": {
+      "microbatch": 2,
+      "loss": 10.975703239440918,
+      "iou_loss": 0.8042346239089966,
+      "object_loss": 5.917943954467773,
+      "class_loss": 1.0365859270095825,
+      "num_foreground": 535.0,
+      "num_gt": 297.0,
+      "compared_gradient_tensors": 195,
+      "max_difference": 0
+    }
+  },
+  "coco_report_verification": {
+    "path": "cnn/reports/cache_training_contract_coco_cpu_20261003.json",
+    "sha256": "19be2f54795102374596a919a39fbe6e90aa8768405c882dbef990f246df27e3",
+    "dataset_sha256": "430f6ae664880a67fea83a2df3691815ca67c59a87898aef040d75e3ebe0465b",
+    "cache_index_sha256": "3b27a89506c516ab0af2cd12b46e7bb230a739965717873479655be6ccc7b398",
+    "cache_blob_sha256": "79950e42395680565dfcea246729a9a56062189af9c2d82f3fa4a01a6f8bc0ad",
+    "manifest_index_blob_and_preprocess_identity_match": true,
+    "device": "cpu",
+    "cpu_threads": 2,
+    "amp": false,
+    "optimizer_steps": 0,
+    "mosaic_false": {
+      "microbatch": 2,
+      "loss": 9.009764671325684,
+      "iou_loss": 0.7038643956184387,
+      "object_loss": 4.70115327835083,
+      "class_loss": 0.7892895340919495,
+      "num_foreground": 51.0,
+      "num_gt": 13.0,
+      "compared_gradient_tensors": 195,
+      "max_difference": 0
+    },
+    "mosaic_true": {
+      "microbatch": 2,
+      "loss": 7.518945693969727,
+      "iou_loss": 0.609398603439331,
+      "object_loss": 3.5551083087921143,
+      "class_loss": 0.9168444275856018,
+      "num_foreground": 152.0,
+      "num_gt": 38.0,
+      "compared_gradient_tensors": 195,
+      "max_difference": 0
+    }
+  },
+  "cpu_conclusion_boundary": {
+    "proved": "For two deterministic CPU FP32 microbatches of size 2, one Mosaic-off and one Mosaic-on, raw and pinned-cache paths produce identical inputs, sample keys, heads, loss components, 195 gradient tensors and complete post-forward model/BN state.",
+    "not_proved": [
+      "optimizer or scheduler equivalence",
+      "gradient accumulation or epoch-boundary equivalence",
+      "effective-batch-64 equivalence",
+      "multi-worker first-batch forward/backward equivalence",
+      "CUDA AMP or GPU behavior",
+      "end-to-end training speed",
+      "multi-epoch loss trajectory",
+      "accuracy or acceptance",
+      "full-dataset cache construction"
+    ],
+    "saved_checkpoint": "No optimizer step or checkpoint write occurred; last.pt remains epoch 6 display / zero-based 5 with SHA-256 51da8c... and the training log timestamp is unchanged."
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "topic": "cache_receipt_is_runtime_provenance_not_checkpoint_protocol",
+      "evidence": "The cache path/receipt are emitted in startup and start-log metadata but intentionally excluded from protocol_for and checkpoint fields so raw/cache runs remain resume-compatible.",
+      "disposition": "Preserve the start log and require an explicitly reviewed receipt on every cached invocation. Resume eligibility proves the training protocol is unchanged; it does not prove that a later operator supplied the same cache receipt. This is not blocking because the cache is opt-in and content/preprocessing-bound."
+    },
+    {
+      "severity": "warning",
+      "topic": "cpu_microbatch_scope",
+      "evidence": "Only first batches with batch=2, workers=0, CPU FP32, Mosaic off/on were compared; no optimizer update occurred.",
+      "disposition": "Do not claim GPU, AMP, accumulation, full-epoch, speed or accuracy equivalence. Before actual GPU continuation, keep the cache switch reversible and perform the planned input/order/loss smoke comparison in the target execution configuration."
+    },
+    {
+      "severity": "info",
+      "topic": "bounded_builder",
+      "evidence": "The current exclusive cache builder remains capped at 128 images, so these reports validate integration contracts and small pilots only.",
+      "disposition": "A separately reviewed full-data builder/receipt is still required before cached full-dataset training; no automatic GPU resume is warranted by this milestone."
+    }
+  ],
+  "final_process_state": "No Python process using the dedicated road_yolo_venv executable was present at the final reviewer check."
+}

@@ -1,0 +1,26 @@
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v:146:	assign o_input_ready = (cnt_result_queue < 2'd2) && silu_table_loaded &&
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v-147-	                       (~silu_table_fault) && (~i_table_valid) && (~flag_fatal);
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v-148-	assign flag_input_accept = i_input_valid && o_input_ready;
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v-149-	assign flag_group_push = flag_input_accept && (~i_result_fault) && (~flag_input_shape_fault);
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v-150-	assign flag_group_pop = flag_pre_accept && flag_scalar_last;
+--
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v:180:	assign o_fault = flag_fatal || o_table_fault;
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v-181-	assign o_result_queue_count = cnt_result_queue;
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v-182-	assign o_meta_count = cnt_meta;
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v-183-	assign o_pre_busy = (cnt_pre_inflight != 4'd0);
+../v11_internal_timing_20261007/rtl/road_postprocess_stream.v-184-	assign o_silu_busy = (cnt_meta != 4'd0);
+--
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v:194:	assign flag_mac_result_accept = (state_current == ST_MAC_WAIT) && flag_result_reserved &&
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-195-	                                mac_result_valid && pp_input_ready;
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-196-	assign flag_commit_accept = pp_output_valid && i_commit_ready && flag_busy_o;
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v:197:	assign flag_table_enable = (state_current == ST_IDLE) && (~i_start) && (~i_export_start);
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-198-	assign flag_load_accept = i_load_valid && o_load_ready;
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-199-	assign flag_output_accept = o_output_valid && i_output_ready;
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-200-	assign flag_start_accept = i_start && (~i_table_valid) && (state_current == ST_IDLE) &&
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-201-	                           pp_table_loaded && (~pp_fault) && (~flag_load_fault) &&
+--
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v:213:	assign o_fault = flag_fault_o || flag_load_fault || pp_fault;
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-214-	assign o_output_valid = (state_current == ST_EXPORT);
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-215-	assign o_output_data = reg_output_cache[cnt_export];
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-216-	assign o_output_index = cnt_export;
+../v11_internal_timing_20261007/rtl/down2_overlap_tile_runner.v-217-	assign o_export_done = flag_export_done_o;

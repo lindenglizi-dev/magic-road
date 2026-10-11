@@ -1,0 +1,49 @@
+HX1P35A/C7独立自检测试位流生成报告
+日期：2026-10-10。
+
+结论
+测试位流已实际生成并通过本轮生成后复核；尚未加载到板卡，板测状态为待执行。
+只用于三套DW/PW小块数值自检，不是完整CNN、摄像头检测或正式交付。
+严格代码门禁、外部接口时序及生成时钟master连接警告继续保留，未新增时序例外。
+
+交付文件
+HX1P35A_C7_SELFTEST.bit
+大小1789544字节。
+SHA256=57e675018a96fb3e360733c84bc56bacf3cd29f4806843f2d39d77c09dd293c7
+实际生成名称RoadYOLO_HX1P35A_KEY4_SELFTEST.bit；交付副本只改文件名，字节内容及哈希一致。
+布局数据库SHA256=fa9fda0f37dadbf97a5ce8b90d9f5d74dce32e707fe7ec0d1429aed9a96bb0a4。
+目标PH1P35MDG324/速度3；板型HX1P35A V1.0；芯片I3来自用户文字确认，非本轮重新拍照识别。
+
+本轮做了什么
+读取并复制冻结board_key4_c7_20261010的pr.db；不改RTL，不重新综合、布局或布线。
+实际TD执行import_db、时序检查、bitgen及配置参数导出。全部工作在独立selftest_jtag_bitstream_20261010目录。
+旧候选、生产相关冻结输入及C7输出合计334项，在首次和第二次运行前后均哈希一致。
+交付副本和说明位于cnn/hw_validation/board_test_20261010，避免误选第一次失败尝试的文件。
+没有运行下载器，没有扫描/下载板卡，没有写Flash，没有训练。
+
+验证结果
+TD第二次返回0；重新载入后的资源及实际引脚与冻结布局一致：9691 Slice、30 DSP、38 ERAM，i_rstn=C7/LVCMOS33。
+恢复数据库原约束后，STA coverage=99.98%，slow/fast均max/min；全量端点的计数、最差端点、角点、余量和跨时钟统计与冻结timing_checks.json逐项相同。
+setup +0.154ns、hold +0.024ns、recovery +1.716ns、removal +0.043ns。
+源pr.db与生成目录pr.db哈希一致。位流为未压缩默认输出，无加密/密钥或额外debug探针配置。
+ROM/ERAM的实物初始化仍须通过运行时自检证明，生成文件和旧网表对拍不能代替板测。
+
+保留的失败及修正
+第一次bitgen成功，但后置时序一致检查失败。import_db已恢复原时钟约束，重复read_sdc触发USR-6122、USR-8170、USR-8159，报告覆盖率0.00%，故首次文件不作为交付。
+只在第二份构建脚本取消重复read_sdc，使用数据库原约束；不是删除必要约束、改false path或改变设计。全量时序与旧布局完全一致证明检查恢复。
+第一次脚本、位流、0%报告、日志和失败说明均保留；不覆盖、不删除。
+
+证据位置
+cnn/hw_validation/production/reports/selftest_jtag_bitstream_20261010/
+  bitstream_receipt.json：生成文件大小、哈希、来源、板测未执行状态。
+  attempt2_timing_checks.json：全量时序解析结果。
+  attempt2_before.json、attempt2_after.json：334项旧文件无变化。
+  attempt2_inputs.json：第二次生成输入闭包。
+  generation_attempt2/：实际TD日志、位流、导入资源/时序报告、pr.db及bitgen_parameters.txt。
+  generation/：首次失败尝试，不交付。
+  首次生成验证失败记录.txt：具体根因与处理。
+
+门禁与限制
+复用原冻结同源RTL功能与严格八项门禁记录，没有宣称本轮重跑或修复。compile静态通过与实际TD证据分别记录；ast/readability/comment/naming/profile的原失败保持，testbench/toolchain门禁原not_requested不改写。
+本轮只增加构建Tcl/Python及报告；未使用不存在的readable-python-generator/readable-script-generator技能，不声称这些专用门禁通过。构建辅助脚本以实际执行、后置断言和哈希闭包检查。
+目标下一步：用户按加载说明执行Program SRAM，保存HDMI TEST画面、K4复位重跑和10分钟连续运行记录；实际下载不在本次助手操作范围。

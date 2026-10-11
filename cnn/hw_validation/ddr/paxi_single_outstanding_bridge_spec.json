@@ -1,0 +1,141 @@
+{
+  "title": "H1-B isolated PAXI bridge",
+  "modules": [
+    {
+      "name": "paxi_single_outstanding_bridge",
+      "rtl_path": "cnn/hw_validation/ddr/paxi_single_outstanding_bridge.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "rising",
+        "domain": "ddr_user"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "polarity": "active_low",
+        "synchrony": "asynchronous_assert",
+        "scope": "coordinated_bridge_and_controller_hard_reset"
+      },
+      "parameters": [],
+      "interfaces": {
+        "family": "PAXI isolated adapter",
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "DDR user clock", "clock_domain": "ddr_user"},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "coordinated_reset", "description": "Active-low hard reset shared with the endpoint", "clock_domain": "ddr_user", "active_level": "low"},
+          {"name": "i_req_valid", "direction": "input", "width": 1, "role": "request_valid", "description": "Holds the complete upstream request stable", "clock_domain": "ddr_user"},
+          {"name": "i_req_write", "direction": "input", "width": 1, "role": "request_operation", "description": "Selects a write when high", "clock_domain": "ddr_user"},
+          {"name": "i_req_byte_addr", "direction": "input", "width": 32, "role": "request_address", "description": "Sixteen-byte-aligned logical byte address", "clock_domain": "ddr_user"},
+          {"name": "i_req_write_data", "direction": "input", "width": 128, "role": "request_write_payload", "description": "One complete write beat cached before AW", "clock_domain": "ddr_user"},
+          {"name": "i_req_write_mask", "direction": "input", "width": 16, "role": "request_high_active_mask", "description": "One masks the corresponding write byte", "clock_domain": "ddr_user", "active_level": "high"},
+          {"name": "i_req_epoch", "direction": "input", "width": 32, "role": "request_epoch", "description": "Coordinated-restart generation", "clock_domain": "ddr_user"},
+          {"name": "i_req_owner", "direction": "input", "width": 32, "role": "request_owner", "description": "Return owner retained through drain", "clock_domain": "ddr_user"},
+          {"name": "i_cancel", "direction": "input", "width": 1, "role": "local_cancel", "description": "Cancels the sole active owner without erasing it", "clock_domain": "ddr_user", "active_level": "high"},
+          {"name": "o_req_ready", "direction": "output", "width": 1, "role": "request_ready", "description": "Accepts one local request while idle", "clock_domain": "ddr_user"},
+          {"name": "i_commit_confirmed", "direction": "input", "width": 1, "role": "external_commit_proof", "description": "Reviewed external event proving the active write has committed", "clock_domain": "ddr_user", "active_level": "high"},
+          {"name": "i_result_ready", "direction": "input", "width": 1, "role": "result_ready", "description": "Consumes a held successful result", "clock_domain": "ddr_user"},
+          {"name": "o_result_valid", "direction": "output", "width": 1, "role": "result_valid", "description": "Holds result metadata and data stable", "clock_domain": "ddr_user"},
+          {"name": "o_result_write", "direction": "output", "width": 1, "role": "result_operation", "description": "Marks a write result", "clock_domain": "ddr_user"},
+          {"name": "o_result_committed", "direction": "output", "width": 1, "role": "result_commit_status", "description": "High only for a write retired after explicit proof", "clock_domain": "ddr_user"},
+          {"name": "o_result_epoch", "direction": "output", "width": 32, "role": "result_epoch", "description": "Epoch of the held result", "clock_domain": "ddr_user"},
+          {"name": "o_result_owner", "direction": "output", "width": 32, "role": "result_owner", "description": "Owner of the held result", "clock_domain": "ddr_user"},
+          {"name": "o_result_read_data", "direction": "output", "width": 128, "role": "result_read_payload", "description": "Attributed one-beat read data", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_accepted_valid", "direction": "output", "width": 1, "role": "acceptance_telemetry", "description": "Pulses for an accepted AR or completed AW and W pair", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_accepted_write", "direction": "output", "width": 1, "role": "acceptance_operation", "description": "Marks write-channel acceptance without claiming commit", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_accepted_epoch", "direction": "output", "width": 32, "role": "acceptance_epoch", "description": "Epoch associated with the acceptance pulse", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_accepted_owner", "direction": "output", "width": 32, "role": "acceptance_owner", "description": "Owner associated with the acceptance pulse", "clock_domain": "ddr_user"},
+          {"name": "o_drain_done", "direction": "output", "width": 1, "role": "drain_status", "description": "High only with no request, reservation, or held result", "clock_domain": "ddr_user"},
+          {"name": "o_protocol_fault", "direction": "output", "width": 1, "role": "fault_status", "description": "Sticky fail-closed protocol fault", "clock_domain": "ddr_user"},
+          {"name": "o_late_discard_count", "direction": "output", "width": 32, "role": "late_discard_counter", "description": "Counts terminal events arriving after cancellation", "clock_domain": "ddr_user"},
+          {"name": "o_cancelled_drain_count", "direction": "output", "width": 32, "role": "cancelled_drain_counter", "description": "Counts accepted transactions fully drained after cancellation", "clock_domain": "ddr_user"},
+          {"name": "i_paxi_arready", "direction": "input", "width": 1, "role": "paxi_arready", "description": "Actual controller read-address ready", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_arvalid", "direction": "output", "width": 1, "role": "paxi_arvalid", "description": "Read address valid held through acceptance", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_araddr", "direction": "output", "width": 25, "role": "paxi_araddr", "description": "Byte address shifted right by one", "clock_domain": "ddr_user"},
+          {"name": "i_paxi_awready", "direction": "input", "width": 1, "role": "paxi_awready", "description": "Actual controller write-address ready", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_awvalid", "direction": "output", "width": 1, "role": "paxi_awvalid", "description": "Write address valid held through acceptance", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_awaddr", "direction": "output", "width": 25, "role": "paxi_awaddr", "description": "Byte address shifted right by one", "clock_domain": "ddr_user"},
+          {"name": "i_paxi_wready", "direction": "input", "width": 1, "role": "paxi_wready", "description": "Actual controller write-data ready", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_wvalid", "direction": "output", "width": 1, "role": "paxi_wvalid", "description": "Write data first presented one cycle after AW acceptance", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_wdata", "direction": "output", "width": 128, "role": "paxi_wdata", "description": "Cached write beat held under backpressure", "clock_domain": "ddr_user"},
+          {"name": "o_paxi_wmask", "direction": "output", "width": 16, "role": "paxi_high_active_mask", "description": "Cached high-active mask held under backpressure", "clock_domain": "ddr_user", "active_level": "high"},
+          {"name": "i_paxi_rvalid", "direction": "input", "width": 1, "role": "paxi_rvalid", "description": "No-READY controller return valid", "clock_domain": "ddr_user"},
+          {"name": "i_paxi_rlast", "direction": "input", "width": 1, "role": "paxi_rlast", "description": "Must mark the single expected return beat", "clock_domain": "ddr_user", "active_level": "high"},
+          {"name": "i_paxi_rdata", "direction": "input", "width": 128, "role": "paxi_rdata", "description": "Controller read-return payload", "clock_domain": "ddr_user"}
+        ]
+      },
+      "behavior": [
+        "A valid upstream request is cached while idle, then checked for the reserved range and sixteen-byte alignment before any PAXI valid is presented.",
+        "ARVALID and AWVALID remain asserted with stable addresses from first presentation through their own READY handshakes, including after local cancellation.",
+        "Write data is already cached before AW and WVALID first asserts in the cycle after AW acceptance; WVALID, WDATA, and the high-active mask remain stable until WREADY.",
+        "Read acceptance occurs only on ARVALID and ARREADY. Write acceptance telemetry occurs only after both AW and W have independently accepted.",
+        "An accepted read retains owner and return reservation until the one RVALID and RLAST beat retires. An accepted write retains owner until a later explicit commit confirmation.",
+        "Cancellation before first AR or AW presentation stops issue. Cancellation after presentation preserves channel validity and ownership, drains the attributed terminal event, increments cancellation telemetry, and never publishes success.",
+        "Result metadata and read data remain stable until result ready. A same-cycle cancel suppresses result valid and wins over the result handshake as an explicit shared-flush exception, not as ordinary ready/valid behavior.",
+        "Unexpected return, missing RLAST, early commit confirmation, or an invalid address enters a sticky fail-closed state cleared only by coordinated hard reset."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001 with one globally outstanding controller request and no timeout.",
+        "Each request transfers exactly sixteen bytes in the inclusive block-start range 0x03400000 through 0x03fffff0.",
+        "The address conversion is fixed to PAXI address equals byte address shifted right by one.",
+        "i_rstn may clear ownership only when the same hard reset also resets the controller endpoint so no old return can arrive afterward.",
+        "i_commit_confirmed must remain low in production until a build-matched vendor contract proves its ordering and visibility semantics.",
+        "The two-clock manual rule is treated as a W presentation deadline. This bridge presents W one cycle after AW acceptance; delayed W acceptance under WREADY backpressure still requires vendor confirmation."
+      ],
+      "corner_cases": [
+        "Cancellation while ARVALID or AWVALID is stalled must not withdraw VALID or change address.",
+        "Cancellation after AW but before W acceptance must continue holding W until WREADY, then wait for explicit commit proof.",
+        "Commit confirmation in the W-handshake cycle is rejected as early by this conservative attribution contract.",
+        "A read return coincident with cancellation is discarded with its known owner and counted, never published.",
+        "The first and last legal blocks pass; an unaligned, lower, or end-exclusive address fails closed.",
+        "A held successful result can be cancelled before ready and must not complete successfully."
+      ],
+      "verification_cases": [
+        "PY_ADDR_BOUNDARY checks the reserved range and sixteen-byte alignment in the Python reference.",
+        "TB_WRITE_CANCEL_BACKPRESSURE checks AW stability across cancel, delayed W acceptance, high-active mask stability, accepted-only telemetry, and late commit discard.",
+        "TB_WRITE_SUCCESS checks strict AW-before-W sequencing and requires a later explicit commit event before success.",
+        "TB_READ_CANCEL_BACKPRESSURE checks AR stability across cancel and attributed late-return discard.",
+        "TB_READ_SUCCESS checks the last legal address, single RLAST beat, owner metadata, and result backpressure stability.",
+        "TB_CONSERVATION checks accepted equals successful plus cancelled-drained at a fully drained boundary.",
+        "TB_PROTOCOL_FAULTS checks end-exclusive address rejection, missing RLAST, unexpected return, and same-cycle W commit rejection."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "write_cancel_drain",
+          "title": "Write cancellation after AW presentation",
+          "scenario": "write_cancel_backpressure",
+          "description": "AW remains presented across cancellation and backpressure. W appears only after AW acceptance. The later explicit commit drains the cancelled owner without a result.",
+          "wavejson": {
+            "signal": [
+              {"name": "clk", "wave": "p..........."},
+              {"name": "req_v/r", "wave": "01.0........"},
+              {"name": "AWVALID", "wave": "0.1....0...."},
+              {"name": "AWREADY", "wave": "0.....10...."},
+              {"name": "cancel", "wave": "0...10......"},
+              {"name": "WVALID", "wave": "0......1.0.."},
+              {"name": "WREADY", "wave": "0........10."},
+              {"name": "accepted", "wave": "0.........10"},
+              {"name": "commit", "wave": "0..........1"},
+              {"name": "result", "wave": "0..........."}
+            ]
+          }
+        },
+        {
+          "id": "read_result_hold",
+          "title": "Read return ownership and result hold",
+          "scenario": "read_success_backpressure",
+          "description": "AR accepts independently, the one no-READY return is captured with RLAST, and the result remains stable until ready.",
+          "wavejson": {
+            "signal": [
+              {"name": "clk", "wave": "p........."},
+              {"name": "req_v/r", "wave": "01.0......"},
+              {"name": "ARVALID", "wave": "0.1..0...."},
+              {"name": "ARREADY", "wave": "0...10...."},
+              {"name": "RVALID", "wave": "0.....10.."},
+              {"name": "RLAST", "wave": "0.....10.."},
+              {"name": "result_valid", "wave": "0.......1."},
+              {"name": "result_ready", "wave": "0........1"}
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

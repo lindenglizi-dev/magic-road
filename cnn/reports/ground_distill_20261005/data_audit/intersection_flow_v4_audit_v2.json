@@ -1,0 +1,247 @@
+{
+  "status": "audit_only_not_training_eligible",
+  "annotation_files": 6928,
+  "xml_declared_dimensions": {
+    "1920x1080": 6928
+  },
+  "dimension_scope": "XML declarations only; all JPEG dimensions were not decoded by this audit",
+  "boxes_outside_xml_dimensions": {
+    "boxes": 7185,
+    "affected_xml_files": 3894,
+    "by_raw_class": {
+      "bicycle": 336,
+      "bus": 359,
+      "engine": 19,
+      "pedestrain": 211,
+      "tricycle": 21,
+      "truck": 193,
+      "vehicle": 6046
+    },
+    "max_overflow_pixels": {
+      "left": 0,
+      "top": 0,
+      "right": 1278,
+      "bottom": 898
+    },
+    "status": "blocking coordinate-contract audit; clipping is not silently authorized"
+  },
+  "images_by_source_split": {
+    "test": 723,
+    "train": 5483,
+    "val": 722
+  },
+  "raw_class_counts": {
+    "bicycle": 29218,
+    "bus": 3453,
+    "engine": 796,
+    "obstacle": 100151,
+    "pedestrain": 23714,
+    "tricycle": 2035,
+    "truck": 9546,
+    "vehicle": 237845
+  },
+  "raw_class_counts_by_split": {
+    "test": {
+      "bicycle": 3051,
+      "bus": 322,
+      "engine": 80,
+      "obstacle": 9059,
+      "pedestrain": 2459,
+      "tricycle": 200,
+      "truck": 916,
+      "vehicle": 23978
+    },
+    "train": {
+      "bicycle": 23396,
+      "bus": 2816,
+      "engine": 642,
+      "obstacle": 82190,
+      "pedestrain": 19005,
+      "tricycle": 1610,
+      "truck": 7749,
+      "vehicle": 190417
+    },
+    "val": {
+      "bicycle": 2771,
+      "bus": 315,
+      "engine": 74,
+      "obstacle": 8902,
+      "pedestrain": 2250,
+      "tricycle": 225,
+      "truck": 881,
+      "vehicle": 23450
+    }
+  },
+  "source_label_spelling": {
+    "classes_txt_declares": "pedestrian",
+    "voc_alias_observed": "pedestrain",
+    "mapping_status": "alias accepted for audit only; training mapping remains unfrozen"
+  },
+  "class_contract": {
+    "person_audit_aliases": [
+      "pedestrain",
+      "pedestrian"
+    ],
+    "vehicle_certain_for_capacity_only": [
+      "bicycle",
+      "bus",
+      "truck",
+      "vehicle"
+    ],
+    "unresolved": [
+      "engine",
+      "tricycle"
+    ],
+    "obstacle": "ignore candidate; completeness/negative policy not established",
+    "unknown_observed": []
+  },
+  "person_height_at_512x288": {
+    "count": 23714,
+    "min": 1.6,
+    "p10": 5.6,
+    "median": 9.066666666666666,
+    "p90": 20.0,
+    "max": 69.06666666666666,
+    "at_most_8_px": 10624,
+    "at_most_16_px": 17275
+  },
+  "top32_oracle_from_raw_annotation_counts": {
+    "all": {
+      "person": {
+        "boxes": 23714,
+        "frames_over_limit": 3,
+        "ideal_recall_ceiling": 0.9997048157206714
+      },
+      "vehicle_certain": {
+        "boxes": 280062,
+        "frames_over_limit": 3588,
+        "ideal_recall_ceiling": 0.7011411758824831
+      }
+    },
+    "by_source_split": {
+      "test": {
+        "person": {
+          "boxes": 2459,
+          "frames_over_limit": 0,
+          "ideal_recall_ceiling": 1.0
+        },
+        "vehicle_certain": {
+          "boxes": 28267,
+          "frames_over_limit": 340,
+          "ideal_recall_ceiling": 0.7157816535182369
+        }
+      },
+      "train": {
+        "person": {
+          "boxes": 19005,
+          "frames_over_limit": 3,
+          "ideal_recall_ceiling": 0.9996316758747698
+        },
+        "vehicle_certain": {
+          "boxes": 224378,
+          "frames_over_limit": 2926,
+          "ideal_recall_ceiling": 0.6953845742452469
+        }
+      },
+      "val": {
+        "person": {
+          "boxes": 2250,
+          "frames_over_limit": 0,
+          "ideal_recall_ceiling": 1.0
+        },
+        "vehicle_certain": {
+          "boxes": 27417,
+          "frames_over_limit": 322,
+          "ideal_recall_ceiling": 0.733158259474049
+        }
+      }
+    },
+    "scope": "capacity-only; excludes unresolved engine/tricycle and does not measure model recall"
+  },
+  "source_split_isolation_evidence": {
+    "float_timestamp_images": 5238,
+    "adjacent_cross_split_pairs_within_1_second": 161,
+    "adjacent_cross_split_pairs_within_2_seconds": 1017,
+    "nearest_cross_split_pair": {
+      "delta_seconds": 0.1081085205078125,
+      "left_split": "train",
+      "left_stem": "1697261506.236204147",
+      "right_split": "test",
+      "right_stem": "1697261506.344312668"
+    },
+    "conclusion": "published train/val/test contains adjacent timestamp frames across splits and is not scene-isolated"
+  },
+  "annotation_closure_sha256": "73227b6d5c63ba5b091f86142e3064c6043b0eced29154a1db93625c769a1565",
+  "blocking_gates": [
+    "No authoritative image-to-camera/original-family mapping was found; source train/val/test cannot prove camera isolation.",
+    "Published source splits contain adjacent timestamp frames across train/val/test.",
+    "engine and tricycle meanings do not match the frozen vehicle contract without an authoritative mapping decision.",
+    "Fixed overlay review found bicycle boxes enclosing rider plus bicycle without a separate person box.",
+    "The source provides no motion-state field or complete stationary-target annotation policy evidence.",
+    "Thousands of VOC boxes exceed the declared image dimensions; the coordinate repair policy is unresolved.",
+    "Obstacle treatment and full-frame negative-supervision completeness are not established."
+  ],
+  "training_eligible": false,
+  "formal_road_eligible": false,
+  "fixed_sample_review": [
+    {
+      "stem": "10110010",
+      "image_sha256": "37e1fbfb74abaccfed11d4f15d5f0a5331ef18ecf08f9d3168596e8f462829cb",
+      "xml_sha256": "12a656548c574ea35671ece3b13ce0cf85afe0c51ceb3bdd4a01530986b852f9",
+      "overlay": "10110010_overlay.jpg",
+      "objects": {
+        "vehicle": 20,
+        "bicycle": 4
+      }
+    },
+    {
+      "stem": "1662003896.981607437",
+      "image_sha256": "4b9662493f95c0e5537b15264ba3f0882cc577620906f9c23d06ab76dc213492",
+      "xml_sha256": "9c9319bad3a34d3a8048753bdb59e590697c2936d38defb236a1d2ecfb934566",
+      "overlay": "1662003896.981607437_overlay.jpg",
+      "objects": {
+        "vehicle": 49,
+        "bicycle": 3,
+        "obstacle": 29,
+        "engine": 1,
+        "pedestrain": 2,
+        "bus": 1
+      }
+    },
+    {
+      "stem": "1662026780.586349010",
+      "image_sha256": "fc53302f361be492c600040b5b682e1b4463cf71815b88289f49b7bf085c30eb",
+      "xml_sha256": "5bac8fc91e80e4ba00af79ec0d5cce09e81fb952177c39ed7fdc6f0eecb71c89",
+      "overlay": "1662026780.586349010_overlay.jpg",
+      "objects": {
+        "pedestrain": 10,
+        "obstacle": 24,
+        "bicycle": 14,
+        "vehicle": 83,
+        "bus": 2,
+        "truck": 1
+      }
+    }
+  ],
+  "fixed_sample_visual_findings": {
+    "10110010": "All four bicycle boxes enclose a visible rider and bicycle together; no person box is present.",
+    "1662003896.981607437": "The engine box encloses a yellow engineering/construction vehicle, not a motorcycle; bicycle boxes enclose riders with their cycles.",
+    "1662026780.586349010": "Same fixed camera view as the preceding timestamp sample; bicycle boxes enclose riders with their cycles while person boxes annotate other pedestrians.",
+    "scope": "manual visual review of three fixed lexicographic/timestamp-family samples only"
+  },
+  "archive_receipt": {
+    "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\data\\intersection_flow_5k\\intersection-flow-5k-v4.zip",
+    "bytes": 6175277050,
+    "expected_bytes_from_http_range": 6175277050,
+    "md5": "bfa3150b821855f9ff92b08609b33c8c",
+    "expected_md5_from_gcs_etag": "bfa3150b821855f9ff92b08609b33c8c",
+    "sha256": "a4031536d4983adc325690568215d25525c0e31d0253228bd3c3577d039a6e2d",
+    "zip_entries": 20791,
+    "uncompressed_bytes": 6305218144,
+    "zip_crc_test": "passed",
+    "source": "https://www.kaggle.com/datasets/starsw/intersection-flow-5k",
+    "api_source": "https://www.kaggle.com/api/v1/datasets/download/starsw/intersection-flow-5k?datasetVersionNumber=4",
+    "license": "CC BY-NC-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+  }
+}

@@ -1,0 +1,91 @@
+RoadYOLO：HX1P35A KEY4/C7复位候选实测报告
+日期：2026-10-10。独立诊断，不是整网或生产交付。
+
+一、结论与尚未通过项
+已解决：旧R10与预期板载复位按键不对应；新候选实际PAD为C7，LVCMOS33，上拉。
+安路TD实际综合、布局布线及慢/快角max/min检查完成，返回0；已约束setup、hold、recovery、removal均无负余量。
+尚未闭合：外部异步按键入口无输入延迟，四路TMDS无输出延迟；3个生成时钟与master连接警告及99.98%而非100%覆盖保留；严格八项门禁仍未通过。
+无上板、实际HDMI或芯片丝印确认结果。不能将内部时序正余量称为整机签核。
+
+二、唯一功能相关变化及证据范围
+board.adc有效约束仅i_rstn LOCATION=R10改为C7；时钟、HDMI引脚和电平标准不变。
+所有20项RTL/IP工程引用仍指向旧冻结候选；不覆盖旧RTL。核心、数值、II、异步取消/同步释放、1024项表重装协议不变。
+board.sdc/build.tcl/程序ROM直接复制旧候选，哈希不变；未新增false path、MCP、异步时钟组或诊断I/O延迟。
+工作目录及输出在本目录physical内；TD流程没有bitgen。没有训练、生产修改、上板、JTAG或Flash动作。
+项目不是Git仓库；旧164项冻结文件在old_before.json、old_after.json、old_final.json中均changed=[]。
+
+三、器件及资源对照（包含自主脚本、计算链、显示及官方HDMI）
+目标：PH1P35MDG324，速度3（-3），50MHz入口，PLL生成100MHz计算、约75MHz像素和375MHz串行。
+项目                     冻结R10布局         新C7布局
+Slice                    9696               9691 / 21216
+LUT6                     8377               8412
+寄存器                   7553               7594
+DSP                      30                 30 / 40
+ERAM                     38                 38 / 108
+分布式RAM LUT            2040               2040
+物理PAD                  10                 10
+PLL                      1                  1
+逻辑顶层接口为6位；4个差分输出增加4个伴随物理PAD，合计10 PAD。
+资源由新route.area和gate_netlist.v复核，primitives.json确认30 DSP、38 ERAM。
+物理优化引入的映射/复制差异导致LUT与寄存器数量变化，不是RTL功能新增，也不声称为结构性资源优化。
+这是DW/PW小块自主自检资源，不是67层CNN、DDR、摄像头和模型ROM的完整资源结论。
+
+四、全量端点时序（ns，正数为余量）
+检查                  冻结R10最差           新C7最差            新报告检查数
+setup                 +0.110                +0.154              19222
+hold                  +0.020                +0.024              22087
+recovery              +1.750                +1.716              4477
+removal               +0.043                +0.043              4477
+STA coverage=99.98%，Confidence=Routed；Slow/Fast均Max=yes、Min=yes。
+检查数是每组每端点最差路径导出数量，不是所有物理路径总数；重综合后的端点数不同，不声称端点逐一对应。
+全部最差端点、Process及跨时钟计数详见timing_checks.json；原始完整报告位于physical。
+最差setup：播放器reg_core_rstn_reg_syn_639.clk → 壳cnt_output_reg[1]_syn_64.ima，slow_m40c。
+最差hold：reg_mac_bias_reg[0]_syn_2.clk → MAC reg_bias_product_reg[1]_syn_2.ima，fast_m40c。
+最差recovery：reg_pixel_release_reg_syn_27 → HDMI蓝通道S_shift_data_reg[1].asr，slow_m40c。
+最差removal：reg_pixel_release_reg_syn_17 → 显示reg_active_payload_reg[102].asr，fast_m40c。
+setup和hold余量仍小，当前不增加功能、不放宽约束；改顶层后必须重跑，不能沿用这些数值。
+
+五、复位、DSP/ERAM与相关时钟证据
+对象                           setup       hold        recovery    removal
+计算复位同步器级间             +9.629      +0.104       不适用      不适用
+像素复位同步器级间             +10.214     +0.251       不适用      不适用
+计算释放分发                   +3.619      +0.104       +5.952      +0.106
+像素/HDMI释放分发              +10.214     +0.251       +1.716      +0.043
+DSP输入                        +0.712      +0.038       +4.612      +0.192
+DSP输出                        +3.497      +0.321       不适用      不适用
+ERAM输入                       +3.562      +0.026       +6.925      +0.470
+ERAM输出                       +5.383      +0.678       不适用      不适用
+“不适用”指该选定路径集合未报告相应检查，不是0ns通过。
+100→75MHz：setup/hold各255项，最差+2.127/+0.061。
+75→100MHz：setup/hold各1项，最差+2.396/+0.178。
+75→375MHz：setup/hold各35项，+0.687/+0.074；recovery/removal各21项，+1.716/+0.070。
+因此真实跨域路径确实被报告；这不能消除check_timing的master连接警告或证明亚稳态安全。
+external_reset_entry.timing没有可签核的外部到寄存器时序路径，不能以内部recovery/removal结果代替异步按键入口安全证明。
+check_timing仍列3类dummy node：DSP mul9模式/符号配置端点、一个LSLICE反馈端点、PLL pllreset；不自动当有效操作数未驱动，也不宣称全部告警清零。
+DRC日志报告No multi-drive、No abnormal timing path；32个MSlice冗余reg/CE属性提示保留。
+report_route_status调用没有生成命名的route_status.rpt，实际路由DRC证据在td.log；不能声称该独立文件已交付。
+
+六、功能证据与严格门禁
+本轮没有修改RTL；复用旧冻结同源的8项功能回归和旧实际综合顶层1152项数值对拍记录。
+旧小块核心1687周期/套保持为同源RTL功能基线；本轮未重跑周期或新综合网表仿真，不宣称新网表数值回归已完成。
+固定测试参数不是训练模型量化参数；没有模型精度、完整CNN或5 FPS通过结论。
+严格门禁沿用旧gate_attempt2原记录，未重跑、未抹除：
+  新RTL：1229 errors / 7 strict warnings，compile/profile通过；ast/readability/comment/naming失败。
+  核心8文件：5499 / 37，compile通过；其余ast/readability/comment/naming/profile失败。
+  TB3文件：54 / 0，compile/ast/readability/naming/profile通过；comment失败。
+  上述门禁testbench/toolchain为not_requested；实际ModelSim/TD证据分别保存，不能偷换为严格门禁通过。
+本轮唯一新增实现文件为ADC及构建/报告辅助文件，无新RTL模块。
+
+七、收集异常及可恢复性
+第一次run.py collect因TD在close_project时重写.al导致输入SHA断言失败；保留收集首次失败记录.txt和原inputs.json。
+只有工程容器变化，其余35项输入未变。collect.py逐项确认源绝对路径、全部Source_Files属性、器件、速度和顶层一致，生成project_rewrite_check.json后收集。
+不覆盖原输入哈希，不重跑布局，不忽略其它输入变化。physical输出及数据库由outputs.json绑定。
+滚动状态、脚本、报告和文档截图由final_freeze.json绑定；旧候选保持可回退。
+
+八、板卡资料与下一步
+用户确认HX1P35A。使用新HX1P35A开发板手册-HDL版2604.pdf第22页图2-24、第23页引脚表：KEY4=C7，松开高/按下低，图中对应KEY3网络上拉3.3V。
+原资料路径：E:/project/qiansai/安路/9_康芯开发板使用手册及实验平台/新HX1P35A开发板手册-HDL版2604.pdf
+SHA256=7B7A65B0212DB35CB89A5DFF6E80AE6CEDF4EF697C0E61E20829C0DC801468D4；本地截图hx1p35a_key_page22.png。
+复位引脚冲突已解决，阶段定位为“首板自主DW/PW自检的物理候选已完成”。不是完整CNN上板完成。
+下一项最小工作是冻结本候选并准备JTAG临时加载自检说明；实际生成测试位流、加载及Flash仍需对应授权。无需为了这个引脚修复增加去抖、UART或泛化调度器。
+实物到手后先核对芯片完整丝印/速度等级和HDMI连接，再以TEST状态画面、1152项PASS、按键复位重新装表为首板验收；不把TEST画面当真实识别。

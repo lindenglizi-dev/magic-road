@@ -1,0 +1,109 @@
+{
+  "modules": [
+    {
+      "name": "road_board_selftest_top",
+      "feature": "board_selftest",
+      "rtl_path": "rtl/road_board_selftest_top.v",
+      "description": "独立首板计算自检，不是完整CNN或识别验收。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_sys_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "项目声明C4板载50MHz，实物待确认",
+            "description": "项目声明C4板载50MHz，实物待确认"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "项目声明R10外部低有效复位，立即取消",
+            "description": "项目声明R10外部低有效复位，立即取消"
+          },
+          {
+            "name": "o_tmds_blue_p",
+            "direction": "output",
+            "width": 1,
+            "role": "官方通道0/G16，差分配对待核实",
+            "description": "官方通道0/G16，差分配对待核实"
+          },
+          {
+            "name": "o_tmds_green_p",
+            "direction": "output",
+            "width": 1,
+            "role": "官方通道1/F17，差分配对待核实",
+            "description": "官方通道1/F17，差分配对待核实"
+          },
+          {
+            "name": "o_tmds_red_p",
+            "direction": "output",
+            "width": 1,
+            "role": "官方通道2/H14，差分配对待核实",
+            "description": "官方通道2/H14，差分配对待核实"
+          },
+          {
+            "name": "o_tmds_clock_p",
+            "direction": "output",
+            "width": 1,
+            "role": "官方TMDS时钟/C17",
+            "description": "官方TMDS时钟/C17"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "100MHz计算；75MHz像素；375MHz串行，官方PLL相关时钟"
+      },
+      "reset": {
+        "assertion": "异步立即取消",
+        "release": "每域两拍；计算壳原协议保留"
+      },
+      "behavior": [
+        "外部仅6位逻辑接口，不引出诊断命令总线。实例化原8份计算RTL、固定播放器/显示、官方PLL/VTC/HDMI。",
+        "raw_rstn=i_rstn AND PLL lock，立即取消；100MHz/75MHz各两拍同步释放。原计算壳自己的两级释放保持。",
+        "PLL为100/75/375MHz相关时钟；VTC1280x720/1650x750约60.606Hz。HDMI跨像素/串行复位必须由真实STA确认。"
+      ],
+      "constraints": [
+        "PH1P35MDG324/-3，不增加时序例外。真实资源/时序待当前顶层验证。"
+      ],
+      "corner_cases": [
+        "发送反压、缺表、错字、超时、全局复位、套间局部复位、快照忙时终态。"
+      ],
+      "verification_cases": [
+        "tb_board_selftest正常/停顿/错误/缺表/超时/复位；tb_selftest_display。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "startup_release",
+          "title": "road_board_selftest_top接口周期",
+          "scenario": "startup_release",
+          "description": "PLL锁定后各域两级释放；播放器仍执行本地8拍复位和8拍等待，然后重新装表，不依赖SiLU初始化。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_rstn",
+                "wave": "01......"
+              },
+              {
+                "name": "pll_lock",
+                "wave": "0..1...."
+              },
+              {
+                "name": "raw_rstn",
+                "wave": "0..1...."
+              },
+              {
+                "name": "domain_release",
+                "wave": "0....1.."
+              },
+              {
+                "name": "core_local_rstn",
+                "wave": "0......."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

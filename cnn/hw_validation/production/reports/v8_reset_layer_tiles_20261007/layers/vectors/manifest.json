@@ -1,0 +1,133 @@
+{
+  "status": "test_parameters_not_trained_qat",
+  "topology": "down2.dw.conv -> SiLU -> down2.pw.conv -> SiLU",
+  "layout": "tile4x4_hwc_no_channel_padding",
+  "halo": "9x9x16, origin=(2*out_row-1,2*out_col-1), OOB=0",
+  "quantization": {
+    "pre_factor": [
+      1,
+      3,
+      5
+    ],
+    "pre_shift": [
+      0,
+      2,
+      4
+    ],
+    "post_factor": 1,
+    "post_shift": 4,
+    "rounding": "nearest_even",
+    "saturation": "int16_then_int8"
+  },
+  "cases": [
+    {
+      "name": "edge_full",
+      "mode": "full",
+      "padding_zero_bytes": 272,
+      "input_count": 1296,
+      "dw_count": 256,
+      "output_count": 384,
+      "record_count": 640,
+      "stage_value_count": 2560,
+      "non_saturated_outputs": 384,
+      "distinct_outputs": 8,
+      "tile_output_origin": [
+        0,
+        0
+      ],
+      "halo_origin": [
+        -1,
+        -1
+      ]
+    },
+    {
+      "name": "interior_full",
+      "mode": "full",
+      "padding_zero_bytes": 0,
+      "input_count": 1296,
+      "dw_count": 256,
+      "output_count": 384,
+      "record_count": 640,
+      "stage_value_count": 2560,
+      "non_saturated_outputs": 384,
+      "distinct_outputs": 8,
+      "tile_output_origin": [
+        20,
+        30
+      ],
+      "halo_origin": [
+        39,
+        59
+      ]
+    },
+    {
+      "name": "bottom_right_full",
+      "mode": "full",
+      "padding_zero_bytes": 0,
+      "input_count": 1296,
+      "dw_count": 256,
+      "output_count": 384,
+      "record_count": 640,
+      "stage_value_count": 2560,
+      "non_saturated_outputs": 384,
+      "distinct_outputs": 8,
+      "tile_output_origin": [
+        68,
+        124
+      ],
+      "halo_origin": [
+        135,
+        247
+      ]
+    },
+    {
+      "name": "pw_standalone",
+      "mode": "pw",
+      "padding_zero_bytes": 0,
+      "input_count": 256,
+      "dw_count": 256,
+      "output_count": 384,
+      "record_count": 384,
+      "stage_value_count": 1536,
+      "non_saturated_outputs": 384,
+      "distinct_outputs": 14
+    }
+  ],
+  "dw_utilization": {
+    "accepted_groups": 512,
+    "physical_mac_slots": 12288,
+    "valid_kernel_products": 2304,
+    "common_mask_open_slots": 6912,
+    "zero_weight_non_target_products": 4608,
+    "tail_masked_slots": 5376,
+    "edge_padding_kernel_products": 368,
+    "activation_lane_utilization": 0.5625,
+    "physical_mac_slot_utilization": 0.1875
+  },
+  "files": {
+    "bottom_right_full_dw_output.hex": "cfd7852d0a77a8db8d2c87954326857af9ffd8dc587e4606e1726a6a53b49b23",
+    "bottom_right_full_halo.hex": "13d4fd4ef6f755218d2b8235f6b90fe8b5ff162a7b9c5b74aab15846e740d4e8",
+    "bottom_right_full_output.hex": "e2d0e43c1a74b182714a4124d549d2d8f761ce6fc34b381545e4cebfe58a142b",
+    "bottom_right_full_records.json": "55f75d20eb9111e900c6a2d34db15f8ddf17500244bcebfa0a7fccf006a59e2f",
+    "bottom_right_full_stages.hex": "8e420b00fb3aebbbad42358e4cd526a43e4b18167cff7c825df1a132c052e990",
+    "dw_biases.hex": "64ed3629a2b5a289e5988b0da48c584b3a242e98ed80418e3f113d324a1c8771",
+    "dw_weights.hex": "a943c0a9e6e67c951ab5c61edc8a340abf243be9416ed38e0176452d9691f9cc",
+    "edge_full_dw_output.hex": "fa85b443a06b4f41ebc8d1caaaf56e9aeb1a5ac7802c4a4f0d332f6cdc38be0b",
+    "edge_full_halo.hex": "0107bb1e3cf70d079b04b86f89b84bd37b9ff2db3d6b9fd36595131eb8b49e1b",
+    "edge_full_output.hex": "817b3259367eedfa77d8eb6baed14663fda93c3d340f32b08e29c2ad983a19bf",
+    "edge_full_records.json": "ed7f45e5be79ff16a5be92d2f78754b6244cc73e49cc77f46545bcf362c90cf1",
+    "edge_full_stages.hex": "fc2ed7dc2b1a6002018a654285766263649dd56bef3ff2a80956a4d68511a89b",
+    "interior_full_dw_output.hex": "794468fe8e051c6d8faad6f0364cd4930762a8448220fd532837a05ecbd4fddb",
+    "interior_full_halo.hex": "52d2b803c1e152d7d148546bae8a7a97e923c59a1d83e65993cca11fbf90674c",
+    "interior_full_output.hex": "7ba0a0d02cce2d02b8038c56fb10f6896551ed250e51b747c4f2253998dbb0e0",
+    "interior_full_records.json": "a30d56df2079054135029831e068ffa2a4b14e1460d7b7a7f4e48068da29fa8c",
+    "interior_full_stages.hex": "a8ffe7510896e54a5abb982655ce6570afeb89e42fb60c27ed51e0e73fcc23e1",
+    "pw_biases.hex": "0e4f59d05075b3bd750b4bc826c02a852a930afc2004d26392e53f8d74756670",
+    "pw_standalone_output.hex": "96564b5ddd2bd82a03c9b4ff234b00d2613d6803e295d5de8b77153b3e8b6be7",
+    "pw_standalone_pw_input.hex": "82985800b00a8cb33423f9183d6a71df0d50d1859d9c952685484cfca5c43ab3",
+    "pw_standalone_records.json": "1a92a80635cf51fa59a11bb0fe1af559b4345fa1435a0a042ca6268b91d6ab38",
+    "pw_standalone_stages.hex": "cb0a42a224a58796c751aca4ac55edba0968ee6076860ca9bbf7a05045c98a51",
+    "pw_weights.hex": "9aa3ca8dec455e2748ac1507c0193634795269bae4d9360eb0597ba105b47aea",
+    "silu.hex": "305db026a2961c891369dfe4c9191a27adc89cf80f6ad8b6ac5042e09cf2de43"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "modules": [
+    {
+      "name": "road_low_io_reset_shell",
+      "feature": "reset_shell",
+      "rtl_path": "road_low_io_reset_shell.v",
+      "description": "Two-stage asynchronous-assertion and synchronous-release reset wrapper around the frozen 38-bit low-I/O physical shell.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "100 MHz diagnostic clock.", "clock_domain": "i_clk"},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Asynchronous active-low external reset source.", "clock_domain": "i_clk", "active_level": "low"},
+          {"name": "i_rx_valid", "direction": "input", "width": 1, "role": "receive_valid", "description": "New-session receive word valid; the source discards any interrupted frame at reset.", "clock_domain": "i_clk"},
+          {"name": "i_rx_data", "direction": "input", "width": 16, "role": "receive_payload", "description": "Unmodified command and payload data for the frozen shell.", "clock_domain": "i_clk"},
+          {"name": "o_rx_ready", "direction": "output", "width": 1, "role": "receive_ready", "description": "Forced low during reset and release waiting, then mirrors the frozen shell.", "clock_domain": "i_clk"},
+          {"name": "o_tx_valid", "direction": "output", "width": 1, "role": "transmit_valid", "description": "Forced low during reset and release waiting, then mirrors the frozen shell.", "clock_domain": "i_clk"},
+          {"name": "o_tx_data", "direction": "output", "width": 16, "role": "transmit_payload", "description": "Unmodified frozen-shell response payload; ignored while transmit valid is low.", "clock_domain": "i_clk"},
+          {"name": "i_tx_ready", "direction": "input", "width": 1, "role": "transmit_ready", "description": "Consumer permission, blocked from the frozen shell until release completes.", "clock_domain": "i_clk"}
+        ],
+        "handshake_channels": [
+          {"id": "receive", "valid": "i_rx_valid", "ready": "o_rx_ready", "payload": ["i_rx_data"]},
+          {"id": "transmit", "valid": "o_tx_valid", "ready": "i_tx_ready", "payload": ["o_tx_data"]}
+        ]
+      },
+      "parameters": [],
+      "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Both release registers clear asynchronously. The frozen shell receives only the second-stage register as its reset, so deassertion reaches the shell synchronously."},
+      "behavior": [
+        "An external low level asynchronously clears reg_release_meta and reg_release_done. shell_rstn is exactly reg_release_done and has no combinational AND path from i_rstn.",
+        "After i_rstn rises, the first sampled rising edge sets only reg_release_meta. The second sampled rising edge sets reg_release_done, while the frozen shell still samples its previous low reset value on that edge.",
+        "The first edge that can consume a new external receive transfer is the third sampled rising edge, which is the first rising edge after shell_rstn becomes high.",
+        "o_rx_ready and o_tx_valid are forced low while raw reset is low or reg_release_done is low. i_rx_valid and i_tx_ready are also blocked from the frozen shell in the same interval.",
+        "Reset cancels the current table, packet, run, export, and held response through the unchanged frozen shell. Recovery requires a new TABLE_BEGIN followed by all 1024 table entries.",
+        "Normal arithmetic, fixed multipliers, interfaces, run initiation interval, immediate cancellation semantics, and result behavior are unchanged after release. Table reload time is a separate recovery window rather than part of the normal run interval."
+      ],
+      "constraints": [
+        "The referenced road_low_io_physical_shell and road_onchip_chain files are immutable and retain their recorded SHA-256 hashes.",
+        "The external producer and consumer discard an interrupted protocol frame when reset asserts. The producer removes any old valid and starts the recovered session with a new TABLE_BEGIN.",
+        "The wrapper does not identify an old epoch if an external producer keeps a pre-reset valid asserted across reset; no epoch port is added.",
+        "Two synchronizer stages are an architecture choice, not proof that metastability is eliminated. New physical timing must separately sign off reset recovery/removal, fanout, and delay.",
+        "No new timing exception, behavioral RAM substitute, training, production bitstream, board Flash operation, or production top replacement is permitted."
+      ],
+      "corner_cases": [
+        "Reset assertion between clocks immediately blocks external ready and valid and asynchronously resets both release stages.",
+        "Reset release 0.1 ns before or after a rising edge follows the same first-sampled-edge rule in digital simulation; this does not model analog metastability.",
+        "Reset during a partial table load invalidates the table and restarts the implicit table address at zero.",
+        "Reset during a held transmit response removes external valid and no old response reappears after release.",
+        "New computation remains blocked until the complete 1024-entry table is reloaded after every reset."
+      ],
+      "verification_cases": [
+        "Run the unchanged fourteen-case numerical, range, backpressure, partial-frame, core-reset, held-export-reset, and held-status-reset regression through this wrapper hierarchy.",
+        "Check raw asynchronous assertion, ordinary two-edge release, release 0.1 ns before a rising edge, and release 0.1 ns after a rising edge.",
+        "Reset a partial table load, confirm pending valid and table count clear, then reload all 1024 entries with the vendor PH1P ERAM model.",
+        "Reset a stalled STATUS response and confirm recovery exposes no old transmit transaction or receive count."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "two_stage_release",
+          "title": "Two-stage reset release and first legal transfer",
+          "scenario": "two-stage-release",
+          "description": "The first edge samples external release into the first stage. The second edge raises the second stage after the frozen shell has sampled reset low. A new transfer is first legal on the third edge.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p......"},
+            {"name": "i_rstn", "wave": "0.1...."},
+            {"name": "reg_release_meta", "wave": "0..1..."},
+            {"name": "reg_release_done", "wave": "0...1.."},
+            {"name": "shell_rstn", "wave": "0...1.."},
+            {"name": "o_rx_ready", "wave": "0...1.."},
+            {"name": "RX transfer", "wave": "0....10"}
+          ]}
+        },
+        {
+          "id": "asynchronous_cancel",
+          "title": "Asynchronous cancellation of a stalled response",
+          "scenario": "asynchronous-cancel",
+          "description": "Raw reset assertion clears the release stages and forces the external handshake outputs low without waiting for a clock. No held response returns after synchronous release.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p......."},
+            {"name": "i_rstn", "wave": "1.0..1..."},
+            {"name": "o_tx_valid", "wave": "1.0......"},
+            {"name": "reg_release_done", "wave": "1.0...1.."},
+            {"name": "old response", "wave": "=x......", "data": ["held"]}
+          ]}
+        }
+      ]
+    }
+  ]
+}

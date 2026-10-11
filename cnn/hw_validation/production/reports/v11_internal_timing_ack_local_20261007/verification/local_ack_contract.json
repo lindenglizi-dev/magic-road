@@ -1,0 +1,36 @@
+{
+  "status": "PROPOSED_BEFORE_RTL",
+  "scope": "runner-local replacement of the cross-module postprocess-ready term on the MAC result acknowledge path",
+  "frozen_old_equations": {
+    "table_enable": "state==IDLE && !start && !export_start",
+    "child_table_valid": "parent_table_valid && table_enable",
+    "child_input_ready": "Q<2 && table_loaded && !table_fault && !child_table_valid && !fatal",
+    "child_fault": "fatal || table_fault",
+    "mac_result_ready": "state==MAC_WAIT && reserved && child_input_ready",
+    "mac_result_accept": "state==MAC_WAIT && reserved && mac_valid && child_input_ready",
+    "child_input_valid": "state==MAC_WAIT && reserved && mac_valid"
+  },
+  "proposed_equations": {
+    "local_ready": "state==MAC_WAIT && reserved && Q<2 && table_loaded && !child_fault",
+    "mac_result_ready": "local_ready",
+    "mac_result_accept": "mac_valid && local_ready",
+    "child_input_valid": "unchanged"
+  },
+  "proof_basis": "In every known-state MAC_WAIT row, state is not IDLE, therefore table_enable=0 and child_table_valid=0 regardless of parent table_valid, start, or export_start. Expanding child_fault gives the remaining child_input_ready factors exactly.",
+  "preserved": [
+    "public ports",
+    "arithmetic and metadata",
+    "MAC and postprocess cores",
+    "result reservation and queue credit",
+    "fault and reset state",
+    "known-state handshakes, II and cycle counts"
+  ],
+  "four_state_boundary": "The Python proof is two-state. State or control X/Z values can produce unknowns through Verilog equality, relational, logical and cross-module expressions; no equivalence claim is made for those rows until focused four-state RTL checks and static inspection pass. Synthesized hardware is two-state, but simulation X behavior remains a diagnostic contract.",
+  "forbidden": [
+    "port changes",
+    "arithmetic-core edits",
+    "scheduler overlap or cycle optimization",
+    "constraint relaxation",
+    "fault masking or X coercion"
+  ]
+}

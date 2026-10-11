@@ -1,0 +1,137 @@
+{
+  "schema": "road-yolo-t05-silu-vendor-stall-v1",
+  "date": "2026-10-05",
+  "status": "fault_reproduced_candidate_functionally_verified",
+  "scope": {
+    "task": "T05 official RAM model full SiLU backpressure validation",
+    "production_rtl_modified": false,
+    "td_run": false,
+    "training_run": false,
+    "flash_or_board_action": false,
+    "tag_check": "not_possible_no_tag_port"
+  },
+  "sources": {
+    "production_rtl": {
+      "path": "cnn/hw_validation/production/silu/silu_shared_unit.v",
+      "sha256": "ee9beb80decb4f276b9ff81214c22f044a71ac1ffc8c72beb1378e6ddb07a7ed"
+    },
+    "candidate_rtl": {
+      "path": "cnn/hw_validation/production/reports/v3_silu_stall_candidate_20261005/silu_shared_unit.v",
+      "sha256": "5f357b493c7b3f941d9fa954a0ce5ec09091e466b641474360d2f64d0e42c938",
+      "change_under_test": "PH1P_LOGIC_ERAM cea changed from constant one to flag_pipeline_enable",
+      "owner": "coordinator; not edited by T05 verify agent"
+    },
+    "directed_testbench": {
+      "path": "cnn/hw_validation/production/reports/v3_silu_vendor_20261005/tb_silu_vendor_stall.v",
+      "sha256": "b7b4acab0dde6a66cf47e709a29d7fd8455636a86c8bfe6966d3c1c31e665cbf"
+    },
+    "random_testbench": {
+      "path": "cnn/hw_validation/production/reports/v3_silu_vendor_20261005/tb_silu_vendor_random.v",
+      "sha256": "c0da9688c2caf38be8a17039307a259d38dc82c9fde72980f6b0fde75f908f0f"
+    },
+    "existing_full_domain_testbench": {
+      "path": "cnn/hw_validation/production/silu/tb_silu_shared_unit.v",
+      "sha256": "56d30f664c6412f0585a2dcb7017035678bc30521ae4b7e86b4a1b2aa9e60800"
+    },
+    "table": {
+      "path": "cnn/hw_validation/production/silu/generated/silu_table.hex",
+      "sha256": "05d6d7062a6b6d0c9178562168d7f8e1554182bb99878b85a0cb6faeb71a25a6"
+    },
+    "golden": {
+      "path": "cnn/hw_validation/production/silu/generated/silu_expected.hex",
+      "sha256": "4f6552528d4035f14203e9aafbf8142ad3de8cd5867a0cfdfdcacb5131b908e2"
+    },
+    "vendor_eram": {
+      "path": "E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/sim_release/ph1p/ph1p_logic_eram.v",
+      "sha256": "70d89b70bdd51812ad86b91e88526b4604ebb117516efda5af976fcddb2e69af",
+      "encrypted": true
+    },
+    "vendor_gsr": {
+      "path": "E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/sim_release/ph1p/ph1p_phy_gsr.v",
+      "sha256": "787312a19b4007bef3b76986bce267966b2d04c1871290ce29905629e38f1524"
+    }
+  },
+  "tool": {
+    "name": "ModelSim SE-64 2020.4",
+    "vlog_sha256": "39e7f5cbae66a5aa65a179f5ab8faee01a0c53dc838e5e2b76510ac6c77e80a6",
+    "vsim_sha256": "011f110291dc69707d7118e8f8d712b91438e0c837f9bc10ce6bf53c1d048cfd",
+    "model_warning": "Two vopt-2697 out-of-bounds INIT_FILE part-select warnings from official ph1p_logic_eram.v line 165 occur on fresh optimization; cached optimized runs report zero repeated warnings."
+  },
+  "library_binding": {
+    "original_library": "work",
+    "candidate_library": "candidate_work",
+    "candidate_physical_path": "cnn/hw_validation/production/reports/v3_silu_vendor_20261005/candidate_work",
+    "mapping_evidence": "modelsim.ini line 63",
+    "compile_evidence": "candidate_compile_silu_tb.log and candidate_compile_contract_tb.log use vlog -work candidate_work with the candidate RTL path",
+    "inventory_evidence": "vdir -lib candidate_work listed PH1P_LOGIC_ERAM, PH1P_PHY_GSR, silu_shared_unit, tb_silu_shared_unit, tb_silu_vendor_random, and tb_silu_vendor_stall"
+  },
+  "directed_vectors": {
+    "central": [
+      {"raw": 0, "lookup_address": 512, "table_value": 0},
+      {"raw": 4, "lookup_address": 513, "table_value": 2},
+      {"raw": 8, "lookup_address": 514, "table_value": 4},
+      {"raw": 12, "lookup_address": 515, "table_value": 6}
+    ],
+    "boundary_raw_values": [-2048, -2047, 2044, 2046, 2048],
+    "boundary_meaning": ["lower bypass", "lookup address 0", "lookup address 1023", "lookup address 1024 constant", "upper bypass"],
+    "stall_lengths": [0, 1, 16, 32, 64],
+    "accepted_per_run": 9,
+    "received_per_run": 9
+  },
+  "production_results": [
+    {"stall_cycles": 0, "process_exit": 0, "self_check": "pass", "errors": 0, "log": "orig_contract_stall0.log"},
+    {"stall_cycles": 1, "process_exit": 0, "self_check": "fail", "errors": 1, "mismatch": "txn 1 raw 4 lookup 513 got 4 expected 2", "log": "orig_contract_stall1.log", "trace": "orig_contract_trace_stall1.csv"},
+    {"stall_cycles": 16, "process_exit": 0, "self_check": "fail", "errors": 1, "mismatch": "txn 1 raw 4 lookup 513 got 4 expected 2", "log": "orig_contract_stall16.log", "trace": "orig_contract_trace_stall16.csv"},
+    {"stall_cycles": 32, "process_exit": 0, "self_check": "fail", "errors": 1, "mismatch": "txn 1 raw 4 lookup 513 got 4 expected 2", "log": "orig_contract_stall32.log", "trace": "orig_contract_trace_stall32.csv"},
+    {"stall_cycles": 64, "process_exit": 0, "self_check": "fail", "errors": 1, "mismatch": "txn 1 raw 4 lookup 513 got 4 expected 2", "log": "orig_contract_stall64.log", "trace": "orig_contract_trace_stall64.csv"}
+  ],
+  "candidate_results": {
+    "directed": [
+      {"stall_cycles": 0, "process_exit": 0, "self_check": "pass", "accepted": 9, "received": 9, "errors": 0},
+      {"stall_cycles": 1, "process_exit": 0, "self_check": "pass", "accepted": 9, "received": 9, "errors": 0},
+      {"stall_cycles": 16, "process_exit": 0, "self_check": "pass", "accepted": 9, "received": 9, "errors": 0},
+      {"stall_cycles": 32, "process_exit": 0, "self_check": "pass", "accepted": 9, "received": 9, "errors": 0},
+      {"stall_cycles": 64, "process_exit": 0, "self_check": "pass", "accepted": 9, "received": 9, "errors": 0}
+    ],
+    "full_domain": {
+      "process_exit": 0,
+      "self_check": "pass",
+      "inputs": 65536,
+      "latency": 5,
+      "ii": 1,
+      "table_words": 1024,
+      "additional_coverage": "existing TB includes a three-cycle held output, pending-drain reload, reset cancellation, and complete reload",
+      "log": "candidate_existing_full_domain_final2.log"
+    },
+    "random_backpressure": {
+      "process_exit": 0,
+      "self_check": "pass",
+      "seed": 42,
+      "inputs": 4096,
+      "accepted": 4096,
+      "received": 4096,
+      "stall_cycles": 1353,
+      "maximum_consecutive_stalls": 7,
+      "raw_domain": [-2048, 2047],
+      "log": "candidate_random_seed42.log"
+    }
+  },
+  "root_cause": "With production CEA tied high, the RAM output advances from address 513 data 2 to address 514 data 4 while the control pipeline remains frozen at address 513. On resume, data 4 is consumed for the transaction whose expected data is 2.",
+  "candidate_conclusion": "Gating CEA with flag_pipeline_enable removes the observed functional mismatch in the tested official model and preserves legal full-table loading in these tests. This is functional simulation evidence, not production release, timing, mapping, or hardware evidence.",
+  "invalid_attempts_retained": [
+    {"log": "candidate_existing_full_domain.log", "reason": "readmem paths were wrong after attempting a post-elaboration cwd change; expected memory remained unknown; not evidence"},
+    {"log": "candidate_existing_full_domain_final.log", "reason": "bad Windows -modelsimini quoting; ModelSim exit 12; not evidence"},
+    {"log": "candidate_qualified_stall1.log", "reason": "deprecated -novopt raised vsim-12110 and ModelSim exit 12; not evidence"},
+    {"logs": ["simulate_stall0_precheckfix.log", "simulate_stall1_precheckfix.log"], "reason": "first testbench sampled table_ready after the final write NBA and produced one false table-ready error; retained, superseded by corrected contract logs"}
+  ],
+  "public_delivery_matrix": {
+    "compile": "pass for official vendor models, unchanged production RTL, candidate RTL, and testbenches",
+    "ast": "not run; no production RTL generated or edited by this verify task",
+    "readability": "not run",
+    "comment": "not run",
+    "naming": "not run",
+    "profile": "not run",
+    "testbench": "production fault reproduced; candidate directed, exhaustive, and fixed-seed random self-checks passed",
+    "toolchain": "ModelSim official encrypted functional-model simulation completed; TD, SDF, synthesis, implementation, and board validation not run"
+  }
+}

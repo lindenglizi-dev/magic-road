@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-03",
+  "status_at_record": "PIPELINE_LAUNCHED_WAITING_FULL_MANIFEST_VERIFICATION",
+  "subsequent_outcome": "FAILED_BEFORE_TRAINING_on_official_zero_height_annotation_2206849; see full_pretrain_retry_20261003.json for repaired retry",
+  "verification_session": 13915,
+  "verification_process_id": 14760,
+  "training_pipeline_session": 3620,
+  "verification_command": "python -B -m cnn.dataset coco-manifest --manifest cnn/data/coco/download_receipt_full2017.json --output cnn/data/coco_full --raw-images",
+  "training_command": "python -u -B -m cnn.train --dataset cnn/data/coco_full/dataset.json --output cnn/runs/coco_full_pretrain300 --epochs 300 --batch-size 8 --accum-steps 8 --workers 4 --amp --mosaic --checkpoint-kind training",
+  "start_condition": "Wait for verification process to exit; require published manifest; trainer independently audits manifest, completeness, train/val isolation and image contents before optimization. Missing manifest or trainer failure stops the job.",
+  "expected_dataset": {"train_images": 118287, "val_images": 5000},
+  "training": {"epochs": 300, "effective_batch": 64, "optimizer": "SGD", "lr": 0.01, "momentum": 0.9, "weight_decay": 0.0005, "seed": 42, "warmup_epochs": 5, "mosaic_off_last_epochs": 15},
+  "progress_log": "../runs/coco_full_pretrain300/train_log.jsonl",
+  "checkpoint": "../runs/coco_full_pretrain300/last.pt",
+  "progress_events": "first optimizer step and every ten steps; epoch events include validation loss; checkpoints saved at epoch boundaries",
+  "verification_run": ["20 unit tests passed", "cnn.test_training passed", "cnn.test_teacher passed", "two-step raw-input CUDA smoke passed and first-step log was checked"],
+  "public_video": {"frames": 2846, "train_frames": 2222, "val_frames": 624, "dataset": "../data/visdrone_vid_val/converted/dataset.json", "formal_road_acceptance_eligible": false},
+  "production_rtl_modified": false,
+  "user_data_required_now": false,
+  "not_claimed": ["first full-data optimizer step completed", "300 epochs completed", "P95_R85 passed", "distillation completed", "deployment INT8 network completed", "FPGA integration completed"]
+}

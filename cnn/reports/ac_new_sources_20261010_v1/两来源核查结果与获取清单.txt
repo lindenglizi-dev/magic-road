@@ -1,0 +1,77 @@
+新增A/C来源核查（2026-10-10）
+
+授权范围：只增加2个来源核查；人工审核总上限32张不变。
+原A/C计划、30张已签署标签汇总、冻结E7、模型结构与验收指标均不改。
+工程非Git；本次仅新增本目录报告，没有修改训练器、数据标签或生产RTL。
+
+1. DAIR-V2X-I（路端单侧数据；不是已有SPD示例包）
+官方仓库：https://github.com/AIR-THU/DAIR-V2X
+格式说明：https://github.com/AIR-THU/DAIR-V2X/blob/main/data/README.md
+官方README公开目录链：Public-V2X-Datasets → DAIR-V2X (CVPR2022) → DAIR-V2X-I → Example。
+已从各公开目录元数据确认小样例名称、ID与大小：
+  example-single-infrastructure-side.zip
+  64,790,449 bytes（约61.79 MiB）
+  https://drive.google.com/file/d/1RQpHsTEJkpo1_CxY0wwRVjYkbeW2n1_f/view
+注意：它不是DAIR-V2X-C示例，也不是V2X-Seq-SPD示例。
+
+本次尝试仅读取ZIP末尾64KiB以便精取样例，实际返回HTTP200 HTML2040字节，
+页面标题明确为Google Drive - Quota exceeded，没有获得ZIP或原图/GT。
+随后只读取失败说明确认原因，不再尝试该文件下载，不绕过配额、登录或访问限制。
+这不是E盘空间不足；未启动全量下载。
+
+官方单侧格式确有2d_box，并列出Pedestrian、Cyclist、Motorcyclist及多类车辆。
+但“有这些类别”不证明人体/车体已经独立拆框，也不证明停车目标完整标注。
+本次没有样例载荷，不能确认这两项；端点闭/半开坐标规范也未核实。
+官方single-infrastructure data_info示例没有足够实体机位字段，不能用编号随机拆分。
+与已有SPD同属DAIR采集系列，需要比对实际背景、标定和原片来源；未核实前隔离，
+不把它当成已经找到的第二个独立非SPD主域，不把路口图默认改称A或C。
+
+全量train&val目录只查了元数据：图像包1,873,535,988字节；
+点云包4,716,136,970字节；另一个元数据/标注相关ZIP71,897,997字节。
+没有读取上述文件载荷。当前只做2D任务，不需要为此下载点云包。
+仓库Apache-2.0许可证已找到，但不能据此单独认证数据的比赛/再分发许可。
+
+2. Rope3D
+作者官方仓库：https://github.com/liyingying0113/rope3d-dataset-tools
+官方页面：https://thudair.baai.ac.cn/rope
+论文：https://openaccess.thecvf.com/content/CVPR2022/html/Ye_Rope3D_The_Roadside_Perception_Dataset_for_Autonomous_Driving_and_Monocular_CVPR_2022_paper.html
+论文与作者仓库说明其为路侧相机采集，联合2D/3D标注，多相机/视角。
+官方站入口本轮未成功获取，但主代理读到了作者仓库和公开演示标签：
+  show_tools/data_demo/label_2/148711_yz2n151d20211124air_420_1637216135_1637217683_60_obstacle.txt
+  https://raw.githubusercontent.com/liyingying0113/rope3d-dataset-tools/main/show_tools/data_demo/label_2/148711_yz2n151d20211124air_420_1637216135_1637217683_60_obstacle.txt
+标签7,457字节，48行，每行15字段；SHA256为：
+  33e5467d2f1d5028074c225953732956f843abe772fccd67e70e38439ee8b0d8
+类别计数：car15、pedestrian2、cyclist2、motorcyclist3、tricyclist1、
+trafficcone21、unknown_unmovable4。单个演示图的计数不能代表整个数据集的类别分布。
+读取原图目录的GitHub公开接口返回HTTP403 rate limit exceeded，明确限流后不再重试。
+未取得或查看配对原图，不能确认A/C取景、停放车辆完整性或骑行人体/车体拆框。
+有骑行类别不等于已有本项目要求的人车分离标签；不能直接批量映射后当成完整GT。
+数据集比赛使用权限也未核实，不能用代码仓库许可证替代数据授权。
+独立只读核查没有返回可用结论，本轮不记作独立复核通过。
+结论：保留候选，不采用；没有可开训的新增图，不以标签计数冒充视觉审核。
+
+3. 本次实际交付边界
+已执行2来源定向核查，定位DAIR官方小样例并读取Rope3D一份演示标签；
+两者均未通过采用条件，不冒充已取得新训练数据或完成配对原图审核。
+没有新增8-12张成对原图/512预览；没有新增可开训图；没有扩大人工审核任务。
+当前仍是训练25张、开发5张已签署，128/64清单未冻结，G_ready=false。
+本次没有E7新主开发评估、训练或新精度指标。
+
+4. 推荐的下一项具体动作
+优先取得上面的DAIR-V2X-I小样例，而不是让用户补画几百个框或下载全量点云。
+如果该文件恢复正常公开下载，或用户已经正常取得文件，将完整ZIP放入：
+  E:/EDownloads/example-single-infrastructure-side.zip
+不需要用户提前解压、挑图或开始人工标注；不要把其他示例包改名冒充此文件。
+若仍显示配额限制，则保留阻塞，不承诺已经后台等待或会自动恢复。
+
+取得之后的检查顺序：
+  a. 校验实际ZIP目录、CRC与本地SHA256；目录声明大小只是辅助证据，不是完整性证明。
+  b. 仅提取路端原图、配对camera标签、data_info及必要标定；不取点云、车端或测试载荷。
+  c. 查真实A/C取景、完整行人与静止车辆、骑行人体/车体，以及与SPD的机位关系。
+  d. 样例合格才做8-12张原图与一致512预览；只做来源展示，不新分配人工签署任务。
+  e. 普遍不合格直接排除，不用教师预测冒充完整GT，不为凑128/64降低要求。
+只有数据完整性、隔离及数量门槛通过，才接原计划E7基线→G100→有收益才G300。
+
+检查方式：screening_receipt.json为机器可读来源、配额失败、数量与边界记录。
+已有30张汇总仍可运行python -B -m cnn.collect_ac_signed check复查，原输入不覆盖。
+按Ponytail最小复用原则，这轮未另写下载框架或导入器；拿到实际样例后再复用ZIP工具。

@@ -1,0 +1,66 @@
+{
+  "modules": [{
+    "name": "silu_internal_probe",
+    "feature": "physical_probe",
+    "rtl_path": "rtl/silu_internal_probe.v",
+    "description": "Registered autonomous source and sink around the frozen SiLU candidate for isolated PH1P35 mapping and timing diagnosis.",
+    "interfaces": {
+      "protocol": "autonomous registered diagnostic probe",
+      "ports": [
+        {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "Probe and SiLU clock", "clock_domain": "i_clk"},
+        {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "External asynchronous active-low reset", "clock_domain": "i_clk", "active_level": "low"},
+        {"name": "o_done", "direction": "output", "width": 1, "role": "done", "description": "All eighteen results captured", "clock_domain": "i_clk"},
+        {"name": "o_error", "direction": "output", "width": 1, "role": "error", "description": "Sticky result or table-state mismatch", "clock_domain": "i_clk"},
+        {"name": "o_phase", "direction": "output", "width": 3, "role": "phase", "description": "Load, wait, run, or done phase", "clock_domain": "i_clk"},
+        {"name": "o_result_count", "direction": "output", "width": 6, "role": "result_count", "description": "Captured result count", "clock_domain": "i_clk"},
+        {"name": "o_checksum", "direction": "output", "width": 32, "role": "checksum", "description": "XOR summary of data and result index", "clock_domain": "i_clk"}
+      ]
+    },
+    "parameters": [],
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "All probe state and frozen DUT transaction state clear asynchronously; no timing exception is assumed."},
+    "behavior": [
+      "Registered controls load all 1024 table addresses in strict order with signed table value address minus 512.",
+      "After o_table_loaded, the probe sends eighteen registered samples covering both bypass regions and central table lookup.",
+      "The source holds valid and data until input handshake; a registered output-ready pattern creates real backpressure.",
+      "Every output handshake is compared with the Python contract and folded into observable count and checksum registers.",
+      "The frozen silu_shared_unit remains the only owner of the PH1P_LOGIC_ERAM instance and its CEA connection."
+    ],
+    "constraints": [
+      "Target PH1P35MDG324 speed grade 3 at a diagnostic 10.000 ns period.",
+      "Only i_clk and i_rstn are external inputs; outputs are observation registers and no board pins are assigned.",
+      "No false path, multicycle path, min-delay padding, generated bitstream, programming, training, or Flash action is allowed.",
+      "The frozen silu_shared_unit source hash must remain 5F357B493C7B3F941D9FA954A0CE5EC09091E466B641474360D2F64D0E42C938.",
+      "This component probe is not whole-CNN throughput, board, or silicon acceptance evidence."
+    ],
+    "corner_cases": [
+      "Address zero restarts loading and address 1023 completes the table.",
+      "Inputs at and beyond negative 2048 return zero; inputs at and beyond positive 2048 bypass with the original value.",
+      "Input 2047 reaches the special rounded address 1024 result without reading beyond the table.",
+      "Backpressure freezes the entire sample pipeline and RAM CEA through the frozen candidate connection."
+    ],
+    "verification_cases": [
+      "Python fixes all eighteen expected results and checksum 0x00001E01.",
+      "RTL simulation checks 1024 table writes, eighteen input handshakes, eighteen outputs, at least one stalled valid result, and the checksum.",
+      "Strict gate diagnostics are retained without waivers.",
+      "TD elaboration, routed database, ERAM mapping, CEA connectivity, resources, and all timing classes are retained as raw evidence."
+    ],
+    "timing_diagrams": [{
+      "id": "load_run_stall",
+      "title": "Registered table load, lookup stream, and backpressure",
+      "scenario": "load-run-stall",
+      "description": "The probe completes table loading, starts consecutive samples, then holds a valid result during a registered ready-low interval.",
+      "wavejson": {"signal": [
+        {"name": "i_clk", "wave": "p..........."},
+        {"name": "i_rstn", "wave": "01.........."},
+        {"name": "reg_phase", "wave": "x3..4.5....6", "data": ["LOAD", "WAIT", "RUN", "DONE"]},
+        {"name": "table_transfer", "wave": "0.1.0......."},
+        {"name": "input_transfer", "wave": "0.....1.1..."},
+        {"name": "reg_output_ready", "wave": "0.....1.0.1."},
+        {"name": "wire_output_valid", "wave": "0......1..0."},
+        {"name": "o_result_count", "wave": "0.......==..", "data": ["n", "n+1"]},
+        {"name": "o_checksum", "wave": "0........=..", "data": ["updated"]}
+      ]}
+    }]
+  }]
+}

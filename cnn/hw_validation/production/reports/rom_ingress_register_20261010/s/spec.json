@@ -1,0 +1,405 @@
+{
+  "modules": [
+    {
+      "name": "road_rom_down2_top",
+      "feature": "r",
+      "rtl_path": "rtl/road_rom_down2_top.v",
+      "description": "独立schema2 TEST参数接入，不是训练模型部署或整网性能证明。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "i_load_valid",
+            "description": "i_load_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_addr",
+            "direction": "input",
+            "width": 11,
+            "role": "i_load_addr",
+            "description": "i_load_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_data",
+            "direction": "input",
+            "width": 8,
+            "role": "i_load_data",
+            "description": "i_load_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_load_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "o_load_ready",
+            "description": "o_load_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "i_start",
+            "description": "i_start",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_commit_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "i_commit_ready",
+            "description": "i_commit_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_export_start",
+            "direction": "input",
+            "width": 1,
+            "role": "i_export_start",
+            "description": "i_export_start",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "i_output_ready",
+            "description": "i_output_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_parameters_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "o_parameters_ready",
+            "description": "o_parameters_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "o_busy",
+            "description": "o_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "o_done",
+            "description": "o_done",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "o_fault",
+            "description": "o_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "o_output_valid",
+            "description": "o_output_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "role": "o_output_data",
+            "description": "o_output_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_index",
+            "direction": "output",
+            "width": 9,
+            "role": "o_output_index",
+            "description": "o_output_index",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_export_done",
+            "direction": "output",
+            "width": 1,
+            "role": "o_export_done",
+            "description": "o_export_done",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "取消全部旧事务和装载有效状态；top同步释放后重装1024表项。"
+      },
+      "behavior": [
+        "50位外部端口不变；两级同步释放后自动从冻结TEST ROM装参数及1024项SiLU表。",
+        "仅参数流增加pending1/kind3/address11/data32单笔寄存，空时接收，不支持同拍排出补入。",
+        "预取器ready只确认进入缓冲；runner valid&&ready才确认参数提交，反压时payload保持。",
+        "pref_done、table_loaded、沿前pending=0且无fault才登记external_owner，末笔消费同拍不移交。",
+        "halo和表保持原直通接口；最后halo握手后的下一拍允许start。",
+        "故障当拍禁止runner参数有效，下一沿清pending/owner；复位立即取消、重新完整预取。",
+        "保持MAC/动态重定标/RNE/SiLU/缓存及II；启动周期单列，小块核心应仍1687周期。"
+      ],
+      "constraints": [
+        "不改原核接口、II、数值、复位合同；不增时序例外。",
+        "不训练、不改生产、不生成位流、不上板。"
+      ],
+      "corner_cases": [
+        "跨20字节词、物理bank边界、未对齐层尾、非法地址。",
+        "装载和计算受阻时复位，不泄漏旧输出。"
+      ],
+      "verification_cases": [
+        "厂商PH1P模型、1676笔字段逐项比较、MAC/pre/SiLU/post/写回/导出对拍。",
+        "原64项同向量回归；TD资源和时序单列。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "entry",
+          "title": "单笔参数保持与提交",
+          "scenario": "entry",
+          "description": "在capture沿锁存，受阻保持，consume沿释放；owner另在已空的后续沿登记。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "pref_valid",
+                "wave": "01.0...."
+              },
+              {
+                "name": "pref_ready",
+                "wave": "10..1..."
+              },
+              {
+                "name": "pending",
+                "wave": "01..0..."
+              },
+              {
+                "name": "runner_ready",
+                "wave": "0..1...."
+              },
+              {
+                "name": "runner_valid",
+                "wave": "01..0..."
+              },
+              {
+                "name": "pref_done",
+                "wave": "0...1..."
+              },
+              {
+                "name": "table_loaded",
+                "wave": "0...1..."
+              },
+              {
+                "name": "external_owner",
+                "wave": "0....1.."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tb_rom_down2",
+      "feature": "r",
+      "rtl_path": "tests/tb_rom_down2.v",
+      "description": "独立schema2 TEST参数接入，不是训练模型部署或整网性能证明。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "role": "o_test_done",
+            "description": "o_test_done",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "取消全部旧事务和装载有效状态；top同步释放后重装1024表项。"
+      },
+      "behavior": [
+        "测试平台逐项检查字段和数值，带复位、长反压、非法地址；不作为综合源。"
+      ],
+      "constraints": [
+        "不改原核接口、II、数值、复位合同；不增时序例外。",
+        "不训练、不改生产、不生成位流、不上板。"
+      ],
+      "corner_cases": [
+        "跨20字节词、物理bank边界、未对齐层尾、非法地址。",
+        "装载和计算受阻时复位，不泄漏旧输出。"
+      ],
+      "verification_cases": [
+        "厂商PH1P模型、1676笔字段逐项比较、MAC/pre/SiLU/post/写回/导出对拍。",
+        "原64项同向量回归；TD资源和时序单列。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "boot",
+          "title": "装载屏障与运行",
+          "scenario": "boot",
+          "description": "事件示意，长预取与运行压缩，不按每格推算周期。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "01........"
+              },
+              {
+                "name": "domain_rstn",
+                "wave": "0..1......"
+              },
+              {
+                "name": "parameters_ready",
+                "wave": "0.....1..."
+              },
+              {
+                "name": "halo_complete",
+                "wave": "0......1.."
+              },
+              {
+                "name": "start",
+                "wave": "0.......10"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tb_rom_ingress",
+      "feature": "r",
+      "rtl_path": "tests/tb_rom_ingress.v",
+      "description": "独立schema2 TEST参数接入，不是训练模型部署或整网性能证明。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "role": "o_test_done",
+            "description": "o_test_done",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "取消全部旧事务和装载有效状态；top同步释放后重装1024表项。"
+      },
+      "behavior": [
+        "验证参数缓冲守恒、长反压、末笔排空、阶段隔离及各装载位置复位。",
+        "使用测试平台force注入runner ready背压；不是新增部署端口或真实外设协议。"
+      ],
+      "constraints": [
+        "不改原核接口、II、数值、复位合同；不增时序例外。",
+        "不训练、不改生产、不生成位流、不上板。"
+      ],
+      "corner_cases": [
+        "跨20字节词、物理bank边界、未对齐层尾、非法地址。",
+        "装载和计算受阻时复位，不泄漏旧输出。"
+      ],
+      "verification_cases": [
+        "厂商PH1P模型、1676笔字段逐项比较、MAC/pre/SiLU/post/写回/导出对拍。",
+        "原64项同向量回归；TD资源和时序单列。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "boot",
+          "title": "装载屏障与运行",
+          "scenario": "boot",
+          "description": "事件示意，长预取与运行压缩，不按每格推算周期。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "01........"
+              },
+              {
+                "name": "domain_rstn",
+                "wave": "0..1......"
+              },
+              {
+                "name": "parameters_ready",
+                "wave": "0.....1..."
+              },
+              {
+                "name": "halo_complete",
+                "wave": "0......1.."
+              },
+              {
+                "name": "start",
+                "wave": "0.......10"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1180 @@
+Created by          : Tang Dynasty v6.2.168116
+                    : Copyright (c) 2012-2025 Anlogic Inc.
+Generated           : Tue Oct  6 02:02:22 2026
+
+Top Model           : silu_internal_probe
+Device              : PH1P35MDG324
+Speed               : 3
+STA coverage        : 99.92%
+Constraint File     : E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/v6_silu_stage_20261006/physical/td/probe.sdc;
+Confidence          : Routed
+Check Corner        : Both (Slow and Fast)
+CRPR Enabled        : Yes
+Report Scheme       : 10 end point(s) per path group, 1 path(s) per end point
+
+
+Check Status
+-------------
+
+Corner   | Max      Min     
+------------------------------------
+Slow     | yes      yes     
+Fast     | yes      yes     
+
+
+Timing Status
+--------------------
+	SWNS: 1.338ns, STNS: 0.000ns
+	HWNS: 0.034ns, HTNS: 0.000ns
+	Period Check WNS: 0.000ns
+
+
+Clock Summary
+--------------------
+
+       Clock-Id:       C-Freq       Fanout   Clock-Name
+--------------------------------------------------------------------------------
+           clk0:      100.000          108   probe_clk
+--------------------------------------------------------------------------------
+
+       Name            Type         Rise(ns)   Fall(ns)          C-Period(ns)     C-Freq(MHz)          R-Period(ns)     R-Freq(MHz)         SWNS(ns)   STNS(ns)         HWNS(ns)   HTNS(ns)         Skew(ns)           Fanout        Max-Level        CC-From    CC-To
+       clk0   Inferred GCLK            0.000      5.000                10.000         100.000                 8.662         115.447            1.338      0.000            0.034      0.000            0.172              108                7             no       no
+
+Notes
+----------
+C-Period  :  constraint period
+C-Freq    :  constraint freq
+R-Period  :  report min period
+R-Freq    :  report fmax
+CC-From   :  has path(s) from cross-domain clock
+CC-To     :  has path(s) to cross-domain clock
+
+
+*   Clock R-Period data only takes intra-clock timing. SWNS/STNS/HWNS/HTNS take both intra-clock and inter-clock timing.
+*   If there is mismatch between R-Period and SWNS, check inter-clock timing of this clock as capture clock.
+*   SWNS/STNS/HWNS/HTNS of timing exception (SMCP/SMD) only counted in global Timing Status, not counted in Clock Summary.
+
+Intra clock domain timing
+--------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Path Group     :     probe_clk -> probe_clk
+Type           :     Self
+From Clock     :     probe_clk
+To Clock       :     probe_clk
+Min Period     :     8.662ns
+Fmax           :     115.447MHz
+
+Statistics:
+Max            : SWNS      1.338ns, STNS      0.000ns,         0 Viol Endpoints,       490 Total Endpoints,      1346 Paths Analyzed
+Min            : HWNS      0.034ns, HTNS      0.000ns,         0 Viol Endpoints,       490 Total Endpoints,      1346 Paths Analyzed
+----------------------------------------------------------------------------------------------------
+
+Max Paths
+----------------------------------------------------------------------------------------------------
+Slack               : 1.338ns
+Begin Point         : cnt_result_reg[3]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_result_count[3] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 5.635ns (cell 3.305ns (58%), net 2.330ns (42%))
+Clock Skew          : 2.977ns
+Logic Level         : 2 ( PAD=2 )
+Max Fanout          : 8
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.635          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: cnt_result_reg[3]_syn_2.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x030y035z7          0.137    r     3.114          pin: cnt_result_reg[3]_syn_2.oqb
+net (fo=8)                              2.330          5.444          net: o_result_count[3]_dup_31,  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[3]_syn_32.doq[0]
+PAD                 x043y061            0.648    r     6.092       1  pin: o_result_count[3]_syn_32.sg09_do
+PAD                 x043y061            2.520    r     8.612       2  pin: o_result_count[3]_syn_32.opad
+net (fo=1)                              0.000          8.612          net: o_result_count[3],  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[3]
+--------------------------------------------------------------------  ---------------
+Arrival                                                8.612               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  1.338               
+
+Slack               : 1.387ns
+Begin Point         : cnt_result_reg[0]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_result_count[0] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 5.586ns (cell 3.305ns (59%), net 2.281ns (41%))
+Clock Skew          : 2.977ns
+Logic Level         : 2 ( PAD=2 )
+Max Fanout          : 16
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.635          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: cnt_result_reg[0]_syn_2.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x030y034z1          0.137    r     3.114          pin: cnt_result_reg[0]_syn_2.oqb
+net (fo=16)                             2.281          5.395          net: o_result_count[0]_dup_27,  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[0]_syn_28.doq[0]
+PAD                 x043y067            0.648    r     6.043       1  pin: o_result_count[0]_syn_28.sg09_do
+PAD                 x043y067            2.520    r     8.563       2  pin: o_result_count[0]_syn_28.opad
+net (fo=1)                              0.000          8.563          net: o_result_count[0],  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[0]
+--------------------------------------------------------------------  ---------------
+Arrival                                                8.563               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  1.387               
+
+Slack               : 1.493ns
+Begin Point         : cnt_result_reg[1]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_result_count[1] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 5.480ns (cell 3.294ns (60%), net 2.186ns (40%))
+Clock Skew          : 2.977ns
+Logic Level         : 2 ( PAD=2 )
+Max Fanout          : 12
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.635          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: cnt_result_reg[1]_syn_2.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x030y033z1          0.126    f     3.103          pin: cnt_result_reg[1]_syn_2.oqa
+net (fo=12)                             2.186          5.289          net: o_result_count[1]_dup_29,  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[1]_syn_30.doq[0]
+PAD                 x043y064            0.648    r     5.937       1  pin: o_result_count[1]_syn_30.sg09_do
+PAD                 x043y064            2.520    r     8.457       2  pin: o_result_count[1]_syn_30.opad
+net (fo=1)                              0.000          8.457          net: o_result_count[1],  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[1]
+--------------------------------------------------------------------  ---------------
+Arrival                                                8.457               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  1.493               
+
+Slack               : 1.533ns
+Begin Point         : cnt_result_reg[2]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_result_count[2] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 5.439ns (cell 3.305ns (60%), net 2.134ns (40%))
+Clock Skew          : 2.978ns
+Logic Level         : 2 ( PAD=2 )
+Max Fanout          : 12
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.636          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: cnt_result_reg[2]_syn_2.clk
+launch edge                             0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+clk2q               x029y034z4          0.137    r     3.115          pin: cnt_result_reg[2]_syn_2.oqb
+net (fo=12)                             2.134          5.249          net: o_result_count[2]_dup_31,  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[2]_syn_32.doq[0]
+PAD                 x043y064            0.648    r     5.897       1  pin: o_result_count[2]_syn_32.sg09_do
+PAD                 x043y064            2.520    r     8.417       2  pin: o_result_count[2]_syn_32.opad
+net (fo=1)                              0.000          8.417          net: o_result_count[2],  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[2]
+--------------------------------------------------------------------  ---------------
+Arrival                                                8.417               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  1.533               
+
+Slack               : 1.737ns
+Begin Point         : reg_phase_reg[1]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_done (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 5.235ns (cell 3.483ns (66%), net 1.752ns (34%))
+Clock Skew          : 2.978ns
+Logic Level         : 3 ( PAD=2  LUT2=1 )
+Max Fanout          : 18
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.636          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_phase_reg[1]_syn_2.clk
+launch edge                             0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+clk2q               x026y031z1          0.126    f     3.104          pin: reg_phase_reg[1]_syn_2.oqa
+net (fo=18)                             1.291          4.395          net: o_phase[1]_dup_13,  ../rtl/silu_internal_probe.v(59)
+                                                                      pin: o_done_syn_6.ie
+LUT2                x041y041z7          0.189    r     4.584       1  pin: o_done_syn_6.ofb
+net (fo=1)                              0.461          5.045          net: o_done_dup_3,  ../rtl/silu_internal_probe.v(57)
+                                                                      pin: o_done_syn_4.doq[0]
+PAD                 x043y041            0.648    r     5.693       2  pin: o_done_syn_4.sg09_do
+PAD                 x043y041            2.520    r     8.213       3  pin: o_done_syn_4.opad
+net (fo=1)                              0.000          8.213          net: o_done,  ../rtl/silu_internal_probe.v(57)
+                                                                      pin: o_done
+--------------------------------------------------------------------  ---------------
+Arrival                                                8.213               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  1.737               
+
+Slack               : 1.816ns
+Begin Point         : reg_phase_reg[1]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_phase[1] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 5.156ns (cell 3.294ns (63%), net 1.862ns (37%))
+Clock Skew          : 2.978ns
+Logic Level         : 2 ( PAD=2 )
+Max Fanout          : 18
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.636          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_phase_reg[1]_syn_2.clk
+launch edge                             0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+clk2q               x026y031z1          0.126    f     3.104          pin: reg_phase_reg[1]_syn_2.oqa
+net (fo=18)                             1.862          4.966          net: o_phase[1]_dup_13,  ../rtl/silu_internal_probe.v(59)
+                                                                      pin: o_phase[1]_syn_14.doq[0]
+PAD                 x043y047            0.648    r     5.614       1  pin: o_phase[1]_syn_14.sg09_do
+PAD                 x043y047            2.520    r     8.134       2  pin: o_phase[1]_syn_14.opad
+net (fo=1)                              0.000          8.134          net: o_phase[1],  ../rtl/silu_internal_probe.v(59)
+                                                                      pin: o_phase[1]
+--------------------------------------------------------------------  ---------------
+Arrival                                                8.134               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  1.816               
+
+Slack               : 1.832ns
+Begin Point         : reg_phase_reg[0]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_phase[0] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 5.140ns (cell 3.294ns (64%), net 1.846ns (36%))
+Clock Skew          : 2.978ns
+Logic Level         : 2 ( PAD=2 )
+Max Fanout          : 16
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.636          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_phase_reg[0]_syn_2.clk
+launch edge                             0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+clk2q               x025y034z6          0.126    f     3.104          pin: reg_phase_reg[0]_syn_2.oqa
+net (fo=16)                             1.846          4.950          net: o_phase[0]_dup_11,  ../rtl/silu_internal_probe.v(59)
+                                                                      pin: o_phase[0]_syn_12.doq[0]
+PAD                 x043y050            0.648    r     5.598       1  pin: o_phase[0]_syn_12.sg09_do
+PAD                 x043y050            2.520    r     8.118       2  pin: o_phase[0]_syn_12.opad
+net (fo=1)                              0.000          8.118          net: o_phase[0],  ../rtl/silu_internal_probe.v(59)
+                                                                      pin: o_phase[0]
+--------------------------------------------------------------------  ---------------
+Arrival                                                8.118               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  1.832               
+
+Slack               : 1.936ns
+Begin Point         : reg_error_reg_syn_77.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_error (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 5.037ns (cell 3.305ns (65%), net 1.732ns (35%))
+Clock Skew          : 2.977ns
+Logic Level         : 2 ( PAD=2 )
+Max Fanout          : 2
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.635          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_error_reg_syn_77.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x030y034z5          0.137    r     3.114          pin: reg_error_reg_syn_77.oqb
+net (fo=2)                              1.732          4.846          net: o_error_dup_3,  ../rtl/silu_internal_probe.v(58)
+                                                                      pin: o_error_syn_4.doq[0]
+PAD                 x043y044            0.648    r     5.494       1  pin: o_error_syn_4.sg09_do
+PAD                 x043y044            2.520    r     8.014       2  pin: o_error_syn_4.opad
+net (fo=1)                              0.000          8.014          net: o_error,  ../rtl/silu_internal_probe.v(58)
+                                                                      pin: o_error
+--------------------------------------------------------------------  ---------------
+Arrival                                                8.014               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  1.936               
+
+Slack               : 2.008ns
+Begin Point         : reg_checksum_reg[13]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_checksum[31] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 4.964ns (cell 1.667ns (33%), net 3.297ns (67%))
+Clock Skew          : 2.978ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 18
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.636          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_checksum_reg[13]_syn_2.clk
+launch edge                             0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+clk2q               x025y027z6          0.137    r     3.115          pin: reg_checksum_reg[13]_syn_2.oqb
+net (fo=18)                             3.297          6.412          net: o_checksum[15]_dup_5,  ../rtl/silu_internal_probe.v(61)
+                                                                      pin: o_checksum[31]_syn_1.doq[0]
+HDIO                x002y000            0.000    f     6.412       1  pin: o_checksum[31]_syn_1.sg09_do
+HDIO                x002y000            1.530    f     7.942       2  pin: o_checksum[31]_syn_1.opad
+net (fo=1)                              0.000          7.942          net: o_checksum[31],  ../rtl/silu_internal_probe.v(61)
+                                                                      pin: o_checksum[31]
+--------------------------------------------------------------------  ---------------
+Arrival                                                7.942               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  2.008               
+
+Slack               : 2.152ns
+Begin Point         : cnt_result_reg[5]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_result_count[5] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 4.821ns (cell 3.294ns (68%), net 1.527ns (32%))
+Clock Skew          : 2.977ns
+Logic Level         : 2 ( PAD=2 )
+Max Fanout          : 5
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.635          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: cnt_result_reg[5]_syn_2.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x030y035z0          0.126    f     3.103          pin: cnt_result_reg[5]_syn_2.oqa
+net (fo=5)                              1.527          4.630          net: o_result_count[5]_dup_79,  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[5]_syn_80.doq[0]
+PAD                 x043y053            0.648    r     5.278       1  pin: o_result_count[5]_syn_80.sg09_do
+PAD                 x043y053            2.520    r     7.798       2  pin: o_result_count[5]_syn_80.opad
+net (fo=1)                              0.000          7.798          net: o_result_count[5],  ../rtl/silu_internal_probe.v(60)
+                                                                      pin: o_result_count[5]
+--------------------------------------------------------------------  ---------------
+Arrival                                                7.798               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                  2.152               
+
+
+
+Min Paths
+----------------------------------------------------------------------------------------------------
+Slack               : 0.034ns
+Begin Point         : add4_syn_110.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[9] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.290ns (cell 0.065ns (22%), net 0.225ns (78%))
+Clock Skew          : 0.031ns
+Logic Level         : 1 ( ERAM=1 )
+Max Fanout          : 2
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.136          0.996          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.025          1.021          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.219          1.240          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: add4_syn_110.clk
+launch edge                             0.000    r     1.240               
+--------------------------------------------------------------------  ---------------
+clk2q               x022y034z7          0.065    r     1.305          pin: add4_syn_110.oqb
+net (fo=2)                              0.225          1.530          net: reg_table_data[11],  ../rtl/silu_internal_probe.v(89)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[9]
+ERAM (reg)          x023y032            0.000    f     1.530       1       
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.530               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.148          1.107          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.030          1.137          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.264          1.401          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     1.401               
+--------------------------------------------------------------------  ---------------
+hold                                    0.175          1.576               
+clock uncertainty                       0.050          1.626               
+clock pessimism                        -0.130          1.496               
+--------------------------------------------------------------------  ---------------
+Required                                               1.496               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.034               
+
+Slack               : 0.035ns
+Begin Point         : reg_table_addr_reg[7]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[6] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.305ns (cell 0.062ns (20%), net 0.243ns (80%))
+Clock Skew          : 0.045ns
+Logic Level         : 1 ( ERAM=1 )
+Max Fanout          : 7
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.136          0.996          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.025          1.021          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.218          1.239          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_table_addr_reg[7]_syn_2.clk
+launch edge                             0.000    r     1.239               
+--------------------------------------------------------------------  ---------------
+clk2q               x021y035z1          0.062    f     1.301          pin: reg_table_addr_reg[7]_syn_2.oqa
+net (fo=7)                              0.243          1.544          net: reg_table_addr[7],  ../rtl/silu_internal_probe.v(88)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[6]
+ERAM (reg)          x023y032            0.000    f     1.544       1       
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.544               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.148          1.107          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.030          1.137          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.264          1.401          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     1.401               
+--------------------------------------------------------------------  ---------------
+hold                                    0.175          1.576               
+clock uncertainty                       0.050          1.626               
+clock pessimism                        -0.117          1.509               
+--------------------------------------------------------------------  ---------------
+Required                                               1.509               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.035               
+
+Slack               : 0.043ns
+Begin Point         : add4_syn_111.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[10] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.299ns (cell 0.065ns (21%), net 0.234ns (79%))
+Clock Skew          : 0.031ns
+Logic Level         : 1 ( ERAM=1 )
+Max Fanout          : 2
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.136          0.996          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.025          1.021          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.219          1.240          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: add4_syn_111.clk
+launch edge                             0.000    r     1.240               
+--------------------------------------------------------------------  ---------------
+clk2q               x022y035z0          0.065    r     1.305          pin: add4_syn_111.oqb
+net (fo=2)                              0.234          1.539          net: reg_table_data[12],  ../rtl/silu_internal_probe.v(89)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[10]
+ERAM (reg)          x023y032            0.000    f     1.539       1       
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.539               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.148          1.107          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.030          1.137          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.264          1.401          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     1.401               
+--------------------------------------------------------------------  ---------------
+hold                                    0.175          1.576               
+clock uncertainty                       0.050          1.626               
+clock pessimism                        -0.130          1.496               
+--------------------------------------------------------------------  ---------------
+Required                                               1.496               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.043               
+
+Slack               : 0.043ns
+Begin Point         : add4_syn_114.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia_extra[3] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.223ns (cell 0.065ns (29%), net 0.158ns (71%))
+Clock Skew          : 0.031ns
+Logic Level         : 1 ( ERAM=1 )
+Max Fanout          : 6
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.136          0.996          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.025          1.021          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.219          1.240          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: add4_syn_114.clk
+launch edge                             0.000    r     1.240               
+--------------------------------------------------------------------  ---------------
+clk2q               x022y035z3          0.065    r     1.305          pin: add4_syn_114.oqb
+net (fo=6)                              0.158          1.463          net: silu_shared_unit_Inst_stage/i_table_data[15],  ../rtl/silu_shared_unit.v(59)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia_extra[3]
+ERAM (reg)          x023y032            0.000    f     1.463       1       
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.463               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.148          1.107          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.030          1.137          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.264          1.401          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     1.401               
+--------------------------------------------------------------------  ---------------
+hold                                    0.099          1.500               
+clock uncertainty                       0.050          1.550               
+clock pessimism                        -0.130          1.420               
+--------------------------------------------------------------------  ---------------
+Required                                               1.420               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.043               
+
+Slack               : 0.050ns
+Begin Point         : add4_syn_108.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia_extra[1] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.240ns (cell 0.065ns (27%), net 0.175ns (73%))
+Clock Skew          : 0.031ns
+Logic Level         : 1 ( ERAM=1 )
+Max Fanout          : 2
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.136          0.996          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.025          1.021          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.219          1.240          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: add4_syn_108.clk
+launch edge                             0.000    r     1.240               
+--------------------------------------------------------------------  ---------------
+clk2q               x022y034z5          0.065    r     1.305          pin: add4_syn_108.oqb
+net (fo=2)                              0.175          1.480          net: reg_table_data[9],  ../rtl/silu_internal_probe.v(89)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia_extra[1]
+ERAM (reg)          x023y032            0.000    f     1.480       1       
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.480               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.148          1.107          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.030          1.137          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.264          1.401          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     1.401               
+--------------------------------------------------------------------  ---------------
+hold                                    0.109          1.510               
+clock uncertainty                       0.050          1.560               
+clock pessimism                        -0.130          1.430               
+--------------------------------------------------------------------  ---------------
+Required                                               1.430               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.050               
+
+Slack               : 0.053ns
+Begin Point         : i_rstn (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : reg_checksum_reg[10]_syn_2.asr (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : fast_125c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 1.463ns (cell 0.460ns (31%), net 1.003ns (69%))
+Clock Skew          : 1.410ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 107
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/silu_internal_probe.v(54)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x001y000            0.460    r     0.460       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x001y000            0.000    f     0.460       2  pin: i_rstn_syn_2.di
+net (fo=107)                            1.003          1.463          net: i_rstn_dup_1,  ../rtl/silu_internal_probe.v(54)
+                                                                      pin: reg_checksum_reg[10]_syn_2.asr
+reg                 x026y028z7          0.000    f     1.463               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.463               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.398          0.398          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.203          0.601          pin: i_clk_syn_2.di
+net (fo=1)                              0.349          0.950          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.008          0.958          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.160          1.118          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.034          1.152          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.258          1.410          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_checksum_reg[10]_syn_2.clk
+capture edge                            0.000    r     1.410               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          1.410               
+clock uncertainty                       0.000          1.410               
+clock pessimism                         0.000          1.410               
+--------------------------------------------------------------------  ---------------
+Required                                               1.410               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.053               
+
+Slack               : 0.054ns
+Begin Point         : silu_shared_unit_Inst_stage/reg_rounded_value_reg[1]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : silu_shared_unit_Inst_stage/reg_ram_address_reg[0]_syn_2.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.116ns (cell 0.088ns (75%), net 0.028ns (25%))
+Clock Skew          : 0.000ns
+Logic Level         : 0
+Max Fanout          : 1
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.136          0.996          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.025          1.021          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.219          1.240          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/reg_rounded_value_reg[1]_syn_2.clk
+launch edge                             0.000    r     1.240               
+--------------------------------------------------------------------  ---------------
+clk2q               x022y032z2          0.062    f     1.302          pin: silu_shared_unit_Inst_stage/reg_rounded_value_reg[1]_syn_2.oqa
+net (fo=1)                              0.028          1.330          net: silu_shared_unit_Inst_stage/reg_rounded_value[1],  ../rtl/silu_shared_unit.v(92)
+                                                                      pin: silu_shared_unit_Inst_stage/reg_ram_address_reg[0]_syn_2.imb
+reg                 x022y032z1          0.026    f     1.356          net: silu_shared_unit_Inst_stage/reg_lookup_address[1],  ../rtl/silu_shared_unit.v(94)
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.356               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.148          1.107          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.030          1.137          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=40)                             0.242          1.379          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/reg_ram_address_reg[0]_syn_2.clk
+capture edge                            0.000    r     1.379               
+--------------------------------------------------------------------  ---------------
+hold                                    0.012          1.391               
+clock uncertainty                       0.050          1.441               
+clock pessimism                        -0.139          1.302               
+--------------------------------------------------------------------  ---------------
+Required                                               1.302               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.054               
+
+Slack               : 0.054ns
+Begin Point         : silu_shared_unit_Inst_stage/flag_round_upper_reg_syn_3.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : silu_shared_unit_Inst_stage/flag_value_lower_reg_syn_3.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.116ns (cell 0.088ns (75%), net 0.028ns (25%))
+Clock Skew          : 0.000ns
+Logic Level         : 0
+Max Fanout          : 1
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.131          0.991          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.025          1.016          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.221          1.237          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/flag_round_upper_reg_syn_3.clk
+launch edge                             0.000    r     1.237               
+--------------------------------------------------------------------  ---------------
+clk2q               x026y030z2          0.062    f     1.299          pin: silu_shared_unit_Inst_stage/flag_round_upper_reg_syn_3.oqa
+net (fo=1)                              0.028          1.327          net: silu_shared_unit_Inst_stage/flag_round_upper,  ../rtl/silu_shared_unit.v(104)
+                                                                      pin: silu_shared_unit_Inst_stage/flag_value_lower_reg_syn_3.imb
+reg                 x026y030z0          0.026    f     1.353          net: silu_shared_unit_Inst_stage/flag_value_upper,  ../rtl/silu_shared_unit.v(110)
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.353               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.143          1.102          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.030          1.132          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.244          1.376          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/flag_value_lower_reg_syn_3.clk
+capture edge                            0.000    r     1.376               
+--------------------------------------------------------------------  ---------------
+hold                                    0.012          1.388               
+clock uncertainty                       0.050          1.438               
+clock pessimism                        -0.139          1.299               
+--------------------------------------------------------------------  ---------------
+Required                                               1.299               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.054               
+
+Slack               : 0.055ns
+Begin Point         : silu_shared_unit_Inst_stage/cnt_pending_reg[1]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : silu_shared_unit_Inst_stage/cnt_pending_reg[2]_syn_5.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.117ns (cell 0.091ns (77%), net 0.026ns (23%))
+Clock Skew          : 0.000ns
+Logic Level         : 0
+Max Fanout          : 1
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.131          0.991          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.025          1.016          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.221          1.237          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/cnt_pending_reg[1]_syn_5.clk
+launch edge                             0.000    r     1.237               
+--------------------------------------------------------------------  ---------------
+clk2q               x025y031z0          0.065    r     1.302          pin: silu_shared_unit_Inst_stage/cnt_pending_reg[1]_syn_5.oqb
+net (fo=1)                              0.026          1.328          net: silu_shared_unit_Inst_stage/flag_value_valid,  ../rtl/silu_shared_unit.v(108)
+                                                                      pin: silu_shared_unit_Inst_stage/cnt_pending_reg[2]_syn_5.imb
+reg                 x025y031z2          0.026    f     1.354          net: silu_shared_unit_Inst_stage/flag_address_valid,  ../rtl/silu_shared_unit.v(111)
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.354               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.143          1.102          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.030          1.132          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.244          1.376          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: silu_shared_unit_Inst_stage/cnt_pending_reg[2]_syn_5.clk
+capture edge                            0.000    r     1.376               
+--------------------------------------------------------------------  ---------------
+hold                                    0.012          1.388               
+clock uncertainty                       0.050          1.438               
+clock pessimism                        -0.139          1.299               
+--------------------------------------------------------------------  ---------------
+Required                                               1.299               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.055               
+
+Slack               : 0.055ns
+Begin Point         : reg_input_data_reg[0]_syn_7.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : reg_input_data_reg[10]_syn_7.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : fast_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 0.117ns (cell 0.091ns (77%), net 0.026ns (23%))
+Clock Skew          : 0.000ns
+Logic Level         : 0
+Max Fanout          : 1
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.379          0.379          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.177          0.556          pin: i_clk_syn_2.di
+net (fo=1)                              0.298          0.854          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.006          0.860          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.131          0.991          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.025          1.016          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.221          1.237          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_input_data_reg[0]_syn_7.clk
+launch edge                             0.000    r     1.237               
+--------------------------------------------------------------------  ---------------
+clk2q               x025y030z4          0.065    r     1.302          pin: reg_input_data_reg[0]_syn_7.oqb
+net (fo=1)                              0.026          1.328          net: silu_shared_unit_Inst_stage/reg_input_quotient[1],  ../rtl/silu_shared_unit.v(87)
+                                                                      pin: reg_input_data_reg[10]_syn_7.imb
+reg                 x025y030z6          0.026    f     1.354          net: silu_shared_unit_Inst_stage/reg_round_quotient[1],  ../rtl/silu_shared_unit.v(90)
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.354               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.428          0.428          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.200          0.628          pin: i_clk_syn_2.di
+net (fo=1)                              0.324          0.952          net: i_clk_dup_1,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.007          0.959          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=2)                              0.143          1.102          net: i_clk_syn_3,  ../rtl/silu_internal_probe.v(53)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.030          1.132          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=68)                             0.244          1.376          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_input_data_reg[10]_syn_7.clk
+capture edge                            0.000    r     1.376               
+--------------------------------------------------------------------  ---------------
+hold                                    0.012          1.388               
+clock uncertainty                       0.050          1.438               
+clock pessimism                        -0.139          1.299               
+--------------------------------------------------------------------  ---------------
+Required                                               1.299               
+--------------------------------------------------------------------  ---------------
+Slack                                                  0.055               
+
+
+Inter clock domain timing
+--------------------------------------------------
+
+IP timing
+--------------------------------------------------

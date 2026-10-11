@@ -1,0 +1,46 @@
+{
+  "schema": "ac_representative_visual_audit_v1",
+  "reviewer": "assistant_visual_screen_not_user_signed_GT",
+  "status": "coverage_gaps_found_not_training_eligible",
+  "human_GT_complete_signed": false,
+  "original_labels_changed": false,
+  "review_scope": "12-frame raw contact sheet and source-box contact sheet; full-size source previews for epfl_c5_o040 and epfl_c2_o160",
+  "findings": [
+    {
+      "candidate_id": "epfl_c5_o040",
+      "finding": "visible_bus_without_source_box",
+      "note": "第5张：左上方公交车清楚可见，现有来源框只含1个person及2个car，没有该公交框。该采样编号的bus文件缺失；在原片帧号/坐标契约闭合前记录为覆盖风险，不自动补成训练GT。",
+      "training_eligible": false
+    },
+    {
+      "candidate_id": "epfl_c2_o160",
+      "finding": "rider_has_person_box_bicycle_has_no_independent_box",
+      "note": "第8张：骑行者有person来源框，自行车没有独立vehicle框；背景自行车架也有可见两轮车。源包仅person/car/bus，不能满足本项目自行车属于vehicle的完整监督。",
+      "training_eligible": false
+    },
+    {
+      "candidate_id": "epfl_c0_o040",
+      "finding": "visible_bus_and_partial_vehicle_need_coverage_check",
+      "note": "第1张：上方公交及下边缘车辆可见，当前来源预览只有person框。不得因car/bus txt缺失自动认定画面没有车辆。",
+      "training_eligible": false
+    },
+    {
+      "candidate_id": "VIRAT_S_000200_00_000100_000171_f0001376",
+      "finding": "existing_sparse_vehicle_GT",
+      "note": "第11张：既有来源仅P1/V1，完整原图有其他可见车辆；仍是C场景候选，不是完整负监督。",
+      "training_eligible": false
+    },
+    {
+      "candidate_id": "VIRAT_S_010107_02_000282_000312_f0000249",
+      "finding": "existing_ground48_not_signed_complete",
+      "note": "第12张来源框更多，但未有完整人工GT发布证据，不能凭框多认定完整。",
+      "training_eligible": false
+    }
+  ],
+  "general_notes": [
+    "其余7张不因未列专项疑点而自动通过；本轮没有逐框签署完整GT。",
+    "EPFL五个候选视角共用一个同步原片家族，不能把相机或采样编号随机拆成train/dev。",
+    "EPFL原生360x288，512预览保留原比例并补黑边，不是新的高清16:9摄像头实测。",
+    "本轮目视筛查不是学生/教师误报评估，也不产生任何准确率结果。"
+  ]
+}

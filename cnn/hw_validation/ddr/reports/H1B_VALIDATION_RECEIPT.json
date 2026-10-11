@@ -1,0 +1,75 @@
+{
+  "schema": "h1b-validation-receipt-v2",
+  "date": "2026-10-04",
+  "integration_release": false,
+  "evidence_scope": "local_mock_only",
+  "production_ready_generation_allowed": false,
+  "board_or_td_run": false,
+  "behavior_checks": {
+    "python": {
+      "status": "passed",
+      "command": "E:\\project\\qiansai\\.tools\\road_yolo_venv\\Scripts\\python.exe -B -X utf8 .\\cnn\\hw_validation\\ddr\\paxi_single_outstanding_model.py",
+      "log": "H1-B Python behavior reference: PASS",
+      "seed": "0x51B"
+    },
+    "iverilog": {
+      "status": "passed",
+      "compile_command": "iverilog -g2001 -Wall -s tb_paxi_single_outstanding_bridge -o .\\cnn\\hw_validation\\ddr\\h1b_final.vvp .\\cnn\\hw_validation\\ddr\\paxi_single_outstanding_bridge.v .\\cnn\\hw_validation\\ddr\\tb_paxi_single_outstanding_bridge.v",
+      "run_command": "vvp .\\cnn\\hw_validation\\ddr\\h1b_final.vvp",
+      "log": [
+        " > INFO: [Verilog] H1-B isolated PAXI bridge PASS",
+        "$finish called at 885000 (1ps)"
+      ],
+      "temporary_vvp_removed": true
+    },
+    "canonical_spec": {
+      "status": "passed",
+      "rtl_port_cross_check": true,
+      "wavedrom_svg_count": 2
+    }
+  },
+  "strict_gate_attempt": 6,
+  "strict_gate_budget_exhausted": true,
+  "nonterminal_gate_attempts": {
+    "attempt4": "high_cpu_no_report",
+    "attempt5": "high_cpu_no_report"
+  },
+  "strict_gate": {
+    "delivery_ready": false,
+    "errors": 42,
+    "strict_warnings": 0,
+    "checks": {
+      "compile": {"status": "passed", "ready": true, "errors": 0, "warnings": 0},
+      "ast": {"status": "passed", "ready": true, "errors": 0, "warnings": 0},
+      "readability": {"status": "failed", "ready": false, "errors": 42, "warnings": 0},
+      "comment": {"status": "passed", "ready": true, "errors": 0, "warnings": 0},
+      "naming": {"status": "failed", "ready": false, "errors": 5, "warnings": 0},
+      "profile": {"status": "passed", "ready": true, "errors": 0, "warnings": 0},
+      "testbench": {"status": "not_requested", "ready": true, "errors": 0, "warnings": 0},
+      "toolchain": {"status": "not_requested", "ready": true, "errors": 0, "warnings": 0}
+    }
+  },
+  "protocol_contract": {
+    "cancel_result_behavior": "shared_flush_exception",
+    "presented_ar_aw_withdraw_allowed": false,
+    "accepted_means_committed": false,
+    "timeout_owner_release_allowed": false,
+    "commit_event_vendor_proven": false
+  },
+  "vendor_blockers": [
+    "No build-matched proof defines a write commit event for i_commit_confirmed.",
+    "The manual two-cycle write rule is interpreted as a presentation deadline; WREADY acceptance semantics remain unproven.",
+    "No real-controller evidence exists yet for no-RREADY return, single-beat RLAST, reset coordination, or late-return behavior."
+  ],
+  "sha256": {
+    "requirements.md": "4136A05372CC3DEF0E1E75B0670DA49672803818893674F7395F0D8CBF54BADF",
+    "codegen_plan.md": "2ADD3C24F055A649B76CA4B74B14CB6C79D6DD0E560073CBC9EE024EDFE3980F",
+    "paxi_single_outstanding_model.py": "B3EE343BB0F3BD8B768D93C3E288EA4D574DBB46817F9CD58A8284F4ADB7CC2C",
+    "paxi_single_outstanding_bridge.v": "364920D2E1D2C006C62F07A91CB8CDA95033B9F17CDFEB7CBAAC4CB293B4BD5F",
+    "tb_paxi_single_outstanding_bridge.v": "D6BC4CA60DC44B415E18822C4BDB07E385E71DC8C34ACE13C7AF727C9DB440EF",
+    "paxi_single_outstanding_bridge_spec.json": "1EA27666B398CD8CAFCB0EC8CDB7ABB17AB8553CD896CB132C9FC79B7B57EF8C",
+    "strict_gate_attempt6.json": "E04E479945F101548D7D77DFBD3B5AF306C1926B515ADB3686F492B4E5276B0F",
+    "generated_paxi_single_outstanding_bridge_spec.md": "2B0003FF0D87111932C18287B0FE3C1D3F615A234314BF522DD1AA4604F94348",
+    "historical_strict_gate_attempt3.json": "09EE95C1313ACED312604321CBEC4771651D12A7CF3A04B213FFD584B5F7207E"
+  }
+}

@@ -1,0 +1,525 @@
+{
+  "status": "python_only_roi_preprocessing_pilot_not_production_not_rtl_not_acceptance",
+  "scope": {
+    "dataset": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\road_roi_dataset_virat",
+    "splits_read": [
+      "train",
+      "val"
+    ],
+    "source_access": "manifest.csv and manifest-declared crop_path only; source_video not opened",
+    "labels": "official annotation GT ped/vehicle only",
+    "hyperparameter_tuning": false,
+    "models_fit": 2,
+    "test_blind_holdout": "rejected by fail-closed path and manifest guards"
+  },
+  "sample_counts": {
+    "train": {
+      "total": 360,
+      "by_label": {
+        "ped": 160,
+        "vehicle": 200
+      },
+      "by_scene": {
+        "virat-ground-000201": 105,
+        "virat-ground-000206": 255
+      }
+    },
+    "val": {
+      "total": 69,
+      "by_label": {
+        "ped": 45,
+        "vehicle": 24
+      },
+      "by_scene": {
+        "virat-ground-000200": 33,
+        "virat-ground-000203": 36
+      }
+    }
+  },
+  "scene_split_contract": {
+    "train": [
+      "virat-ground-000201",
+      "virat-ground-000206"
+    ],
+    "val": [
+      "virat-ground-000200",
+      "virat-ground-000203"
+    ]
+  },
+  "preprocessing_contracts": {
+    "fpga_stretch": {
+      "input": "manifest crop_path uint8 grayscale inclusive annotation crop",
+      "output": "32x32 uint8",
+      "mapping": "src=floor(length*(i+0.5)/32), capped length-1; existing Q8 DDA expression (length*(4+8*i))>>8",
+      "padding": "none",
+      "training_validation_identical": true
+    },
+    "aspect_letterbox": {
+      "input": "same manifest crop_path as fpga_stretch",
+      "output": "32x32 uint8",
+      "scale": "long side=32; short side=round-half-up(short*32/long), clamped [1,32]",
+      "nearest_neighbor_mapping": "for output i of target length D: src=floor(source_length*(2*i+1)/(2*D)), capped source_length-1",
+      "centering": "floor(left/top padding); any odd extra pad pixel goes right/bottom",
+      "boundary_fill_value_uint8": 0,
+      "training_validation_identical": true
+    },
+    "hog324": {
+      "win_size": [
+        32,
+        32
+      ],
+      "block_size": [
+        16,
+        16
+      ],
+      "block_stride": [
+        8,
+        8
+      ],
+      "cell_size": [
+        8,
+        8
+      ],
+      "nbins": 9,
+      "signed_gradient": false,
+      "gamma_correction": false,
+      "descriptor_size": 324
+    },
+    "classifier": "StandardScaler fit on train only then fixed LinearSVC C=1 class_weight=balanced; scaler folded in exported model"
+  },
+  "models": {
+    "fpga_stretch": {
+      "feature_dimension": 324,
+      "linear_svc": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "random_state": 20260927,
+        "max_iter": 30000,
+        "n_iter": 15
+      },
+      "metrics": {
+        "train": {
+          "float": {
+            "model": "fpga_stretch",
+            "split": "train",
+            "group_type": "overall",
+            "group_value": "all",
+            "sample_count": 360,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "ped_support": 160,
+            "ped_precision": 1.0,
+            "ped_recall": 1.0,
+            "vehicle_support": 200,
+            "vehicle_precision": 1.0,
+            "vehicle_recall": 1.0,
+            "cm_ped_as_ped": 160,
+            "cm_ped_as_vehicle": 0,
+            "cm_vehicle_as_ped": 0,
+            "cm_vehicle_as_vehicle": 200
+          },
+          "quantized": {
+            "model": "fpga_stretch_q",
+            "split": "train",
+            "group_type": "overall",
+            "group_value": "all",
+            "sample_count": 360,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "ped_support": 160,
+            "ped_precision": 1.0,
+            "ped_recall": 1.0,
+            "vehicle_support": 200,
+            "vehicle_precision": 1.0,
+            "vehicle_recall": 1.0,
+            "cm_ped_as_ped": 160,
+            "cm_ped_as_vehicle": 0,
+            "cm_vehicle_as_ped": 0,
+            "cm_vehicle_as_vehicle": 200
+          }
+        },
+        "val": {
+          "float": {
+            "model": "fpga_stretch",
+            "split": "val",
+            "group_type": "overall",
+            "group_value": "all",
+            "sample_count": 69,
+            "accuracy": 0.927536231884058,
+            "balanced_accuracy": 0.9444444444444444,
+            "ped_support": 45,
+            "ped_precision": 1.0,
+            "ped_recall": 0.8888888888888888,
+            "vehicle_support": 24,
+            "vehicle_precision": 0.8275862068965517,
+            "vehicle_recall": 1.0,
+            "cm_ped_as_ped": 40,
+            "cm_ped_as_vehicle": 5,
+            "cm_vehicle_as_ped": 0,
+            "cm_vehicle_as_vehicle": 24
+          },
+          "quantized": {
+            "model": "fpga_stretch_q",
+            "split": "val",
+            "group_type": "overall",
+            "group_value": "all",
+            "sample_count": 69,
+            "accuracy": 0.927536231884058,
+            "balanced_accuracy": 0.9444444444444444,
+            "ped_support": 45,
+            "ped_precision": 1.0,
+            "ped_recall": 0.8888888888888888,
+            "vehicle_support": 24,
+            "vehicle_precision": 0.8275862068965517,
+            "vehicle_recall": 1.0,
+            "cm_ped_as_ped": 40,
+            "cm_ped_as_vehicle": 5,
+            "cm_vehicle_as_ped": 0,
+            "cm_vehicle_as_vehicle": 24
+          }
+        }
+      },
+      "fixed_point_feasibility": {
+        "status": "diagnostic_descriptor_output_and_linear_model_quantization_not_rtl_equivalence",
+        "feature_format": {
+          "unsigned_bits": 13,
+          "fraction_bits": 12,
+          "scale": 4096,
+          "rounding": "numpy.rint round-to-nearest-even",
+          "saturation": "none"
+        },
+        "weight_format": {
+          "signed_bits": 16,
+          "scale": 17998.609547359407,
+          "rounding": "numpy.rint round-to-nearest-even"
+        },
+        "quantized_bias": -198291575,
+        "worst_case_accumulator_abs_bound": 17092089828,
+        "worst_case_required_signed_bits": 35,
+        "observed_max_abs_accumulator": 251126986,
+        "observed_required_signed_bits": 29,
+        "splits": {
+          "train": {
+            "classification_mismatch_vs_float": 0,
+            "classification_mismatch_vs_float_by_true_class": {
+              "ped": {
+                "support": 160,
+                "classification_mismatch_vs_float": 0
+              },
+              "vehicle": {
+                "support": 200,
+                "classification_mismatch_vs_float": 0
+              }
+            },
+            "float_to_quantized_prediction_confusion_ped_vehicle": [
+              [
+                160,
+                0
+              ],
+              [
+                0,
+                200
+              ]
+            ],
+            "max_abs_score_error": 0.0021643460708840045,
+            "mean_abs_score_error": 0.00045372332552552413,
+            "float_score_range": [
+              -3.4073231316672863,
+              3.2521178903419146
+            ],
+            "quantized_integer_score_range": [
+              -251126986,
+              239681184
+            ]
+          },
+          "val": {
+            "classification_mismatch_vs_float": 0,
+            "classification_mismatch_vs_float_by_true_class": {
+              "ped": {
+                "support": 45,
+                "classification_mismatch_vs_float": 0
+              },
+              "vehicle": {
+                "support": 24,
+                "classification_mismatch_vs_float": 0
+              }
+            },
+            "float_to_quantized_prediction_confusion_ped_vehicle": [
+              [
+                40,
+                0
+              ],
+              [
+                0,
+                29
+              ]
+            ],
+            "max_abs_score_error": 0.0015417963991156691,
+            "mean_abs_score_error": 0.000526412855649354,
+            "float_score_range": [
+              -2.6062258929260325,
+              2.7924674167185928
+            ],
+            "quantized_integer_score_range": [
+              -192151072,
+              205814349
+            ]
+          }
+        },
+        "limitation": "OpenCV HOG remains floating point; this quantizes its 324 outputs and folded SVM only."
+      },
+      "descriptor_ranges": {
+        "train": {
+          "min": 0.0,
+          "max": 0.6559028029441833,
+          "mean": 0.12868903277113847,
+          "std": 0.10548532007258232,
+          "zero_fraction": 0.020276063100137173
+        },
+        "val": {
+          "min": 0.0,
+          "max": 0.6225147247314453,
+          "mean": 0.12753181105127678,
+          "std": 0.10689519735262352,
+          "zero_fraction": 0.04043657183753802
+        }
+      }
+    },
+    "aspect_letterbox": {
+      "feature_dimension": 324,
+      "linear_svc": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "random_state": 20260927,
+        "max_iter": 30000,
+        "n_iter": 13
+      },
+      "metrics": {
+        "train": {
+          "float": {
+            "model": "aspect_letterbox",
+            "split": "train",
+            "group_type": "overall",
+            "group_value": "all",
+            "sample_count": 360,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "ped_support": 160,
+            "ped_precision": 1.0,
+            "ped_recall": 1.0,
+            "vehicle_support": 200,
+            "vehicle_precision": 1.0,
+            "vehicle_recall": 1.0,
+            "cm_ped_as_ped": 160,
+            "cm_ped_as_vehicle": 0,
+            "cm_vehicle_as_ped": 0,
+            "cm_vehicle_as_vehicle": 200
+          },
+          "quantized": {
+            "model": "aspect_letterbox_q",
+            "split": "train",
+            "group_type": "overall",
+            "group_value": "all",
+            "sample_count": 360,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "ped_support": 160,
+            "ped_precision": 1.0,
+            "ped_recall": 1.0,
+            "vehicle_support": 200,
+            "vehicle_precision": 1.0,
+            "vehicle_recall": 1.0,
+            "cm_ped_as_ped": 160,
+            "cm_ped_as_vehicle": 0,
+            "cm_vehicle_as_ped": 0,
+            "cm_vehicle_as_vehicle": 200
+          }
+        },
+        "val": {
+          "float": {
+            "model": "aspect_letterbox",
+            "split": "val",
+            "group_type": "overall",
+            "group_value": "all",
+            "sample_count": 69,
+            "accuracy": 0.8985507246376812,
+            "balanced_accuracy": 0.9222222222222223,
+            "ped_support": 45,
+            "ped_precision": 1.0,
+            "ped_recall": 0.8444444444444444,
+            "vehicle_support": 24,
+            "vehicle_precision": 0.7741935483870968,
+            "vehicle_recall": 1.0,
+            "cm_ped_as_ped": 38,
+            "cm_ped_as_vehicle": 7,
+            "cm_vehicle_as_ped": 0,
+            "cm_vehicle_as_vehicle": 24
+          },
+          "quantized": {
+            "model": "aspect_letterbox_q",
+            "split": "val",
+            "group_type": "overall",
+            "group_value": "all",
+            "sample_count": 69,
+            "accuracy": 0.8985507246376812,
+            "balanced_accuracy": 0.9222222222222223,
+            "ped_support": 45,
+            "ped_precision": 1.0,
+            "ped_recall": 0.8444444444444444,
+            "vehicle_support": 24,
+            "vehicle_precision": 0.7741935483870968,
+            "vehicle_recall": 1.0,
+            "cm_ped_as_ped": 38,
+            "cm_ped_as_vehicle": 7,
+            "cm_vehicle_as_ped": 0,
+            "cm_vehicle_as_vehicle": 24
+          }
+        }
+      },
+      "fixed_point_feasibility": {
+        "status": "diagnostic_descriptor_output_and_linear_model_quantization_not_rtl_equivalence",
+        "feature_format": {
+          "unsigned_bits": 13,
+          "fraction_bits": 12,
+          "scale": 4096,
+          "rounding": "numpy.rint round-to-nearest-even",
+          "saturation": "none"
+        },
+        "weight_format": {
+          "signed_bits": 16,
+          "scale": 20583.701271499995,
+          "rounding": "numpy.rint round-to-nearest-even"
+        },
+        "quantized_bias": -138121499,
+        "worst_case_accumulator_abs_bound": 14092128897,
+        "worst_case_required_signed_bits": 35,
+        "observed_max_abs_accumulator": 273555304,
+        "observed_required_signed_bits": 30,
+        "splits": {
+          "train": {
+            "classification_mismatch_vs_float": 0,
+            "classification_mismatch_vs_float_by_true_class": {
+              "ped": {
+                "support": 160,
+                "classification_mismatch_vs_float": 0
+              },
+              "vehicle": {
+                "support": 200,
+                "classification_mismatch_vs_float": 0
+              }
+            },
+            "float_to_quantized_prediction_confusion_ped_vehicle": [
+              [
+                160,
+                0
+              ],
+              [
+                0,
+                200
+              ]
+            ],
+            "max_abs_score_error": 0.0014479902580264437,
+            "mean_abs_score_error": 0.0003431682771615633,
+            "float_score_range": [
+              -3.2447208741283835,
+              2.6038288256145496
+            ],
+            "quantized_integer_score_range": [
+              -273555304,
+              219489032
+            ]
+          },
+          "val": {
+            "classification_mismatch_vs_float": 0,
+            "classification_mismatch_vs_float_by_true_class": {
+              "ped": {
+                "support": 45,
+                "classification_mismatch_vs_float": 0
+              },
+              "vehicle": {
+                "support": 24,
+                "classification_mismatch_vs_float": 0
+              }
+            },
+            "float_to_quantized_prediction_confusion_ped_vehicle": [
+              [
+                38,
+                0
+              ],
+              [
+                0,
+                31
+              ]
+            ],
+            "max_abs_score_error": 0.0011983498538385984,
+            "mean_abs_score_error": 0.0003306187186829069,
+            "float_score_range": [
+              -3.174972798848562,
+              2.6911403757707326
+            ],
+            "quantized_integer_score_range": [
+              -267739799,
+              226947018
+            ]
+          }
+        },
+        "limitation": "OpenCV HOG remains floating point; this quantizes its 324 outputs and folded SVM only."
+      },
+      "descriptor_ranges": {
+        "train": {
+          "min": 0.0,
+          "max": 0.7022032141685486,
+          "mean": 0.12340941990567116,
+          "std": 0.11160854331372244,
+          "zero_fraction": 0.04987997256515775
+        },
+        "val": {
+          "min": 0.0,
+          "max": 0.6865310668945312,
+          "mean": 0.1186946991961399,
+          "std": 0.1165986106214726,
+          "zero_fraction": 0.03820003578457685
+        }
+      }
+    }
+  },
+  "inputs": {
+    "status": "all_inputs_verified",
+    "manifest_sha256": "ef4bd105844a11720ea07d504a6137132cce81ad62a77aba06f9d47b19ff666d",
+    "selected_input_count": 429,
+    "selected_inputs_canonical_sha256": "4b2fde6caffe8bedd69720c63dec07a8641f4efa5437f9e27454353add8103eb",
+    "cross_split_leakage": {
+      "scene_id": [],
+      "source_sha256": [],
+      "source_family": [],
+      "raw_crop_pixel_sha256": [],
+      "fpga_stretch_pixel_sha256": [],
+      "aspect_letterbox_pixel_sha256": []
+    },
+    "stretch_regeneration_matches_all_manifest_roi_sha256": true,
+    "missing_raw_crops": []
+  },
+  "implementation": {
+    "script": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tools\\compare_roi_aspect_pilot.py",
+    "script_sha256": "b0602bacabe3226c7ecd6492d48ac6da2478995b84a64e52324f09f2f1377a56",
+    "python": "3.13.12",
+    "opencv": "4.13.0",
+    "numpy": "2.4.6",
+    "pillow": "12.3.0",
+    "scikit_learn": "1.9.0"
+  },
+  "artifacts": {
+    "receipt": "receipt.json",
+    "models": "models.json",
+    "predictions": "predictions.csv",
+    "failures": "failures.csv",
+    "stratified_metrics": "stratified_metrics.csv",
+    "feature_ranges": "feature_ranges.csv"
+  },
+  "limitations": [
+    "This creates a new preprocessing contract for a Python pilot and does not replace the existing ROI contract.",
+    "No RTL, source video, invalid-candidate rejection, test, blind, or holdout evidence is included.",
+    "Only 429 samples from four VIRAT scenes are measured; validation remains diagnostic, not acceptance evidence.",
+    "OpenCV HOG is floating point and its quantized-output/SVM feasibility result is not RTL equivalence."
+  ]
+}

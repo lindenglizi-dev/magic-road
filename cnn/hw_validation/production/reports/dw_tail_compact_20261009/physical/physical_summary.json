@@ -1,0 +1,134 @@
+{
+  "schema": "road_physical_candidate_summary_v2",
+  "generated_on": "2026-10-09",
+  "candidate": "dw_tail_compact_20261009",
+  "decision": "not_signed_off_due_to_internal_setup_failures",
+  "device": "PH1P35MDG324",
+  "speed_grade": -3,
+  "clock_mhz": 100.0,
+  "tool": {
+    "name": "Tang Dynasty",
+    "version": "6.2.168116",
+    "executable_sha256": "E2E04ADA5E256DCCD017240C0F4DCFACE7F96DCA67CDE0E56E606AC0E02F827A"
+  },
+  "constraints": {
+    "sdc_sha256": "9D7A4652CA51DAC7217F25DEA02E8D2019F0EC64B4A2BF84E2FF19FB9F681ADA",
+    "adc_sha256": "849F310976CAC0090E8432F50E39EE3AE8EB407FA7F8FAAC2669D92DB5ADF384",
+    "same_as_dynamic_overlap_20261008": true,
+    "new_exceptions_added": false,
+    "bitstream_generated": false
+  },
+  "functional_binding": {
+    "core_receipt": "../tests/receipt.json",
+    "core_receipt_sha256": "E4F97F41C8933ED1BDC622C4384D05E1AFD0FD2C842B79601938513EDEFB7216",
+    "layer_receipt": "../tests/layer/receipt.json",
+    "layer_receipt_sha256": "49FB3708374A161291ECE87157B7D640F380C3FC223001F8798F6CD15A9E2C1D",
+    "runner_sha256": "0747CB08E647DB1ADB0F7C9B4A99E7568F69043F31CB8A213D30B7A4E657AFE0",
+    "postprocess_sha256": "DE8DEEB625B80C96BAE0757A831D4EB9F4BE3B2A7174265079ACA1A4F15439E9",
+    "observed_cycles": 3203,
+    "cycle_delta_vs_A": -128,
+    "note": "Core, layer and independent tail numerical receipts passed before physical execution. Physical signoff nevertheless fails."
+  },
+  "runtime_chain_binding": {
+    "executed_again": false,
+    "bound_candidate": "../retirement_lane_banks_20261009/physical/physical_summary.json",
+    "basis": "The six runtime-chain RTL sources, including postprocess, are byte-identical to A. Only B runner RTL differs, outside runtime_chain scope."
+  },
+  "layer_shell": {
+    "scope": "actual B runner, storage, 24-MAC probe, fixed-TEST adapter, unchanged runtime pre/post, RNE and SiLU inside unchanged low-I/O shell",
+    "database_sha256": {
+      "gate_db": "42D76E81CE72463C2A54D941331792831F532A7A1E69E22F65C9E3AE4DC3ECD3",
+      "pr_db": "F454751DD7D0D53D4BB7BE3B7333ABCD200980443AA6C125FEEF787E3F28C622"
+    },
+    "resource": {
+      "slice": 7106,
+      "lut6": 6579,
+      "register": 4308,
+      "used_ram_slices": 1984,
+      "dram_lut": 1920,
+      "shifter_lut": 64,
+      "dsp": 24,
+      "eram": 1,
+      "io": 38
+    },
+    "delta_vs_A": {
+      "slice": 181,
+      "lut6": 246,
+      "register": -30,
+      "used_ram_slices": 152,
+      "dram_lut": 152,
+      "shifter_lut": 0,
+      "dsp": 0,
+      "eram": 0,
+      "io": 0
+    },
+    "resource_conclusion": "B saves 128 measured cycles but does not save Slice; it adds 181 Slice versus A.",
+    "internal_timing": {
+      "setup": {"negative_endpoints_in_internal_report": 4, "worst_slack_ns": -0.528, "stns_ns": -2.112, "corner": "slow_m40c"},
+      "hold": {"negative": 0, "worst_slack_ns": 0.023, "corner": "fast_m40c"},
+      "recovery": {"negative": 0, "worst_slack_ns": 3.416, "corner": "slow_m40c"},
+      "removal": {"negative": 0, "worst_slack_ns": 0.044, "corner": "fast_m40c"}
+    },
+    "coverage_100000_negative": {
+      "records": 77,
+      "unique_endpoints": 77,
+      "internal_setup": {
+        "records": 5,
+        "unique_endpoints": 5,
+        "families": [
+          {"count": 4, "slack_ns": -0.528, "launch": "u_chain/u_pre/u_round/result_tag_o_reg[1]_syn_2.clk", "endpoints": ["u_chain/reg_pre_acc_reg[6]_syn_2.cea", "u_chain/reg_pre_acc_reg[7]_syn_2.cea", "u_chain/reg_pre_acc_reg[12]_syn_2.cea", "u_chain/reg_pre_acc_reg[13]_syn_2.cea"]},
+          {"count": 1, "slack_ns": -0.449, "launch": "u_chain/flag_fatal_reg_syn_5.clk", "endpoint": "ramread0_syn_3738.we"}
+        ]
+      },
+      "external": {"setup": 16, "hold": 54, "recovery": 0, "removal": 2},
+      "worst_external_ns": {"setup": -2.197, "hold": -0.970, "removal": -0.357},
+      "report": "layer_shell/coverage_100000_violations.timing"
+    },
+    "functional_reset_distribution": {
+      "negative_records": 4,
+      "unique_endpoints": 4,
+      "worst_slack_ns": -0.082,
+      "stns_ns": -0.328,
+      "launch": "reg_release_done_reg_syn_7.clk",
+      "endpoints": ["u_chain/reg_pre_acc_reg[6]_syn_2.cea", "u_chain/reg_pre_acc_reg[7]_syn_2.cea", "u_chain/reg_pre_acc_reg[12]_syn_2.cea", "u_chain/reg_pre_acc_reg[13]_syn_2.cea"],
+      "classification": "separate specialized report with the same four endpoint registers but a different launch; do not add these paths to the 77 coverage records or call them four new endpoint failures",
+      "report": "layer_shell/functional_reset_distribution.timing"
+    },
+    "critical_path_root_cause": {
+      "four_pre_acc_paths": "Data delay 10.270 ns = 1.513 ns cell plus 8.757 ns net; five LUT levels; max fanout 47. Dominant final mux79_syn_2[14] net has fanout 40 and 4.933 ns net delay.",
+      "A_pre_acc7_comparison": "A is +1.954 ns with 7.873 ns data delay = 1.481 ns cell plus 6.392 ns net, five LUT levels and fanout 40. B adds 2.365 ns net delay while cell delay and logic depth remain close.",
+      "tail_logic_membership": "The four failing paths remain entirely in the unchanged postprocess PRE tag/ready-enable cone. New flag_dw_tail/address selection logic is not directly on these paths.",
+      "fifth_internal_path": "The -0.449 ns flag_fatal to DW-weight RAM write-enable path uses existing load/count/write-enable logic; no flag_dw_tail, cnt_mac_group or new tail-address signal is directly on the path.",
+      "inference": "The B runner change increases placed resource and changes routing/congestion. This is the evidence-backed cause category; it is not proof of a single deterministic placer mechanism."
+    },
+    "hardblock_origin": {
+      "dsp": {"setup_paths": 384, "hold_paths": 384, "negative": 0, "setup_worst_ns": 6.153, "hold_worst_ns": 0.454},
+      "eram": {"setup_paths": 16, "hold_paths": 16, "negative": 0, "setup_worst_ns": 5.893, "hold_worst_ns": 0.963}
+    },
+    "syn5025": {
+      "present": true,
+      "hdl5314_present": false,
+      "explicit_unconnected_output_messages": 0,
+      "disposition": "The generic warning remains unlocalized and unwaived. No blanket benign assertion is made because the tool did not enumerate each zeroed object."
+    }
+  },
+  "retirement_bank_driver_proof": {
+    "postprocess_identical_to_A": true,
+    "postprocess_sha256": "DE8DEEB625B80C96BAE0757A831D4EB9F4BE3B2A7174265079ACA1A4F15439E9",
+    "rtl_full_element_writes": "../../rtl/road_dynamic_postprocess.v:339-353",
+    "logical_banks": ["reg_retire_alpha", "reg_retire_beta", "reg_retire_gamma"],
+    "result": "The same three full-element RTL writes and byte-identical postprocess source bind A's per-bank structural proof. B's own synthesized layer netlist also retains separate alpha/beta/gamma RAM structures and no HDL-5314 warning.",
+    "limitation": "Static write-source evidence does not replace gate-level numerical equivalence."
+  },
+  "verification_gap": {
+    "gate_level_same_vector_simulation": "not_run",
+    "reason": "The existing numerical bench targets the RTL layer interface, not the serialized physical shell, and no already-qualified vendor-primitive gate bench/library flow exists here.",
+    "accepted_evidence": "Bound passing RTL receipts plus own routed database and structural bank evidence only."
+  },
+  "overall": {
+    "internal_100mhz": "fail: five internal setup endpoints in coverage, with four corresponding reset-distribution paths separately negative in the specialized report",
+    "external_io": "72 coverage failures retained; no constraint exception or RTL repair applied",
+    "deployment": "not signed off, not authorized and not demonstrated",
+    "baseline_guidance": "Keep A as the usable physical baseline; keep B as a failed physical candidate pending an explicit later architecture/placement decision."
+  }
+}

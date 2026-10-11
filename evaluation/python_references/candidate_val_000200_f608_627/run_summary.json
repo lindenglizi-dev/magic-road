@@ -1,0 +1,794 @@
+{
+  "contract": {
+    "status": "algorithm_and_coordinate_reference_not_cycle_accurate_rle_ccl",
+    "mode": "deployed",
+    "input": "1280x720 BGR decoded frame with zero-based frame_index",
+    "gray": "(R>>2)+(G>>1)+(B>>2), uint8",
+    "sampling": "analysis[y,x]=gray[5*y,5*x], yielding deployed 256x144; this deliberately does not use background_model.v's generic default FRAME_HEIGHT=150",
+    "learning": "first frame initializes; next three frames use toward(old,new,shift=2,min_step=1); no candidates during four learning frames",
+    "difference": "foreground when abs(gray-background) >= 20",
+    "threshold": 20,
+    "post_learning_update": "deployed: background_update_enable=1, freeze_foreground=1, toward shift=4 with minimum step one",
+    "cleanup": "zero-padded 3x3 sum >=3 and center pixel must be one",
+    "run_filter": "after cleanup, discard each horizontal run shorter than MIN_RUN_LENGTH=2",
+    "components": "8-connected; area is foreground pixel count; inclusive bbox; top four by descending area then scan label",
+    "coordinate_mapping": "candidate boxes use inclusive analysis coordinates; source_sample_box multiplies each coordinate by five and denotes sampled source locations",
+    "frame_identity": "output frame_index equals the input video frame consumed for that mask; no display/HDMI identity is inferred",
+    "unmodeled_rtl_limits": "MAX_RUN=64, MAX_LABEL=32, overflow/discard behavior, and cycle-level label-union timing are not modeled"
+  },
+  "video": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\public_data\\raw\\virat_ground_v2\\video_original\\VIRAT_S_000200_00_000100_000171.mp4",
+  "video_sha256": "a8888e14bb2a1d38368a10cfd949916fcf9acc9972d3dacc3cbbc502c8d8a568",
+  "script_sha256": "5d75e053ca7a6c30e24a468825e5775c5e8183279539c592795a35888f8ebc61",
+  "parameters": {
+    "requested_frame_count": 20,
+    "start_frame": 608,
+    "threshold": 20,
+    "mode": "deployed"
+  },
+  "processed_frames": 20,
+  "learning_frames": 4,
+  "candidate_frames": 16,
+  "candidate_count": 34,
+  "frames": [
+    {
+      "frame_index": 608,
+      "learning": true,
+      "background_ready": false,
+      "learned_frame_count": 1,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "candidates": []
+    },
+    {
+      "frame_index": 609,
+      "learning": true,
+      "background_ready": false,
+      "learned_frame_count": 2,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "candidates": []
+    },
+    {
+      "frame_index": 610,
+      "learning": true,
+      "background_ready": false,
+      "learned_frame_count": 3,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "candidates": []
+    },
+    {
+      "frame_index": 611,
+      "learning": true,
+      "background_ready": true,
+      "learned_frame_count": 4,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "candidates": []
+    },
+    {
+      "frame_index": 612,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 120,
+      "foreground_pixels_clean": 112,
+      "foreground_pixels_after_min_run": 99,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 49,
+          "xmin": 229,
+          "ymin": 99,
+          "xmax": 243,
+          "ymax": 103,
+          "source_sample_box": [
+            1145,
+            495,
+            1215,
+            515
+          ]
+        },
+        {
+          "component_label": 2,
+          "area": 24,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 230,
+          "ymax": 113,
+          "source_sample_box": [
+            1125,
+            530,
+            1150,
+            565
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 613,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 134,
+      "foreground_pixels_clean": 130,
+      "foreground_pixels_after_min_run": 123,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 53,
+          "xmin": 229,
+          "ymin": 98,
+          "xmax": 243,
+          "ymax": 104,
+          "source_sample_box": [
+            1145,
+            490,
+            1215,
+            520
+          ]
+        },
+        {
+          "component_label": 2,
+          "area": 31,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 231,
+          "ymax": 113,
+          "source_sample_box": [
+            1125,
+            530,
+            1155,
+            565
+          ]
+        },
+        {
+          "component_label": 5,
+          "area": 18,
+          "xmin": 232,
+          "ymin": 108,
+          "xmax": 239,
+          "ymax": 110,
+          "source_sample_box": [
+            1160,
+            540,
+            1195,
+            550
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 614,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 144,
+      "foreground_pixels_clean": 141,
+      "foreground_pixels_after_min_run": 135,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 58,
+          "xmin": 229,
+          "ymin": 98,
+          "xmax": 244,
+          "ymax": 104,
+          "source_sample_box": [
+            1145,
+            490,
+            1220,
+            520
+          ]
+        },
+        {
+          "component_label": 2,
+          "area": 38,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 231,
+          "ymax": 113,
+          "source_sample_box": [
+            1125,
+            530,
+            1155,
+            565
+          ]
+        },
+        {
+          "component_label": 5,
+          "area": 18,
+          "xmin": 232,
+          "ymin": 112,
+          "xmax": 238,
+          "ymax": 114,
+          "source_sample_box": [
+            1160,
+            560,
+            1190,
+            570
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 615,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 154,
+      "foreground_pixels_clean": 152,
+      "foreground_pixels_after_min_run": 142,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 53,
+          "xmin": 228,
+          "ymin": 98,
+          "xmax": 244,
+          "ymax": 103,
+          "source_sample_box": [
+            1140,
+            490,
+            1220,
+            515
+          ]
+        },
+        {
+          "component_label": 2,
+          "area": 39,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 231,
+          "ymax": 113,
+          "source_sample_box": [
+            1125,
+            530,
+            1155,
+            565
+          ]
+        },
+        {
+          "component_label": 5,
+          "area": 22,
+          "xmin": 232,
+          "ymin": 111,
+          "xmax": 238,
+          "ymax": 114,
+          "source_sample_box": [
+            1160,
+            555,
+            1190,
+            570
+          ]
+        },
+        {
+          "component_label": 3,
+          "area": 19,
+          "xmin": 232,
+          "ymin": 107,
+          "xmax": 239,
+          "ymax": 110,
+          "source_sample_box": [
+            1160,
+            535,
+            1195,
+            550
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 616,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 163,
+      "foreground_pixels_clean": 163,
+      "foreground_pixels_after_min_run": 156,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 55,
+          "xmin": 229,
+          "ymin": 98,
+          "xmax": 245,
+          "ymax": 103,
+          "source_sample_box": [
+            1145,
+            490,
+            1225,
+            515
+          ]
+        },
+        {
+          "component_label": 5,
+          "area": 46,
+          "xmin": 232,
+          "ymin": 106,
+          "xmax": 239,
+          "ymax": 114,
+          "source_sample_box": [
+            1160,
+            530,
+            1195,
+            570
+          ]
+        },
+        {
+          "component_label": 4,
+          "area": 41,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 231,
+          "ymax": 113,
+          "source_sample_box": [
+            1125,
+            530,
+            1155,
+            565
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 617,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 161,
+      "foreground_pixels_clean": 160,
+      "foreground_pixels_after_min_run": 150,
+      "candidates": [
+        {
+          "component_label": 2,
+          "area": 87,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 239,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            530,
+            1195,
+            570
+          ]
+        },
+        {
+          "component_label": 1,
+          "area": 52,
+          "xmin": 229,
+          "ymin": 97,
+          "xmax": 245,
+          "ymax": 103,
+          "source_sample_box": [
+            1145,
+            485,
+            1225,
+            515
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 618,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 177,
+      "foreground_pixels_clean": 173,
+      "foreground_pixels_after_min_run": 166,
+      "candidates": [
+        {
+          "component_label": 2,
+          "area": 91,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 239,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            530,
+            1195,
+            570
+          ]
+        },
+        {
+          "component_label": 1,
+          "area": 64,
+          "xmin": 230,
+          "ymin": 97,
+          "xmax": 244,
+          "ymax": 104,
+          "source_sample_box": [
+            1150,
+            485,
+            1220,
+            520
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 619,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 179,
+      "foreground_pixels_clean": 177,
+      "foreground_pixels_after_min_run": 165,
+      "candidates": [
+        {
+          "component_label": 2,
+          "area": 92,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 239,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            530,
+            1195,
+            570
+          ]
+        },
+        {
+          "component_label": 1,
+          "area": 62,
+          "xmin": 229,
+          "ymin": 97,
+          "xmax": 246,
+          "ymax": 104,
+          "source_sample_box": [
+            1145,
+            485,
+            1230,
+            520
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 620,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 189,
+      "foreground_pixels_clean": 187,
+      "foreground_pixels_after_min_run": 179,
+      "candidates": [
+        {
+          "component_label": 2,
+          "area": 94,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 239,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            530,
+            1195,
+            570
+          ]
+        },
+        {
+          "component_label": 1,
+          "area": 85,
+          "xmin": 229,
+          "ymin": 97,
+          "xmax": 246,
+          "ymax": 109,
+          "source_sample_box": [
+            1145,
+            485,
+            1230,
+            545
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 621,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 200,
+      "foreground_pixels_clean": 195,
+      "foreground_pixels_after_min_run": 185,
+      "candidates": [
+        {
+          "component_label": 2,
+          "area": 98,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 240,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            530,
+            1200,
+            570
+          ]
+        },
+        {
+          "component_label": 1,
+          "area": 87,
+          "xmin": 231,
+          "ymin": 97,
+          "xmax": 246,
+          "ymax": 109,
+          "source_sample_box": [
+            1155,
+            485,
+            1230,
+            545
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 622,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 215,
+      "foreground_pixels_clean": 207,
+      "foreground_pixels_after_min_run": 203,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 105,
+          "xmin": 230,
+          "ymin": 96,
+          "xmax": 246,
+          "ymax": 109,
+          "source_sample_box": [
+            1150,
+            480,
+            1230,
+            545
+          ]
+        },
+        {
+          "component_label": 2,
+          "area": 98,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 240,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            530,
+            1200,
+            570
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 623,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 206,
+      "foreground_pixels_clean": 200,
+      "foreground_pixels_after_min_run": 189,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 189,
+          "xmin": 225,
+          "ymin": 96,
+          "xmax": 246,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            480,
+            1230,
+            570
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 624,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 210,
+      "foreground_pixels_clean": 206,
+      "foreground_pixels_after_min_run": 196,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 196,
+          "xmin": 225,
+          "ymin": 96,
+          "xmax": 247,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            480,
+            1235,
+            570
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 625,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 216,
+      "foreground_pixels_clean": 207,
+      "foreground_pixels_after_min_run": 198,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 198,
+          "xmin": 225,
+          "ymin": 95,
+          "xmax": 247,
+          "ymax": 114,
+          "source_sample_box": [
+            1125,
+            475,
+            1235,
+            570
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 626,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 218,
+      "foreground_pixels_clean": 211,
+      "foreground_pixels_after_min_run": 200,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 158,
+          "xmin": 231,
+          "ymin": 95,
+          "xmax": 248,
+          "ymax": 114,
+          "source_sample_box": [
+            1155,
+            475,
+            1240,
+            570
+          ]
+        },
+        {
+          "component_label": 3,
+          "area": 38,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 231,
+          "ymax": 113,
+          "source_sample_box": [
+            1125,
+            530,
+            1155,
+            565
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 627,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 219,
+      "foreground_pixels_clean": 216,
+      "foreground_pixels_after_min_run": 204,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 161,
+          "xmin": 231,
+          "ymin": 95,
+          "xmax": 248,
+          "ymax": 114,
+          "source_sample_box": [
+            1155,
+            475,
+            1240,
+            570
+          ]
+        },
+        {
+          "component_label": 3,
+          "area": 39,
+          "xmin": 225,
+          "ymin": 106,
+          "xmax": 231,
+          "ymax": 113,
+          "source_sample_box": [
+            1125,
+            530,
+            1155,
+            565
+          ]
+        }
+      ]
+    }
+  ]
+}

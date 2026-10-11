@@ -1,0 +1,153 @@
+--- frozen/down2_dynamic_tile_runner.v
++++ candidate/down2_dynamic_tile_runner.v
+@@ -141,8 +141,8 @@
+ 	reg [31:0]cnt_silu_accepts;
+ 	reg [31:0]cnt_post_accepts;
+ 	reg [31:0]cnt_writebacks;
+-	reg flag_cnt_output_clear;
+-	reg flag_cnt_output_increment;
++	reg [4:0]next_cnt_output;
++	reg flag_cnt_output_update;
+ 
+ 	reg [10:0]cnt_expected_halo;
+ 	reg [8:0]cnt_expected_dw_cache;
+@@ -179,6 +179,8 @@
+ 	wire flag_fault_flush;                       // Any terminal fault stops issue and invalidates publication
+ 	wire flag_mac_fault_accept;
+ 	wire flag_pw_prepare_next;
++	wire flag_pw_payload_eligible;
++	wire flag_mac_payload_capture;
+ 
+ 	wire pp_input_ready;
+ 	wire pp_output_valid;
+@@ -294,6 +296,13 @@
+ 	                              (~pp_fault) && (~flag_load_fault) && (~flag_fault_o) &&
+ 	                              (~(mac_result_valid && mac_fault));
+ 	assign flag_mac_input_accept = flag_mac_input_valid && mac_input_ready;
++	// Decode the successor payload independently; actual acceptance still owns the capture.
++	assign flag_pw_payload_eligible = flag_layer_pw &&
++	                                 ((~flag_mac_last_group) ||
++	                                  (~((cnt_output == 5'd7) && (cnt_position == 4'd15))));
++	assign flag_mac_payload_capture = (state_current == ST_STORAGE) ||
++	                                  ((state_current == ST_MAC_SEND) && flag_mac_input_accept &&
++	                                   flag_pw_payload_eligible);
+ 	assign flag_mac_result_ready_local = flag_layer_pw ?
+ 	                                     ((cnt_pw_meta != 3'd0) && flag_busy_o && (~pp_fault) &&
+ 	                                      (mac_fault || (pp_table_loaded && pp_input_ready))) :
+@@ -453,39 +462,30 @@
+ 	end
+ 
+ 	always@(*)begin
+-		flag_cnt_output_clear = 1'b0;
+-		flag_cnt_output_increment = 1'b0;
++		// Compute data before ready/fault qualification; no extra clock stage is introduced.
++		next_cnt_output = 5'd0;
++		flag_cnt_output_update = 1'b0;
+ 		case(state_current)
+ 			ST_IDLE:begin
+-				if(flag_start_accept)begin
+-					flag_cnt_output_clear = 1'b1;
++				flag_cnt_output_update = flag_start_accept;
++			end
++			ST_MAC_SEND:begin
++				flag_cnt_output_update = flag_mac_input_accept && flag_mac_last_group;
++				if(flag_layer_pw)begin
++					if(cnt_output < 5'd7)begin
++						next_cnt_output = cnt_output + 5'd1;
++					end else if(cnt_position == 4'd15)begin
++						next_cnt_output = cnt_output;
++					end
++				end else if(cnt_output < 5'd15)begin
++					next_cnt_output = cnt_output + 5'd1;
+ 				end
+ 			end
+-			ST_MAC_SEND:begin
+-				if(flag_mac_input_accept && flag_mac_last_group)begin
+-					if(flag_layer_pw)begin
+-						if(cnt_output < 5'd7)begin
+-							flag_cnt_output_increment = 1'b1;
+-						end else if(cnt_position < 4'd15)begin
+-							flag_cnt_output_clear = 1'b1;
+-						end
+-					end else begin
+-						if(cnt_output < 5'd15)begin
+-							flag_cnt_output_increment = 1'b1;
+-						end else begin
+-							flag_cnt_output_clear = 1'b1;
+-						end
+-					end
+-				end
+-			end
+ 			ST_DW_DRAIN:begin
+-				if(cnt_dw_writes == 9'd256)begin
+-					flag_cnt_output_clear = 1'b1;
+-				end
++				flag_cnt_output_update = (cnt_dw_writes == 9'd256);
+ 			end
+ 			default:begin
+-				flag_cnt_output_clear = 1'b0;
+-				flag_cnt_output_increment = 1'b0;
++				flag_cnt_output_update = 1'b0;
+ 			end
+ 		endcase
+ 	end
+@@ -557,6 +557,13 @@
+ 				flag_result_reserved <= 1'b0;
+ 				state_current <= ST_FAULT;
+ 			end else begin
++				// Keep the original terminal-fault priority over all operand captures.
++				if(flag_mac_payload_capture)begin
++					reg_mac_activation <= next_mac_activation;
++					reg_mac_weight <= next_mac_weight;
++					reg_mac_bias <= next_mac_bias;
++					reg_mac_mask <= next_mac_mask;
++				end
+ 				if(flag_commit_accept)begin
+ 					flag_debug_valid_o <= 1'b1;
+ 					reg_debug_phase_o <= 2'd3;
+@@ -618,10 +625,6 @@
+ 						end
+ 					end
+ 					ST_STORAGE:begin
+-						reg_mac_activation <= next_mac_activation;
+-						reg_mac_weight <= next_mac_weight;
+-						reg_mac_bias <= next_mac_bias;
+-						reg_mac_mask <= next_mac_mask;
+ 						state_current <= ST_MAC_SEND;
+ 					end
+ 					ST_MAC_SEND:begin
+@@ -632,10 +635,6 @@
+ 									if((cnt_output == 5'd7) && (cnt_position == 4'd15))begin
+ 										state_current <= ST_PW_DRAIN;
+ 									end else begin
+-										reg_mac_activation <= next_mac_activation;
+-										reg_mac_weight <= next_mac_weight;
+-										reg_mac_bias <= next_mac_bias;
+-										reg_mac_mask <= next_mac_mask;
+ 										if(cnt_output == 5'd7)begin
+ 											cnt_position <= cnt_position + 4'd1;
+ 										end
+@@ -658,10 +657,6 @@
+ 							end else begin
+ 								cnt_mac_group <= cnt_mac_group + 1'b1;
+ 								if(flag_layer_pw)begin
+-									reg_mac_activation <= next_mac_activation;
+-									reg_mac_weight <= next_mac_weight;
+-									reg_mac_bias <= next_mac_bias;
+-									reg_mac_mask <= next_mac_mask;
+ 									state_current <= ST_MAC_SEND;
+ 								end else begin
+ 									state_current <= ST_STORAGE;
+@@ -723,10 +718,8 @@
+ 			cnt_output <= 5'd0;
+ 		end else begin
+ 			if(pp_fault || flag_load_fault)begin
+-			end else if(flag_cnt_output_clear)begin
+-				cnt_output <= 5'd0;
+-			end else if(flag_cnt_output_increment)begin
+-				cnt_output <= cnt_output + 1'b1;
++			end else if(flag_cnt_output_update)begin
++				cnt_output <= next_cnt_output;
+ 			end
+ 		end
+ 	end

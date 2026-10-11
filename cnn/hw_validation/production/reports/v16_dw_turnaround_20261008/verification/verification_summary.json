@@ -1,0 +1,82 @@
+{
+  "candidate": "v16_dw_turnaround_20261008",
+  "rtl_frozen": true,
+  "functional_conclusion": "PASS",
+  "physical_conclusion": "INTERNAL_PASS_REPORTED_BY_ROOT_ACTUAL_TD",
+  "change_scope": "One runner constant: DW post input valid permits the existing two-slot queue at counts 0 and 1 instead of count 0 only.",
+  "unchanged_contracts": [
+    "ports",
+    "MAC and postprocess RTL",
+    "numeric behavior and coefficients",
+    "initiation interval",
+    "immediate fault cancellation",
+    "backpressure",
+    "asynchronous reset",
+    "constraints",
+    "PW scheduling"
+  ],
+  "binding": {
+    "rtl/down2_overlap_tile_runner.v": "e9c6074003646e59e42f0bb4032beeacb0c7a6fc5c93145c53817188dc021d49",
+    "verification/regression_candidate/down2_overlap_tile_runner.v": "e9c6074003646e59e42f0bb4032beeacb0c7a6fc5c93145c53817188dc021d49",
+    "rtl/road_postprocess_stream.v": "a51590f53c62f3a6dc51eaded0c77301b692f0cf2ae95109bd1e73afb29193fb",
+    "verification/regression_candidate/tb_down2_overlap_tile_runner.v": "d785f4df366934a957c015f1d3f33e404032dd2fd8891a42f0576c2b8373ee2f"
+  },
+  "independent_root_regression": {
+    "iverilog_g2001_compile_exit": 0,
+    "vvp_exit": 0,
+    "artifact_sha256": "94f42b3f239b4b22355257f79e4b00e986f79d2e68aae1976355a35ef85ded64",
+    "log_sha256": "b827a5c02f57ac20c2aa7976811485e612406fb434e990ad2e4ebe8b9e869411",
+    "result": "TB_PASS_DOWN2_TILE cases=4"
+  },
+  "queue_contract": {
+    "python_reference_sha256": "a59ee8b780a7dd8f6663ecdfe48b290ac27bbbef6299dc085123043d00ad0bd3",
+    "reference_log_sha256": "12df4627550e93980fddf8f16bf1d16ca5347efcd34a31ca59ed6363c003e9e0",
+    "reference_result": "continuous accepts 0,1,2; capacity 2; 64-cycle stall, alternating ready and 10 cancellation cases passed",
+    "rtl_four_state": "64 combinations, including 48 with unknown queue bits, passed with no procedural consume from an unknown accept",
+    "full_queue": "two slots held full for 64 cycles with commit ready low; ready=0, no accept, raw triplet/lane/tag/mask/reservation stable",
+    "push_pop": "384 simultaneous push/pop events observed in the three full regressions",
+    "reset": "lane0/lane1/lane2 reset separately after 64-cycle hold, plus reset from a full two-slot queue; no ghost output/debug/done"
+  },
+  "cycle_and_function_results": {
+    "dw_ack_to_next_first_group": 5,
+    "dw_job_state_cycles": "storage=3, send=3, wait=10, post=3, total=19",
+    "case_0_core": 4153,
+    "case_1_core": 4153,
+    "case_2_random_commit_core": 4154,
+    "pw_only_core": 1822,
+    "dw_state_cycles_no_stall": "storage=640, send=640, wait=2560, dw_post=256, drain=56, done=1",
+    "dw_counts": "128 task results, 384 MAC beats, 256 post scalars, 64 tail scalars, 256 unique cache writes",
+    "golden": "accumulator, pre, SiLU, post, final output tags and data passed for all original vectors"
+  },
+  "preserved_directed_checks": "counter 16896 known plus 24 X/Z boundaries, cache/halo/table fault, ack-local X/Z, random commit, three-lane backpressure, real single-lane positive/negative overflow atomic cancellation, legal limits and export checks passed",
+  "actual_td_reported_by_root": {
+    "exit": 0,
+    "resources": "6452 Slice, 5811 LUT, 4474 reg, 26 DSP, 1 ERAM, 38 IO",
+    "internal_setup_ns": 0.247,
+    "internal_hold_ns": 0.022,
+    "internal_recovery_ns": 2.234,
+    "internal_removal_ns": 0.068,
+    "internal_negative_paths": 0,
+    "external_not_signed_off": "15 setup, 348 hold and 1 removal violations remain outside the internal timing conclusion"
+  },
+  "retained_failures": {
+    "initial_v15_schedule_expectations": {
+      "log_sha256": "189c5209d639fbff01d7a98a7e213758dce1750e31295011999687f812d093b5",
+      "errors": 12,
+      "classification": "EXPECTED_SCHEDULE_ASSERTION_DELTA",
+      "note": "The old TB expected ACK-to-next=7, DW_POST=384 and nonzero queue-wait. Functional stage and final output comparisons still matched; the schedule assertions were then updated to the approved v16 contract."
+    },
+    "local_iverilog": "The local compiler again terminated with Windows 0xC0000005 after producing a VVP artifact; that artifact ran exit 0. Root independent compile exit 0 is authoritative.",
+    "strict_six_source_closure": {
+      "errors": 4001,
+      "compile": "passed",
+      "delivery_ready": false,
+      "report": "gates/closure.json"
+    }
+  },
+  "waveform": {
+    "json5_sha256": "58da64ac4df7a43dd69fd821280a5d5a0d4bd63d15c2ea45797a1a7206ac0d6c",
+    "svg_sha256": "21ee89a8eed538acea3e5848f09bd4e3746fe2ac5fd4fb607df677e23121f930",
+    "render": "PASS"
+  }
+}

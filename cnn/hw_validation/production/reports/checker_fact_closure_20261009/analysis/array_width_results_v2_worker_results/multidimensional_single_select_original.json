@@ -1,0 +1,67 @@
+{
+  "mode": "original",
+  "case": "multidimensional_single_select",
+  "actual": "failed",
+  "applicable": true,
+  "message": "",
+  "findings": [
+    {
+      "rule_id": "VG000",
+      "rule_key": "legacy_finding",
+      "severity": null,
+      "location": {
+        "scope": "file",
+        "file": "width_parent.v",
+        "line_start": 5,
+        "line_end": 5,
+        "column_start": null,
+        "column_end": null,
+        "exact": true,
+        "related_locations": [],
+        "note": null
+      },
+      "problem": "实例端口与连接表达式位宽不匹配。",
+      "evidence": {
+        "node_kind": "verilog_rtl",
+        "source_excerpt": "width_child.i_value port_width=32 signal_width=1 expression=reg_values[i_index]",
+        "detail": "width_child.i_value port_width=32 signal_width=1 expression=reg_values[i_index]"
+      },
+      "guidance": {
+        "instruction": "修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。",
+        "steps": [
+          "打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。",
+          "按 instruction 修改问题片段，保留模块接口、复位和时序契约。",
+          "重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。"
+        ],
+        "risk": "behavioral",
+        "human_review_required": true,
+        "examples": [
+          {
+            "kind": "verilog",
+            "bad": "width_child.i_value port_width=32 signal_width=1 expression=reg_values[i_index]",
+            "good": "按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。",
+            "note": "示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。"
+          }
+        ]
+      },
+      "status": "failed",
+      "code": "VG000",
+      "rule": "legacy_finding",
+      "path": "width_parent.v",
+      "line": 5,
+      "message": "实例端口与连接表达式位宽不匹配。",
+      "metadata": {}
+    }
+  ],
+  "imports": {
+    "vg_instance_rules": "C:\\Users\\lenovo\\.codex\\skills\\readable-verilog-generator\\scripts\\python\\quality\\vg_instance_rules.py",
+    "vg_instance_rules_sha256": "7a3443d5b636aee8abb7e55fa0be36eaa37e75ded08acd53b44da1ea66e35c47",
+    "vg_instance_rules_upstream": null,
+    "vg_instance_rules_upstream_sha256": null,
+    "vg_value_facts": "C:\\Users\\lenovo\\.codex\\skills\\readable-verilog-generator\\scripts\\python\\quality\\vg_value_facts.py",
+    "vg_value_facts_sha256": "2af17ab5607ae156910d30ea27ef9aa03e609b1a4601fc5671439d018e4e6bd2"
+  },
+  "fixture": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\checker_fact_closure_20261009\\analysis\\array_width_results_v2_fixtures\\multidimensional_single_select",
+  "fixture_digest_kind": "directory_fingerprint_sha256",
+  "fixture_digest": "53b18402f687b5d48536c746e633185f467ee689bbcd15427f2bfea7913d1212"
+}

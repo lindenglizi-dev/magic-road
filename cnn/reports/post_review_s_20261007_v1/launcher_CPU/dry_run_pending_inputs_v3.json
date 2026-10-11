@@ -1,0 +1,130 @@
+{
+  "status": "dry_run_blocked",
+  "mode": "dry_run",
+  "training_started": false,
+  "protocol": "post_review_s_v1",
+  "parameters": {
+    "phase": "supervised",
+    "epochs": 5,
+    "batch_size": 8,
+    "accum_steps": 8,
+    "lr": 0.001,
+    "lr_schedule": "finetune_constant",
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "clip_grad": 10.0,
+    "seed": 42,
+    "workers": 0,
+    "device": "cuda",
+    "amp": true,
+    "mosaic": false,
+    "checkpoint_every_seconds": 120.0
+  },
+  "initialization": "init_E7_weights_only",
+  "stop_after_epoch": 2,
+  "command": [
+    "D:\\Python313\\python.exe",
+    "-u",
+    "-B",
+    "-m",
+    "cnn.train",
+    "--dataset",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\data\\post_review_s_20261007_v1\\dataset_train_val.json",
+    "--output",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\runs\\post_review_s_20261007_v1",
+    "--phase",
+    "supervised",
+    "--epochs",
+    "5",
+    "--stop-after-epoch",
+    "2",
+    "--batch-size",
+    "8",
+    "--accum-steps",
+    "8",
+    "--lr",
+    "0.001",
+    "--lr-schedule",
+    "finetune_constant",
+    "--momentum",
+    "0.9",
+    "--weight-decay",
+    "0.0005",
+    "--clip-grad",
+    "10",
+    "--seed",
+    "42",
+    "--workers",
+    "0",
+    "--device",
+    "cuda",
+    "--amp",
+    "--no-mosaic",
+    "--checkpoint-every-seconds",
+    "120",
+    "--input-cache",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\data\\cache_post_review_s_20261007_v1",
+    "--input-cache-index-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000",
+    "--init-checkpoint",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\releases\\RoadYOLO-S4-512_20261005_before_supervised5\\cnn\\runs\\person_native_recovery_20261004\\epoch_0006.pt"
+  ],
+  "identities": {
+    "dataset_sha256": "2973f8205bfd27117650a8a3719df682a7f5f228acf89e0edff71dd443e1c292",
+    "init_checkpoint_sha256": "17c3cd644bd80a5f66e24eb3f510126fbb5db5bbb302e39250d78d339b6e5d42",
+    "ground_receipt_status": "pending_human_review",
+    "watchdog": {
+      "temperature_stop_c": 75,
+      "telemetry_pause_seconds": 20,
+      "telemetry_stop_seconds": 30,
+      "soft_pause_seconds": 1560,
+      "hard_stop_seconds": 1800
+    }
+  },
+  "blocked_gates": [
+    {
+      "gate": "cache_index_missing",
+      "detail": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\data\\cache_post_review_s_20261007_v1\\index.json",
+      "blocks": [
+        "validate_only",
+        "execute"
+      ]
+    },
+    {
+      "gate": "experiment_contract_missing",
+      "detail": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\reports\\post_review_s_20261007_v1\\experiment_contract.json",
+      "blocks": [
+        "validate_only",
+        "execute"
+      ]
+    },
+    {
+      "gate": "preflight_missing",
+      "detail": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\reports\\post_review_s_20261007_v1\\preflight.json",
+      "blocks": [
+        "validate_only",
+        "execute"
+      ]
+    },
+    {
+      "gate": "ground_manifest_missing",
+      "detail": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\reports\\post_review_s_20261007_v1\\ground48\\ground_val48.json",
+      "blocks": [
+        "execute"
+      ]
+    },
+    {
+      "gate": "ground_human_review_incomplete",
+      "detail": "requires 48 complete raw-seen six-check reviews bound to ground manifest",
+      "blocks": [
+        "execute"
+      ]
+    }
+  ],
+  "source_sha256": {
+    "run_post_review_s.py": "e4c2affc48f1b05cbb5ab1d7051256b79a4846226081cbd912ac138c8e218c87",
+    "train.py": "1d259ae5887de0d079eb8b0e39ad1ea27479c4b7f62431c1051e0c92608ebfa5",
+    "training_watchdog.py": "31084e6aec5599fa0db2bc5ee10608c46188d3bfbb3b2d0acd24c9250ce012e2",
+    "resume_state.py": "11baae21df5cc624d706d10d4014b75108c482978590ebcfdff9ecdb2a20cee2"
+  }
+}

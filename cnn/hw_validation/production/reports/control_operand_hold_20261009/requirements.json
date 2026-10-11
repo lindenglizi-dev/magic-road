@@ -1,0 +1,20 @@
+{
+  "task": "modify_validate",
+  "approved": "2026-10-09 user: 好的，进行修改",
+  "baseline": "dw_weight_load_timing_20261009",
+  "changed": ["MAC A0 nonaccept holds payload and clears only ownership flags", "PRE successor selection uses buffer validity, real transfer rules unchanged"],
+  "review": {
+    "interface": "Ports and accepted/output transfer timing unchanged",
+    "reset": "Original asynchronous reset values and full reload protocol unchanged",
+    "pipeline": "No added stage, no II change; only invalid internal payload may differ",
+    "handshake": "PRE cannot refill while stalled; MAC input valid/first/last clear on nonaccept",
+    "width": "No resized signals or arithmetic edits",
+    "synthesis": "Expect ready removed from RAM selector and bubble zero mux removed from DSP operands; actual mapping must confirm",
+    "coverage": "Original64 blocks,4 load-boundary sets,MAC control stress,RTL shell and routed shell",
+    "risk": "Held invalid products can differ internally but must not accumulate, publish or leak after reset"
+  },
+  "strict_delivery": false,
+  "missing_companion_skills": ["readable-python-generator", "readable-script-generator"],
+  "fallback": "Reuse bounded helpers, Python assertion model and actual local tool receipts; no strict companion readiness claim",
+  "public_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"]
+}

@@ -1,0 +1,227 @@
+{
+  "status": "both_final_netlists_functional_pass_but_not_warning_free",
+  "scope": "Read-only aggregation of the already-completed shell_gate_attempt3 and shell_routed_opt fixed/dynamic logs plus targeted connectivity inspection of their referenced netlists. No simulation, synthesis, TD, training, checker, RTL, or netlist was started or changed.",
+  "counting_note": "Each number below was recounted from the SHA-256-bound final log. shell_gate_attempt3/fixed_stress.log independently yields 102027 warnings; equality with the older attempt2 total is coincidental and is not a reuse of the old count.",
+  "netlists": {
+    "gate_attempt3": {
+      "path": "physical_attempt3/gate_netlist.v",
+      "sha256": "a5bb99ef5ad164173c8cb3fd3ca45e47d0e68cf786541a65328ad90bc72b76dc",
+      "bytes": 13661907,
+      "receipt": {
+        "path": "shell_gate_attempt3/receipt.json",
+        "sha256": "0734976c9d79c94bf70acd89d75a08642732993c27ad1394f85c184574ba33e1"
+      }
+    },
+    "routed_opt": {
+      "path": "physical_opt/routed_netlist.v",
+      "sha256": "1d5dd4ec680e43b6d9fa141cc2891865277abe04df664ce779cbb1ed83272bdb",
+      "bytes": 13361296,
+      "receipt": {
+        "path": "shell_routed_opt/receipt.json",
+        "sha256": "309590ceb3cf28ded6ad801a2970a00a79cacc4833ac69d43582e2e2ee1a83b5"
+      }
+    }
+  },
+  "logs": {
+    "gate_attempt3_fixed": {
+      "path": "shell_gate_attempt3/fixed_stress.log",
+      "sha256": "daf3bb4813ae313272ade759d012bf8cccbffcd4daa5236c2a23055097690304",
+      "bytes": 24992921,
+      "pass": "TB_PASS_RUNTIME_LAYER_SHELL tiles=3 exported=1152 guards=3 core_cycles=2607",
+      "errors": 0,
+      "fatal_lines": 0,
+      "warning_lines": 102027,
+      "by_code": {
+        "vopt-2718": 96042,
+        "vopt-2685": 4889,
+        "vsim-3016": 621,
+        "vopt-2958": 474,
+        "vsim-2685": 1
+      }
+    },
+    "gate_attempt3_dynamic": {
+      "path": "shell_gate_attempt3/dynamic_stress.log",
+      "sha256": "bc7eb3d6c716a0e51ed76a0c3a5d4ff984f52b3f4abb99a6b543f407ae850a7f",
+      "bytes": 259862,
+      "pass": "TB_PASS_RUNTIME_LAYER_SHELL tiles=3 exported=1152 guards=3 core_cycles=2607",
+      "errors": 0,
+      "fatal_lines": 0,
+      "warning_lines": 622,
+      "by_code": {
+        "vsim-3016": 621,
+        "vsim-2685": 1
+      },
+      "interpretation": "The log loads the existing optimized design, so elaboration-time vopt warning families are not repeated. It is a separate workload result, not a second warning-free elaboration."
+    },
+    "routed_opt_fixed": {
+      "path": "shell_routed_opt/fixed_stress.log",
+      "sha256": "a5d21c76d2ce693fa6fb110f4f6bc1e3a38a9adcf8b6fa75b3b12627ec803c76",
+      "bytes": 57736389,
+      "pass": "TB_PASS_RUNTIME_LAYER_SHELL tiles=3 exported=1152 guards=3 core_cycles=2607",
+      "errors": 0,
+      "fatal_lines": 0,
+      "warning_lines": 239490,
+      "by_code": {
+        "vopt-2718": 230328,
+        "vopt-2685": 8108,
+        "vsim-3016": 580,
+        "vopt-2958": 474
+      }
+    },
+    "routed_opt_dynamic": {
+      "path": "shell_routed_opt/dynamic_stress.log",
+      "sha256": "b3856bc2a4fa9d7926cf11afded4f329f830d273bf5b4cf1d33e4758b0ca90c6",
+      "bytes": 306625,
+      "pass": "TB_PASS_RUNTIME_LAYER_SHELL tiles=3 exported=1152 guards=3 core_cycles=2607",
+      "errors": 0,
+      "fatal_lines": 0,
+      "warning_lines": 580,
+      "by_code": {
+        "vsim-3016": 580
+      },
+      "interpretation": "The log reuses the routed optimized design; only runtime type-compatibility warnings recur."
+    }
+  },
+  "fixed_elaboration_root_causes": {
+    "gate_attempt3": {
+      "lslice_superset": {
+        "affected_instances": 3511,
+        "too_few_warnings": 3511,
+        "missing_port_warnings": 92648
+      },
+      "fixed_mux_registers": {
+        "affected_instances": 1307,
+        "too_few_warnings": 1307,
+        "missing_port_warnings": 1403,
+        "ports": {
+          "ce": 1307,
+          "sr": 96
+        }
+      },
+      "dsp_supercells": {
+        "affected_instances": 30,
+        "too_few_warnings": 30,
+        "missing_port_warnings": 1125
+      },
+      "io_pad_superset": {
+        "affected_instances": 38,
+        "too_few_warnings": 38,
+        "missing_port_warnings": 838
+      },
+      "silu_eram_optional_ports": {
+        "affected_instances": 1,
+        "too_few_warnings": 1,
+        "missing_port_warnings": 27
+      },
+      "implicit_dsp_control_open_n": 474,
+      "connected_type_mismatches": {
+        "total": 621,
+        "ports": {
+          "d": 548,
+          "ce": 73
+        }
+      },
+      "other": "One parameter-only CONFIG cell, one constant LUT input warning duplicated at vopt/vsim."
+    },
+    "routed_opt": {
+      "lslice_superset": {
+        "affected_instances": 8029,
+        "too_few_warnings": 8029,
+        "missing_port_warnings": 228322,
+        "note": "Placement/routing maps registers and logic into physical LSLICE cells, replacing the gate netlist's separate AL_MAP_SEQ bucket and expanding the vendor supercell interface warnings. Each dpram_* LSLICE port is omitted 5957 times; these are not the SiLU ERAM wea port."
+      },
+      "dsp_supercells": {
+        "affected_instances": 30,
+        "too_few_warnings": 30,
+        "missing_port_warnings": 1125
+      },
+      "io_pad_superset": {
+        "affected_instances": 38,
+        "too_few_warnings": 38,
+        "missing_port_warnings": 838
+      },
+      "silu_eram_optional_ports": {
+        "affected_instances": 1,
+        "too_few_warnings": 1,
+        "missing_port_warnings": 27
+      },
+      "route_inserted_cells": {
+        "sclk_instances": 4,
+        "sclk_warning_lines": 12,
+        "bankref_instances": 5,
+        "bankref_warning_lines": 13,
+        "config_instances": 1,
+        "config_warning_lines": 1
+      },
+      "implicit_dsp_control_open_n": {
+        "total": 474,
+        "road_mac_probe": 408,
+        "requant_post": 22,
+        "requant_pre": 44
+      },
+      "connected_type_mismatches": {
+        "total": 580,
+        "ports": {
+          "cea": 302,
+          "ceb": 260,
+          "id": 6,
+          "imb": 3,
+          "ia": 2,
+          "ib": 2,
+          "ic": 2,
+          "ie": 2,
+          "ima": 1
+        },
+        "note": "These are incompatible connected types, not missing connections."
+      }
+    }
+  },
+  "necessary_differences": {
+    "routed_fixed_minus_gate_fixed_total": 137463,
+    "by_code": {
+      "vopt-2718": 134286,
+      "vopt-2685": 3219,
+      "vopt-2958": 0,
+      "vsim-3016": -41,
+      "vsim-2685": -1
+    },
+    "root_cause": "The increase is overwhelmingly physical LSLICE supercell expansion after placement/routing: 8029 routed LSLICE instances versus 3511 gate LSLICE instances. DSP, IO-pad, ERAM, and undriven DSP-control counts remain structurally the same; a small number of route-inserted clock/bank-reference cells is new."
+  },
+  "targeted_effective_port_audit": {
+    "mac_operands": {
+      "confirmed_active_disconnect": false,
+      "gate_evidence": "physical_attempt3/gate_netlist.v:111517 and following connects clk, controls, xa=reg_activation_front_b, y=reg_weight_front_b, multiplier internal buses and product.",
+      "routed_evidence": "physical_opt/routed_netlist.v:122642-122656 preserves clk, xa=reg_activation_front_b, y=reg_weight_front_b, controls, internal multiplier buses and product.",
+      "warning_check": "Neither netlist's DSP missing-port list contains xa or y. The unchanged 408 MAC open_n warnings are control/config-vector positions and remain a model-fidelity risk, not proof of absent operands."
+    },
+    "mac_bias": {
+      "confirmed_active_disconnect": false,
+      "gate_evidence": "physical_attempt3/gate_netlist.v:95478 and 117388 retain reg_mac_bias and reg_bias_dot register paths.",
+      "routed_evidence": "physical_opt/routed_netlist.v:96997-97005 maps reg_mac_bias[0] with reset, clock, data/control inputs and output; 127198-127205 maps reg_bias_dot[0] with data/control inputs and output.",
+      "warning_check": "Bias-related physical cells omit unused LSLICE supercell ports, but their effective data, clock/control and output ports are present."
+    },
+    "silu_eram": {
+      "confirmed_active_data_disconnect": false,
+      "confirmed_active_write_enable_disconnect": false,
+      "gate_evidence": "physical_attempt3/gate_netlist.v:192968-192970 selects CSA0=1, CSA1=1, CSA2=SIG; 193073 and following connects addra, clka, csa, dia, dia_extra, wea, doa and doa_extra.",
+      "routed_evidence": "physical_opt/routed_netlist.v:197622-197624 keeps the same chip-select configuration; 197727-197735 connects addra, routed clka, csa[2]=flag_pipeline_enable, dia, dia_extra, wea=flag_table_write_enable, doa and doa_extra.",
+      "warning_check": "The 27 omitted ERAM ports are the unused B side and optional ECC/FIFO/cascade/probe/output-register controls. LSLICE dpram_we warnings are a different primitive family."
+    }
+  },
+  "closure_decision": {
+    "all_four_workloads_passed": true,
+    "any_error_or_fatal": false,
+    "blanket_warning_waiver": false,
+    "confirmed_active_mac_operand_disconnect": false,
+    "confirmed_active_mac_bias_disconnect": false,
+    "confirmed_active_eram_data_or_write_enable_disconnect": false,
+    "residual_risks": [
+      "474 undriven DSP control/config open_n nets remain in both final fixed elaborations",
+      "Gate and routed simulations retain 621 and 580 connected-port type mismatches respectively",
+      "Cached dynamic runs do not repeat elaboration diagnostics",
+      "Two passing workloads do not validate unexercised vendor primitive modes"
+    ],
+    "minimum_close_path": "Treat fixed logs as the elaboration warning inventory and dynamic logs as separate functional workloads. Preserve the passing evidence, but close vendor-model fidelity only with the exact matching primitive library/netlist pair or a regenerated vendor netlist, followed by both workloads. Do not change MAC arithmetic, latency, handshake, or ERAM protocol merely to suppress vendor superset-port warnings.",
+    "extra_authorization": "No additional authorization was needed for this read-only audit. Any vendor-library swap, netlist regeneration, or external-tool rerun needs explicit workflow authorization."
+  }
+}

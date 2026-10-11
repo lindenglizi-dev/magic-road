@@ -1,0 +1,39 @@
+{
+  "status": "PRE_RTL_CONTRACT_NOT_MEASUREMENT",
+  "clock_hz": 100000000,
+  "frame_cycle_limit_at_5fps": 20000000,
+  "fixed_no_stall_edges": {
+    "pre_accept": 0,
+    "pre_valid": 8,
+    "silu_accept": 9,
+    "silu_valid": 14,
+    "post_accept": 15,
+    "post_valid": 23,
+    "write_handshake": 24
+  },
+  "initiation_intervals": {
+    "pre_round": 1,
+    "silu": 1,
+    "post_round": 1,
+    "write": 1
+  },
+  "capacities": {
+    "atomic_result_groups": 2,
+    "inflight_reservations": 1,
+    "silu_metadata": 8
+  },
+  "invariants": [
+    "completed_group_count + inflight_reservation_count <= 2",
+    "inflight_reservation_count <= 1",
+    "metadata_count equals accepted SiLU inputs minus accepted SiLU outputs",
+    "busy intervals overlap and are not additive"
+  ],
+  "measurement_required": [
+    "DW core start through last valid write",
+    "PW core start through last valid write",
+    "combined layer run",
+    "preload and export reported separately",
+    "stall reason cycles classified mutually exclusively",
+    "first full/backpressure edge through upstream admission withdrawal"
+  ]
+}

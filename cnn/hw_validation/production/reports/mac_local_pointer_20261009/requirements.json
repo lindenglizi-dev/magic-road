@@ -1,0 +1,14 @@
+{
+  "task": "modify and validate an isolated MAC-local result-read pointer preservation candidate",
+  "baseline": "../control_operand_hold_20261009",
+  "allowed_rtl_change": "Only add (* preserve *) to the existing two-bit ptr_result_read declaration in road_mac_probe.v",
+  "reason": "Attempt to prevent equivalent runner/MAC pointer merging and localize the result-fault-to-DSP-CE cone",
+  "vendor_basis": "Installed Anlogic SWUG106 section 4.2.14, printed pages 43-45: preserve prevents register merging and constant optimization",
+  "invariants": ["all Verilog tokens other than the one attribute", "ports", "arithmetic", "II", "cycle latency", "ready/valid acceptance", "same-cycle credit bypass", "fault atomicity", "reset cancellation", "1024-entry table reload"],
+  "success": ["attribute-only byte comparison", "same 64 complete-block counter rows", "MAC queue/fault/reset regression", "actual top physical mapping and full internal setup/hold/recovery/removal results", "routed functional regression"],
+  "delivery_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"],
+  "strict_delivery_ready": false,
+  "scope": "diagnostic only; external interface signoff and strict failures remain separate",
+  "forbidden": ["training", "production modification", "bitstream", "board", "Flash", "new timing exceptions"],
+  "companion_skill_limit": "readable-python-generator and readable-script-generator are not available in this session; reused local build helpers plus Python syntax/assertions are not equivalent to their strict gates"
+}

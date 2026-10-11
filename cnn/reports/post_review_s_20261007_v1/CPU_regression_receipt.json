@@ -1,0 +1,26 @@
+{
+  "schema": "post_review_s_CPU_regression_v1",
+  "status": "passed_focused_CPU_checks_full_cache_run_separate",
+  "checks": [
+    {"module": "cnn.test_merge_post_review_dataset", "result": "PASS", "unit_tests": 1, "scope": "identity join, complete review, 127/1 route, unchanged validation, malformed input rejection"},
+    {"module": "cnn.test_prepare_verified_train", "result": "PASS", "scope": "native coordinates, one-based conversion, duplicate hints, positive supervision in ignore"},
+    {"module": "cnn.test_finetune_schedule", "result": "PASS", "scope": "constant LR, legacy compatibility, tiny synthetic CPU segmented-vs-uninterrupted resume"},
+    {"module": "cnn.test_distillation_safety", "result": "PASS", "scope": "synthetic GT/ignore gradients, shard coverage, hash/path guards, bounded LRU; no real teacher cache built"},
+    {"module": "cnn.test_review_workbench_ui", "result": "PASS", "scope": "existing core behavior, Node syntax, unchanged original 276-frame manifest"},
+    {"module": "cnn.test_prepare_ground48", "result": "PASS", "scope": "48 raw hashes, generated Node syntax/manifest, four 12-frame batches, zero inherited signoffs, fail-closed export"},
+    {"module": "cnn.test_rebind_annotation_cache", "result": "PASS", "unit_tests": 9, "scope": "synthetic pixels/new targets, delete-label subset, malformed offsets, origin/source/blob corruption, legacy contiguous layout", "additional_focused_centered_check": "3/3 synthetic centered inputs, boxes, labels, ignore boxes and keys exactly equal"},
+    {"module": "cnn.test_run_post_review_s", "result": "PASS", "unit_tests": 10, "scope": "fixed S protocol, same-run resume, pending/forged ground rejected, signed-patch replay, handshake/timeout/duplicate-event guards"}
+  ],
+  "known_validation_limits": [
+    "Full 24,200-record real cache equivalence is reported separately by cache_CPU_receipt.json, not by these small regression tests.",
+    "Real centered-input equivalence follows from identical uint8 RGB and the same inherited FullFrameDataset.__getitem__ centering implementation; the real rebind loop does not separately recompute every float32 centered tensor.",
+    "Legacy test_disk_cache full rebuild cannot run on current disk because the unchanged builder requires its 20 GiB free-space reserve. Focused legacy-contiguous tests passed.",
+    "Generated workbench JavaScript and manifest were checked with Node; no live browser rendering or human signoff is claimed.",
+    "Two existing tests initially failed at sandbox temporary-file permissions; exact CPU-only reruns with scoped approval passed. No training, data or parameter workaround was applied."
+  ],
+  "GPU_used": false,
+  "real_training_started": false,
+  "real_optimizer_updates": 0,
+  "accuracy_measured": false,
+  "formal_acceptance": false
+}

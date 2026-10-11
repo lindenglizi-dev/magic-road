@@ -1,0 +1,158 @@
+{
+  "modules": [{
+    "name": "road_round_internal_probe",
+    "feature": "internal_probe",
+    "rtl_path": "rtl/road_round_internal_probe.v",
+    "description": "Registered deterministic source, production nearest-even rounding core, registered sink and observable checksum for an internal integration boundary.",
+    "interfaces": {
+      "protocol": "autonomous registered probe",
+      "ports": [
+        {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "Probe and rounding pipeline clock", "clock_domain": "i_clk"},
+        {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "External asynchronous active-low assertion into the two-register release synchronizer only", "clock_domain": "i_clk", "active_level": "low"},
+        {"name": "o_result_valid", "direction": "output", "width": 1, "role": "output_valid", "description": "One-cycle pulse for each result captured by the sink register boundary", "clock_domain": "i_clk"},
+        {"name": "o_result_data", "direction": "output", "width": 16, "role": "result_payload", "description": "Registered signed int16 result bit pattern; ignored on fault", "clock_domain": "i_clk"},
+        {"name": "o_result_tag", "direction": "output", "width": 16, "role": "output_tag", "description": "Registered source identity returned by the rounding core", "clock_domain": "i_clk"},
+        {"name": "o_result_fault", "direction": "output", "width": 1, "role": "fault", "description": "Registered unsupported-shift result flag", "clock_domain": "i_clk"},
+        {"name": "o_checksum", "direction": "output", "width": 64, "role": "checksum", "description": "XOR of normalized registered result tokens", "clock_domain": "i_clk"},
+        {"name": "o_error", "direction": "output", "width": 1, "role": "error", "description": "Sticky mismatch between fault and the deterministic shift pattern", "clock_domain": "i_clk"},
+        {"name": "o_result_count", "direction": "output", "width": 16, "role": "result_count", "description": "Number of result tokens incorporated into checksum", "clock_domain": "i_clk"}
+      ]
+    },
+    "parameters": [],
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "road_round_reset_gen_Inst_release.reg_reset_meta and reg_reset_release assert asynchronously; wire_core_rstn deasserts after two rising edges and resets every source, RNE, sink and summary register.", "trusted_external_sources": [{"module": "road_round_reset_gen", "output_port": "o_rstn"}]},
+    "behavior": [
+      "A registered 64-bit deterministic feedback source forms products by repeating its sign bit, restricting products to the signed 62-bit magnitude range and excluding INT64_MIN.",
+      "Registered tag low six bits provide shifts zero through sixty-three; shift sixty-three is the deliberate fault case, and every eighth source slot is an invalid bubble.",
+      "flag_advance is low for one clock in every four and freezes the source boundary and every road_round_shift stage; the stall phase itself remains free-running.",
+      "The staged road_round_shift keeps its canonical nine enabled-edge input-to-output behavior and II one on enabled clocks.",
+      "A sink register boundary captures data, tag and fault only on a common advance and exposes a one-cycle valid pulse.",
+      "Fault data is normalized to zero before the separate checksum-token register; checksum, count and sticky error update only for qualified tokens.",
+      "Reset cancels all in-flight source, core, sink and checksum tokens; the deterministic batch restarts from tag zero."
+    ],
+    "constraints": [
+      "Verilog-2001 only and one i_clk domain; no gated clock.",
+      "Only paths from top-level i_rstn to asynchronous reset controls of road_round_reset_gen_Inst_release.reg_reset_meta and reg_reset_release may receive the external asynchronous-reset exception.",
+      "Paths from road_round_reset_gen_Inst_release.reg_reset_release through wire_core_rstn to the core and all source, sink and summary reset endpoints remain timed and must not be false-pathed.",
+      "The production road_round_shift source must remain byte-identical to its staged copy.",
+      "This fixture is not whole-CNN, synthesis timing, board, throughput or accuracy evidence."
+    ],
+    "corner_cases": [
+      "Shift zero passes an integer product without fractional rounding.",
+      "Shift sixty-three returns a tagged fault and its unspecified data is zeroed only for checksum construction.",
+      "A common stall freezes source and core state without duplicating a sink transfer.",
+      "Asserting i_rstn during active tokens cancels them before the next clock; release takes two rising edges.",
+      "The final eighteen-row CNN tile issue is outside this arithmetic-only probe."
+    ],
+    "verification_cases": [
+      "Python generates 192 deterministic source slots using production/round/reference.py::expected.",
+      "The testbench checks each registered source product, shift, tag and valid value.",
+      "The testbench checks all 168 returned result tags, faults and nonfault data values.",
+      "The testbench observes common stalls and proves representative source and core registers hold.",
+      "The testbench asserts reset with live tokens, checks immediate cancellation, two-edge release and clean sequence restart.",
+      "Final checksum, result count, fault count and sticky error match the Python report."
+    ],
+    "timing_diagrams": [{
+      "id": "registered_probe",
+      "title": "Two-stage reset release and a common stall",
+      "scenario": "reset-release-stall-result",
+      "description": "Internal reset releases after two clock edges; flag_advance then inserts a real common stall while registered results remain individually visible.",
+      "wavejson": {"signal": [
+        {"name": "i_clk", "wave": "p............."},
+        {"name": "i_rstn", "wave": "01............"},
+        {"name": "reset_gen.reg_reset_meta", "wave": "0.1..........."},
+        {"name": "reset_gen.reg_reset_release", "wave": "0..1.........."},
+        {"name": "flag_advance", "wave": "0..1..0.1....."},
+        {"name": "o_result_valid", "wave": "0.........101."},
+        {"name": "o_result_tag", "wave": "x.........==x.", "data": ["tag A", "tag B"]},
+        {"name": "o_checksum", "wave": "0...........=.", "data": ["A xor B"]}
+      ]}
+    }]
+  }, {
+    "name": "road_round_reset_gen",
+    "feature": "internal_probe",
+    "rtl_path": "rtl/road_round_reset_gen.v",
+    "description": "Dedicated asynchronous-assert two-register synchronous-release reset generator for the internal probe.",
+    "interfaces": {"protocol": "reset release", "ports": [
+      {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "Reset release synchronization clock", "clock_domain": "i_clk"},
+      {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "External asynchronous active-low reset", "clock_domain": "i_clk", "active_level": "low"},
+      {"name": "o_rstn", "direction": "output", "width": 1, "role": "reset", "description": "Active-low reset released after two rising edges", "clock_domain": "i_clk", "active_level": "low"}
+    ]},
+    "parameters": [],
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "reg_reset_meta and reg_reset_release assert low asynchronously; o_rstn releases only after both rising-edge stages."},
+    "behavior": ["External reset asynchronously clears exactly reg_reset_meta and reg_reset_release.", "After i_rstn rises, reg_reset_meta rises on the first clock and reg_reset_release rises on the second clock.", "o_rstn is the direct published value of reg_reset_release."],
+    "constraints": ["Only the external i_rstn paths to these two asynchronous controls may receive an asynchronous reset timing exception.", "The reg_reset_release to functional reset path remains timed.", "Verilog-2001 and one clock domain only."],
+    "corner_cases": ["A short low pulse immediately clears both stages.", "A reset reassertion during release cancels the release immediately."],
+    "verification_cases": ["Testbench observes the first and second release stages separately.", "Reset reassertion with live functional tokens clears both stages immediately."],
+    "timing_diagrams": [{"id": "reset_release", "title": "Asynchronous assertion and two-edge release", "scenario": "reset-release", "description": "Assertion is immediate while release crosses two clocked stages.", "wavejson": {"signal": [
+      {"name": "i_clk", "wave": "p......."},
+      {"name": "i_rstn", "wave": "01......"},
+      {"name": "reg_reset_meta", "wave": "0.1....."},
+      {"name": "reg_reset_release", "wave": "0..1...."},
+      {"name": "o_rstn", "wave": "0..1...."}
+    ]}}]
+  }, {
+    "name": "road_round_internal_probe_core",
+    "feature": "internal_probe",
+    "rtl_path": "rtl/road_round_internal_probe_core.v",
+    "description": "Functional deterministic source, production nearest-even rounding core, registered sink and observable checksum behind an input reset boundary.",
+    "interfaces": {"protocol": "autonomous registered probe core", "ports": [
+      {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "Functional probe clock", "clock_domain": "i_clk"},
+      {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Stable active-low reset from the dedicated generator", "clock_domain": "i_clk", "active_level": "low"},
+      {"name": "o_result_valid", "direction": "output", "width": 1, "role": "output_valid", "description": "Registered result capture pulse", "clock_domain": "i_clk"},
+      {"name": "o_result_data", "direction": "output", "width": 16, "role": "result_payload", "description": "Registered signed int16 result bit pattern", "clock_domain": "i_clk"},
+      {"name": "o_result_tag", "direction": "output", "width": 16, "role": "output_tag", "description": "Registered source identity", "clock_domain": "i_clk"},
+      {"name": "o_result_fault", "direction": "output", "width": 1, "role": "fault", "description": "Registered unsupported-shift result flag", "clock_domain": "i_clk"},
+      {"name": "o_checksum", "direction": "output", "width": 64, "role": "checksum", "description": "XOR of normalized registered result tokens", "clock_domain": "i_clk"},
+      {"name": "o_error", "direction": "output", "width": 1, "role": "error", "description": "Sticky fault-pattern mismatch", "clock_domain": "i_clk"},
+      {"name": "o_result_count", "direction": "output", "width": 16, "role": "result_count", "description": "Results incorporated into checksum", "clock_domain": "i_clk"}
+    ]},
+    "parameters": [],
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Every source, RNE, sink and summary register clears; the dedicated generator guarantees synchronous release."},
+    "behavior": ["The registered PRBS source produces 192 tagged slots, with every eighth slot invalid.", "Tag low six bits provide shifts zero through sixty-three and shift sixty-three deliberately faults.", "A registered common advance freezes the source and all road_round_shift stages one clock in four.", "The result boundary exposes each accepted result and a later boundary updates checksum, count and sticky error."],
+    "constraints": ["i_rstn is a module input from road_round_reset_gen and is not generated in this functional module.", "All combinational cones remain at most three operations and three sources.", "The staged road_round_shift remains byte-identical to production."],
+    "corner_cases": ["Shift zero is exact.", "Shift sixty-three returns a tagged fault.", "Common stalls hold both source and core state.", "Reset cancels all in-flight tokens."],
+    "verification_cases": ["Check all 192 registered source slots.", "Check all 168 returned tokens and three faults.", "Check each common stall hold and reset cancellation.", "Check the final checksum and result count."],
+    "timing_diagrams": [{"id": "core_stall", "title": "Registered source and common stall", "scenario": "source-stall-result", "description": "The registered advance freezes source and RNE state before results resume.", "wavejson": {"signal": [
+      {"name": "i_clk", "wave": "p........."},
+      {"name": "i_rstn", "wave": "01........"},
+      {"name": "flag_advance", "wave": "0.1..0.1.."},
+      {"name": "o_result_valid", "wave": "0......10."},
+      {"name": "o_result_tag", "wave": "x......=x.", "data": ["tag"]}
+    ]}}]
+  }, {
+    "name": "road_round_shift",
+    "feature": "requantization",
+    "rtl_path": "rtl/road_round_shift.v",
+    "description": "Staged byte-identical production nine-stage globally enabled exact signed rounding and int16 saturation primitive.",
+    "interfaces": {"protocol": "custom", "ports": [
+      {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "Enclosing pipeline clock", "clock_domain": "i_clk"},
+      {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Active-low token cancellation", "clock_domain": "i_clk", "active_level": "low"},
+      {"name": "i_advance", "direction": "input", "width": 1, "role": "clock_enable", "description": "Common pipeline advance", "clock_domain": "i_clk"},
+      {"name": "i_input_valid", "direction": "input", "width": 1, "role": "input_valid", "description": "Input token valid", "clock_domain": "i_clk"},
+      {"name": "i_product", "direction": "input", "width": 64, "role": "signed_product", "description": "Exact signed product excluding INT64_MIN", "clock_domain": "i_clk"},
+      {"name": "i_shift", "direction": "input", "width": 6, "role": "shift", "description": "Right shift zero through sixty-two; sixty-three faults", "clock_domain": "i_clk"},
+      {"name": "i_tag", "direction": "input", "width": 16, "role": "tag", "description": "Opaque payload identity", "clock_domain": "i_clk"},
+      {"name": "o_result_valid", "direction": "output", "width": 1, "role": "output_valid", "description": "Qualifies data, tag and fault", "clock_domain": "i_clk"},
+      {"name": "o_result_data", "direction": "output", "width": 16, "role": "result_payload", "description": "Signed saturated int16", "clock_domain": "i_clk"},
+      {"name": "o_result_tag", "direction": "output", "width": 16, "role": "output_tag", "description": "Accepted input identity", "clock_domain": "i_clk"},
+      {"name": "o_fault", "direction": "output", "width": 1, "role": "fault", "description": "Unsupported shift or minimum int64", "clock_domain": "i_clk"}
+    ]},
+    "parameters": [],
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Every pipeline register and valid bit clears to zero."},
+    "behavior": ["Nine enabled edges including acceptance produce output.", "II is one enabled clock and invalid input inserts a bubble.", "i_advance low freezes every pipeline register.", "Nearest-even rounding restores sign and saturates to signed int16."],
+    "constraints": ["Verilog-2001 only and no multiplier.", "One clock domain and common clock enable.", "The enclosing probe owns readiness."],
+    "corner_cases": ["Shift zero has no fractional increment.", "Half ties round to even.", "Shift sixty-three and INT64_MIN fault."],
+    "verification_cases": ["Production reference covers all legal shifts and signed ties.", "Internal probe checks continuous tokens, bubbles, common stalls, tags, faults and reset cancellation."],
+    "timing_diagrams": [{"id": "enabled_pipeline", "title": "Enabled clocks and a common stall", "scenario": "stream-with-stall", "description": "Adjacent tokens retain order across a common stall.", "wavejson": {"signal": [
+      {"name": "i_clk", "wave": "p........."},
+      {"name": "i_advance", "wave": "1...0.1..."},
+      {"name": "i_input_valid", "wave": "01.0......"},
+      {"name": "o_result_valid", "wave": "0........1"}
+    ]}}]
+  }],
+  "reset": {"trusted_external_sources": [{"module": "road_round_reset_gen", "output_port": "o_rstn"}]}
+}

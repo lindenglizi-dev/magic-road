@@ -1,0 +1,496 @@
+{
+  "modules": [
+    {
+      "name": "down2_dynamic_tile_runner",
+      "feature": "down2_dynamic_tile",
+      "rtl_path": "down2_dynamic_tile_runner.v",
+      "description": "down2 DW16 stride2 与 PW16→24 固定4×4探针的接口",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {
+            "name": "i_clk",
+            "width": 1,
+            "direction": "input",
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "width": 1,
+            "direction": "input",
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_table_valid",
+            "description": "i_table_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_addr",
+            "width": 10,
+            "direction": "input",
+            "role": "i_table_addr",
+            "description": "i_table_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_data",
+            "width": 16,
+            "direction": "input",
+            "role": "i_table_data",
+            "description": "i_table_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_load_valid",
+            "description": "i_load_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_kind",
+            "width": 3,
+            "direction": "input",
+            "role": "i_load_kind",
+            "description": "i_load_kind",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_addr",
+            "width": 11,
+            "direction": "input",
+            "role": "i_load_addr",
+            "description": "i_load_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load_data",
+            "width": 32,
+            "direction": "input",
+            "role": "i_load_data",
+            "description": "i_load_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "width": 1,
+            "direction": "input",
+            "role": "i_start",
+            "description": "i_start",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pw_only",
+            "width": 1,
+            "direction": "input",
+            "role": "i_pw_only",
+            "description": "i_pw_only",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_commit_ready",
+            "width": 1,
+            "direction": "input",
+            "role": "i_commit_ready",
+            "description": "i_commit_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_export_start",
+            "width": 1,
+            "direction": "input",
+            "role": "i_export_start",
+            "description": "i_export_start",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "width": 1,
+            "direction": "input",
+            "role": "i_output_ready",
+            "description": "i_output_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_ready",
+            "description": "o_table_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_loaded",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_loaded",
+            "description": "o_table_loaded",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_fault",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_fault",
+            "description": "o_table_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_load_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_load_ready",
+            "description": "o_load_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "width": 1,
+            "direction": "output",
+            "role": "o_busy",
+            "description": "o_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "width": 1,
+            "direction": "output",
+            "role": "o_done",
+            "description": "o_done",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "width": 1,
+            "direction": "output",
+            "role": "o_fault",
+            "description": "o_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "width": 1,
+            "direction": "output",
+            "role": "o_output_valid",
+            "description": "o_output_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "width": 8,
+            "direction": "output",
+            "role": "o_output_data",
+            "description": "o_output_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_index",
+            "width": 9,
+            "direction": "output",
+            "role": "o_output_index",
+            "description": "o_output_index",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_export_done",
+            "width": 1,
+            "direction": "output",
+            "role": "o_export_done",
+            "description": "o_export_done",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_valid",
+            "width": 1,
+            "direction": "output",
+            "role": "o_debug_valid",
+            "description": "o_debug_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_phase",
+            "width": 2,
+            "direction": "output",
+            "role": "o_debug_phase",
+            "description": "o_debug_phase",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_layer",
+            "width": 1,
+            "direction": "output",
+            "role": "o_debug_layer",
+            "description": "o_debug_layer",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_position",
+            "width": 4,
+            "direction": "output",
+            "role": "o_debug_position",
+            "description": "o_debug_position",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_channel",
+            "width": 5,
+            "direction": "output",
+            "role": "o_debug_channel",
+            "description": "o_debug_channel",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_debug_value",
+            "width": 32,
+            "direction": "output",
+            "role": "o_debug_value",
+            "description": "o_debug_value",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_preload_writes",
+            "width": 32,
+            "direction": "output",
+            "role": "o_preload_writes",
+            "description": "o_preload_writes",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_core_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_core_cycles",
+            "description": "o_core_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_mac_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_mac_cycles",
+            "description": "o_mac_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_pre_cycles",
+            "description": "o_pre_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_silu_cycles",
+            "description": "o_silu_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_post_cycles",
+            "description": "o_post_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_writeback_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_writeback_cycles",
+            "description": "o_writeback_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_storage_wait_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_storage_wait_cycles",
+            "description": "o_storage_wait_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_scheduler_idle_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_scheduler_idle_cycles",
+            "description": "o_scheduler_idle_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_export_cycles",
+            "width": 32,
+            "direction": "output",
+            "role": "o_export_cycles",
+            "description": "o_export_cycles",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_result_queue_count",
+            "width": 2,
+            "direction": "output",
+            "role": "o_result_queue_count",
+            "description": "o_result_queue_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_result_reserved",
+            "width": 1,
+            "direction": "output",
+            "role": "o_result_reserved",
+            "description": "o_result_reserved",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_meta_count",
+            "width": 4,
+            "direction": "output",
+            "role": "o_meta_count",
+            "description": "o_meta_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_mac_result_count",
+            "width": 32,
+            "direction": "output",
+            "role": "o_mac_result_count",
+            "description": "o_mac_result_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_accept_count",
+            "width": 32,
+            "direction": "output",
+            "role": "o_pre_accept_count",
+            "description": "o_pre_accept_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_accept_count",
+            "width": 32,
+            "direction": "output",
+            "role": "o_silu_accept_count",
+            "description": "o_silu_accept_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_accept_count",
+            "width": 32,
+            "direction": "output",
+            "role": "o_post_accept_count",
+            "description": "o_post_accept_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_writeback_count",
+            "width": 32,
+            "direction": "output",
+            "role": "o_writeback_count",
+            "description": "o_writeback_count",
+            "clock_domain": "i_clk"
+          }
+        ],
+        "handshake_channels": [
+          {
+            "id": "load",
+            "valid": "i_load_valid",
+            "ready": "o_load_ready",
+            "payload": [
+              "i_load_kind",
+              "i_load_addr",
+              "i_load_data"
+            ]
+          },
+          {
+            "id": "export",
+            "valid": "o_output_valid",
+            "ready": "i_output_ready",
+            "payload": [
+              "o_output_data",
+              "o_output_index"
+            ]
+          }
+        ],
+        "streams": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "异步取消全部在途任务及装载计数；调用方提供同步释放，重新装满1024项表。"
+      },
+      "behavior": [
+        "kind0 halo1296字节；kind2 DW144权重；kind3 DW16偏置；kind4 PW384权重；kind5 PW24偏置。",
+        "DW 3空间点MAC结果逐标量送动态核；256次DW提交写内部缓存，PW从该缓存计算。",
+        "core_cycles覆盖start接受后busy至全部384个PW写回并done；装表/预载/导出单计。",
+        "旧pre/silu/post活动计数来自兼容端口并为零，应使用TB真实状态互斥分类。"
+      ],
+      "constraints": [
+        "TEST包系数为65536/24与16777216/31；未接真实QAT或运行时参数加载器。",
+        "single in-flight batch；所有消费采用valid与ready握手。"
+      ],
+      "corner_cases": [
+        "halo边界取零、完整装载前禁止启动、长反压、结果保持时复位、重新装表后无旧结果。"
+      ],
+      "verification_cases": [
+        "640 acc、1920 pre/SiLU/post、640唯一提交、384最终导出；DW256批、PW128批。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "stall",
+          "title": "结果反压与接收",
+          "scenario": "result_stall",
+          "description": "事件示意；运算期间经过多拍，图中省略中间计算拍，不声明固定延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "input accepted",
+                "wave": "010....."
+              },
+              {
+                "name": "compute",
+                "wave": "0.1..0.."
+              },
+              {
+                "name": "result valid",
+                "wave": "0....1.0"
+              },
+              {
+                "name": "result ready",
+                "wave": "1....01."
+              },
+              {
+                "name": "result payload",
+                "wave": "x....=..",
+                "data": [
+                  "held result"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

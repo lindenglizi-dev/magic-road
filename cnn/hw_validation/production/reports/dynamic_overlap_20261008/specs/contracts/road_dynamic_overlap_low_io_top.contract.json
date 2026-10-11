@@ -1,0 +1,170 @@
+{
+  "modules": [
+    {
+      "name": "road_dynamic_overlap_low_io_top",
+      "feature": "dynamic_overlap_layer_shell",
+      "rtl_path": "road_dynamic_overlap_low_io_top.v",
+      "description": "38-bit diagnostic shell for the actual down2 dynamic runner, MAC, storage and fixed-TEST postprocess adapter.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {
+            "name": "i_clk",
+            "width": 1,
+            "direction": "input",
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "width": 1,
+            "direction": "input",
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rx_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_rx_valid",
+            "description": "i_rx_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rx_data",
+            "width": 16,
+            "direction": "input",
+            "role": "i_rx_data",
+            "description": "i_rx_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rx_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_rx_ready",
+            "description": "o_rx_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_tx_valid",
+            "width": 1,
+            "direction": "output",
+            "role": "o_tx_valid",
+            "description": "o_tx_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_tx_data",
+            "width": 16,
+            "direction": "output",
+            "role": "o_tx_data",
+            "description": "o_tx_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tx_ready",
+            "width": 1,
+            "direction": "input",
+            "role": "i_tx_ready",
+            "description": "i_tx_ready",
+            "clock_domain": "i_clk"
+          }
+        ],
+        "handshake_channels": [
+          {
+            "id": "rx",
+            "valid": "i_rx_valid",
+            "ready": "o_rx_ready",
+            "payload": [
+              "i_rx_data"
+            ]
+          },
+          {
+            "id": "tx",
+            "valid": "o_tx_valid",
+            "ready": "i_tx_ready",
+            "payload": [
+              "o_tx_data"
+            ]
+          }
+        ],
+        "streams": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Immediate assertion cancels all work, two rising edges release, reload table addresses 0..1023 before compute."
+      },
+      "behavior": [
+        "1000 followed by 1024 signed16 words loads the SiLU table sequentially.",
+        "2000 accepts one descriptor and two least-significant-first data words per runner preload write.",
+        "3000 and 3001 start DW-to-PW or PW-only execution; 6000 and 6001 block or allow commit backpressure.",
+        "4000 exports index and INT8 data as two accepted 16-bit words; 5000 returns the frozen status and counters.",
+        "The instantiated down2_dynamic_tile_runner public ports are unchanged and include actual MAC, halo/cache storage, dynamic pre/post, RNE and SiLU.",
+        "The adapter coefficients are the TEST constants 65536 shift24 and 16777216 shift31; implementation may legally constant-fold them.",
+        "No new parameter protocol, DDR, board protocol or timing exception.",
+        "Only reg_release_done drives the internal async reset tree. Raw i_rstn still immediately masks RX ready and TX valid.",
+        "Two synchronizer DFFs, clock, ports, numeric core and load protocol remain unchanged. No attributes or timing exceptions.",
+        "Raw ASR recovery/removal still checked; a positive diagnostic result cannot establish asynchronous external signoff."
+      ],
+      "constraints": [
+        "100MHz PH1P35MDG324 -3 diagnostic only, automatic pins and zero I/O delays.",
+        "Layer-shell parameter loads cover runner data; adapter requant multipliers remain fixed TEST constants and do not measure universal multiplication cost.",
+        "Strict failures and external/removal timing failures remain unclosed."
+      ],
+      "corner_cases": [
+        "Partial table/load reset, running reset, commit block, random TX stall and export before completion."
+      ],
+      "verification_cases": [
+        "Complete table/halo/weight/bias preload, DW-to-PW run, blocked commit and 384-output export.",
+        "Partial load and running reset, payload hold, 1024-word reload and no stale output."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "release",
+          "title": "异步取消、两级同步释放",
+          "scenario": "reset_release",
+          "description": "数字契约示意：释放后两个有效沿；第三沿最早接收，随后必须装满表。不能模拟亚稳态。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "01......"
+              },
+              {
+                "name": "reg_release_meta",
+                "wave": "0.1....."
+              },
+              {
+                "name": "reg_release_done",
+                "wave": "0..1...."
+              },
+              {
+                "name": "RX permitted",
+                "wave": "0..1...."
+              },
+              {
+                "name": "table_loaded",
+                "wave": "0......."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

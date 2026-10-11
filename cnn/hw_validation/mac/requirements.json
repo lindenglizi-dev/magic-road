@@ -1,0 +1,47 @@
+{
+  "module": "road_mac_probe",
+  "clock_hz": 100000000,
+  "reset": "asynchronous_active_low",
+  "organization": {
+    "input_lanes": 8,
+    "output_channels": 3,
+    "multipliers": 24,
+    "activation_bits": 8,
+    "weight_bits": 8,
+    "bias_bits": 32,
+    "accumulator_bits": 32
+  },
+  "interface": "single_inflight_ready_valid",
+  "byte_order": "lane_zero_in_least_significant_byte",
+  "weight_order": "three_consecutive_eight_lane_output_groups",
+  "behavior": [
+    "A beat is accepted only when input valid and input ready are both high.",
+    "Masked lanes contribute signed zero to all three outputs.",
+    "A first beat selects the three input biases as accumulation bases.",
+    "A non-first beat selects the retained three-channel accumulators.",
+    "A normal last beat publishes one three-channel result.",
+    "Any signed 32-bit overflow publishes fault and never publishes success.",
+    "Result valid, data, and fault remain stable while result ready is low.",
+    "Reset cancels in-flight work and clears retained accumulators and output state."
+  ],
+  "excluded": [
+    "ROM",
+    "DDR",
+    "requantization",
+    "activation LUT",
+    "full-layer throughput",
+    "full-network FPS"
+  ],
+  "verification": {
+    "python_seed": 42,
+    "random_single_beat_cases": 1024,
+    "directed": [
+      "negative_extrema",
+      "mask_tail",
+      "multi_beat_accumulation",
+      "input_and_output_stall",
+      "reset_cancellation",
+      "positive_and_negative_overflow"
+    ]
+  }
+}

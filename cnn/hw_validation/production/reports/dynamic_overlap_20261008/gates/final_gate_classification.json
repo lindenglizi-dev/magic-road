@@ -1,0 +1,104 @@
+{
+  "schema": "dynamic_overlap_gate_classification_v1",
+  "source": "generated_deliverable_gate_final.json",
+  "delivery_ready": false,
+  "strict": true,
+  "gate_totals": {
+    "errors": 5541,
+    "strict_warnings": 22,
+    "quality_findings": 4944,
+    "quality_finding_severity": {"blocker": 2288, "error": 2506, "warning": 150},
+    "compile": {"status": "passed", "errors": 0, "warnings": 0, "files": 9, "modules": 9, "parse_errors": 0},
+    "formatter_ast": {"status": "failed", "errors": 18},
+    "readability": {"status": "failed", "errors": 4922, "warnings": 22},
+    "comment_gate": {"status": "failed", "errors": 601},
+    "naming": {"status": "failed", "errors": 944, "warnings": 20},
+    "profile": {"status": "failed", "errors": 4, "warnings": 2}
+  },
+  "classification_method": {
+    "basis": "Exact rule_key and exact diagnostic message from each final-gate finding; no inference from signal names or RTL behavior.",
+    "partition": "The five requested finding classes are mutually exclusive. Other findings are retained and are not asserted benign.",
+    "quality_finding_partition": {"width_semantic": 72, "counter_semantic": 0, "multidriver_semantic": 0, "combinational_loop": 2, "format_style": 2519, "other": 2351}
+  },
+  "requested_semantic_classes": {
+    "width_semantic": {
+      "count": 72,
+      "severity": {"blocker": 72},
+      "exact_diagnostics": [
+        {"rule_id": "VG122", "rule_key": "op_no_arith_overflow", "count": 52, "message": "算术结果位宽超过赋值目标位宽。"},
+        {"rule_id": "VG085", "rule_key": "op_rel_width_match", "count": 11, "message": "表达式两侧位宽不一致。"},
+        {"rule_id": "VG097", "rule_key": "conn_port_width_match", "count": 4, "message": "端口或连接表达式位宽无法静态确定。"},
+        {"rule_id": "VG097", "rule_key": "conn_port_width_match", "count": 2, "message": "命名端口连接为空，无法静态比较位宽。"},
+        {"rule_id": "VG084", "rule_key": "case_item_in_range_width", "count": 1, "message": "存在无法静态确定的 case 控制项或标签位宽。"},
+        {"rule_id": "VG097", "rule_key": "conn_port_width_match", "count": 1, "message": "实例参数区、端口区或参数覆盖无法静态解析。"},
+        {"rule_id": "VG137", "rule_key": "assign_width_match", "count": 1, "message": "存在无法静态确定的表达式位宽。"}
+      ],
+      "file_counts": {"down2_dynamic_tile_runner.v": 32, "road_dynamic_postprocess.v": 14, "road_dynamic_chain_low_io_top.v": 6, "silu_shared_unit.v": 9, "road_down2_dynamic_adapter.v": 7, "road_dynamic_overlap_low_io_top.v": 2, "file_unspecified_by_gate": 2}
+    },
+    "counter_semantic": {
+      "count": 0,
+      "note": "No final finding has an exact semantic counter rule key or diagnostic. The 18 naming.counter findings and one counter declaration-region message are format/style findings, not counter-behavior findings. Diagnostics containing the phrase low count were not misclassified as counter logic."
+    },
+    "multidriver_semantic": {
+      "count": 0,
+      "note": "No exact rule key or message reports multiple drivers. VG153 read_without_driver has 124 findings, but undriven is not multidriver and remains in other."
+    },
+    "combinational_loop": {
+      "count": 2,
+      "severity": {"blocker": 2},
+      "exact_diagnostic": {"rule_id": "VG136", "rule_key": "comb_no_feedback", "message": "组合逻辑依赖图中存在反馈环。"},
+      "locations": [
+        {"file": "down2_dynamic_tile_runner.v", "line": 196, "evidence": "lane_index"},
+        {"file": "road_dynamic_postprocess.v", "line": 123, "evidence": "check_lane"}
+      ]
+    }
+  },
+  "format_style": {
+    "quality_finding_count": 2519,
+    "severity": {"blocker": 146, "error": 2271, "warning": 102},
+    "separate_gate_errors": {"formatter_ast": 18, "comment_gate": 601},
+    "exact_rule_key_counts": {
+      "comments.procedural_assignment": 702,
+      "comments.coverage": 597,
+      "format.tab_indent": 511,
+      "comments.instance_mapping": 145,
+      "literal_width_match": 102,
+      "literal_explicit_base_width": 81,
+      "naming.flag": 39,
+      "wire_declaration_inline_assignment": 37,
+      "assign.inline_wire": 37,
+      "regions.declaration": 36,
+      "control.begin_end": 31,
+      "comments.region_anchor": 26,
+      "comments.always": 23,
+      "naming.counter": 18,
+      "comments.repeated_semantic": 15,
+      "output.bridge": 13,
+      "comments.case_branch_leading_comment": 12,
+      "comments.instance": 9,
+      "regions.localparam": 8,
+      "header.description_simulations_paths": 7,
+      "naming.register_signal": 7,
+      "instance.naming": 6,
+      "header.bilingual": 5,
+      "header.chinese_fields": 5,
+      "header.english_fields": 5,
+      "header.history_records": 5,
+      "ports.group_comments": 5,
+      "regions.banner": 5,
+      "naming.declaration_digit_tokens": 5,
+      "output.mirror.group_label": 4,
+      "regions.always": 4,
+      "comments.language": 3,
+      "header.reference_dependency_shape": 2,
+      "comments.semantic": 2,
+      "comments.definition_group": 2,
+      "comments.version_markers": 2,
+      "regions.instance": 1,
+      "regions.order": 1,
+      "regions.instances_last": 1
+    },
+    "literal_width_note": "VG125 reports literals wider than the minimum value width and VG138 reports missing explicit width/base; they are kept in format/style rather than semantic width mismatch."
+  },
+  "disposition": "Gate failure is preserved without sweeping historical RTL style. Physical closure and functional evidence do not suppress these diagnostics, and delivery_ready remains false."
+}

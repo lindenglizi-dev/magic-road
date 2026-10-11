@@ -1,0 +1,160 @@
+--- original/vg_contract_liveness.py
++++ fixed/vg_contract_liveness.py
+@@ -287,6 +287,62 @@
+     }
+ 
+ # evaluate_liveness_gate 执行 VG153 和 VG154。
++def _static_width(item: dict[str, Any]) -> int | None:
++    """仅证明静态完整总线；参数、数组和部分连接保持阻断。"""
++    if item.get("unpacked"):
++        return None
++    width = re.sub(r"\s+", "", str(item.get("width") or ""))
++    if not width:
++        return 1
++    match = re.fullmatch(r"\[(\d+):(\d+)\]", width)
++    return abs(int(match[1]) - int(match[2])) + 1 if match else None
++
++
++def _instance_drivers(module, local_facts, catalog):
++    """从已有 formatter AST 证明命名连接的唯一输出驱动，不重解析 RTL。"""
++    declared = {name: item["object"] for name, item in local_facts["declarations"].items()}
++    declared.update({port["name"]: port for port in module.get("ports", [])})
++    candidates = {}
++    unresolved = set()
++    for instance in module.get("instances", []):
++        child = catalog.get(instance.get("module_name"))
++        if child is None:
++            continue  # 未知接口仍由 VG097 和原 VG153 阻断，绝不伪造驱动。
++        formals = {port["name"]: port for port in child.get("ports", [])}
++        for association in instance.get("port_associations", []):
++            formal = formals.get(association.get("formal_name"))
++            if formal is None or formal.get("direction") != "output":
++                continue
++            actual = association.get("actual") or {}
++            names = set(actual.get("references") or [])
++            name = str(actual.get("text") or "").strip()
++            node = actual.get("expression") or {}
++            parent = declared.get(name)
++            supported = (
++                instance.get("parse_complete") and instance.get("association_style") == "named"
++                and not instance.get("has_params") and not instance.get("parameter_overrides")
++                and not instance.get("array_range_text")
++                and not child.get("params") and not child.get("generates") and not module.get("generates")
++                and parent is not None and parent.get("kind", "wire") == "wire"
++                and actual.get("kind") == "expression" and names == {name}
++                and node.get("node_kind") == "identifier" and (node.get("name") or node.get("text")) == name
++                and actual.get("static_lvalue_segments") == [{"name": name}]
++                and _static_width(parent) is not None and _static_width(parent) == _static_width(formal)
++                and bool(parent.get("signed")) == bool(formal.get("signed"))
++            )
++            if not supported:
++                unresolved.update(names or {name or "<unresolved_actual>"})
++                continue
++            candidates.setdefault(name, []).append(instance.get("instance_name"))
++    drivers = set()
++    for name, instances in candidates.items():
++        if len(instances) != 1 or name in local_facts["drivers"] or name in unresolved:
++            unresolved.add(name)
++        else:
++            drivers.add(name)
++    return drivers, unresolved
++
++
+ def evaluate_liveness_gate(facts: VgFacts, str_gate_id: str) -> VgEvaluation:
+     """检查读取无驱动和声明无使用问题。
+ 
+@@ -303,8 +359,19 @@
+     # 存在内部声明或端口时进入生存性适用范围。
+     bool_applicable = False  # 当前 RTL 是否出现候选声明
+ 
++    modules = list(_source_modules(facts))
++    catalog = {}
++    duplicates = set()
++    for _, module in modules:
++        name = module.get("name")
++        if name in catalog:
++            duplicates.add(name)
++        catalog[name] = module
++    for name in duplicates:
++        catalog.pop(name)  # 重名定义不选择任意实现。
++
+     # 每个模块独立计算声明、读取和驱动关系。
+-    for obj_source, dict_module in _source_modules(facts):
++    for obj_source, dict_module in modules:
+ 
+         # 当前模块的结构化生存性事实。
+         dict_signal_facts = _module_signal_facts(dict_module, obj_source.lines)  # 当前模块声明驱动读取事实
+@@ -320,6 +387,16 @@
+ 
+         # VG153 只检查内部声明和输出端口，不检查 parameter/localparam。
+         if str_gate_id == "VG153":
++
++            instance_drivers, unresolved = _instance_drivers(dict_module, dict_signal_facts, catalog)
++            set_drivers.update(instance_drivers)
++            for name in sorted(unresolved):
++                list_findings.append(_finding(
++                    obj_source, dict_module, line=None,
++                    message="子模块输出的完整位宽或唯一驱动关系无法确认。",
++                    evidence=name,
++                    metadata=(("symbol", name), ("driver_state", "unresolved_instance_output")),
++                ))
+ 
+             # 读取且没有驱动的内部声明属于确定阻断。
+             for str_name, dict_declaration in dict_declarations.items():
+--- original/quality_gate_structure_rules.py
++++ fixed/quality_gate_structure_rules.py
+@@ -12,7 +12,7 @@
+ from typing import Any
+ 
+ # formatter_ast 与 rulebook 仍是这些子模块依赖的唯一结构化入口。
+-from .formatter_backend.banners import display_width
++from .formatter_backend.banners import display_width, extract_banner_title, is_banner_line
+ from .formatter_ast import build_ast_report_for_path, iter_verilog_sources, read_verilog_source
+ from .declaration_region_policy import (
+     declaration_region_title,
+@@ -3845,11 +3845,15 @@
+     tuple_region_keywords = _configured_region_keywords()  # 当前文件应遵守的区域横幅顺序
+ 
+     # list_found 保存源码中出现的已知区域标题。
++    module_lines = str_text.splitlines()[
++        max(0, int(dict_module.get("line_start") or 1) - 1):
++        int(dict_module.get("line_end") or len(str_text.splitlines()))
++    ]
+     list_found = [
+-        str_keyword  # 已命中的 Erie 区域标题
+-        for str_keyword in tuple_region_keywords  # 遍历当前生效的区域顺序表
+-        if str_keyword in str_text  # 仅记录源码实际包含的区域标题
+-    ]  # 源码中命中的 Erie 区域横幅标题
++        extract_banner_title(line)
++        for line in module_lines
++        if is_banner_line(line) and extract_banner_title(line) in tuple_region_keywords
++    ]
+ 
+     # 非平凡模块必须至少有区域横幅。
+     if not list_found:
+@@ -3869,14 +3873,10 @@
+         return list_issues
+ 
+     # list_positions 按既定顺序记录区域标题在源码中的位置。
+-    list_positions = [
+-        str_text.find(str_keyword)  # 区域横幅在源码中的字符偏移
+-        for str_keyword in tuple_region_keywords  # 按当前规范区域顺序扫描
+-        if str_keyword in str_text  # 仅记录已出现标题的位置
+-    ]  # 已命中区域横幅在源码中的出现位置
++    list_positions = [tuple_region_keywords.index(title) for title in list_found]
+ 
+     # 区域出现顺序必须和 REGION_KEYWORDS 一致。
+-    if list_positions != sorted(list_positions):
++    if list_positions != sorted(list_positions) or len(list_found) != len(set(list_found)):
+ 
+         # 顺序错乱会影响生成 RTL 的可扫描性。
+         list_issues.append(
+@@ -3890,7 +3890,7 @@
+         )
+ 
+     # 有实例化时必须放在实例化区域，由顺序规则决定参数检查区是否覆盖最终位置。
+-    if dict_module.get("instances") and "模块实例化区域" not in str_text:
++    if dict_module.get("instances") and "模块实例化区域" not in list_found:
+ 
+         # 实例区域缺失时登记 VG031。
+         list_issues.append(

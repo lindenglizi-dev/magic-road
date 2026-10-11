@@ -1,0 +1,175 @@
+{
+  "status": "python_fixed_budget_post_cleanup_diagnostic_not_rtl_or_acceptance_evidence",
+  "clip_id": "VIRAT_S_000203_03_000736_000785",
+  "scored_frame_interval_inclusive": [
+    600,
+    899
+  ],
+  "warmup_contract": "decode and process causally from source frame 0; score only requested interval",
+  "processed_frames_including_warmup": 900,
+  "processed_scoring_frames": 300,
+  "annotation_labels": [
+    "ped",
+    "vehicle"
+  ],
+  "parameters": {
+    "sample_stride": 5,
+    "learn_frames": 4,
+    "threshold": 20,
+    "min_neighbors": 3,
+    "min_run": 2,
+    "main_min_area": 16,
+    "main_slots": 4,
+    "total_budget": 8,
+    "small_min_area": 2,
+    "small_max_area": 15,
+    "minimum_small_box": [
+      4,
+      4
+    ],
+    "nms_iou": 0.3,
+    "annotation_match_iou": 0.1,
+    "scorers": [
+      "contrast_fill",
+      "area",
+      "peak_difference"
+    ]
+  },
+  "hashes": {
+    "source_video_sha256": "c85ced4e6984bb4a2d97109a7f9e45cf7b398530c0eebc0eba3dcd30c68477ad",
+    "annotations_csv_sha256": "e3c32ee80cd7d37d7ee8b1f5fc79a22d05b7e5e6fb2c9f61dbe512b6e711840e",
+    "script_sha256": "f3cd750c65f7e6e5e611e9d3638b0e07d05b6ac35255371718c77f6aedb55de5",
+    "candidate_chain_reference_sha256": "6ed7652dd51db9eb1a1debede3cfb74f8ca862f261e96fa4557fb30969ab766d",
+    "candidates_csv_sha256": "4d5ffff1717dd437989724c7df15c330f9bd0a2be9bfdc99627f38dbe9760ce6",
+    "annotation_row_coverage_csv_sha256": "14bb293b0c1e91789fbcea6e5dcf827800b73474c45884835c80d5118d275a4b",
+    "development_catalog_sha256": "2c5fc1323e66bdb144dd56e08aeb6b1afe52ec2904e2e72fd439de1496e92ae3"
+  },
+  "inputs": {
+    "source_video": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\public_data\\raw\\virat_ground_v2\\video_original\\VIRAT_S_000203_03_000736_000785.mp4",
+    "annotations_csv": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\public_data\\virat_ground_v2\\annotations.csv",
+    "development_catalog": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\public_data\\virat_ground_v2\\catalog.json",
+    "catalog_split": "val"
+  },
+  "scoring_contract": {
+    "contrast_fill": "0.60*normalized(mean_difference-threshold) + 0.25*component_fill_ratio + 0.15*min(area/main_min_area,1)",
+    "area": "component foreground-pixel area; deterministic label tie-break",
+    "peak_difference": "component maximum absolute gray/background difference",
+    "tie_break": "higher score, then larger area, then lower component label"
+  },
+  "selection_contract": "Main branch exactly keeps area>=main_min_area components sorted by (-area,label), capped at main_slots. The experimental branch only considers small_min_area<=area<=small_max_area, center-expands to minimum_small_box, then greedily rejects IoU>nms_iou against main and accepted small boxes. Its fixed slot allocation is total_budget-main_slots; unused main slots are not reassigned, so the per-frame count may be below the total budget.",
+  "coordinate_contract": "All analysis boxes are inclusive. Source extent is [stride*xmin,stride*ymin,stride*(xmax+1)-1,stride*(ymax+1)-1], clipped.",
+  "results": [
+    {
+      "scorer": "contrast_fill",
+      "candidate_count": 2318,
+      "candidate_count_by_branch": {
+        "main_area_topk": 1118,
+        "small_component_experimental": 1200
+      },
+      "frames_at_total_budget": 223,
+      "minimum_candidates_per_frame": 6,
+      "maximum_candidates_per_frame": 8,
+      "annotation_coverage": {
+        "all": {
+          "annotation_rows": 755,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 375,
+          "incremental_rows_from_small_branch": 375,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.4966887417218543
+        },
+        "ped": {
+          "annotation_rows": 455,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 233,
+          "incremental_rows_from_small_branch": 233,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.512087912087912
+        },
+        "vehicle": {
+          "annotation_rows": 300,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 142,
+          "incremental_rows_from_small_branch": 142,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.47333333333333333
+        }
+      }
+    },
+    {
+      "scorer": "area",
+      "candidate_count": 2318,
+      "candidate_count_by_branch": {
+        "main_area_topk": 1118,
+        "small_component_experimental": 1200
+      },
+      "frames_at_total_budget": 223,
+      "minimum_candidates_per_frame": 6,
+      "maximum_candidates_per_frame": 8,
+      "annotation_coverage": {
+        "all": {
+          "annotation_rows": 755,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 281,
+          "incremental_rows_from_small_branch": 281,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.37218543046357616
+        },
+        "ped": {
+          "annotation_rows": 455,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 170,
+          "incremental_rows_from_small_branch": 170,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.37362637362637363
+        },
+        "vehicle": {
+          "annotation_rows": 300,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 111,
+          "incremental_rows_from_small_branch": 111,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.37
+        }
+      }
+    },
+    {
+      "scorer": "peak_difference",
+      "candidate_count": 2318,
+      "candidate_count_by_branch": {
+        "main_area_topk": 1118,
+        "small_component_experimental": 1200
+      },
+      "frames_at_total_budget": 223,
+      "minimum_candidates_per_frame": 6,
+      "maximum_candidates_per_frame": 8,
+      "annotation_coverage": {
+        "all": {
+          "annotation_rows": 755,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 449,
+          "incremental_rows_from_small_branch": 449,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.5947019867549669
+        },
+        "ped": {
+          "annotation_rows": 455,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 278,
+          "incremental_rows_from_small_branch": 278,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.610989010989011
+        },
+        "vehicle": {
+          "annotation_rows": 300,
+          "covered_by_main_rows": 0,
+          "covered_by_combined_rows": 171,
+          "incremental_rows_from_small_branch": 171,
+          "main_coverage_rate": 0.0,
+          "combined_coverage_rate": 0.57
+        }
+      }
+    }
+  ],
+  "boundary": "Only the main area-top4 branch represents current selection behavior. The small branch, box expansion and NMS are Python proposals. VIRAT annotations are not exhaustive background truth, so candidate count is processing load, not a false-positive count. No blind-reserve input is accepted."
+}

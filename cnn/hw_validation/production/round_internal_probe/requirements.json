@@ -1,0 +1,10 @@
+{
+  "module": "road_round_internal_probe",
+  "class": ["generate", "validate"],
+  "clock": "i_clk, 100 MHz target only",
+  "reset": "i_rstn asynchronously asserts a two-register chain; reg_reset_release synchronously deasserts after two rising edges and drives every internal reset endpoint",
+  "inputs": ["i_clk", "i_rstn"],
+  "behavior": "Generate a deterministic registered signed product, shift, tag and valid stream; insert real common stalls; exercise the staged production RNE; register every result and consume it into observable checksum, count and error state.",
+  "verification": ["Python oracle imported from production round reference", "all 192 generated payloads", "all 168 result tokens", "three fault tokens", "common-stall hold", "asynchronous cancellation", "two-edge release", "strict generated-deliverable gate"],
+  "limits": ["internal boundary component only", "no whole-CNN claim", "no timing or board claim"]
+}

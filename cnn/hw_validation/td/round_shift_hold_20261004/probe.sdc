@@ -1,0 +1,5 @@
+create_clock -name {probe_clk} -period 10.000 -waveform {0.000 5.000} [get_ports {i_clk}]
+set_input_delay -clock [get_clocks {probe_clk}] -max 0.000 [get_ports {i_rstn i_advance i_input_valid i_product[*] i_shift[*] i_tag[*]}]
+set_input_delay -clock [get_clocks {probe_clk}] -min 0.000 [get_ports {i_rstn i_advance i_input_valid i_product[*] i_shift[*] i_tag[*]}]
+set_output_delay -clock [get_clocks {probe_clk}] -max 0.000 [get_ports {o_result_valid o_result_data[*] o_result_tag[*] o_fault}]
+set_output_delay -clock [get_clocks {probe_clk}] -min 0.000 [get_ports {o_result_valid o_result_data[*] o_result_tag[*] o_fault}]

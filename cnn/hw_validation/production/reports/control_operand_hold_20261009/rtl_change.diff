@@ -1,0 +1,34 @@
+--- frozen/road_dynamic_postprocess.v
++++ candidate/road_dynamic_postprocess.v
+@@ -169,7 +169,7 @@
+     assign o_silu_accept = flag_silu_accept;
+     assign o_post_accept = flag_post_accept;
+ 
+-    // Refill selection on acceptance; a full queue may conservatively bubble.
++    // Preselect the successor while buffered; only real acceptance permits refill.
+     reg flag_select_valid;
+     reg select_entry;
+     reg [2:0]select_mask;
+@@ -178,7 +178,7 @@
+         select_entry = reg_ingress_read;
+         select_mask = reg_ingress_mask[reg_ingress_read];
+         flag_select_valid = reg_ingress_count != 2'd0;
+-        if (flag_pre_accept) begin
++        if (flag_pre_buffer_valid) begin
+             if (reg_pre_last) begin
+                 select_entry = !reg_ingress_read;
+                 select_mask = reg_ingress_mask[!reg_ingress_read];
+--- frozen/road_mac_probe.v
++++ candidate/road_mac_probe.v
+@@ -283,10 +283,7 @@
+ 			flag_first_front <= i_first;
+ 			flag_last_front <= i_last;
+ 		end else begin
+-			reg_activation_front <= 64'd0;
+-			reg_weight_front <= 192'd0;
+-			reg_bias_front <= 96'd0;
+-			reg_mask_front <= 8'd0;
++			//空拍保持操作数；有效位取消该拍，避免故障许可驱动宽数据清零选择。
+ 			flag_front_valid <= 1'b0;
+ 			flag_first_front <= 1'b0;
+ 			flag_last_front <= 1'b0;

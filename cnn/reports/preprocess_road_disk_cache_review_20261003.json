@@ -1,0 +1,161 @@
+{
+  "report_kind": "independent_read_only_road_cpu_disk_cache_review",
+  "date": "2026-10-03",
+  "role": "verify",
+  "scope": {
+    "reviewed_source_manifest": "cnn/data/visdrone_vid_train/raw_manifest/dataset.json",
+    "reviewed_pilot_manifest": "cnn/data/road_cache_cpu_pilot_20261003/dataset.json",
+    "reviewed_cache": "cnn/data/cache_road_cpu_disk_pilot_20261003",
+    "reviewed_pilot_report": "cnn/reports/preprocess_road_disk_cache_pilot_20261003.json",
+    "source_edits": false,
+    "gpu_used_by_reviewer": false,
+    "training_started_by_reviewer": false,
+    "newtest_or_blind_pixels_read": false,
+    "full_disk_cli_rerun": false,
+    "owned_output_only": "cnn/reports/preprocess_road_disk_cache_review_20261003.json"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "road_cache_pilot_correctness": "passed",
+    "accuracy_acceptance_eligible": false,
+    "training_speed_claim_supported": false,
+    "automatic_gpu_resume_authorized": false,
+    "summary": "The 128-row road pilot is the exact deterministic floor-spaced selection from the pinned development-only source manifest. Every selected source row preserves all GT, ignore and provenance fields; only image path normalization and teacher_key addition differ. Cache records and reported preprocessing equivalence/timing identities independently recompute. This is a small CPU preprocessing QA artifact, not accuracy evidence or training integration."
+  },
+  "source_snapshots": {
+    "source_manifest_sha256": "ad353c5bce5b0ecef0433c74515324bbfdb031e92aff964cd56c18ae069d9fe4",
+    "pilot_manifest_sha256": "e75c1f53a882e5177c9b0d24fbcc4075cdffe7e0dffdff53925697aabb6ec179",
+    "cnn/prepare_cache_pilot.py": "733be0595adffadab2234b1617808319e60083b8c549a13037f59bdde9ec2fbc",
+    "cnn/test_disk_cache.py": "9cd56deb806b8ff47f8aa4ed9cd50d34a624cdd99b23a0c65c1abc52aa735b2d",
+    "cnn/disk_cache.py": "06eb5df4b4005e4a4d4b6cbe5848759da4cb68d748a5cd59766defe44d7764b5",
+    "cnn/train.py": "22204a2ff2931866e9b4c3a2b6db6671590a79fe25e0c89ee39a96f410049f4a",
+    "cnn/model.py": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c",
+    "checkpoint_unchanged": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4"
+  },
+  "selection_verification": {
+    "reconstructed_manifest_exactly_matches_output": true,
+    "selection_rule": "floor(i*N/K) over image-name-sorted rows separately within original train and val splits",
+    "selected_by_labels_or_model_scores": false,
+    "source_pixels_read_by_selector": false,
+    "unique_selected_rows": true,
+    "selected_rows_found_in_source": 128,
+    "selected_rows_missing_from_source": 0,
+    "all_fields_exact_after_expected_image_and_teacher_key_normalization": true,
+    "all_annotation_and_completeness_fields_exact": true,
+    "all_selected_rows_raw_image": true,
+    "all_selected_rows_annotation_complete": true,
+    "positive_boxes": 5751,
+    "ignore_boxes": 572,
+    "class_box_counts": {
+      "person": 1825,
+      "vehicle": 3926
+    },
+    "train": {
+      "source_rows": 19050,
+      "selected_rows": 96,
+      "first_sorted_index": 0,
+      "last_sorted_index": 18851,
+      "omitted_sorted_tail_rows": 198,
+      "source_scenes": 46,
+      "selected_scenes": 44
+    },
+    "val": {
+      "source_rows": 5151,
+      "selected_rows": 32,
+      "first_sorted_index": 0,
+      "last_sorted_index": 4990,
+      "omitted_sorted_tail_rows": 160,
+      "source_scenes": 10,
+      "selected_scenes": 10
+    },
+    "selected_scene_count": 54,
+    "selected_uav_id_family_count": 48,
+    "scene_split_leaks": 0,
+    "uav_id_family_split_leaks": 0,
+    "unselected_short_train_scenes": [
+      "visdrone-vid-uav0000013_01073_v",
+      "visdrone-vid-uav0000072_06432_v"
+    ],
+    "scene_scope_note": "scene_id identifies source sequences. No camera-identity claim is made. The family count is a conservative grouping by uav numeric identifier and is reported only to verify split consistency.",
+    "sampling_limit": "The selector is deterministic and label-blind but not random or scene-stratified. Two short train sequences receive no sample, and the sorted tail is not endpoint-covered. Therefore the pilot is unsuitable for accuracy or distribution claims."
+  },
+  "raw_and_cache_binding": {
+    "pilot_provenance_binds_source_manifest": true,
+    "pilot_manifest_status": "development_cache_pilot",
+    "pilot_purpose": "CPU_disk_cache_QA_only_not_accuracy_or_training",
+    "formal_road_eligible": false,
+    "raw_path": "Every selected row retains preprocess.raw_image=true, source_sha256, source_annotation_sha256, original source_frame and full annotation metadata. Image names are resolved to absolute paths before cache construction.",
+    "pixel_version": "The unchanged disk cache binds dataset SHA, actual source image hashes, row fingerprints, PREPROCESS_CONTRACT, HWC RGB uint8 shape, preprocessing source SHA values and OpenCV/NumPy/Pillow/Torch versions.",
+    "cache_report_sha256": "b387fb9089d1eda2b48d6fc92dd3a96418e9307bb325dd50de374efb35973119",
+    "cache_index_sha256": "eb9212965ac9789d74a15151d26d82a6d4d16919f692ad5fc0904daa6af762eb",
+    "cache_rgb_sha256": "b357057be321c46175d16927e425224533efc2d46b578d55401f3d74bf0ed4d6",
+    "cache_entries": 128,
+    "record_bytes": 442368,
+    "cache_bytes": 56623104,
+    "cache_mib": 54.0,
+    "all_offsets_sequential": true,
+    "all_row_fingerprints_match": true,
+    "all_source_hash_bindings_match": true,
+    "all_record_rgb_hashes_match": true,
+    "whole_blob_hash_matches": true,
+    "preprocessing_identity_matches_current_sources": true,
+    "manifest_and_content_hashes_recomputed_equal": true
+  },
+  "equivalence_evidence": {
+    "train_direct_rgb_centered_targets_keys": 96,
+    "val_direct_rgb_centered_targets_keys": 32,
+    "train_mosaic_epoch_6": 96,
+    "train_mosaic_epoch_7": 96,
+    "train_mosaic_disabled_epoch_285": 96,
+    "shuffle_workers_0": 96,
+    "shuffle_workers_2": 96,
+    "interpretation": "The cache replaces only FullFrameDataset._load. Original Mosaic selection/transforms, boxes, labels, ignore boxes, teacher keys, shuffle order and RGB-minus-128 conversion are reused and matched exactly in the pilot. Validation remains non-Mosaic."
+  },
+  "independent_cpu_test": {
+    "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_disk_cache -v",
+    "result": "1 passed in 0.517 seconds"
+  },
+  "performance_recalculation": {
+    "device": "cpu",
+    "cpu_threads": 2,
+    "construction_seconds": 3.12056159999338,
+    "raw_trials_seconds": [
+      10.463480400008848,
+      9.622927800024627,
+      10.41314020002028
+    ],
+    "disk_trials_seconds": [
+      0.5480392999888863,
+      0.719958100002259,
+      0.7490758999774698
+    ],
+    "raw_median_milliseconds_per_mosaic_recomputed": 108.47021041687792,
+    "disk_median_milliseconds_per_mosaic_recomputed": 7.499563541690198,
+    "isolated_preprocess_speedup_recomputed": 14.463536419671655,
+    "matches_pilot_report": true,
+    "boundary": "Three serial passes over 96 deterministic train Mosaics with a warm OS filesystem cache. Cached records are still opened, sought, read, copied and SHA-256 checked. No forward/backward, optimizer, loss, DataLoader throughput, GPU, physical cold-disk, full epoch or production trainer is measured.",
+    "construction_boundary": "The reported construction time excludes pilot selection and the initial load_dataset_manifest audit/hash pass. It includes the cache builder's source rehash, raw decode/preprocess, write, fsync and index publication.",
+    "conclusion": "14.4635364x is road-pilot preprocessing microbenchmark evidence only. It is not a training speedup or a basis for time-compressing training."
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "topic": "training_use_is_process_control_not_hard_guard",
+      "evidence": "The pilot sets purpose=CPU_disk_cache_QA_only_not_accuracy_or_training and formal_road_eligible=false, but retains training_eligible=true so the unchanged disk-cache CLI can reuse load_dataset_manifest. train.py does not enforce purpose or formal_road_eligible.",
+      "disposition": "Do not pass this 128-row manifest to the trainer or evaluator for accuracy claims. If production cache integration is later implemented, pin an explicit cache-QA-only or training-dataset identity at that boundary. This does not block the current standalone CPU cache QA."
+    },
+    {
+      "severity": "warning",
+      "topic": "systematic_non_stratified_sampling",
+      "evidence": "Floor spacing over globally sorted names covers 54/56 sequences and omits two short train sequences; it is independent of labels but not representative sampling.",
+      "disposition": "Use only for cache equivalence/performance smoke testing, never for accuracy, coverage or road-distribution conclusions."
+    },
+    {
+      "severity": "warning",
+      "topic": "benchmark_scope",
+      "evidence": "The 14.4635364x result is warm-page-cache preprocessing only.",
+      "disposition": "Production integration requires a separately switchable cache, exact input/order/loss comparison and end-to-end epoch profiling before any training-time claim. Do not auto-resume GPU training from this milestone."
+    }
+  ],
+  "final_process_state": "No Python process using the dedicated road_yolo_venv executable was present at the final reviewer check."
+}

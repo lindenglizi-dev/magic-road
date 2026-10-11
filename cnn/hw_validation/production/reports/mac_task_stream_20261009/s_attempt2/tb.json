@@ -1,0 +1,89 @@
+{
+  "modules": [
+    {
+      "name": "tb_down2_dynamic_overlap",
+      "feature": "r",
+      "rtl_path": "tb_down2_dynamic_overlap.v",
+      "description": "Four-credit PW task stream; frozen A0-A5 arithmetic, separate result descriptors.",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Asynchronous cancellation of credits, pipeline and descriptors; ready low during reset. Reload1024 table entries and parameters before runner start."
+      },
+      "behavior": [
+        "Keep signed33 reduction, max24 groups/192 products per lane, final INT32 atomic zero fault, bias once and reduction II1.",
+        "MAC first reserves one of four results until actual result pop, including time in A0-A5. Active reduction always accepts continuation.",
+        "PW last acceptance advances issue position/channel; first acceptance pushes the matching descriptor. MAC result pop and descriptor pop are identical.",
+        "PW parameters and tags come from descriptor head, never the new issue counters. Dynamic runtime TEST coefficients remain loaded through existing ports.",
+        "Fault pop bypasses postprocess, invalidates entire tile and stops issuance. Already accepted successors remain owned until common reset; no soft cancellation.",
+        "DW schedule unchanged. PW first operands prepared during previous last handshake; four-entry result and descriptor rings, no DDR or new external ports.",
+        "No-stall down2 endpoint2607: DW2015 plus PW592; these are test-block cycles, not full network FPS."
+      ],
+      "constraints": [
+        "No production edits, training, bitgen, board, Flash or additional timing exceptions.",
+        "Diagnostic input/output delays are not a real external-device timing contract."
+      ],
+      "corner_cases": [
+        "No partial parameter publication; negative multiplier and shift63 are rejected.",
+        "Output ownership under backpressure; reset cancels data and invalidates parameter banks."
+      ],
+      "verification_cases": [
+        "Same40 layer scenarios per revision, all640 values at each arithmetic stage and384 exports.",
+        "Random phase relative to core start; MAC/commit stability, four PW reset positions, full queue and final-lane overflow."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "pw_task_stream",
+          "title": "PW tasks overlap before prior result",
+          "scenario": "pw_task_stream",
+          "description": "First0/2/4/6, last1/3/5/7. First result pop8 can reuse credit. Sustained output depends on postprocess backpressure.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "MAC first accepted",
+                "wave": "1010101010"
+              },
+              {
+                "name": "MAC last accepted",
+                "wave": "0101010101"
+              },
+              {
+                "name": "first descriptor/result pop",
+                "wave": "0.......10"
+              },
+              {
+                "name": "reserved credits",
+                "wave": "=.=.=.=.=.",
+                "data": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  4
+                ]
+              }
+            ],
+            "head": {
+              "tick": 0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

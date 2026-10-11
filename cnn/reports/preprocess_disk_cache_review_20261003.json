@@ -1,0 +1,167 @@
+{
+  "report_kind": "independent_read_only_cpu_disk_cache_review",
+  "date": "2026-10-03",
+  "role": "verify",
+  "scope": {
+    "implementation_files": [
+      "cnn/disk_cache.py",
+      "cnn/test_disk_cache.py"
+    ],
+    "pilot_report": "cnn/reports/preprocess_disk_cache_pilot_20261003.json",
+    "cache_root": "cnn/data/cache_cpu_disk_pilot_20261003",
+    "source_edits": false,
+    "gpu_used_by_reviewer": false,
+    "training_started_by_reviewer": false,
+    "newtest_or_blind_pixels_read": false,
+    "owned_output_only": "cnn/reports/preprocess_disk_cache_review_20261003.json"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "prototype_correctness": "passed",
+    "production_training_integration": "not_attempted_and_not_claimed",
+    "summary": "The prototype publishes only a complete fsynced index, binds the cache to the exact manifest, current source hashes, normalized annotation rows, preprocessing sources/contracts and library versions, and rejects stale, incomplete or corrupt data. Cached RGB, targets, Mosaic behavior, RGB-minus-128 inputs and deterministic shuffled worker order match the original path in the exercised pilot."
+  },
+  "source_snapshot": {
+    "cnn/disk_cache.py": "06eb5df4b4005e4a4d4b6cbe5848759da4cb68d748a5cd59766defe44d7764b5",
+    "cnn/test_disk_cache.py": "4b5d31b9a9d022c74361a2e85e8512ee95181c6ef7fcd984fe9bb9576a0c8789",
+    "cnn/train.py": "22204a2ff2931866e9b4c3a2b6db6671590a79fe25e0c89ee39a96f410049f4a",
+    "cnn/dataset.py": "0f9e07b29e41161afa06f2e0fed7d6e5bbedc84761ab91745bfffb5802d35e64",
+    "cnn/integer.py": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+    "checkpoint_unchanged": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4"
+  },
+  "binding_and_publication_review": {
+    "exclusive_root": "root.mkdir() rejects any existing complete or interrupted cache directory; the prototype never overwrites prior cache evidence.",
+    "publication_order": "rgb.bin is exclusive-created, flushed and fsynced; index.pending.json is exclusive-created, flushed and fsynced; only then is it renamed to index.json. Readers require index.json, so interrupted builds remain unpublished.",
+    "manifest_identity": "dataset_sha256 binds the exact JSON bytes, including annotations and split assignments.",
+    "content_identity": "dataset_content_sha256 binds normalized image paths and current source image hashes.",
+    "row_identity": "Each entry row_sha256 fingerprints the normalized row, including boxes, labels, ignore data, split, preprocessing metadata, image path/hash and teacher key.",
+    "source_identity": "Build rehashes each source immediately before decode. Reader construction rehashes every declared source and compares it with the manifest-normalized image_sha256.",
+    "preprocess_identity": "The cache records PREPROCESS_CONTRACT, HWC RGB uint8 shape/size, source SHA-256 values for disk_cache.py/train.py/dataset.py/integer.py and OpenCV/NumPy/Pillow/Torch versions.",
+    "cache_integrity": "Reader construction checks record count, offsets, source/row bindings, file size and whole-blob SHA-256. Every _load additionally checks record length and per-record SHA-256.",
+    "disk_budget": "Build requires exact RGB payload bytes plus a 20 GiB free-space reserve before creating the cache root.",
+    "residual_atomicity_note": "The same-directory rename prevents readers from accepting a partial index. Directory-entry fsync is not performed, so this is fail-closed publication rather than a cross-power-loss durability guarantee."
+  },
+  "split_and_pipeline_review": {
+    "pilot_splits": {
+      "train": 96,
+      "val": 32,
+      "newtest": 0
+    },
+    "split_isolation": "The combined blob/index retain split on every fingerprinted row. DiskCachedDataset filters both self.rows and self.entries to the requested split in stable order; validation cannot return training entries and Mosaic samples only within the filtered split.",
+    "constructor_scope_note": "A reader verifies the identities of all rows in the combined cache at construction, including the other development split, but only exposes the requested split. This is integrity checking, not sample leakage.",
+    "raw_rgb_path": "Cache stores FullFrameDataset._load output as immutable 288x512x3 HWC RGB uint8 before centering.",
+    "mosaic_reuse": "DiskCachedDataset inherits the unchanged FullFrameDataset._mosaic and __getitem__; only _load is replaced. The original deterministic 2x2 Mosaic, box/label/ignore transforms, teacher keys and float32 RGB-minus-128 conversion remain shared.",
+    "validation_augmentation": "Validation instances are constructed with mosaic=false and only compare direct raw/cache items.",
+    "worker_shuffle": "Separate DataLoaders use equal seeded generators. Exact tensors, targets and key order matched for workers=0 and workers=2 across all 96 training samples.",
+    "production_scope": "No train.py, profile_preprocess.py, model or RTL integration was added. The prototype cannot silently alter the production trainer."
+  },
+  "independent_checks": {
+    "unit_test": {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_disk_cache -v",
+      "result": "1 passed in 0.553 seconds"
+    },
+    "pilot_artifact": {
+      "report_sha256": "858c1b913d189f02feeefc80a66c589b8178c5b9eefe3ea0bfef5e2b2e333c02",
+      "index_sha256": "174a23bae3c0a6952753c7ff4d9bad4034b7d31756af39dc55475d0026a59c17",
+      "rgb_blob_sha256": "79950e42395680565dfcea246729a9a56062189af9c2d82f3fa4a01a6f8bc0ad",
+      "manifest_sha256": "430f6ae664880a67fea83a2df3691815ca67c59a87898aef040d75e3ebe0465b",
+      "dataset_content_sha256": "5f1be651e0276312831158da4a1a7de65aeb120f55cd92d36e243dc5cc7b35b9",
+      "contract": "road-yolo-pre-mosaic-rgb888-disk-v1",
+      "status": "complete",
+      "entry_count": 128,
+      "record_bytes": 442368,
+      "blob_bytes": 56623104,
+      "blob_mib": 54.0,
+      "all_offsets_sequential": true,
+      "all_row_fingerprints_match": true,
+      "all_source_hash_bindings_match": true,
+      "all_record_rgb_hashes_match": true,
+      "whole_blob_hash_matches": true,
+      "preprocessing_identity_matches_current_sources": true,
+      "manifest_and_content_hashes_recomputed_equal": true
+    },
+    "reported_equivalence_counts": [
+      {
+        "split": "train",
+        "kind": "raw_RGB_and_centered_input",
+        "count": 96
+      },
+      {
+        "split": "train",
+        "epoch": 6,
+        "mosaic": true,
+        "count": 96
+      },
+      {
+        "split": "train",
+        "epoch": 7,
+        "mosaic": true,
+        "count": 96
+      },
+      {
+        "split": "train",
+        "epoch": 285,
+        "mosaic": false,
+        "count": 96
+      },
+      {
+        "kind": "shuffle",
+        "workers": 0,
+        "count": 96
+      },
+      {
+        "kind": "shuffle",
+        "workers": 2,
+        "count": 96
+      },
+      {
+        "split": "val",
+        "kind": "raw_RGB_and_centered_input",
+        "count": 32
+      }
+    ]
+  },
+  "performance_recalculation": {
+    "device": "cpu",
+    "cpu_threads": 2,
+    "construction_seconds": 1.7977623000042513,
+    "raw_trials_seconds": [
+      5.98441889998503,
+      5.287081799993757,
+      5.4594914999906905
+    ],
+    "disk_trials_seconds": [
+      0.5193854000244755,
+      0.5399049000116065,
+      0.5224176000047009
+    ],
+    "raw_median_seconds_per_mosaic_recomputed": 0.056869703124903026,
+    "disk_median_seconds_per_mosaic_recomputed": 0.0054418500000489685,
+    "isolated_preprocess_speedup_recomputed": 10.450435628396828,
+    "matches_report": true,
+    "measurement_boundary": "Three serial passes over 96 deterministic Mosaic outputs on a warm OS filesystem cache. Disk records are still opened, sought, read, copied and SHA-256 checked on every source read. No model forward/backward, optimizer, DataLoader throughput benchmark, GPU, physical cold-disk test, end-to-end epoch, loss comparison or production trainer execution is included.",
+    "construction_boundary": "construction_seconds starts inside build_cache after load_dataset_manifest already audited and hashed the pilot once. It includes the build's own source rehash/decode/write/fsync/index publication, but is not total command startup time.",
+    "linear_storage_context_not_a_build_claim": "At 442368 bytes per image, 123287 full COCO train+val images would require 54538223616 payload bytes, about 50.79 GiB, before index/filesystem overhead and the required 20 GiB reserve. The prototype deliberately caps builds at 128 images."
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "topic": "benchmark_scope",
+      "evidence": "The measured 10.4504356x is a warm-page-cache preprocessing microbenchmark over 96 Mosaics, not training throughput.",
+      "disposition": "Do not multiply training speed or shorten a training schedule using this number. A separate production integration and end-to-end epoch profile would be required."
+    },
+    {
+      "severity": "warning",
+      "topic": "source_freshness_lifetime",
+      "evidence": "Source JPEGs are rehashed when DiskCachedDataset is constructed; existing readers rehash cached RGB records, not source JPEGs, on every _load.",
+      "disposition": "Do not claim that an already-open reader detects arbitrary source JPEG changes in real time. Reopen the reader to repeat source identity checks. This does not affect immutable-source pilot evidence."
+    },
+    {
+      "severity": "info",
+      "topic": "integrity_threat_boundary",
+      "evidence": "The reader validates index/blob self-consistency and bindings. The independently stored pilot report pins index SHA-256, but the prototype API does not require an external expected-index receipt.",
+      "disposition": "Adequate for the trusted local prototype. A production trainer should pin the reviewed index hash or build receipt before treating the cache as an adversarially tamper-evident artifact."
+    }
+  ],
+  "final_process_state": "No Python process using the dedicated road_yolo_venv executable was present at the final reviewer check."
+}

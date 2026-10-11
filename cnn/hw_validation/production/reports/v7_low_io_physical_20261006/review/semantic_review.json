@@ -1,0 +1,113 @@
+{
+  "status": "FUNCTIONAL_SEMANTICS_REVIEW_PASS_STRICT_UNCLOSED",
+  "frozen_sources_unchanged": true,
+  "confirmed_semantic_defects": 0,
+  "conditional_contract_risks": [
+    "road_mac_probe does not internally count or reject more than 24 accepted groups",
+    "road_mac_probe consumes first and last as caller-supplied protocol attributes and does not reject malformed sequences",
+    "the chain permits table loading whenever the MAC is idle, including a gap between reduction groups; the low-I/O shell must separate load and run modes",
+    "validation covers one four-position RUN per reset; repeated RUN without reset is not established by this review"
+  ],
+  "signed_and_width_review": {
+    "position_counter": "2-bit modulo-4 wrap is intentional and exact for four positions",
+    "channel_counter": "2-bit increment is guarded by channel != 2 and therefore only performs 0->1 or 1->2",
+    "rescale_product": "signed32 multiplied by signed32 nonnegative fixed factor produces signed64",
+    "round_output": "the 16-bit result bit pattern is reinterpreted as signed before signed saturation comparisons",
+    "cache_indices": "write base is restricted to 0,3,6,9 and derived +1/+2 indices remain within 0..11",
+    "multiple_driver_or_comb_loop": "none found in the frozen four-source manual review"
+  },
+  "strict_gate": {
+    "delivery_ready": false,
+    "errors": 374,
+    "strict_warnings": 0,
+    "public_checks": {
+      "compile": "passed",
+      "ast": "failed",
+      "readability": "failed",
+      "comment": "failed",
+      "naming": "failed",
+      "profile": "passed",
+      "testbench": "passed",
+      "toolchain": "not_requested"
+    },
+    "classification": {
+      "mechanical_style_and_structural_conformance": 210,
+      "domain_proven_counter_width": 2,
+      "definite_rule_complexity_budget_not_timing_measurement": 11,
+      "incomplete_source_closure_or_checker_inconclusive": 151
+    },
+    "detail": {
+      "definite_complexity": {
+        "VG145": 7,
+        "VG146": 4
+      },
+      "inconclusive": {
+        "VG146_external_interface": 66,
+        "VG147_external_interface": 66,
+        "VG146_missing_storage_expression": 4,
+        "VG153_child_output_driver_unresolved": 15
+      }
+    }
+  },
+  "base16_cycle_measurement": {
+    "definition": "endpoint difference over half-open intervals [start,end)",
+    "start_cycle": 1033,
+    "end_cycle": 1515,
+    "cycles": 482,
+    "categories": {
+      "mac": 84,
+      "pre_rescale": 132,
+      "silu": 84,
+      "post_rescale": 120,
+      "commit": 12,
+      "inter_position": 3,
+      "readback": 47
+    },
+    "state_counts_excluding_end_endpoint": {
+      "ST_MAC": 134,
+      "ST_PREPARE": 12,
+      "ST_PRE_SEND": 12,
+      "ST_PRE_WAIT": 108,
+      "ST_SILU_SEND": 12,
+      "ST_SILU_WAIT": 72,
+      "ST_POST_SEND": 12,
+      "ST_POST_WAIT": 108,
+      "ST_COMMIT_ALPHA": 4,
+      "ST_COMMIT_BETA": 4,
+      "ST_COMMIT_GAMMA": 4
+    },
+    "notes": [
+      "each two-beat position spends 11 cycles from first to second accept and 10 cycles from last accept to chain terminal handshake",
+      "the MAC result becomes visible one edge before the chain samples its terminal handshake; this does not change the frozen MAC latency",
+      "each pre-rescale interval is 11 cycles: boundary handoff plus PREPARE, PRE_SEND and round wait",
+      "each SiLU interval is 7 cycles from pre-round endpoint to SiLU-output endpoint",
+      "each post-rescale interval is 10 cycles from SiLU-output endpoint to post-round endpoint",
+      "the twelve read responses are one cycle after their request and requests are spaced four cycles apart in the original testbench"
+    ]
+  },
+  "modelsim": {
+    "compile_errors": 0,
+    "compile_warnings": 0,
+    "run_errors": 0,
+    "run_warnings": 2,
+    "warnings_are_vendor_init_file_bounds": true,
+    "tb_pass": "TB_PASS_CHAIN mac=9 pre=27 silu=27 post=27 read=27 atomic_hidden=18 reset=6 directed=1 errors=0",
+    "monitor": "REVIEW_MONITOR base16_start=1033 base16_end=1515 endpoint_difference=482 responses=12"
+  },
+  "hashes": {
+    "road_onchip_chain.v": "6ec48c6ddda89ab91e66926c42e012b3d9c45cc93150823ffb50c1eb627f7132",
+    "road_mac_probe.v": "f8bf6cace6eb99bd9b915be5e27e1d38af4b3a2485ffeb6e87675d8bfc3478e8",
+    "road_round_shift.v": "cb8f1e308e5832eecc9d5a0cebb86df221ea5f12abe97a5796dc49bea04b382d",
+    "silu_shared_unit.v": "5f357b493c7b3f941d9fa954a0ce5ec09091e466b641474360d2f64d0e42c938",
+    "strict_gate.json": "ff31f0e2adefb4e134fc9b7598a16b32b6b004b3659422b508ec57a36af73c52",
+    "tb_road_chain_cycle_monitor.v": "66d57885c1865666795e4341ea4dd0778adfecb50e9b99c652a2accae2b8c49f",
+    "review_cycle_trace.csv": "b8098901ac1460997deceb7994de4d623e52d697bc7d94847e939b2872c07d63",
+    "modelsim_review_run.log": "f0d773c621ef77bc840b08f97a9d2b6751c552f3804d559f5a8254c4c9148d31"
+  },
+  "monitor_gate": {
+    "delivery_ready": false,
+    "errors": 120,
+    "strict_warnings": 0,
+    "boundary": "the checker rejected the hierarchical multi-top monitor shape as only-single-module unsupported; ModelSim compile and execution are the monitor's functional evidence"
+  }
+}

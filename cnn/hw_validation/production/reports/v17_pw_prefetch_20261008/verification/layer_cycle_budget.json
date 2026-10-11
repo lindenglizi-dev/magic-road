@@ -1,0 +1,970 @@
+{
+  "status": "CONDITIONAL_CADENCE_ONLY_NOT_FULL_FRAME_MEASUREMENT",
+  "graph_sha256": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738",
+  "base_ledger_sha256": "d14d6f3faf72d34dd001fdbfe2751a986cd0e8a64ed2f8d5fb3b3953339af721",
+  "excluded": [
+    "DDR",
+    "non-convolution ops",
+    "NMS",
+    "dynamic quantization",
+    "preload/export",
+    "per-tile drain and DMA overhead"
+  ],
+  "assumptions": [
+    "Stride1 packing is not measured by the down2 stride2 probe.",
+    "Per-layer tails reuse old calibrated conditional constants.",
+    "No data reuse, port, physical or full-frame throughput proof."
+  ],
+  "v16_conditional_cycles": 50815482,
+  "v17_conditional_cycles": 50741754,
+  "conditional_saved_cycles": 73728,
+  "target_5fps_cycles": 20000000,
+  "h24_shape_only_comparison": {
+    "conditional_cycles": 38718330,
+    "macs": 156114432,
+    "weights": 96900,
+    "biases": 2141,
+    "implemented_trained_or_measured": false,
+    "note": "Reuse unverified cadence/tail assumptions; no accuracy or throughput proof."
+  },
+  "layers": [
+    {
+      "name": "stem.conv",
+      "kind": "stem_regular",
+      "output_hwc": [
+        144,
+        256,
+        16
+      ],
+      "v16_conditional_cycles": 3981341,
+      "v17_conditional_cycles": 3981341,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down2.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        72,
+        128,
+        16
+      ],
+      "v16_conditional_cycles": 1327132,
+      "v17_conditional_cycles": 1327132,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 36864,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down2.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        24
+      ],
+      "v16_conditional_cycles": 1032221,
+      "v17_conditional_cycles": 958493,
+      "conditional_saved_cycles": 73728,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp2.blocks.0.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "v16_conditional_cycles": 884764,
+      "v17_conditional_cycles": 884764,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 27648,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp2.blocks.0.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "v16_conditional_cycles": 516125,
+      "v17_conditional_cycles": 516125,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp2.blocks.1.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "v16_conditional_cycles": 884764,
+      "v17_conditional_cycles": 884764,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 27648,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp2.blocks.1.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "v16_conditional_cycles": 516125,
+      "v17_conditional_cycles": 516125,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp2.out.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        24
+      ],
+      "v16_conditional_cycles": 1179677,
+      "v17_conditional_cycles": 1179677,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down3.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 497692,
+      "v17_conditional_cycles": 497692,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 13824,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down3.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 589853,
+      "v17_conditional_cycles": 589853,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp3.blocks.0.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 442396,
+      "v17_conditional_cycles": 442396,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 13824,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp3.blocks.0.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 294941,
+      "v17_conditional_cycles": 294941,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp3.blocks.1.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 442396,
+      "v17_conditional_cycles": 442396,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 13824,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp3.blocks.1.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 294941,
+      "v17_conditional_cycles": 294941,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp3.blocks.2.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 442396,
+      "v17_conditional_cycles": 442396,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 13824,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp3.blocks.2.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 294941,
+      "v17_conditional_cycles": 294941,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp3.out.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 811037,
+      "v17_conditional_cycles": 811037,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down4.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 248860,
+      "v17_conditional_cycles": 248860,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 6912,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down4.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "v16_conditional_cycles": 405533,
+      "v17_conditional_cycles": 405533,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp4.blocks.0.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 221212,
+      "v17_conditional_cycles": 221212,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 6912,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp4.blocks.0.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 202781,
+      "v17_conditional_cycles": 202781,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp4.blocks.1.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 221212,
+      "v17_conditional_cycles": 221212,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 6912,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp4.blocks.1.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 202781,
+      "v17_conditional_cycles": 202781,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp4.blocks.2.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 221212,
+      "v17_conditional_cycles": 221212,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 6912,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp4.blocks.2.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 202781,
+      "v17_conditional_cycles": 202781,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "csp4.out.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "v16_conditional_cycles": 626717,
+      "v17_conditional_cycles": 626717,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "sppf.squeeze.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        24
+      ],
+      "v16_conditional_cycles": 156701,
+      "v17_conditional_cycles": 156701,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "sppf.out.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "v16_conditional_cycles": 626717,
+      "v17_conditional_cycles": 626717,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "lateral4.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 313373,
+      "v17_conditional_cycles": 313373,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse3_td.reduce.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 1253405,
+      "v17_conditional_cycles": 1253405,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse3_td.block.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 442396,
+      "v17_conditional_cycles": 442396,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 13824,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse3_td.block.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 294941,
+      "v17_conditional_cycles": 294941,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "lateral3.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 405533,
+      "v17_conditional_cycles": 405533,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse2_td.reduce.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        24
+      ],
+      "v16_conditional_cycles": 1622045,
+      "v17_conditional_cycles": 1622045,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse2_td.block.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "v16_conditional_cycles": 884764,
+      "v17_conditional_cycles": 884764,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 27648,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse2_td.block.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "v16_conditional_cycles": 516125,
+      "v17_conditional_cycles": 516125,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down3_bu.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 497692,
+      "v17_conditional_cycles": 497692,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 13824,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down3_bu.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 589853,
+      "v17_conditional_cycles": 589853,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse3_bu.reduce.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 1253405,
+      "v17_conditional_cycles": 1253405,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse3_bu.block.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 442396,
+      "v17_conditional_cycles": 442396,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 13824,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse3_bu.block.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "v16_conditional_cycles": 294941,
+      "v17_conditional_cycles": 294941,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down4_bu.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 248860,
+      "v17_conditional_cycles": 248860,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 6912,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "down4_bu.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "v16_conditional_cycles": 405533,
+      "v17_conditional_cycles": 405533,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse4_bu.reduce.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "v16_conditional_cycles": 1069085,
+      "v17_conditional_cycles": 1069085,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse4_bu.block.dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 221212,
+      "v17_conditional_cycles": 221212,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 6912,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "fuse4_bu.block.pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 202781,
+      "v17_conditional_cycles": 202781,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head2.stem.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "v16_conditional_cycles": 2359325,
+      "v17_conditional_cycles": 2359325,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head2.cls_dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "v16_conditional_cycles": 3538972,
+      "v17_conditional_cycles": 3538972,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 110592,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head2.cls_pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "v16_conditional_cycles": 3244061,
+      "v17_conditional_cycles": 3244061,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head2.cls_out",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        2
+      ],
+      "v16_conditional_cycles": 202780,
+      "v17_conditional_cycles": 202780,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head2.reg_dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "v16_conditional_cycles": 3538972,
+      "v17_conditional_cycles": 3538972,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 110592,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head2.reg_pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "v16_conditional_cycles": 3244061,
+      "v17_conditional_cycles": 3244061,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head2.reg_out",
+      "kind": "pointwise",
+      "output_hwc": [
+        72,
+        128,
+        5
+      ],
+      "v16_conditional_cycles": 405532,
+      "v17_conditional_cycles": 405532,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head3.stem.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 811037,
+      "v17_conditional_cycles": 811037,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head3.cls_dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 884764,
+      "v17_conditional_cycles": 884764,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 27648,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head3.cls_pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 811037,
+      "v17_conditional_cycles": 811037,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head3.cls_out",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        2
+      ],
+      "v16_conditional_cycles": 50716,
+      "v17_conditional_cycles": 50716,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head3.reg_dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 884764,
+      "v17_conditional_cycles": 884764,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 27648,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head3.reg_pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "v16_conditional_cycles": 811037,
+      "v17_conditional_cycles": 811037,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head3.reg_out",
+      "kind": "pointwise",
+      "output_hwc": [
+        36,
+        64,
+        5
+      ],
+      "v16_conditional_cycles": 101404,
+      "v17_conditional_cycles": 101404,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head4.stem.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 313373,
+      "v17_conditional_cycles": 313373,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head4.cls_dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 221212,
+      "v17_conditional_cycles": 221212,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 6912,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head4.cls_pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 202781,
+      "v17_conditional_cycles": 202781,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head4.cls_out",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        2
+      ],
+      "v16_conditional_cycles": 12700,
+      "v17_conditional_cycles": 12700,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head4.reg_dw.conv",
+      "kind": "depthwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 221212,
+      "v17_conditional_cycles": 221212,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 6912,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head4.reg_pw.conv",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "v16_conditional_cycles": 202781,
+      "v17_conditional_cycles": 202781,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    },
+    {
+      "name": "head4.reg_out",
+      "kind": "pointwise",
+      "output_hwc": [
+        18,
+        32,
+        5
+      ],
+      "v16_conditional_cycles": 25372,
+      "v17_conditional_cycles": 25372,
+      "conditional_saved_cycles": 0,
+      "spatial_triplets": 0,
+      "measured_scope": "down2 4x4 only; all other layer shapes are unmeasured"
+    }
+  ]
+}

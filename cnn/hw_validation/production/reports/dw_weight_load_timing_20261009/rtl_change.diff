@@ -1,0 +1,68 @@
+--- frozen/down2_dynamic_tile_runner.v
++++ candidate/down2_dynamic_tile_runner.v
+@@ -69,6 +69,10 @@
+ 	reg signed [7:0]reg_dw_cache [0:255];
+ 	reg signed [7:0]reg_output_cache [0:383];
+ 	reg signed [7:0]reg_dw_weight [0:143];
++	// Commit one edge after validated acceptance; the existing start/storage boundary covers this edge.
++	reg flag_dw_weight_write_pending;
++	reg [7:0]reg_dw_weight_write_address;
++	reg signed [7:0]reg_dw_weight_write_data;
+ 	reg signed [31:0]reg_dw_bias [0:15];
+ 	reg signed [7:0]reg_pw_weight [0:383];
+ 	reg signed [31:0]reg_pw_bias [0:23];
+@@ -222,6 +226,7 @@
+ 	wire flag_multiplier_load_valid;
+ 	wire flag_control_load_valid;
+ 	wire flag_halo_load_write;
++	wire flag_dw_weight_load_write;
+ 	wire flag_dw_cache_load_address_valid;
+ 	wire flag_dw_cache_load_write;
+ 	wire flag_dw_cache_commit_address_valid;
+@@ -335,6 +340,8 @@
+ 	                                ((i_load_addr == 11'd40 || i_load_addr == 11'd41) && (~i_load_data[31]));
+ 	assign flag_halo_load_write = flag_load_accept && (i_load_kind == 3'd0) &&
+ 	                              ((i_load_addr == cnt_expected_halo) || (i_load_addr == 11'd0));
++	assign flag_dw_weight_load_write = flag_load_accept && (i_load_kind == 3'd2) &&
++	                                  ((i_load_addr == cnt_expected_dw_weight) || (i_load_addr == 11'd0));
+ 	assign flag_dw_cache_load_address_valid = (i_load_addr <= 11'd255);
+ 	assign flag_dw_cache_load_write = flag_load_accept && (i_load_kind == 3'd1) &&
+ 	                                  flag_dw_cache_load_address_valid &&
+@@ -767,7 +774,6 @@
+ 					end
+ 					3'd2:begin
+ 						if((i_load_addr == cnt_expected_dw_weight) || (i_load_addr == 11'd0))begin
+-							reg_dw_weight[i_load_addr] <= i_load_data[7:0];
+ 							flag_dw_weight_loaded <= (i_load_addr == 11'd143);
+ 							cnt_expected_dw_weight <= (i_load_addr == 11'd143) ? 8'd0 : i_load_addr + 1'b1;
+ 						end else begin
+@@ -836,6 +842,29 @@
+ 			if(flag_dw_cache_write)begin
+ 				reg_dw_cache[wire_dw_cache_write_address] <= wire_dw_cache_write_data;
+ 			end
++		end
++	end
++
++	// Reset cancels a queued write; memory validity is rebuilt by the unchanged full-load protocol.
++	always@(posedge i_clk or negedge i_rstn)begin
++		if(i_rstn == 1'b0)begin
++			flag_dw_weight_write_pending <= 1'b0;
++			reg_dw_weight_write_address <= 8'd0;
++			reg_dw_weight_write_data <= 8'sd0;
++		end else begin
++			flag_dw_weight_write_pending <= flag_dw_weight_load_write;
++			if(flag_dw_weight_load_write)begin
++				reg_dw_weight_write_address <= i_load_addr[7:0];
++				reg_dw_weight_write_data <= i_load_data[7:0];
++			end
++		end
++	end
++
++	// Single owner: only registered write control/address/data reach the replicated weight storage.
++	always@(posedge i_clk or negedge i_rstn)begin
++		if(i_rstn == 1'b0)begin
++		end else if(flag_dw_weight_write_pending)begin
++			reg_dw_weight[reg_dw_weight_write_address] <= reg_dw_weight_write_data;
+ 		end
+ 	end
+ 

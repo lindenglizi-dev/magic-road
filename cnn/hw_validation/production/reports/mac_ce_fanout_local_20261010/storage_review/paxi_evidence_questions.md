@@ -1,0 +1,31 @@
+# PAXI/DDR evidence questions
+
+Date: 2026-10-10. Status: `integration_release=false`. This is a read-only evidence review; the isolated H1-B model and RTL are mock-boundary evidence, not controller, board, or production evidence.
+
+The current protected DDR sources still match the 2026-10-02 receipt hashes, including `mc_to_user_interface.v`, `ph1p35_324_ddr_wrapper.v`, generated DDR wrapper/XML, and `video_in.v`/`video_out.v`. The relevant receipts are `evaluation/ddr_architecture/ddr_roi_bytes_20261002_v2/receipt.json` (SHA256 `b81f49a7193d3cb8622cea9ad30756ad9047dddeaee159bd5941d5ab2a787355`) and `cnn/hw_validation/ddr/reports/H1B_VALIDATION_RECEIPT.json` (SHA256 `fb9625f68282bf63b13614dbb1a7937a755bccb6b541279e5f884d31ee98f257`).
+
+## Five release questions
+
+| Item | Existing matched evidence | What it proves | Specific missing evidence / question | Release state |
+|---|---|---|---|---|
+| Address unit | The generated/user boundary is 25-bit address and 128-bit data. DDR2 is x16 with BL8. Existing video clients advance their controller address by 8 per 128-bit transfer. H1-B locally applies `byte_addr >> 1`. | A 16-bit-word address interpretation is plausible and internally consistent with the existing video stride. | Which build-matched controller document or board experiment proves that PAXI address bit 0 selects a 16-bit word? Run two or more non-aliasing 16-byte writes/reads at byte addresses whose `>>1` values differ, including both reserved-region boundaries, and record controller addresses and returned bytes. Until then `byte_addr >> 1` is candidate, not frozen fact. | BLOCKED |
+| AW/W timing | The generated IP exposes independent `paxi_awready` and `paxi_wready`. The active wrapper connects real WREADY but reports `O_mc_app_wdf_rdy = paxi_awready`, so upstream does not observe real W acceptance. H1-B mock presents W one cycle after AW acceptance and holds it through mock WREADY. | The mock checks one conservative presentation sequence and payload stability under artificial backpressure. | Provide the build-matched PAXI timing rule: Is the stated two-clock rule a first-presentation deadline or an acceptance deadline? May WREADY remain low beyond it? Must AW precede W, or may AW/W handshake independently? Then capture a real-controller trace covering AWREADY/WREADY independently and correct the wrapper acceptance signal before release. | BLOCKED |
+| Write visibility | PAXI has no AXI B response in the exposed interface. H1-B separates AW/W acceptance from an external `i_commit_confirmed`; its receipt says `commit_event_vendor_proven=false`. | AW/W handshakes are not silently relabeled as persistence or safe read-after-write visibility. | What documented controller event, fence, status bit, or verified readback sequence proves that all write data is visible to a later reader? Define ordering relative to later AR, layer barrier, buffer release, and reset. `i_commit_confirmed` must remain unconnected/low until this event is build-matched and tested. | BLOCKED |
+| No-RREADY return | The active wrapper ties `paxi_rready=1`. `mc_to_user_interface.v` forwards RVALID/data without a return-ready input. PAXI RLAST exists internally, but the wrapper does not forward it and `O_mc_app_rd_data_end` is undriven. | A controller return cannot be backpressured by the current user bridge; a receiving slot must already exist. | Prove the configured number of RVALID beats for each accepted AR, or forward RLAST. Measure real return timing and show `occupied + reserved <= depth` for every cycle, including consumer stalls and cancellation. An unexpected/missing final beat must retain owner and fail closed; mock single-beat RLAST checks do not prove the real IP. | BLOCKED |
+| Reset and late return | H1-B keeps owner until terminal drain and tests mock late-return discard after cancel. It permits hard reset to clear ownership only under the assumption that bridge and endpoint reset together. Current real-controller evidence explicitly lacks reset coordination and late-return measurements. | The local design avoids timeout-based owner release and documents the only condition under which reset could clear state. | With the real controller, assert/deassert reset while AR is presented, after AR acceptance, while AW/W are at each independent handshake state, and while a return is pending. Can any old RVALID/data or write effect appear after local state is cleared? Record the reset domain, minimum reset duration, calibration transition, owner/epoch behavior, and the first legal new request. If old effects can return, hard reset cannot erase reservations without an epoch/owner quarantine. | BLOCKED |
+
+## Existing wrapper defects that remain in scope
+
+- `user_source/hdl_source/mc_to_user_interface.v:46-58` pops the shared FIFO only from the combined command-ready and reported write-data-ready signals; the wrapper combines ARREADY/AWREADY and substitutes AWREADY for WREADY. This can misattribute or drop independently backpressured command/data handshakes.
+- `user_source/hdl_source/ph1p35_ddr/ph1p35_324_ddr_wrapper.v:65-75,96-103` exposes real `paxi_wready` only to an internal wire, permanently asserts `paxi_rready`, does not forward `paxi_rlast`, and leaves `O_mc_app_rd_data_end` without an assignment.
+- H1-B behavior checks passed only against Python and Icarus mocks. Its strict gate remains `delivery_ready=false` with 42 errors, and no TD, encrypted vendor IP, or board run was performed.
+
+## Minimum evidence packet before M4
+
+1. Build/tool/IP identity and hashes for the exact controller instance.
+2. Vendor text or a reproducible real-controller trace answering all five questions above.
+3. A request/owner/reservation trace with AR, AW, W, RVALID, RLAST or exact beat count, reset, cancel, and the real write-visible event.
+4. Negative cases: independent AW/W stalls, full return buffer, cancellation after acceptance, reset with outstanding traffic, missing/extra return, and read-after-write before/after the visibility barrier.
+5. No fixed-N wait, timeout owner release, synthetic commit, or mock-only signal may be used as the production guarantee.
+
+Conclusion: the current materials are useful for defining the probe and identifying wrapper defects, but none of the five production DDR questions is released.

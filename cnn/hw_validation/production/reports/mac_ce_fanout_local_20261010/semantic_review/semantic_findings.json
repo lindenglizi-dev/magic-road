@@ -1,0 +1,282 @@
+{
+  "schema": "road_yolo_semantic_review_v1",
+  "review_date": "2026-10-10",
+  "role": "read_only_semantic_review",
+  "scope": {
+    "baseline": "production/reports/control_operand_hold_20261009/rtl",
+    "candidate": "production/reports/mac_ce_fanout_local_20261010/rtl",
+    "rtl_files_reviewed": [
+      "down2_dynamic_tile_runner.v",
+      "road_down2_dynamic_adapter.v",
+      "road_dynamic_overlap_low_io_top.v",
+      "road_dynamic_postprocess.v",
+      "road_dynamic_requant.v",
+      "road_mac_probe.v",
+      "road_round_shift.v",
+      "silu_shared_unit.v"
+    ],
+    "candidate_change": "Only down2_dynamic_tile_runner.v wire flag_mac_input_accept gains (* max_fanout = 16 *).",
+    "rtl_or_runner_edited_by_reviewer": false,
+    "td_simulation_run_by_reviewer": false
+  },
+  "verdict": {
+    "must_stop_property_experiment": false,
+    "proven_new_functional_defect": false,
+    "semantic_basis": "The attribute is attached to the existing net declaration and does not change its acceptance equation, port, width, state, reset, arithmetic, or handshake semantics. The seven other RTL files are byte-identical to the frozen baseline.",
+    "important_limit": "This is permission to continue an isolated diagnostic, not gate passage, SYN-5025 closure, physical signoff, production readiness, or deployment approval.",
+    "functional_regression_status_at_review": "passed_after_external_sandbox_rerun",
+    "functional_regression_note": "WinError 623 was resolved by the authorized outside-sandbox rerun. simulation_current points to simulation_attempt2, whose four suites each pass 16 cases, 64 total; cycle comparison reports 64 identical full-field rows and 1687 cycles on both sides; mac_sim passes with tasks 119, groups 849, and cycles 1211; all four load-boundary suites pass; shell_rtl passes six tiles and 2304 bytes.",
+    "implementation_status_at_review": "started_in_existing_TD_session_41379_no_result_yet"
+  },
+  "gate_facts": {
+    "baseline": {"errors": 5037, "strict_warnings": 37, "delivery_ready": false},
+    "candidate": {"errors": 5037, "strict_warnings": 37, "delivery_ready": false},
+    "compile_status": "passed",
+    "candidate_parse_errors": 0,
+    "identity_delta": {
+      "added": "VG138 at down2_dynamic_tile_runner.v:165 for the synthesis-attribute integer literal 16",
+      "removed": "COMMENT_COMMENT_PLACEMENT at the same declaration",
+      "unreviewed_new_findings": 0
+    },
+    "classification": "The observed delta is local format/comment identity churn. Existing semantic findings remain separately reviewed below and are not globally reclassified as format."
+  },
+  "findings": [
+    {
+      "id": "CE_ATTRIBUTE_SCOPE",
+      "category": "candidate_change",
+      "objects": ["down2_dynamic_tile_runner.flag_mac_input_accept"],
+      "legal_range": "1 bit, 0 or 1; its Boolean assignment is unchanged.",
+      "protection": "scope_check.json requires exactly one changed RTL file, exactly one attribute occurrence, and byte identity after replacing the attributed declaration with the original declaration.",
+      "counterexample": "Any changed assignment, additional changed RTL byte, port/reset/II change, or more than one attribute occurrence.",
+      "status": "proven_scope_only",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG109_COMBINATIONAL_DEFAULTS",
+      "category": "VG109",
+      "objects": [
+        "down2_dynamic_tile_runner next_* and flag_cnt_output_* combinational controls",
+        "road_dynamic_overlap_low_io_top state_next and transfer-driven next state",
+        "road_dynamic_postprocess flag_select_valid, selection fields, and flag_bad_parameters"
+      ],
+      "legal_range": "All combinational outputs are assigned a default before conditional overrides; state_next defaults to state_current; sequential registers intentionally retain their value when no enable/handshake fires.",
+      "protection": "Default-first combinational structure and explicit sequential hold semantics cover the VG109 conditional sites, including runner kernel/halo generation, start/MAC/export control, top RX/table/load/export/TX/status transitions, and postprocess lane/activation/accept selection.",
+      "counterexample": "A reachable branch that skips both a default and an override for a combinational result, or an unintended level-sensitive storage element in elaboration.",
+      "status": "reviewed_no_functional_defect_proven",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG122_RUNNER_PARAMETERS",
+      "category": "VG122",
+      "objects": [
+        "down2_dynamic_tile_runner.wire_parameter_base",
+        "down2_dynamic_tile_runner.wire_parameter_beta",
+        "down2_dynamic_tile_runner.wire_parameter_gamma"
+      ],
+      "legal_range": "PW: base 16..37, beta 17..38, gamma 18..39. DW: accepted base 0..15, beta 1..16, gamma 2..17. All fit 6 bits and the 40-entry parameter arrays.",
+      "protection": "PW channel base is derived from output group 0..7. DW lane/base generation stays in 0..15. The adapter rejects PW base >21 and rejects DW mask/base combinations that could exceed channel 15; rejected shapes propagate fault and are not published as normal output.",
+      "counterexample": "A normal non-fault transaction indexes gamma above 39 or wraps a 6-bit addition.",
+      "status": "proven_bounded",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG122_RUNNER_RING_AND_WORK_COUNTERS",
+      "category": "VG122",
+      "objects": [
+        "ptr_pw_meta_read/write",
+        "cnt_pw_meta",
+        "cnt_dw_writes",
+        "cnt_pw_writes",
+        "cnt_dw_post_lane",
+        "cnt_position",
+        "cnt_mac_group",
+        "cnt_export",
+        "cnt_output"
+      ],
+      "legal_range": "Ring pointers are modulo 4; meta occupancy 0..4; DW writes 0..256; PW writes 0..384; DW post lane 0..2; position 0..15; MAC group PW 0..1 and DW 0..2; export 0..383; output PW 0..7 and DW 0..15.",
+      "protection": "Reserve uses cnt_pw_meta < 4 or same-cycle pop; pop requires nonzero metadata. Terminal comparisons drain at the exact write totals. Lane/group/position/output/export increments are suppressed or cleared on their terminal value. Pointer wrap is intentional modulo queue depth.",
+      "counterexample": "Push at occupancy 4 without simultaneous pop, pop at 0, or increment after a terminal value so that a control-visible wrap changes task identity.",
+      "status": "proven_bounded_by_handshake_and_terminal_guards",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG122_RUNNER_TELEMETRY",
+      "category": "VG122",
+      "objects": ["32-bit preload/wait/active/export diagnostic counters"],
+      "legal_range": "0..2^32-1; current fixed tile execution is far below wrap.",
+      "protection": "Counters are observation outputs and are reset/cleared at their documented boundaries; they do not select arithmetic data or queue addresses.",
+      "counterexample": "An uninterrupted interval of at least 2^32 counted events would wrap telemetry; this would be a measurement-integrity issue, not a demonstrated current data-path fault.",
+      "status": "bounded_for_current_tile_evidence_long_run_wrap_not_formally_excluded",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG122_ADAPTER_CHANNELS",
+      "category": "VG122",
+      "objects": ["road_down2_dynamic_adapter.wire_channel_beta", "road_down2_dynamic_adapter.wire_channel_gamma"],
+      "legal_range": "PW accepted base <=21 gives gamma <=23; DW accepted bases are <=15, <=14, or <=13 according to one-hot lane mask, giving a valid selected channel <=15.",
+      "protection": "flag_shape_fault explicitly covers invalid layer/mask/base combinations and is ORed into i_input_fault for ordered fault handling.",
+      "counterexample": "An invalid channel combination reaching normal retirement without fault.",
+      "status": "proven_guarded",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG122_TOP_COUNTERS",
+      "category": "VG122",
+      "objects": ["road_dynamic_overlap_low_io_top.reg_table_addr", "road_dynamic_overlap_low_io_top.cnt_status_index"],
+      "legal_range": "Table address 0..1023; status index 0..30.",
+      "protection": "Table address increments only on table transfer and not at 1023. Status index increments only during status send and not at 30; terminal transfers advance state instead.",
+      "counterexample": "A transfer at the terminal value that also increments the counter.",
+      "status": "proven_bounded",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG122_POSTPROCESS_QUEUES",
+      "category": "VG122",
+      "objects": [
+        "road_dynamic_postprocess.reg_ingress_count",
+        "reg_retire_count",
+        "reg_meta_count",
+        "reg_pre_inflight",
+        "reg_post_inflight",
+        "ingress/retire/meta ring pointers"
+      ],
+      "legal_range": "Ingress occupancy 0..2; retire occupancy 0..8; meta occupancy 0..8; each inflight count is at most 24 (8 tasks times up to 3 lanes), fitting 5 bits; pointers intentionally wrap at their storage depth.",
+      "protection": "Input ready requires ingress <2 and retire <8. SiLU admission requires meta <8. Pops/completions are derived from corresponding valid tokens. Fatal cancellation clears counts and valid maps.",
+      "counterexample": "Acceptance with a full corresponding queue and no same-cycle release, completion without a token, or 32 outstanding lane operations.",
+      "status": "reviewed_bounded_no_reachable_wrap_found",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG122_MAC_QUEUES",
+      "category": "VG122",
+      "objects": ["road_mac_probe.cnt_reserved", "road_mac_probe.cnt_result_count", "road_mac_probe.ptr_result_read/write"],
+      "legal_range": "Reserved and result occupancy 0..4; pointers modulo 4.",
+      "protection": "A first-group accept reserves a slot; input_ready permits a new task only below four reservations or with a same-cycle result pop. Result valid requires nonzero result count; write occurs only on final-valid.",
+      "counterexample": "Fifth independent first-group accept without same-cycle pop, or result pop at zero.",
+      "status": "proven_bounded_by_reservation_protocol",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG122_SILU",
+      "category": "VG122",
+      "objects": ["silu_shared_unit.cnt_table_expected", "silu_shared_unit.cnt_pending", "silu_shared_unit.reg_lookup_address"],
+      "legal_range": "Expected table address 0..1023 then returns to 0; pending samples fit the fixed pipeline in 3 bits; active lookup after divide-by-four/RNE is 0..1024, with 1024 explicitly handled as UPPER_VALUE.",
+      "protection": "Strict sequential table-address checking, table-last guard, a common pipeline enable that freezes all stages under output backpressure, tail flags for inputs <=-2048 and >=2048, and an explicit address-1024 bypass.",
+      "counterexample": "A valid non-tail sample producing lookup <0 or >1024, pending increment while the full pipeline is frozen, or table expected increment after 1023.",
+      "status": "reviewed_no_reachable_wrap_found",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG141_MULTIPLE_DRIVER",
+      "category": "VG141",
+      "objects": ["all eight reviewed RTL files", "road_dynamic_postprocess.reg_retire_fault"],
+      "legal_range": "One procedural owner per register/net. Whole-vector and bit-select writes to reg_retire_fault occur in the same clocked process.",
+      "protection": "The gate reports VG141 passed/not applicable, and manual ownership tracing found no second always block or continuous/procedural collision for the highlighted state.",
+      "counterexample": "The same state bit driven by two independent processes or by both a primitive/continuous source and procedural assignment.",
+      "status": "passed_and_manually_confirmed_for_high_risk_object",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG153_UNDRIVEN_RTL",
+      "category": "VG153",
+      "objects": ["runner.lane_index", "postprocess.check_lane", "postprocess.reg_retire_fault", "adapter unresolved_actual"],
+      "legal_range": "Loop integers are assigned by for-loop initialization/update; reg_retire_fault is reset/cleared/set in one clocked process; the unresolved adapter actual corresponds to an intentionally open child output rather than a consumed undriven input.",
+      "protection": "Direct source ownership is visible in the frozen RTL and compile/elaboration succeeds.",
+      "counterexample": "A loop variable read outside its initialized iteration, a consumed open input, or a state bit without procedural ownership.",
+      "status": "checker_false_positive_or_intentional_open_for_four_findings",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "VG153_ERAM_OUTPUT",
+      "category": "VG153",
+      "objects": ["silu_shared_unit.wire_table_read_data", "PH1P_LOGIC_ERAM_Inst_silu_table.doa"],
+      "legal_range": "20-bit primitive output; the module consumes bits 15:0 only.",
+      "protection": "wire_table_read_data is connected to the ERAM doa output. All active A-port inputs are explicitly connected; B port is explicitly disabled; unused primitive outputs are intentionally open.",
+      "counterexample": "The mapped primitive does not own doa, or synthesis replaces it with a zeroed/unclocked source contrary to the primitive contract.",
+      "status": "rtl_driver_located_primitive_mapping_contract_still_vendor_bound",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "SYN5025_ZEROING",
+      "category": "synthesis_warning",
+      "objects": ["all pins/nets referred to by SYN-5025", "six state_next_b22/state_next_b16 dead records"],
+      "legal_range": "A functionally loaded input/control/data/address/write-enable must have a real driver. A dead net with PINS=0 and DRIVER=0 may be removed without becoming evidence about mapped primitive inputs.",
+      "protection": "The elaborated-net query found loaded=[] and only six PINS 0 / DRIVER 0 state_next records. RTL inspection locates explicit ERAM active-port connections.",
+      "counterexample": "Any queried object with PINS>0 and DRIVER_COUNT=0, especially a valid/enable, MAC operand, weight/bias, RAM address/data/write-enable, or active primitive mode pin.",
+      "status": "pending_mapped_object_identification_not_closed",
+      "blocks_property_experiment": false,
+      "blocks_production_or_deployment_if_unresolved": true,
+      "non_generalization_rule": "The six unloaded state_next nets cannot be generalized to primitive pins or to every object covered by the generic warning."
+    },
+    {
+      "id": "CLOCK_GENERATED_MASTER_WARNING",
+      "category": "clock_integrity",
+      "objects": ["unnamed generated clock reported disconnected from its master", "probe_clk"],
+      "legal_range": "Every sequential endpoint in the diagnostic shell must be clocked by the intended 100 MHz probe_clk, and any functional generated clock must have an identifiable source/master relationship.",
+      "protection": "clock_summary_debug reports probe_clk as the sole primary clock with 5550 clock endpoints and zero nonclock endpoints; check_timing reports no-clock=0, multi-clock leaf=0, internal-network clock=0, and one local clock.",
+      "counterexample": "The unnamed generated clock owns a functional endpoint, gates an active primitive, or represents an intended clock domain whose master is absent.",
+      "status": "pending_name_source_master_and_endpoint_query",
+      "blocks_property_experiment": false,
+      "blocks_signoff_if_functional": true
+    },
+    {
+      "id": "CLOCK_DUMMY_NODES",
+      "category": "clock_integrity",
+      "objects": ["PH1P_PHY_DSPSIOU_V2 mul9_mode/mul9_signed dummy nodes", "PH1P_PHY_LSLICE _al_n1_syn_752.ofb"],
+      "legal_range": "A dummy/dangling node may be harmless only if it is an unused configuration/model artifact and has no functional load or timing endpoint.",
+      "protection": "The timing report names the model classes, while ordinary sequential endpoints remain assigned to probe_clk.",
+      "counterexample": "A dummy node drives a live DSP mode/signedness decision or a loaded logic path.",
+      "status": "pending_mapped_load_and_primitive_semantics_query",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "PHY5089_ABNORMAL_PATHS",
+      "category": "routing_timing",
+      "objects": ["44 final abnormal path endpoints reported after routing"],
+      "legal_range": "All internal setup/hold/recovery/removal paths used for signoff must be analyzed rather than skipped.",
+      "protection": "The exported abnormal targets show probe_clk on launch/capture; constraints contain no timing exceptions. Existing analysis separates external zero-delay diagnostic IO from internal endpoints.",
+      "counterexample": "A skipped abnormal path is internal and functionally reachable, or candidate physical export omits it from the failed-endpoint accounting.",
+      "status": "physical_diagnostic_pending_not_an_rtl_semantic_counterexample",
+      "blocks_property_experiment": false,
+      "blocks_signoff_if_internal_unaccounted": true
+    },
+    {
+      "id": "RUNPY_BINDING_AND_STAGE",
+      "category": "runner_review",
+      "objects": ["mac_ce_fanout_local_20261010/run.py ROOT/BASE/frozen/scope/gate_compare/functional/finish"],
+      "legal_range": "Writes remain under candidate ROOT; BASE and helper inputs remain read-only/frozen; the property experiment starts only after exact scope and gate-delta review; finish consumes complete receipts and source hashes.",
+      "protection": "path_bindings.json binds every imported module ROOT to the candidate; frozen_check reports changed=[]; scope enforces eight files and one exact attribute-only change; gate_compare reads top-level issues/checks and rejects unreviewed added identities; functional calls scope and gate_compare before simulations; exceptions create a failure receipt and stop the stage.",
+      "counterexample": "A helper writes through a stale ROOT, a baseline/dependency hash changes, gate JSON shape differs, an unreviewed finding is added, or finish succeeds with a missing/failed functional receipt.",
+      "status": "entrypoint_structure_reviewed_no_scope_escape_found",
+      "blocks_property_experiment": false
+    },
+    {
+      "id": "RUNPY_UNDRIVEN_FINISH_BOUNDARY",
+      "category": "runner_review",
+      "objects": ["run.py finish() undriven receipt check"],
+      "legal_range": "An undriven receipt should make its limited scope explicit and should never be interpreted as complete mapped-primitive proof.",
+      "protection": "finish requires loaded=[], verifies source hashes, requires the exact incomplete-scope string, and requires every record to contain PINS 0 DRIVER 0.",
+      "counterexample": "A future receipt changes scope, contains a loaded object, contains a record other than PINS 0 DRIVER 0, or is used as if its explicitly incomplete elaborated-net scope covered all mapped primitive pins.",
+      "status": "entrypoint_assurance_gap_fixed_scope_still_intentionally_incomplete",
+      "blocks_property_experiment": false,
+      "blocks_claiming_syn5025_closed": true,
+      "required_interpretation": "Current finish now requires the exact incomplete-scope string and requires every record to contain PINS 0 DRIVER 0. This fixes the runner-entry guarantee identified by review, but the receipt scope itself remains deliberately incomplete and cannot close primitive-pin zeroing."
+    }
+  ],
+  "stop_conditions": [
+    "A candidate RTL difference beyond the one max_fanout attribute declaration.",
+    "A later functional regression mismatch, handshake/order/fault/cycle regression, or invalidation of the currently passing receipts.",
+    "A loaded undriven mapped object on active control, operand, weight, bias, RAM address/data/write-enable, or primitive mode input.",
+    "A functional endpoint owned by the disconnected generated clock.",
+    "A new unreviewed gate identity other than the already reviewed local VG138 attribute-format finding.",
+    "A frozen dependency/hash/path-binding failure."
+  ],
+  "review_boundary": {
+    "experiment_may_continue": true,
+    "strict_gate_waived": false,
+    "syn5025_closed": false,
+    "clock_warning_closed": false,
+    "production_ready": false,
+    "deployment_ready": false
+  }
+}

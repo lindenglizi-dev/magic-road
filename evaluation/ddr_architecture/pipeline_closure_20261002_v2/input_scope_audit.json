@@ -1,0 +1,875 @@
+{
+  "status": "PASS_interface_and_actual_elaboration",
+  "historical_interface": {
+    "module": "ccl_pipeline_trial_top",
+    "parameter_defaults": {
+      "WIDTH": "129",
+      "HEIGHT": "8",
+      "X_WIDTH": "8",
+      "Y_WIDTH": "4",
+      "ID_WIDTH": "32",
+      "LABEL_WIDTH": "8",
+      "MAX_LABEL": "128",
+      "MAX_RUN": "64",
+      "AREA_WIDTH": "16",
+      "MIN_RUN_LENGTH": "1",
+      "MIN_AREA": "1"
+    },
+    "ports": {
+      "clk": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "rst_n": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "task_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "task_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "task_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "task_frame_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "in_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "in_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "in_task_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "in_y": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[Y_WIDTH-1:0]"
+      },
+      "in_pixel": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "in_last": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "in_frame_last": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "cancel": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "rejected_input": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "candidate_valid": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "candidate_success": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "candidate_reason": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[7:0]"
+      },
+      "candidate_count": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[2:0]"
+      },
+      "candidate_task_id": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "candidate_frame_id": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "candidate_release": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "candidate_release_blocked": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "read_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "read_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "read_index": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[1:0]"
+      },
+      "response_valid": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "1"
+      },
+      "response_ready": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "response_index": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[1:0]"
+      },
+      "response_label": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[LABEL_WIDTH-1:0]"
+      },
+      "response_xmin": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[X_WIDTH-1:0]"
+      },
+      "response_xmax": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[X_WIDTH-1:0]"
+      },
+      "response_ymin": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[Y_WIDTH-1:0]"
+      },
+      "response_ymax": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[Y_WIDTH-1:0]"
+      },
+      "response_area": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[AREA_WIDTH-1:0]"
+      },
+      "response_task_id": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "response_frame_id": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "processed_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "processed_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "processed_task_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "processed_frame_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "processed_count": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[2:0]"
+      },
+      "accepted_count": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[2:0]"
+      },
+      "processed_error": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "final_valid": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "final_success": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "1"
+      },
+      "final_reason": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[7:0]"
+      },
+      "final_candidate_count": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[2:0]"
+      },
+      "final_processed_count": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[2:0]"
+      },
+      "final_accepted_count": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[2:0]"
+      },
+      "final_task_id": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "final_frame_id": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "display_commit_ack": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "failure_ack": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "algorithm_release": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "banks_empty": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "abort_active": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "core_reset_active": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "1"
+      }
+    },
+    "sha256": "0ae08849d753ba561b31081b12252b36eb47ca5022bb3de35f807fab6ac346cd"
+  },
+  "current_interface": {
+    "module": "ccl_pipeline_trial_top",
+    "parameter_defaults": {
+      "WIDTH": "129",
+      "HEIGHT": "8",
+      "X_WIDTH": "8",
+      "Y_WIDTH": "4",
+      "ID_WIDTH": "32",
+      "LABEL_WIDTH": "8",
+      "MAX_LABEL": "128",
+      "MAX_RUN": "64",
+      "AREA_WIDTH": "16",
+      "MIN_RUN_LENGTH": "1",
+      "MIN_AREA": "1"
+    },
+    "ports": {
+      "clk": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "rst_n": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "task_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "task_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "task_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "task_frame_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "in_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "in_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "in_task_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "in_y": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[Y_WIDTH-1:0]"
+      },
+      "in_pixel": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "in_last": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "in_frame_last": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "cancel": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "rejected_input": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "candidate_valid": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "candidate_success": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "candidate_reason": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[7:0]"
+      },
+      "candidate_count": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[2:0]"
+      },
+      "candidate_task_id": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "candidate_frame_id": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "candidate_release": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "candidate_release_blocked": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "read_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "read_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "read_index": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[1:0]"
+      },
+      "response_valid": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "1"
+      },
+      "response_ready": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "response_index": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[1:0]"
+      },
+      "response_label": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[LABEL_WIDTH-1:0]"
+      },
+      "response_xmin": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[X_WIDTH-1:0]"
+      },
+      "response_xmax": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[X_WIDTH-1:0]"
+      },
+      "response_ymin": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[Y_WIDTH-1:0]"
+      },
+      "response_ymax": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[Y_WIDTH-1:0]"
+      },
+      "response_area": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[AREA_WIDTH-1:0]"
+      },
+      "response_task_id": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "response_frame_id": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "processed_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "processed_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "processed_task_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "processed_frame_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "processed_count": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[2:0]"
+      },
+      "accepted_count": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[2:0]"
+      },
+      "processed_error": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "object_done_valid": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "object_done_ready": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "object_task_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "object_frame_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "object_done_index": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[1:0]"
+      },
+      "object_accepted": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "final_valid": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "final_success": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "1"
+      },
+      "final_reason": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[7:0]"
+      },
+      "final_candidate_count": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[2:0]"
+      },
+      "final_processed_count": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[2:0]"
+      },
+      "final_accepted_count": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "[2:0]"
+      },
+      "final_task_id": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "final_frame_id": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "display_commit_ack": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "display_ack_task_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "display_ack_frame_id": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "[ID_WIDTH-1:0]"
+      },
+      "commit_valid": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "commit_ready": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "failure_ack": {
+        "direction": "input",
+        "kind": "wire",
+        "width": "1"
+      },
+      "algorithm_release": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "banks_empty": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "abort_active": {
+        "direction": "output",
+        "kind": "wire",
+        "width": "1"
+      },
+      "core_reset_active": {
+        "direction": "output",
+        "kind": "reg",
+        "width": "1"
+      }
+    },
+    "sha256": "4796492c310fc78b39979c862513d27ad02947dd28b73edb5dc631f7f1b46809"
+  },
+  "intentional_functional_additions": [
+    "commit_ready",
+    "commit_valid",
+    "display_ack_frame_id",
+    "display_ack_task_id",
+    "object_accepted",
+    "object_done_index",
+    "object_done_ready",
+    "object_done_valid",
+    "object_frame_id",
+    "object_task_id"
+  ],
+  "original_ports_unchanged": true,
+  "defaults_unchanged": true,
+  "strict_formatter_status": "separate_not_passed",
+  "compiled_variants": [
+    {
+      "variant": "baseline",
+      "input_modules": [
+        "ccl_pipeline_trial_top",
+        "ccl_pixel_line_banks",
+        "ccl_raw_run_table",
+        "ccl_rle_stream_core",
+        "ccl_task_guard",
+        "feature_table",
+        "frame_resolver",
+        "label_manager",
+        "labeled_run_table",
+        "object_frame_store",
+        "row_matcher",
+        "run_detector",
+        "top4_selector"
+      ],
+      "elaborated_modules": [
+        "ccl_pipeline_trial_top",
+        "ccl_pixel_line_banks",
+        "ccl_raw_run_table",
+        "ccl_rle_stream_core",
+        "ccl_task_guard",
+        "feature_table",
+        "frame_resolver",
+        "label_manager",
+        "labeled_run_table",
+        "object_frame_store",
+        "row_matcher",
+        "run_detector",
+        "top4_selector"
+      ],
+      "commands": [
+        {
+          "argv": [
+            "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.exe",
+            "-g2001",
+            "-Wall",
+            "-s",
+            "ccl_pipeline_trial_top",
+            "-o",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\ddr_architecture\\pipeline_closure_20261002_v2\\baseline\\design.vvp",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\run_detector.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\labeled_run_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\label_manager.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\feature_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\frame_resolver.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\top4_selector.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\object_frame_store.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_pixel_line_banks.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_task_guard.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_raw_run_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_rle_stream_core.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_pipeline_trial_top.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\row_matcher.v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.exe",
+            "-g2012",
+            "-Wall",
+            "-s",
+            "tb_ddr_pipeline",
+            "-o",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\ddr_architecture\\pipeline_closure_20261002_v2\\baseline\\simulation.vvp",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\tb_ddr_pipeline.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\run_detector.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\labeled_run_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\label_manager.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\feature_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\frame_resolver.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\top4_selector.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\object_frame_store.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_pixel_line_banks.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_task_guard.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_raw_run_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_rle_stream_core.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_pipeline_trial_top.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\row_matcher.v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "E:\\project\\qiansai\\.tools\\iverilog\\bin\\vvp.exe",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\ddr_architecture\\pipeline_closure_20261002_v2\\baseline\\simulation.vvp"
+          ],
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "variant": "optimized",
+      "input_modules": [
+        "ccl_pipeline_trial_top",
+        "ccl_pixel_line_banks",
+        "ccl_raw_run_table",
+        "ccl_rle_stream_core",
+        "ccl_task_guard",
+        "feature_table",
+        "frame_resolver",
+        "label_manager",
+        "labeled_run_table",
+        "object_frame_store",
+        "row_matcher",
+        "run_detector",
+        "top4_selector"
+      ],
+      "elaborated_modules": [
+        "ccl_pipeline_trial_top",
+        "ccl_pixel_line_banks",
+        "ccl_raw_run_table",
+        "ccl_rle_stream_core",
+        "ccl_task_guard",
+        "feature_table",
+        "frame_resolver",
+        "label_manager",
+        "labeled_run_table",
+        "object_frame_store",
+        "row_matcher",
+        "run_detector",
+        "top4_selector"
+      ],
+      "commands": [
+        {
+          "argv": [
+            "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.exe",
+            "-g2001",
+            "-Wall",
+            "-s",
+            "ccl_pipeline_trial_top",
+            "-o",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\ddr_architecture\\pipeline_closure_20261002_v2\\optimized\\design.vvp",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\run_detector.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\labeled_run_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\label_manager.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\feature_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\frame_resolver.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\top4_selector.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\object_frame_store.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_pixel_line_banks.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_task_guard.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_raw_run_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_rle_stream_core.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_pipeline_trial_top.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\row_matcher.v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.exe",
+            "-g2012",
+            "-Wall",
+            "-s",
+            "tb_ddr_pipeline",
+            "-o",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\ddr_architecture\\pipeline_closure_20261002_v2\\optimized\\simulation.vvp",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\tb_ddr_pipeline.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\run_detector.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\labeled_run_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\label_manager.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\feature_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\frame_resolver.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\top4_selector.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\user_source\\hdl_source\\road_vision\\object_frame_store.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_pixel_line_banks.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_task_guard.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_raw_run_table.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_rle_stream_core.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\ccl_pipeline_trial_top.v",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tests\\experimental_ddr_ccl\\row_matcher.v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "E:\\project\\qiansai\\.tools\\iverilog\\bin\\vvp.exe",
+            "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\ddr_architecture\\pipeline_closure_20261002_v2\\optimized\\simulation.vvp"
+          ],
+          "exit_code": 0
+        }
+      ]
+    }
+  ],
+  "formatting_fix_nonwhitespace_equal": true
+}

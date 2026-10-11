@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-05",
+  "authorized_workflow": "supervised_first_then_evidence_gated_distillation",
+  "refreeze_receipt": "cnn/releases/RoadYOLO-S4-512_20261005_before_supervised5/refreeze_receipt.json",
+  "initial_checkpoint_sha256": "17c3cd644bd80a5f66e24eb3f510126fbb5db5bbb302e39250d78d339b6e5d42",
+  "baseline_process": {
+    "actual_pid_at_launch_check": 33568,
+    "redirector_pid": 13436,
+    "mode": "CPU_full_development_validation",
+    "report": "cnn/reports/supervised5_baseline_20261005/epoch7_full_val.json",
+    "stdout": "cnn/reports/supervised5_baseline_20261005/full_val.stdout.log",
+    "stderr": "cnn/reports/supervised5_baseline_20261005/full_val.stderr.log",
+    "note": "PID records describe this launch, not a guarantee that the process remains alive"
+  },
+  "training": {
+    "data": "existing VisDrone development train/val split; not new ground-road data",
+    "cache": "cnn/data/cache_road_recovery_20261003",
+    "mosaic": false,
+    "additional_epochs": 5,
+    "global_epoch_start": 7,
+    "global_epoch_target": 12,
+    "initialization": "independent output, original full optimizer/scaler/RNG and 40-epoch schedule continuation",
+    "save_each_epoch": true,
+    "distillation": false,
+    "start_gates": ["full epoch7 baseline valid", "new current-source GPU AMP resume equivalence proof", "independent protection ready"]
+  },
+  "evaluation_after_five": {
+    "full_validation_images": 5151,
+    "old_subset_images": 256,
+    "comparison": "same dataset, truth, ignore regions, preprocessing and fixed postprocessing as the archived epoch7 baseline",
+    "continuation_gate": "in both sets, person AP50 improvement at least 1 percentage point and vehicle AP50 change at least -1 percentage point",
+    "gate_scope": "predeclared development heuristic, not statistical significance or formal acceptance",
+    "continue_to_additional_10_15_20": "only after completed comparison evidence; no unconditional continuation",
+    "teacher": "same-set evaluation before any separate distillation experiment; predictions do not replace truth"
+  },
+  "sparse_ground_scene_policy": {
+    "purpose": "future training supplement and explicitly bounded demonstration",
+    "selection": "predeclare camera family, scene and target-density rules before scoring; keep scene-isolated holdout",
+    "forbidden_claim": "a selected demonstration clip with 100 percent observed recall proves neither universal recall nor formal acceptance",
+    "intersection_flow": "excluded from this training due to unresolved label and split contract, not merely its target count"
+  },
+  "formal_acceptance": false,
+  "rtl_changes": false
+}

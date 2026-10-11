@@ -1,0 +1,5377 @@
+--- installed/scripts/__init__.py
++++ project/scripts/__init__.py
+@@ -1 +1,4 @@
+-"""readable-verilog-generator 的脚本包根。"""
++"""Project-local rule fixes; all other runtime modules remain upstream."""
++from pkgutil import extend_path
++
++__path__ = extend_path(__path__, __name__)
+--- installed/scripts/python/__init__.py
++++ project/scripts/python/__init__.py
+@@ -1 +1,4 @@
+-"""按工作流域划分的 Python 入口集合。"""
++"""Extend the original runtime without modifying the installed package."""
++from pkgutil import extend_path
++
++__path__ = extend_path(__path__, __name__)
+--- installed/scripts/python/quality/formatter_backend/__init__.py
++++ project/scripts/python/quality/formatter_backend/__init__.py
+@@ -1,18 +1,20 @@
+-"""汇总 Verilog formatter 后端的公开入口。"""
++"""Project-local formatter front-end fixes over the installed backend."""
+ 
+-# 后端协议和默认实现保持旧导入路径兼容。
++from pkgutil import extend_path
++
++__path__ = extend_path(__path__, __name__)
++
+ from .base import FormatterBackend
+ from .builtin_backend import BuiltinFormatterBackend
+ from .engine import VerilogFormatterEngine, VerilogFormatterError
+ from .factory import create_backend
+ from .format_routing import FormatRouteResult
+ 
+-# __all__ 明确暴露 formatter backend 的稳定 API 名称。
+ __all__ = [
+-    "FormatterBackend",  # 抽象后端协议
+-    "BuiltinFormatterBackend",  # 随包 formatter 默认实现
+-    "VerilogFormatterEngine",  # 具体解析和渲染引擎
+-    "VerilogFormatterError",  # formatter 层统一异常
+-    "FormatRouteResult",  # 路由阶段结果模型
+-    "create_backend",  # 后端工厂入口
++    "FormatterBackend",
++    "BuiltinFormatterBackend",
++    "VerilogFormatterEngine",
++    "VerilogFormatterError",
++    "FormatRouteResult",
++    "create_backend",
+ ]
+--- installed/scripts/python/quality/formatter_backend/parse_mixin.py
++++ project/scripts/python/quality/formatter_backend/parse_mixin.py
+@@ -1,1884 +1,59 @@
+-"""为 VerilogFormatterEngine 提供模块、参数和端口声明解析辅助。"""
++"""Narrow parser adaptations layered on the installed formatter parser."""
+ 
+-# future annotations 让 mixin 拆分后的类型提示继续延迟求值。
+ from __future__ import annotations
+ 
+-# 正则、时间兼容字段和路径兼容字段都服务于旧版解析入口。
++import importlib.util
+ import re
+-from datetime import datetime
++import sys
+ from pathlib import Path
+-from typing import Iterable
+ 
+-# banner 工具负责识别和复用现有的模块头分组注释样式。
+-from .banners import display_width, extract_banner_title, is_banner_line, make_banner
+ 
+-# formatter 声明模型第一组承载参数与端口声明的核心结构。
+-from .models import (
+-    VerilogFormatterError,
+-    ParamDecl,
+-    ParamRenderCluster,
+-)
++def _load_upstream_module():
++    """Load the installed implementation under a private sibling name."""
+ 
+-# formatter 声明模型第二组承载端口布局和信号声明的辅助结构。
+-from .models import (
+-    PortDecl,
+-    PortLayoutInfo,
+-    SignalDecl,
+-)
++    path_current = Path(__file__).resolve()
++    package = sys.modules[__package__]
++    for path_entry in package.__path__:
++        path_candidate = (Path(path_entry) / path_current.name).resolve()
++        if path_candidate == path_current or not path_candidate.is_file():
++            continue
++        str_name = f"{__package__}._installed_parse_mixin"
++        spec = importlib.util.spec_from_file_location(str_name, path_candidate)
++        if spec is None or spec.loader is None:
++            break
++        module = importlib.util.module_from_spec(spec)
++        sys.modules[str_name] = module
++        spec.loader.exec_module(module)
++        return module
++    raise ImportError("installed formatter parse_mixin.py was not found")
+ 
+-# formatter 声明模型第三组承载模块头元数据。
+-from .models import (
+-    HeaderMetadata,
+-)
+ 
+-# formatter 布局模型承载输出、赋值和实例信号的布局辅助结构。
+-from .models import (
+-    OutputSignalLayout,
+-    AssignSourceLayout,
+-    InstanceSignalLayout,
+-    AssignStmt,
+-    LValueRef,
+-)
++_upstream = _load_upstream_module()
+ 
+-# formatter 语句块模型第一组承载主体和 case 结构。
+-from .models import (
+-    BodyBlock,
+-    CaseItem,
+-    ControlNode,
+-)
+ 
+-# formatter 语句块模型第二组承载过程块和实例块结构。
+-from .models import (
+-    AlwaysBlock,
+-    InstanceBlock,
+-    GenerateBlock,
+-)
++class ParseMixin(_upstream.ParseMixin):
++    """Accept two legal source shapes before delegating to the original parser."""
+ 
+-# formatter 语句块模型第三组承载其余原样保留或条件编译结构。
+-from .models import (
+-    InitialBlock,
+-    FunctionBlock,
+-    RawBlock,
+-    PreprocessorConditional,
+-)
++    def _parse_module(self, source: str):
++        """Normalize a bare zero-port module header to its equivalent ``()`` form."""
+ 
+-# 文本读取工具保留给旧继承入口，避免拆分 mixin 后改变可导入符号集合。
+-from .textio import read_verilog_text
++        str_normalized = re.sub(
++            r"(?m)^(?P<prefix>[ \t]*module[ \t]+[A-Za-z_]\w*[ \t]*);",
++            r"\g<prefix>();",
++            source,
++            count=1,
++        )
++        return super()._parse_module(str_normalized)
+ 
+-# 维护模块头、参数和端口等声明区域的解析辅助逻辑。
+-class ParseMixin:
+-    """维护模块、参数、端口和声明文本的结构化解析逻辑。"""
++    def _split_always_header(self, text: str) -> tuple[str, str]:
++        """Split a simple periodic ``always #value`` control or use the original path."""
+ 
+-    # 按 module/endmodule 边界切分多模块源码片段。
+-    def _split_module_sections(self, source: str) -> list[dict[str, object]]:
+-        """
+-        把源码切分成若干个完整模块片段及其前置注释。
+-
+-        参数:
+-            source: 原始 Verilog 源码全文。
+-        返回:
+-            list[dict[str, object]]: 每个元素包含模块原文和紧邻其前的行注释列表。
+-        异常:
+-            VerilogFormatterError: 源码中找不到任何 module 声明时抛出。
+-        """
+-
+-        # 编译跨多行 module/endmodule 片段匹配模式。
+-        pattern_module: re.Pattern[str] = re.compile(r"(?ms)^\s*module\b.*?^\s*endmodule\b")  # 完整模块片段匹配模式
+-
+-        # 收集源码中命中的全部完整模块片段。
+-        list_matches = list(pattern_module.finditer(source))  # 完整模块匹配结果列表
+-
+-        # 没有 module 声明时，builtin backend 无法继续解析。
+-        if not list_matches:
+-
+-            # 抛出带 current-project 前缀的模块缺失异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] source does not contain a module declaration."
+-            ) from self._strict_error(
+-                "unsupported_shape",
+-                "source does not contain a module declaration",
+-                "Provide at least one synthesizable module declaration before running the formatter.",
+-            )
+-
+-        # 逐个模块片段写入模块原文和前置注释信息。
+-        list_sections: list[dict[str, object]] = []  # 模块片段及其前置注释列表
+-
+-        # 记录上一个模块结束位置，用来提取当前模块前的注释区。
+-        int_last_end = 0  # 上一个模块在源码中的结束下标
+-
+-        # 顺序遍历每个 module/endmodule 匹配结果。
+-        for match_module in list_matches:
+-
+-            # 收集当前模块紧邻前方的连续行注释。
+-            list_leading_comments: list[str] = []  # 当前模块前置注释列表
+-
+-            # 截出上一个模块结束后到当前模块开始前的夹层文本。
+-            str_between = source[int_last_end : match_module.start()]  # 当前模块前的夹层文本
+-
+-            # 逆序扫描夹层文本，只保留紧邻模块的连续注释段。
+-            for str_line in reversed(str_between.splitlines()):
+-
+-                # 对当前物理行去掉两端空白，便于判断注释边界。
+-                str_stripped_line = str_line.strip()  # 当前夹层物理行的规范化文本
+-
+-                # 空白行只在尚未开始收集注释时允许被跳过。
+-                if not str_stripped_line:
+-
+-                    # 已经命中过前置注释后，空白行意味着注释段结束。
+-                    if list_leading_comments:
+-
+-                        # 前置注释段一旦被空白行打断，就不再继续向前扩展。
+-                        break
+-
+-                    # 夹层前部仍是纯空白时，继续逆序跳过这些行。
+-                    continue
+-
+-                # 双斜线注释属于模块前置注释候选。
+-                if str_stripped_line.startswith("//"):
+-
+-                    # 记录这条紧邻模块的行注释。
+-                    list_leading_comments.append(str_stripped_line)
+-
+-                    # 当前行已经并入前置注释段，继续向前尝试补齐这一段注释。
+-                    continue
+-
+-                # 命中非注释内容时，前置注释段到此结束。
+-                break
+-
+-            # 追加当前模块原文和正序前置注释列表。
+-            list_sections.append(
+-                {
+-                    "module_text": match_module.group(0),
+-                    "leading_comments": list(reversed(list_leading_comments)),
+-                }
+-            )
+-
+-            # 更新下一个模块的夹层起点。
+-            int_last_end = match_module.end()  # 当前模块在源码中的结束下标
+-
+-        # 返回全部模块片段及其前置注释信息。
+-        return list_sections
+-
+-    # 解析单模块源码的名称、参数、端口和主体正文。
+-    def _parse_module(self, source: str) -> tuple[str, list[ParamDecl], list[PortDecl], str]:
+-        """
+-        从单模块源码中提取模块名、参数、端口和主体正文。
+-
+-        参数:
+-            source: 只包含一个模块定义的源码文本。
+-        返回:
+-            tuple[str, list[ParamDecl], list[PortDecl], str]: 模块名、参数列表、端口列表和模块主体正文。
+-        异常:
+-            VerilogFormatterError: 源码不是单模块形态或模块头不受支持时抛出。
+-        """
+-
+-        # builtin backend 目前只接受单个 module 定义。
+-        if len(re.findall(r"(?m)^\s*module\b", source)) != 1:
+-
+-            # 抛出多模块源码不受支持的统一异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] multi-module sources are not supported by the builtin backend."
+-            ) from self._strict_error(
+-                "unsupported_shape",
+-                "multi-module sources are not supported by the builtin backend",
+-                "Split helper modules into separate files before formatting.",
+-            )
+-
+-        # 先拼出单模块头、参数段、端口段和主体段的整体正则文本。
+-        str_module_header_pattern = (
+-            r"module\s+(?P<name>\w+)\s*"
+-            r"(?:#\s*\((?P<params>.*?)\)\s*(?://[^\n]*\n\s*)*)?"
+-            r"\((?P<ports>.*?)\)\s*;\s*(?P<body>.*)\s*endmodule"
+-        )  # 单模块解析的整体正则文本
+-
+-        # 基于整体正则文本编译单模块结构匹配模式。
+-        pattern_module_header: re.Pattern[str] = re.compile(str_module_header_pattern, re.DOTALL)  # 单模块解析的整体匹配模式
+-
+-        # 在源码里查找单模块结构的完整匹配结果。
+-        match_module = pattern_module_header.search(source)  # 单模块整体匹配结果
+-
+-        # 匹配失败时，说明模块头结构超出 builtin backend 处理边界。
+-        if not match_module:
+-
+-            # 抛出单模块头不受支持的统一异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] only single module sources are currently supported."
+-            ) from self._strict_error(
+-                "unsupported_shape",
+-                "only single module sources are currently supported",
+-                "Simplify the module header so the builtin backend can parse one module body at a time.",
+-            )
+-
+-        # 提取模块名，作为后续渲染和日志输出的主标识。
+-        str_module_name = match_module.group("name")  # 当前模块名称
+-
+-        # 预先加载源码里的宏展开映射，供参数和端口解析复用。
+-        dict_macro_expansions = self._load_macro_expansions_from_source(source)  # 当前源码里的宏展开映射
+-
+-        # 解析模块头里的参数声明列表。
+-        list_params = self._parse_params(match_module.group("params") or "", dict_macro_expansions)  # 模块参数列表
+-
+-        # 提取模块主体正文，交给后续声明和语句块解析继续使用。
+-        str_body = match_module.group("body")  # 模块主体正文
+-
+-        # 解析端口声明，并在需要时同步清理主体里的冗余端口文本。
+-        str_ports_text = match_module.group("ports") or ""  # 模块头端口原始文本
+-
+-        # 先收集模块头端口恢复结果，便于后面统一拆包。
+-        tuple_module_ports = self._parse_module_ports(str_ports_text, str_body, dict_macro_expansions)  # 模块头端口恢复结果
+-
+-        # 把端口恢复结果拆成端口列表和清理后的主体正文。
+-        list_ports, str_body = tuple_module_ports  # 模块端口列表与清理后的主体正文
+-
+-        # 返回单模块解析得到的核心结构。
+-        return str_module_name, list_params, list_ports, str_body
+-
+-    # 解析模块头参数段里的参数声明列表。
+-    def _parse_params(self, text: str, macro_expansions: dict[str, str] | None = None) -> list[ParamDecl]:
+-        """
+-        解析参数块文本中的参数声明列表。
+-
+-        参数:
+-            text: 参数块原始文本。
+-            macro_expansions: 供参数宏引用展开使用的宏映射。
+-        返回:
+-            list[ParamDecl]: 解析得到的参数声明列表。
+-        """
+-
+-        # 纯空参数块可以直接返回空列表。
+-        if not text.strip():
+-
+-            # 没有任何参数文本时，参数列表应保持为空。
+-            return []
+-
+-        # 缺省时使用空宏映射，避免后续分支反复判空。
+-        dict_macro_expansions = macro_expansions or {}  # 参数解析使用的宏展开映射
+-
+-        # 逐行 helper 优先保留注释和宏调用的局部结构。
+-        list_params = self._parse_param_lines(text, dict_macro_expansions)  # 逐行模式解析出的参数声明
+-
+-        # 逐行模式已经命中过参数时，直接返回逐行解析结果。
+-        if list_params:
+-
+-            # 逐行路径已经拿到稳定结果，不再回退到顶层逗号切分。
+-            return list_params
+-
+-        # 逐行模式未命中时，回退到顶层逗号切分方案。
+-        return self._parse_param_entries(self._split_top_level(text, ","))
+-
+-    # 参数行 helper 负责逐行路由普通声明和宏调用。
+-    def _parse_param_lines(self, text: str, dict_macro_expansions: dict[str, str]) -> list[ParamDecl]:
+-        """按物理行解析参数声明并保留宏调用原文。
+-
+-        参数:
+-            text: 参数块原始文本。
+-            dict_macro_expansions: 参数宏引用对应的展开文本。
+-        返回:
+-            逐行模式解析得到的参数声明列表。
+-        """
+-
+-        # 逐行结果保持源码中的参数和宏调用顺序。
+-        list_params: list[ParamDecl] = []  # 逐行参数声明列表
+-
+-        # 每个物理行独立路由到宏或普通参数解析器。
+-        for str_raw_line in text.splitlines():
+-
+-            # 去掉外围空白，便于识别空行、注释和宏调用。
+-            str_stripped_line = str_raw_line.strip()  # 当前参数行的规范化文本
+-
+-            # 空行和纯注释行不产生参数声明。
+-            if not str_stripped_line or str_stripped_line.startswith("//"):
+-
+-                # 当前物理行不承载参数声明。
+-                continue
+-
+-            # 宏调用需要同时保留 raw 节点和可用的合成展开参数。
+-            if str_stripped_line.startswith("`"):
+-
+-                # 宏 helper 返回按 raw、synthetic 顺序排列的参数节点。
+-                list_params.extend(self._parse_param_macro_line(str_stripped_line, dict_macro_expansions))
+-
+-                # 当前宏行已经完整消费。
+-                continue
+-
+-            # 普通参数行通过单条声明解析器恢复结构。
+-            parsed_param_decl = self._parse_param_line(str_stripped_line, allow_trailing_comma=True)  # 当前物理行解析结果
+-
+-            # 只收集可稳定识别的参数声明。
+-            if parsed_param_decl is not None:
+-
+-                # 保留逐行参数的源码顺序。
+-                list_params.append(parsed_param_decl)
+-
+-        # 返回逐行模式命中的全部参数节点。
+-        return list_params
+-
+-    # 参数宏 helper 保留调用原文并把展开项重建为 synthetic 节点。
+-    def _parse_param_macro_line(
+-        self,
+-        str_macro_line: str,
+-        dict_macro_expansions: dict[str, str],
+-    ) -> list[ParamDecl]:
+-        """解析一行参数宏调用及其可用展开文本。
+-
+-        参数:
+-            str_macro_line: 以反引号开头的参数宏调用行。
+-            dict_macro_expansions: 宏名到展开文本的映射。
+-        返回:
+-            raw 宏节点以及随后可生成的 synthetic 参数节点。
+-        """
+-
+-        # raw 节点始终保留用户显式写下的宏调用文本。
+-        list_params = [ParamDecl("raw", "", "", raw_text=str_macro_line)]  # 当前宏行产生的参数节点
+-
+-        # 宏名用于从源码级映射中查找展开文本。
+-        str_macro_name = str_macro_line.lstrip("`").split(None, 1)[0]  # 当前参数行引用的宏名
+-
+-        # 缺少展开文本时只返回 raw 节点。
+-        str_expansion = dict_macro_expansions.get(str_macro_name, "")  # 当前宏调用对应的展开文本
+-
+-        # 空展开不产生 synthetic 参数。
+-        if not str_expansion:
+-
+-            # 调用方仍可依赖 raw 节点保留原文。
+-            return list_params
+-
+-        # 展开文本递归复用参数解析入口，但禁用二次宏展开。
+-        list_expanded_params = self._parse_params(str_expansion, {})  # 宏展开后得到的候选参数列表
+-
+-        # 顺序处理每个展开候选，过滤 raw 宏占位节点。
+-        for parsed_param in list_expanded_params:
+-
+-            # raw 节点只负责保留展开文本中的宏调用，不重复合成。
+-            if parsed_param.raw_text:
+-
+-                # 跳过无法落成结构声明的宏占位节点。
+-                continue
+-
+-            # 重建节点时复制前置注释，避免共享可变列表。
+-            list_comments = list(parsed_param.leading_comments)  # synthetic 参数使用的注释副本
+-
+-            # synthetic 节点继承展开参数的声明规格和注释。
+-            list_params.append(
+-                ParamDecl(
+-                    parsed_param.keyword,  # 展开参数关键字
+-                    parsed_param.name,  # 展开参数名称
+-                    parsed_param.value,  # 展开参数默认值
+-
+-                    # 声明规格和注释继续继承原展开参数，但前置注释使用隔离副本。
+-                    parsed_param.decl_spec,  # 展开参数声明规格
+-                    parsed_param.comment,  # 展开参数行尾注释
+-                    list_comments,  # 隔离后的前置注释副本
+-
+-                    # synthetic 标记让 renderer 区分宏原文与可落地声明。
+-                    synthetic=True,  # 标记节点来自宏展开
+-                )
+-            )
+-
+-        # 返回 raw 节点和全部可落地的 synthetic 参数。
+-        return list_params
+-
+-    # 单参数行 helper 统一拆分行尾注释和调用声明解析器。
+-    def _parse_param_line(self, str_entry: str, *, allow_trailing_comma: bool) -> ParamDecl | None:
+-        """解析一条普通参数声明文本。
+-
+-        参数:
+-            str_entry: 单条参数声明或顶层逗号片段。
+-            allow_trailing_comma: 是否允许声明末尾保留逗号。
+-        返回:
+-            可稳定解析的参数声明；无法识别时返回 None。
+-        """
+-
+-        # 行尾注释与声明主体分别交给既有单条解析器。
+-        str_raw_decl, str_comment = self._split_comment(str_entry)  # 参数声明文本与行尾注释
+-
+-        # 统一禁用参数分号，逗号策略由调用路径决定。
+-        return self._parse_param_decl(
+-            str_raw_decl,
+-            str_comment,
+-            allow_trailing_comma=allow_trailing_comma,
+-            allow_trailing_semicolon=False,
++        obj_delay = re.fullmatch(
++            r"[ \t]*always[ \t]+#[ \t]*(?P<delay>(?:\d+(?:\.\d+)?|[A-Za-z_]\w*))"
++            r"(?:[ \t]+(?P<body>.*))?[ \t]*",
++            text,
+         )
+-
+-    # 顶层参数片段 helper 承担逐行模式未命中时的保守回退。
+-    def _parse_param_entries(self, list_entries: list[str]) -> list[ParamDecl]:
+-        """解析顶层逗号切分得到的参数片段。
+-
+-        参数:
+-            list_entries: 保留原始顺序的顶层参数片段。
+-        返回:
+-            回退路径识别出的结构化参数声明列表。
+-        """
+-
+-        # 回退结果继续保持顶层片段顺序。
+-        list_params: list[ParamDecl] = []  # 顶层片段解析结果
+-
+-        # 每个片段独立执行单参数解析。
+-        for str_entry in list_entries:
+-
+-            # 回退片段已经由顶层逗号 splitter 去除分隔符。
+-            parsed_param_decl = self._parse_param_line(str_entry, allow_trailing_comma=False)  # 当前回退片段解析结果
+-
+-            # 无法识别的片段保持既有忽略行为。
+-            if parsed_param_decl is None:
+-
+-                # 继续处理其它顶层参数片段。
+-                continue
+-
+-            # 结构化声明按原始片段顺序加入结果。
+-            list_params.append(parsed_param_decl)
+-
+-        # 返回回退路径解析出的全部参数。
+-        return list_params
+-
+-    # 解析单条 parameter/localparam 声明。
+-    def _parse_param_decl(
+-        self,
+-        text: str,
+-        comment: str = "",
+-        *,
+-        allow_trailing_comma: bool,
+-        allow_trailing_semicolon: bool,
+-    ) -> ParamDecl | None:
+-        """
+-        解析单条 parameter 或 localparam 声明。
+-
+-        参数:
+-            text: 单条参数声明文本。
+-            comment: 参数声明关联的行尾注释。
+-            allow_trailing_comma: 是否允许声明尾部保留逗号。
+-            allow_trailing_semicolon: 是否允许声明尾部保留分号。
+-        返回:
+-            ParamDecl | None: 解析成功时返回参数声明，否则返回 None。
+-        """
+-
+-        # 先裁掉两端空白，得到待解析的参数声明主体。
+-        str_cleaned = text.strip()  # 待解析的参数声明主体
+-
+-        # 空参数文本不产生参数声明。
+-        if not str_cleaned:
+-
+-            # 只含空白的候选文本不生成结构化参数声明。
+-            return None
+-
+-        # 逗号属于声明分隔符，需要先剥离后再判断参数主体。
+-        if allow_trailing_comma and str_cleaned.endswith(","):
+-
+-            # 去掉尾逗号后，后续正则才会只面对真实参数主体。
+-            str_cleaned = str_cleaned[:-1].rstrip()  # 去掉尾逗号后的参数声明文本
+-
+-        # 单条参数尾部分号只表示语句结束，这里要把它从参数正文里剥离出去。
+-        if allow_trailing_semicolon and str_cleaned.endswith(";"):
+-
+-            # 清掉结尾分号后，右侧参数值表达式就不会误把结束符当成内容。
+-            str_cleaned = str_cleaned[:-1].rstrip()  # 去掉单条参数结束符后的声明文本
+-
+-        # 匹配 parameter/localparam 关键字和剩余声明文本。
+-        match_param_decl = re.match(r"^(parameter|localparam)\b(?P<remainder>.*)$", str_cleaned)  # 单条参数声明匹配结果
+-
+-        # 未命中参数关键字时，说明当前文本不是参数声明。
+-        if not match_param_decl:
+-
+-            # 不含 parameter/localparam 关键字的文本不进入参数声明结果。
+-            return None
+-
+-        # 提取 parameter 或 localparam 关键字。
+-        str_keyword = match_param_decl.group(1)  # 参数关键字
+-
+-        # 取出关键字后的声明主体。
+-        str_remainder = match_param_decl.group("remainder").strip()  # 参数声明剩余文本
+-
+-        # 剩余文本为空时，说明声明不完整。
+-        if not str_remainder:
+-
+-            # 关键字后没有主体时，当前参数声明仍然不完整。
+-            return None
+-
+-        # 在剩余文本里定位顶层赋值号位置。
+-        list_assignment_positions = self._find_procedural_assignment_operators(str_remainder)  # 参数声明里的赋值号位置列表
+-
+-        # 没有赋值号时，不视为可落地的参数声明。
+-        if not list_assignment_positions:
+-
+-            # 缺少顶层赋值号时，当前文本不构成稳定参数声明。
+-            return None
+-
+-        # 只取首个顶层赋值号作为参数声明的切分点。
+-        int_assignment_index = list_assignment_positions[0]  # 参数声明主赋值号位置
+-
+-        # 左侧文本承载参数名及其声明规格。
+-        str_lhs = str_remainder[:int_assignment_index].strip()  # 参数声明左侧文本
+-
+-        # 右侧文本承载参数值表达式。
+-        str_value = str_remainder[int_assignment_index + 1 :].strip()  # 参数值表达式文本
+-
+-        # 左右任一为空时，都说明声明还不完整。
+-        if not str_lhs or not str_value:
+-
+-            # 参数左右两侧任一缺失时，都不能安全生成 ParamDecl。
+-            return None
+-
+-        # 从左侧声明文本末尾提取参数名。
+-        match_name = re.search(r"([A-Za-z_]\w*)\s*$", str_lhs)  # 参数名匹配结果
+-
+-        # 左侧提取不到合法标识符时，说明当前文本不能安全解析为参数声明。
+-        if not match_name:
+-
+-            # 左侧尾部没有合法标识符时，当前参数名无法可靠提取。
+-            return None
+-
+-        # 提取参数名供 ParamDecl 结构继续使用。
+-        str_name = match_name.group(1)  # 当前参数声明里最终提取出的参数名
+-
+-        # 参数名前的剩余文本视为 decl_spec。
+-        str_decl_spec = str_lhs[: match_name.start()].strip()  # 参数声明规格文本
+-
+-        # 返回结构化的单条参数声明。
+-        return ParamDecl(str_keyword, str_name, str_value, str_decl_spec, comment)
+-
+-    # 解析一行内包含多个参数项的 parameter/localparam 声明。
+-    def _parse_param_decls(
+-        self,
+-        text: str,
+-        comment: str = "",
+-        *,
+-        allow_trailing_comma: bool,
+-        allow_trailing_semicolon: bool,
+-    ) -> list[ParamDecl]:
+-        """
+-        解析一组可能包含多个条目的 parameter 或 localparam 声明。
+-
+-        参数:
+-            text: 参数声明组文本。
+-            comment: 首个参数条目关联的行尾注释。
+-            allow_trailing_comma: 是否允许声明组尾部保留逗号。
+-            allow_trailing_semicolon: 是否允许声明组尾部保留分号。
+-        返回:
+-            list[ParamDecl]: 解析得到的参数声明列表；失败时返回空列表。
+-        """
+-
+-        # 先裁掉两端空白，得到待拆分的参数声明组文本。
+-        str_cleaned = text.strip()  # 参数声明组主体
+-
+-        # 参数组尾逗号只承担条目分隔作用，不应参与后续条目分析。
+-        if allow_trailing_comma and str_cleaned.endswith(","):
+-
+-            # 先移除参数组尾逗号，避免顶层切分前残留伪条目边界。
+-            str_cleaned = str_cleaned[:-1].rstrip()  # 去掉尾逗号后的参数声明组文本
+-
+-        # 参数声明组尾部分号只表示整组结束，这里要避免它混进最后一个条目。
+-        if allow_trailing_semicolon and str_cleaned.endswith(";"):
+-
+-            # 把整组结束分号提前剥离，后面的顶层逗号切分才不会污染最后一项。
+-            str_cleaned = str_cleaned[:-1].rstrip()  # 去掉整组参数结束符后的声明组文本
+-
+-        # 匹配 parameter/localparam 关键字和后续多项声明主体。
+-        match_param_group = re.match(r"^(parameter|localparam)\b(?P<remainder>.*)$", str_cleaned, re.DOTALL)  # 参数声明组匹配结果
+-
+-        # 未命中参数声明组时，回退到单条参数声明解析。
+-        if not match_param_group:
+-
+-            # 这里缓存的是单条参数回退解析会复用的尾逗号和尾分号开关。
+-            dict_fallback_parse_options = {  # 单条参数回退解析的关键字参数
+-                "allow_trailing_comma": allow_trailing_comma,  # 是否允许尾部逗号
+-                "allow_trailing_semicolon": allow_trailing_semicolon,  # 是否允许尾部分号
+-            }
+-
+-            # 再尝试把整段文本按单条参数声明直接回退解析。
+-            parsed_param_decl_node = self._parse_param_decl(  # 单条参数声明回退解析结果
+-                text,  # 当前待回退解析的参数文本
+-                comment,  # 当前参数文本关联的行尾注释
+-                **dict_fallback_parse_options,  # 把尾逗号和尾分号兼容开关原样透传给回退解析器
+-            )
+-
+-            # 单条回退路径解析成功时返回单元素列表，否则返回空列表。
+-            return [parsed_param_decl_node] if parsed_param_decl_node is not None else []
+-
+-        # 提取当前参数声明组的关键字。
+-        str_keyword = match_param_group.group(1)  # 参数声明组关键字
+-
+-        # 取出关键字后的多项参数主体。
+-        str_remainder = match_param_group.group("remainder").strip()  # 参数声明组剩余文本
+-
+-        # 按顶层逗号切出每个参数条目。
+-        list_entries = self._split_top_level(str_remainder, ",")  # 参数条目列表
+-
+-        # 逐项收集解析出的参数声明。
+-        list_params: list[ParamDecl] = []  # 参数声明组里的结构化参数列表
+-
+-        # 第一项里的 decl_spec 可以作为后续省略项的共享声明规格。
+-        str_shared_decl_spec = ""  # 可供后续条目继承的声明规格
+-
+-        # 顺序解析每个参数条目。
+-        for int_index, str_entry in enumerate(list_entries):
+-
+-            # 去掉条目两端空白，得到可直接分析的参数项文本。
+-            str_candidate = str_entry.strip()  # 当前参数条目文本
+-
+-            # 参数组里允许重复显式写出 parameter/localparam 关键字。
+-            match_repeated_keyword = re.match(r"^(parameter|localparam)\b(?P<remainder>.*)$", str_candidate, re.DOTALL)  # 条目级关键字匹配结果
+-
+-            # 命中重复关键字时，要同步更新当前关键字和条目主体。
+-            if match_repeated_keyword:
+-
+-                # 当前条目显式重复关键字时，需要更新后续条目的主关键字。
+-                str_keyword = match_repeated_keyword.group(1)  # 当前条目显式写出的关键字
+-
+-                # 保留去掉重复关键字后的条目主体，供后续赋值号判断复用。
+-                str_candidate = match_repeated_keyword.group("remainder").strip()  # 去掉重复关键字后的条目主体
+-
+-            # 定位当前条目里的顶层赋值号。
+-            list_assignment_positions = self._find_procedural_assignment_operators(str_candidate)  # 当前条目赋值号位置列表
+-
+-            # 没有赋值号时，整组参数声明视为不稳定。
+-            if not list_assignment_positions:
+-
+-                # 当前条目缺少顶层赋值号时，整组参数声明整体判定失败。
+-                return []
+-
+-            # 取当前条目的首个顶层赋值号位置。
+-            int_assignment_index = list_assignment_positions[0]  # 当前条目的主赋值号位置
+-
+-            # 左侧文本承载参数名和声明规格。
+-            str_lhs = str_candidate[:int_assignment_index].strip()  # 当前条目左侧文本
+-
+-            # 右侧表达式承载的是当前参数条目的实际默认值文本。
+-            str_value = str_candidate[int_assignment_index + 1 :].strip()  # 当前条目右侧值表达式
+-
+-            # 从左侧文本末尾提取参数名。
+-            match_name = re.search(r"([A-Za-z_]\w*)\s*$", str_lhs)  # 当前条目参数名匹配结果
+-
+-            # 缺少参数名或值表达式时，整组解析失败。
+-            if not match_name or not str_value:
+-
+-                # 条目里缺少参数名或值表达式时，整组结果不再继续拼接。
+-                return []
+-
+-            # 条目级 decl_spec 为空时，回退复用第一项的共享声明规格。
+-            str_decl_spec = str_lhs[: match_name.start()].strip() or str_shared_decl_spec  # 当前条目的声明规格文本
+-
+-            # 第一项显式携带 decl_spec 时，把它记录给后续条目复用。
+-            if int_index == 0 and str_decl_spec:
+-
+-                # 首项声明规格最完整时，把它缓存给后续省略项直接继承。
+-                str_shared_decl_spec = str_decl_spec  # 供后续条目复用的共享声明规格
+-
+-            # 追加当前条目解析出的结构化参数声明。
+-            list_params.append(
+-                ParamDecl(
+-                    str_keyword,
+-                    match_name.group(1),
+-                    str_value,
+-                    str_decl_spec,
+-                    comment if int_index == 0 else "",
+-                )
+-            )
+-
+-        # 返回参数声明组解析得到的全部参数条目。
+-        return list_params
+-
+-    # 提取声明前缀里的 leading attributes。
+-    def _extract_leading_attributes(self, text: str) -> tuple[str, str]:
+-        """
+-        提取文本前缀里的 `(* ... *)` attributes，并返回剩余正文。
+-
+-        参数:
+-            text: 原始声明文本。
+-        返回:
+-            tuple[str, str]: attributes 前缀文本和去掉 attributes 后的剩余正文。
+-        """
+-
+-        # 匹配前缀 attributes 和剩余正文两部分。
+-        match_attributes = re.match(r"^((?:\(\*.*?\*\)\s*)*)(.*)$", text.strip())  # leading attributes 匹配结果
+-
+-        # 匹配失败时，按无 attributes 处理原始文本。
+-        if not match_attributes:
+-
+-            # 没有 attributes 前缀时，正文直接沿用原始声明文本。
+-            return "", text.strip()
+-
+-        # 返回裁剪后的 attributes 文本和剩余正文。
+-        return match_attributes.group(1).strip(), match_attributes.group(2).strip()
+-
+-    # 提取文本内联块注释，并返回去掉注释后的正文。
+-    def _extract_inline_block_comments(self, text: str) -> tuple[str, str]:
+-        """
+-        提取文本里的内联块注释，并返回无块注释正文和注释合集。
+-
+-        参数:
+-            text: 原始声明文本。
+-        返回:
+-            tuple[str, str]: 去掉块注释后的正文，以及用空格拼接后的块注释文本。
+-        """
+-
+-        # 收集原文里的全部内联块注释。
+-        list_comments = re.findall(r"/\*.*?\*/", text)  # 原文里的块注释列表
+-
+-        # 移除块注释后得到可继续语法解析的正文。
+-        str_stripped = re.sub(r"/\*.*?\*/", "", text).strip()  # 去掉块注释后的正文
+-
+-        # 返回正文和拼接后的块注释文本。
+-        return str_stripped, " ".join(str_comment.strip() for str_comment in list_comments)
+-
+-    # 解析单条模块端口声明文本。
+-    def _parse_port_line(
+-        self,
+-        raw: str,
+-        inline_comment: str,
+-        current_group: str,
+-        current_section: str,
+-        current_subgroup: str,
+-    ) -> PortDecl | None:
+-        """
+-        解析单条 input/output/inout 端口声明。
+-
+-        参数:
+-            raw: 原始端口声明文本。
+-            inline_comment: 当前端口声明关联的行尾注释。
+-            current_group: 当前端口所属分组名。
+-            current_section: 当前端口所属 section 名。
+-            current_subgroup: 当前端口所属 subgroup 名。
+-        返回:
+-            PortDecl | None: 解析成功时返回结构化端口声明，否则返回 None。
+-        """
+-
+-        # 先提取端口声明前缀里的 attributes 文本。
+-        str_attributes, str_cleaned = self._extract_leading_attributes(raw)  # 端口声明 attributes 与去前缀正文
+-
+-        # 再去掉端口正文里的内联块注释和尾部分隔符。
+-        str_cleaned, str_block_comment = self._extract_inline_block_comments(str_cleaned.rstrip(",;"))  # 去块注释后的端口正文与块注释文本
+-
+-        # 缺省时沿用行尾注释；没有行尾注释时回退到当前 section 名。
+-        str_comment = inline_comment or current_section  # 当前端口声明的基础注释文本
+-
+-        # 命中块注释时，把它拼到端口注释末尾保留原语义。
+-        if str_block_comment:
+-
+-            # 把块注释追加到当前端口注释末尾，避免注释语义丢失。
+-            str_comment = f"{str_comment} {str_block_comment}".strip()  # 合并块注释后的端口注释文本
+-
+-        # 按方向、signed、位宽、名称和 unpacked 维度匹配单条端口声明。
+-        str_port_decl_pattern = (
+-            r"^(input|output|inout)\s+"
+-            r"(?:(?:wire|reg|logic)\s+)?"
+-            r"(signed\s*)?"
+-            r"(\[[^\]]+\])?\s*"
+-            r"(\w+)"
+-            r"((?:\s*\[[^\]]+\])*)"
+-            r"\s*(?:=\s*.+)?$"
+-        )  # 单条端口声明匹配正则
+-
+-        # 用前面拼好的端口正则检查当前文本能否稳定还原为单条端口声明。
+-        match_port_decl = re.match(str_port_decl_pattern, str_cleaned)  # 单条端口声明匹配结果
+-
+-        # 当前文本不是可识别端口声明时，返回 None 交给上层继续兜底。
+-        if not match_port_decl:
+-
+-            # 当前端口文本未命中结构化端口声明模式。
+-            return None
+-
+-        # 返回结构化端口声明，供后续布局和渲染流程继续复用。
+-        return PortDecl(
+-            direction=match_port_decl.group(1),
+-            width=(match_port_decl.group(3) or "").strip(),
+-            name=match_port_decl.group(4),
+-            comment=str_comment,
+-            group=current_group,
+-            section=current_section,
+-            signed=bool(match_port_decl.group(2)),
+-            unpacked=(match_port_decl.group(5) or "").strip(),
+-            attributes=str_attributes,
+-            subgroup=current_subgroup,
+-        )
+-
+-    # 解析单条信号声明文本，并在需要时拆成多个 SignalDecl。
+-    def _parse_signal_decl(self, raw: str, inline_comment: str) -> list[SignalDecl]:
+-        """
+-        解析 `wire/reg/logic/integer/real` 信号声明文本。
+-
+-        参数:
+-            raw: 原始信号声明文本。
+-            inline_comment: 当前信号声明关联的行尾注释。
+-        返回:
+-            list[SignalDecl]: 解析得到的单个或多个信号声明。
+-        异常:
+-            VerilogFormatterError: 声明形态不稳定或 real 声明不符合归一化约束时抛出。
+-        """
+-
+-        # 先裁掉尾部分号，再提取声明前缀里的 attributes 文本。
+-        str_attributes, str_cleaned = self._extract_leading_attributes(raw.strip().rstrip(";").strip())  # 信号声明 attributes 与去前缀正文
+-
+-        # 再去掉正文里的内联块注释，保留后续可复用的块注释文本。
+-        str_cleaned, str_block_comment = self._extract_inline_block_comments(str_cleaned)  # 去块注释后的信号正文与块注释文本
+-
+-        # 信号声明默认沿用行尾注释作为首个信号的注释文本。
+-        str_comment = inline_comment  # 当前信号声明的基础注释文本
+-
+-        # 命中块注释时，把它拼到当前信号注释末尾。
+-        if str_block_comment:
+-
+-            # 把块注释追加到信号注释末尾，避免声明语义丢失。
+-            str_comment = f"{str_comment} {str_block_comment}".strip()  # 合并块注释后的信号注释文本
+-
+-        # 先拆出声明种类、signed 标记、位宽和剩余信号列表文本。
+-        str_signal_decl_pattern = (
+-            r"^(wire|tri1|reg|logic|integer|real)\s*"
+-            r"(signed\s*)?"
+-            r"(\[[^\]]+\])?\s*"
+-            r"(.+)$"
+-        )  # 单条信号声明匹配正则
+-
+-        # 用前面拼好的信号正则抽取声明种类、位宽和剩余条目文本。
+-        match_signal_decl = re.match(str_signal_decl_pattern, str_cleaned)  # 单条信号声明匹配结果
+-
+-        # 匹配失败时，说明当前声明还不是可安全归一化的形态。
+-        if not match_signal_decl:
+-
+-            # 抛出统一的信号声明归一化异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] signal declaration normalization failed."
+-            ) from self._strict_error(
+-                "declaration_normalization_violation",
+-                raw,
+-                "Rewrite the declaration into one or more single-signal forms such as "
+-                "'reg signed [W-1:0] name [0:N-1];'.",
+-            )
+-
+-        # 提取当前声明的种类关键字。
+-        str_kind = match_signal_decl.group(1)  # 信号声明种类
+-
+-        # 记录当前声明是否显式带有 signed 标记。
+-        bool_signed = bool(match_signal_decl.group(2))  # 当前信号声明的 signed 标记
+-
+-        # 取出统一作用于本条声明的位宽文本。
+-        str_width = (match_signal_decl.group(3) or "").strip()  # 当前信号声明的统一位宽文本
+-
+-        # 取出种类关键字之后的信号列表正文。
+-        str_remainder = match_signal_decl.group(4).strip()  # 当前信号声明的剩余信号列表文本
+-
+-        # real 声明不允许额外带 signed 或 packed 位宽信息。
+-        if str_kind == "real" and (bool_signed or str_width):
+-
+-            # 抛出 real 声明形态不受支持的统一异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] real declaration normalization failed."
+-            ) from self._strict_error(
+-                "declaration_normalization_violation",
+-                raw,
+-                "Rewrite real declarations into a single-signal form such as "
+-                "'real gain;' or 'real coeff[0:N-1];'.",
+-            )
+-
+-        # 按顶层逗号切出信号声明里的每个条目。
+-        list_items = self._split_top_level(str_remainder, ",")  # 信号声明条目列表
+-
+-        # 没有条目时，说明声明仍然不具备安全拆分边界。
+-        if not list_items:
+-
+-            # 抛出空条目列表导致的归一化异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] signal declaration normalization failed."
+-            ) from self._strict_error(
+-                "declaration_normalization_violation",
+-                raw,
+-                "Rewrite the declaration into one or more single-signal forms such as "
+-                "'reg signed [W-1:0] name [0:N-1];'.",
+-            )
+-
+-        # real 声明必须保持单信号形态，不能一行声明多个 real。
+-        if str_kind == "real" and len(list_items) > 1:
+-
+-            # 抛出多 real 条目不受支持的统一异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] real declaration normalization failed."
+-            ) from self._strict_error(
+-                "declaration_normalization_violation",
+-                raw,
+-                "Rewrite real declarations into a single-signal form such as "
+-                "'real gain;' or 'real coeff[0:N-1];'.",
+-            )
+-
+-        # 收集拆分后的结构化信号声明。
+-        list_signal_decls: list[SignalDecl] = []  # 当前声明拆分后的信号声明列表
+-
+-        # 匹配每个条目里的名称、unpacked 维度和可选初始化表达式。
+-        pattern_signal_item: re.Pattern[str] = re.compile(r"^(\w+)" r"((?:\s*\[[^\]]+\])*)" r"\s*(?:=\s*(.+))?$")  # 单个信号条目匹配模式
+-
+-        # 逐个条目恢复成 SignalDecl。
+-        for int_index, str_item in enumerate(list_items):
+-
+-            # 去掉条目两端空白后，再做单条信号条目匹配。
+-            match_item = pattern_signal_item.match(str_item.strip())  # 单个信号条目匹配结果
+-
+-            # 当前条目不合法时，整条声明不能继续安全拆分。
+-            if not match_item:
+-
+-                # 抛出单个信号条目形态不稳定的统一异常。
+-                raise VerilogFormatterError(
+-                    "> ERR: [Python] signal declaration normalization failed."
+-                ) from self._strict_error(
+-                    "declaration_normalization_violation",
+-                    raw,
+-                    "Rewrite the declaration into one or more single-signal forms such as "
+-                    "'reg signed [W-1:0] name [0:N-1];'.",
+-                )
+-
+-            # 提取当前信号条目的 unpacked 维度文本。
+-            str_unpacked = (match_item.group(2) or "").strip()  # 当前信号条目的 unpacked 维度文本
+-
+-            # 提取当前条目尾部的初始化表达式，供单信号声明复用。
+-            str_init = (match_item.group(3) or "").strip()  # 当前信号条目的初始化表达式文本
+-
+-            # 追加当前条目还原得到的结构化信号声明。
+-            list_signal_decls.append(
+-                SignalDecl(
+-                    kind=str_kind,
+-                    width=str_width,
+-                    name=match_item.group(1),
+-                    init=str_init,
+-                    comment=str_comment if int_index == 0 else "",
+-                    signed=bool_signed,
+-                    unpacked=str_unpacked,
+-                    attributes=str_attributes,
+-                    leading_comments=[],
+-                )
+-            )
+-
+-        # 返回拆分后的结构化信号声明列表。
+-        return list_signal_decls
+-
+-    # 把 packed 位宽文本归类成 single、multi 或 unknown。
+-    def _classify_declared_width(self, width: str) -> str:
+-        """
+-        根据 packed 位宽文本判断信号是单比特、多比特还是未知宽度。
+-
+-        参数:
+-            width: 原始 packed 位宽文本。
+-        返回:
+-            str: `single`、`multi` 或 `unknown`。
+-        """
+-
+-        # 没有位宽文本时，按单比特声明处理。
+-        if not width:
+-
+-            # 空位宽文本默认表示单比特信号。
+-            return "single"
+-
+-        # 统一位宽规格里的空白，方便后续判断边界。
+-        str_normalized = self._normalize_decl_spec_spacing(width).strip()  # 规范化后的位宽文本
+-
+-        # 不是标准方括号包裹形态时，无法稳定判断位宽类别。
+-        if not str_normalized.startswith("[") or not str_normalized.endswith("]"):
+-
+-            # 非标准 packed 位宽文本统一按 unknown 处理。
+-            return "unknown"
+-
+-        # 去掉外层方括号，只保留位宽载荷正文。
+-        str_payload = str_normalized[1:-1].strip()  # packed 位宽内部载荷文本
+-
+-        # 在载荷里定位顶层冒号位置。
+-        int_colon_index = self._find_top_level_colon(str_payload)  # 位宽载荷里的顶层冒号位置
+-
+-        # 缺少顶层冒号时，无法按 `[msb:lsb]` 形式判断位宽。
+-        if int_colon_index == -1:
+-
+-            # 不满足标准 packed 位宽格式时返回 unknown。
+-            return "unknown"
+-
+-        # 提取冒号左侧的上界文本。
+-        str_left = str_payload[:int_colon_index].strip()  # 位宽上界文本
+-
+-        # 提取冒号右侧的下界文本。
+-        str_right = str_payload[int_colon_index + 1 :].strip()  # 位宽下界文本
+-
+-        # 只有纯数字上下界才允许直接静态判断 single/multi。
+-        if not re.fullmatch(r"\d+", str_left) or not re.fullmatch(r"\d+", str_right):
+-
+-            # 动态表达式位宽无法静态比较，统一返回 unknown。
+-            return "unknown"
+-
+-        # 左右界相等时视为单比特，否则视为多比特。
+-        return "single" if int(str_left) == int(str_right) else "multi"
+-
+-    # 根据当前缓存的位宽分类表查询指定信号的位宽类别。
+-    def _classify_signal_width(self, name: str) -> str:
+-        """
+-        查询当前信号位宽分类缓存中的指定信号。
+-
+-        参数:
+-            name: 待查询的信号名。
+-        返回:
+-            str: 当前信号的位宽分类；缺省时返回 `unknown`。
+-        """
+-
+-        # 从当前信号位宽分类缓存里读取指定信号的分类结果。
+-        return self._current_signal_width_classes.get(name, "unknown")
+-
+-    # 为端口和信号声明构建统一的位宽分类映射表。
+-    def _build_signal_width_class_map(self, ports: list[PortDecl], decls: list[SignalDecl]) -> dict[str, str]:
+-        """
+-        汇总端口和信号声明的位宽信息，生成名称到位宽类别的映射。
+-
+-        参数:
+-            ports: 已解析端口声明列表。
+-            decls: 已解析信号声明列表。
+-        返回:
+-            dict[str, str]: 信号名到 `single`、`multi` 或 `unknown` 的映射表。
+-        """
+-
+-        # 收集端口和信号声明的位宽分类结果。
+-        dict_width_classes: dict[str, str] = {}  # 信号名到位宽分类的映射表
+-
+-        # 先把端口声明里的位宽分类写入缓存表。
+-        for port_decl in ports:
+-
+-            # raw_text 端口或缺少名字的端口不进入静态位宽分类表。
+-            if not port_decl.name or port_decl.raw_text:
+-
+-                # 当前端口不具备稳定静态分类条件时，直接跳过。
+-                continue
+-
+-            # 为当前端口记录 packed 位宽分类结果。
+-            dict_width_classes[port_decl.name] = self._classify_declared_width(port_decl.width)  # 当前端口的位宽分类
+-
+-        # 再把普通信号声明里的位宽分类写入缓存表。
+-        for signal_decl in decls:
+-
+-            # assign 伪声明或无名声明不参与位宽分类缓存构建。
+-            if not signal_decl.name or signal_decl.kind in {"assign", "__assign__"}:
+-
+-                # 当前声明不属于可缓存位宽类别的普通信号声明。
+-                continue
+-
+-            # integer/real 且不带位宽时，只能保守记录为 unknown。
+-            if signal_decl.kind in {"integer", "real"} and not signal_decl.width:
+-
+-                # 只在当前名字尚未出现时补入保守的 unknown 分类。
+-                dict_width_classes.setdefault(signal_decl.name, "unknown")
+-
+-                # 当前声明已经完成保守分类，无需继续走 packed 位宽路径。
+-                continue
+-
+-            # 为当前普通信号声明记录 packed 位宽分类结果。
+-            dict_width_classes[signal_decl.name] = self._classify_declared_width(signal_decl.width)  # 当前信号的位宽分类
+-
+-        # 返回汇总后的位宽分类映射表。
+-        return dict_width_classes
+-
+-    # 从 always 头部拆出敏感列表头和尾随正文。
+-    def _split_always_header(self, text: str) -> tuple[str, str]:
+-        """
+-        拆分 always 语句头中的敏感列表和尾随正文。
+-
+-        参数:
+-            text: 原始 always 语句头文本。
+-        返回:
+-            tuple[str, str]: 规范化后的 always 头部，以及紧随其后的剩余文本。
+-        异常:
+-            VerilogFormatterError: always 头部不完整或敏感列表不平衡时抛出。
+-        """
+-
+-        # 去掉头尾空白，得到待拆分的 always 头文本。
+-        str_working = text.strip()  # 去空白后的 always 头文本
+-
+-        # 只有 always 起始的文本才允许走专用拆分路径。
+-        if not str_working.startswith("always"):
+-
+-            # 抛出 always 头部起始关键字不合法的统一异常。
+-            raise VerilogFormatterError("> ERR: [Python] always header normalization failed.") from self._strict_error(
+-                "unsupported_shape",
+-                text,
+-                "Use a stable always block header before formatting.",
+-            )
+-
+-        # 去掉 always 关键字后，保留敏感列表和尾随正文。
+-        str_tail = str_working[len("always") :].lstrip()  # always 关键字后的剩余文本
+-
+-        # always 后必须紧跟 @ 敏感列表起始符号。
+-        if not str_tail.startswith("@"):
+-
+-            # 抛出 always 缺失敏感列表起始符的统一异常。
+-            raise VerilogFormatterError("> ERR: [Python] always header normalization failed.") from self._strict_error(
+-                "unsupported_shape",
+-                text,
+-                "Use a stable always block header before formatting.",
+-            )
+-
+-        # 去掉 @ 之后的空白，准备识别 * 或括号敏感列表。
+-        str_tail = str_tail[1:].lstrip()  # 去掉 @ 后的敏感列表文本
+-
+-        # always @* 形式可以直接拆出固定头部和尾随正文。
+-        if str_tail.startswith("*"):
+-
+-            # 返回标准化的 always@(*) 头和余下正文。
+-            return "always@(*)", str_tail[1:].strip()
+-
+-        # 非 @* 形式必须以括号包裹敏感列表。
+-        if not str_tail.startswith("("):
+-
+-            # 抛出敏感列表括号缺失的统一异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] always sensitivity list normalization failed."
+-            ) from self._strict_error(
+-                "unsupported_shape",
+-                text,
+-                "Balance the always sensitivity list before formatting.",
+-            )
+-
+-        # 记录敏感列表括号嵌套深度，直到找到最外层闭合位置。
+-        int_depth = 0  # 敏感列表括号嵌套深度
+-
+-        # 初始化敏感列表闭合括号下标，缺省时保持未命中。
+-        int_close_index = -1  # 最外层右括号下标
+-
+-        # 扫描敏感列表文本，定位与首个左括号配对的闭合位置。
+-        for int_index, str_char in enumerate(str_tail):
+-
+-            # 左括号会让当前敏感列表嵌套深度增加。
+-            if str_char == "(":
+-
+-                # 进入更深一层括号嵌套。
+-                int_depth += 1  # 进入括号后的敏感列表嵌套深度
+-
+-            # 右括号会尝试关闭当前最内层括号。
+-            elif str_char == ")":
+-
+-                # 当前字符让括号嵌套深度回退一层。
+-                int_depth -= 1  # 遇到右括号后的敏感列表嵌套深度
+-
+-                # 回到最外层时，说明敏感列表边界已经闭合。
+-                if int_depth == 0:
+-
+-                    # 记录最外层闭合括号位置并停止继续扫描。
+-                    int_close_index = int_index  # 最外层敏感列表闭合位置
+-
+-                    # 命中最外层闭合位置后，不再继续扫描后续字符。
+-                    break
+-
+-        # 没有找到最外层闭合右括号时，敏感列表仍然不完整。
+-        if int_close_index == -1:
+-
+-            # 抛出敏感列表括号不平衡的统一异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] always sensitivity list normalization failed."
+-            ) from self._strict_error(
+-                "unsupported_shape",
+-                text,
+-                "Balance the always sensitivity list before formatting.",
+-            )
+-
+-        # 组装规范化后的 always 敏感列表头。
+-        str_header = f"always@{str_tail[: int_close_index + 1]}"  # 规范化后的 always 头部
+-
+-        # 返回标准化头部和尾随正文。
+-        return str_header, str_tail[int_close_index + 1 :].strip()
+-
+-    # 判断语句文本是否已经在顶层遇到分号结束。
+-    def _statement_has_top_level_semicolon(self, text: str) -> bool:
+-        """
+-        判断给定语句文本是否在顶层结构上已经出现结束分号。
+-
+-        参数:
+-            text: 待检查的语句文本。
+-        返回:
+-            bool: 顶层存在分号时返回 True，否则返回 False。
+-        """
+-
+-        # 记录括号、方括号和花括号的综合嵌套深度。
+-        int_depth = 0  # 当前语句文本的综合嵌套深度
+-
+-        # 顺序扫描语句文本中的每个字符。
+-        for str_char in text:
+-
+-            # 左侧定界符会让综合嵌套深度增加。
+-            if str_char in "([{":
+-
+-                # 进入更深一层复合结构。
+-                int_depth += 1  # 当前字符让综合嵌套深度向内推进一层
+-
+-            # 右侧定界符会让综合嵌套深度向外回退。
+-            elif str_char in ")]}":
+-
+-                # 防止异常文本把深度减到负数。
+-                int_depth = max(0, int_depth - 1)  # 当前字符让综合嵌套深度向外回退一层
+-
+-            # 只有位于顶层的分号才表示语句结束。
+-            elif str_char == ";" and int_depth == 0:
+-
+-                # 已经识别到顶层结束分号，可以提前返回。
+-                return True
+-
+-        # 整段文本扫描完成后仍未找到顶层分号。
+-        return False
+-
+-    # 从按行切分的片段里回收一条完整语句文本。
+-    def _collect_statement_text_from_fragments(self, fragments: list[str], start: int) -> tuple[str, int]:
+-        """
+-        从语句片段列表中收集一条以顶层分号结束的完整语句。
+-
+-        参数:
+-            fragments: 已按物理片段切分的语句文本列表。
+-            start: 语句起始片段下标。
+-        返回:
+-            tuple[str, int]: 拼接后的完整语句文本，以及下一条片段的起始下标。
+-        """
+-
+-        # 先把起始片段规范化后放入语句收集缓冲区。
+-        list_statement_lines = [self._normalize_statement_line(fragments[start].strip())]  # 当前语句片段缓冲区
+-
+-        # 下一轮从起始片段之后继续向前拼接。
+-        int_index = start + 1  # 待检查的下一个片段下标
+-
+-        # 持续向后收集片段，直到遇到顶层结束分号。
+-        while int_index < len(fragments):
+-
+-            # 把当前已收集的非空片段重新拼成完整语句文本。
+-            str_joined = "\n".join(line for line in list_statement_lines if line)  # 当前已拼接语句文本
+-
+-            # 已经命中顶层结束分号时，当前语句收集完成。
+-            if self._statement_has_top_level_semicolon(str_joined):
+-
+-                # 结束当前语句拼接，保留 int_index 作为下一段起点。
+-                break
+-
+-            # 继续把下一片段规范化后并入当前语句缓冲区。
+-            list_statement_lines.append(
+-                self._normalize_statement_line(fragments[int_index].strip())
+-            )
+-
+-            # 当前片段已经消费，继续检查后续片段。
+-            int_index += 1  # 继续检查后续片段的下标位置
+-
+-        # 返回拼接后的语句文本和下一个待处理片段下标。
+-        return "\n".join(line for line in list_statement_lines if line), int_index
+-
+-    # 从物理行列表中回收一条声明语句及其首个行尾注释。
+-    def _collect_declaration_statement(self, lines: list[str], start: int) -> tuple[str, str, int]:
+-        """
+-        从多行声明中提取完整声明文本、首个行尾注释和结束下标。
+-
+-        参数:
+-            lines: 原始物理行列表。
+-            start: 声明起始行下标。
+-        返回:
+-            tuple[str, str, int]: 拼接后的声明文本、首个行尾注释和下一行下标。
+-        """
+-
+-        # 收集当前多行声明中的有效代码行。
+-        list_statement_lines: list[str] = []  # 当前声明的代码行缓冲区
+-
+-        # 只记录当前声明遇到的首个行尾注释。
+-        str_comment = ""  # 当前声明绑定的首个行尾注释
+-
+-        # 从声明起始行开始逐行向后收集。
+-        int_index = start  # 当前正在消费的物理行下标
+-
+-        # 持续回收物理行，直到声明在顶层遇到分号结束。
+-        while int_index < len(lines):
+-
+-            # 拆出当前物理行的代码部分和行尾注释。
+-            str_raw, str_inline_comment = self._split_comment(lines[int_index].strip())  # 当前行代码与行尾注释
+-
+-            # 一旦遇到第一条行尾说明，就把它作为整条多行声明的代表注释。
+-            if str_inline_comment and not str_comment:
+-
+-                # 这里保留的是当前多行声明最先出现且最贴近语义的行尾注释。
+-                str_comment = str_inline_comment  # 当前声明要沿用的首条行尾说明
+-
+-            # 当前行仍含有效代码时，才并入声明文本。
+-            if str_raw.strip():
+-
+-                # 把当前有效代码行追加到声明缓冲区。
+-                list_statement_lines.append(str_raw.strip())
+-
+-            # 重新拼接当前声明，判断是否已经命中顶层分号。
+-            str_joined = " ".join(line for line in list_statement_lines if line)  # 当前声明的拼接文本
+-
+-            # 顶层分号出现后，这条声明已经完整。
+-            if self._statement_has_top_level_semicolon(str_joined):
+-
+-                # 返回完整声明文本、首个注释以及下一条起始下标。
+-                return str_joined, str_comment, int_index + 1
+-
+-            # 当前行还未闭合整条声明时，继续向后推进。
+-            int_index += 1  # 继续收集下一条物理行并更新片段下标
+-
+-        # 到达文件尾仍未闭合时，返回当前已收集的保守结果。
+-        return " ".join(line for line in list_statement_lines if line), str_comment, int_index
+-
+-    # 从片段列表中回收一个原始 case...endcase 语句块。
+-    def _collect_raw_case_statement_from_fragments(self, fragments: list[str], start: int) -> tuple[list[str], int]:
+-        """
+-        从片段列表中提取一个保持原状的 case 语句块。
+-
+-        参数:
+-            fragments: 已按片段切分的语句文本列表。
+-            start: case 语句块起始片段下标。
+-        返回:
+-            tuple[list[str], int]: 收集到的 case 片段列表，以及下一条片段的起始下标。
+-        异常:
+-            VerilogFormatterError: 找不到对应 endcase 时抛出。
+-        """
+-
+-        # 顺序收集 case 语句块里的规范化片段。
+-        list_collected: list[str] = []  # 当前 case 语句块的规范化片段列表
+-
+-        # 记录 case/casez/casex 与 endcase 的嵌套层级。
+-        int_depth = 0  # 当前 case 语句块嵌套深度
+-
+-        # 从起始片段开始继续向后消费。
+-        int_index = start  # 当前 case 片段下标
+-
+-        # 持续扫描片段，直到最外层 case 块闭合。
+-        while int_index < len(fragments):
+-
+-            # 规范化当前片段文本，便于统一判断 case 边界。
+-            str_normalized = self._normalize_statement_line(fragments[int_index].strip())  # 当前规范化片段文本
+-
+-            # 只有非空片段才会参与 case 嵌套层级统计。
+-            if str_normalized:
+-
+-                # 把当前有效片段并入 case 收集结果。
+-                list_collected.append(str_normalized)
+-
+-                # 深度 helper 根据 case 起点或 endcase 更新嵌套层级。
+-                int_depth += self._raw_case_depth_delta(str_normalized)  # 当前片段处理后的 case 嵌套深度
+-
+-                # 回到最外层时，说明整个 case 块已经闭合。
+-                if int_depth == 0:
+-
+-                    # 返回完整的 case 片段列表和下一条起始下标。
+-                    return list_collected, int_index + 1
+-
+-            # 当前片段处理完成后继续向后扫描。
+-            int_index += 1  # 继续扫描下一个 case 片段
+-
+-        # 扫描到末尾仍未闭合时，当前 case 结构不完整。
+-        raise VerilogFormatterError("> ERR: [Python] case block normalization failed.") from self._strict_error(
+-            "unsupported_shape",
+-            fragments[start].strip(),
+-            "Close each case block with endcase before formatting.",
+-        )
+-
+-    # raw case 深度 helper 只识别 case 家族起点和 endcase 终点。
+-    def _raw_case_depth_delta(self, str_normalized: str) -> int:
+-        """返回规范化片段对 case 嵌套深度的影响。
+-
+-        参数:
+-            str_normalized: 当前规范化后的语句片段。
+-        返回:
+-            case 起点返回 1，endcase 返回 -1，其它片段返回 0。
+-        """
+-
+-        # case、casez 和 casex 都打开一层 raw case 结构。
+-        if re.match(r"^(?:case|casez|casex)\b", str_normalized):
+-
+-            # 调用方据此增加嵌套深度。
+-            return 1
+-
+-        # endcase 关闭最近一层 raw case 结构。
+-        if str_normalized.startswith("endcase"):
+-
+-            # 调用方据此减少嵌套深度。
+-            return -1
+-
+-        # 普通片段不影响 case 层级。
+-        return 0
+-
+-    # 按顶层分号把声明区域拆成独立语句。
+-    def _split_declaration_statements(self, text: str) -> list[str]:
+-        """
+-        按顶层分号切分声明文本，并为每段恢复结尾分号。
+-
+-        参数:
+-            text: 待拆分的声明区域文本。
+-        返回:
+-            list[str]: 逐条恢复后的声明语句列表。
+-        """
+-
+-        # 逐条收集补回分号后的声明语句文本。
+-        list_statements: list[str] = []  # 拆分后的声明语句列表
+-
+-        # 顶层分号切分后，逐段清理空白并恢复语句结束符。
+-        for str_entry in self._split_top_level(text, ";"):
+-
+-            # 去掉当前声明片段首尾空白，判断是否仍有有效内容。
+-            str_stripped = str_entry.strip()  # 当前声明片段的去空白文本
+-
+-            # 空片段不需要恢复成声明语句。
+-            if str_stripped:
+-
+-                # 为当前有效声明片段补回结束分号。
+-                list_statements.append(f"{str_stripped};")
+-
+-        # 返回拆分后的独立声明语句列表。
+-        return list_statements
+-
+-    # 解析 ANSI 风格模块头中的端口声明列表。
+-    def _parse_ports(self, text: str, macro_expansions: dict[str, str] | None = None) -> list[PortDecl]:
+-        """
+-        解析 ANSI 风格模块头中的端口声明列表。
+-
+-        参数:
+-            text: 端口区域原始文本。
+-            macro_expansions: 端口宏展开映射。
+-        返回:
+-            list[PortDecl]: 解析得到的端口声明列表。
+-        异常:
+-            VerilogFormatterError: 端口声明不是单条稳定形态时抛出。
+-        """
+-
+-        # 纯空端口区不产生任何结构化端口声明。
+-        if not text.strip():
+-
+-            # 空端口区直接返回空端口列表。
+-            return []
+-
+-        # 端口区宏展开通常来自模块头上下文，这里先兜底为空映射。
+-        dict_macro_expansions = macro_expansions or {}  # 端口解析使用的宏展开映射
+-
+-        # 收集端口区里解析得到的结构化端口声明。
+-        list_ports: list[PortDecl] = []  # 端口声明结果列表
+-
+-        # 先建立 banner 状态机里的大分组状态。
+-        str_current_group = ""  # 当前端口分组标题
+-
+-        # 再建立给后续端口补充中层语义的 banner 小节状态。
+-        str_current_section = ""  # 当前端口小节标题
+-
+-        # 最后建立仅影响端口细粒度归类的 banner 子分组状态。
+-        str_current_subgroup = ""  # 当前端口的细粒度子分组标题
+-
+-        # 累积只包含属性而没有实际声明的前置 attributes。
+-        str_pending_attributes = ""  # 待拼接到下一条端口声明的前置属性
+-
+-        # 按物理行顺序解析端口区域，保留注释和宏展开边界。
+-        for str_raw_line in text.splitlines():
+-
+-            # 去掉当前物理行头尾空白，统一判断分支入口。
+-            str_stripped = str_raw_line.strip()  # 当前端口物理行的规范化文本
+-
+-            # 空白行只起分隔作用，不产生端口节点。
+-            if not str_stripped:
+-
+-                # 当前物理行不承载端口信息，直接跳过。
+-                continue
+-
+-            # 宏调用行需要同时保留 raw 节点和可展开的合成端口。
+-            if str_stripped.startswith("`"):
+-
+-                # 原样保留端口宏调用行，避免丢失用户显式端口宏。
+-                list_ports.append(PortDecl("raw", "", "", raw_text=str_stripped))
+-
+-                # 提取宏名，便于读取源码中缓存的端口宏展开文本。
+-                str_macro_name = str_stripped.lstrip("`").split(None, 1)[0]  # 当前端口宏名
+-
+-                # 查找当前宏调用对应的展开文本。
+-                str_expansion = dict_macro_expansions.get(str_macro_name, "")  # 当前端口宏展开文本
+-
+-                # 命中可展开文本时，递归生成合成端口节点。
+-                if str_expansion:
+-
+-                    # 追加展开后解析出的端口，但过滤掉其中的 raw 宏占位节点。
+-                    list_ports.extend(
+-                        port_decl
+-                        for port_decl in self._parse_ports(str_expansion, {})
+-                        if not port_decl.raw_text
+-                    )
+-
+-                # 当前宏调用行已经完整处理。
+-                continue
+-
+-            # 行注释可能承载端口分组、小节或子分组信息。
+-            if str_stripped.startswith("//"):
+-
+-                # 提取 banner 标题文本，供分组状态机继续判断。
+-                str_comment_text = extract_banner_title(str_stripped)  # 当前注释行的标题文本
+-
+-                # 无法提取标题的注释行不改变任何端口分组状态。
+-                if not str_comment_text:
+-
+-                    # 普通说明注释不属于端口分组状态输入。
+-                    continue
+-
+-                # banner 分隔线会切换当前端口分组标题。
+-                if is_banner_line(str_stripped):
+-
+-                    # 进入新的端口分组后，同时清空旧小节和子分组。
+-                    str_current_group = str_comment_text  # 当前 banner 归属的新端口分组
+-
+-                    # 进入新分组后，需要先清空上一层遗留的小节状态。
+-                    str_current_section = ""  # 进入新分组后的当前端口小节标题
+-
+-                    # 进入新分组后，也要同步清空上一层遗留的子分组状态。
+-                    str_current_subgroup = ""  # 进入新分组后的当前端口子分组标题
+-
+-                    # 当前注释已经切换分组状态，不再进入后续分支。
+-                    continue
+-
+-                # 标准小节标签会更新当前端口小节状态。
+-                if self._is_port_section_label(str_comment_text):
+-
+-                    # 切换端口小节时，需要同步清空旧子分组。
+-                    str_current_section = str_comment_text  # 当前 banner 归属的新端口小节
+-
+-                    # 切换小节后，旧子分组已经不再适用。
+-                    str_current_subgroup = ""  # 切换小节后的当前端口子分组标题
+-
+-                    # 当前注释已经切换小节状态，不再继续判断后续标签。
+-                    continue
+-
+-                # 这里识别的是不改动大分组、只补充局部标签的子分组标题。
+-                if self._is_port_subgroup_label(str_comment_text, str_current_group):
+-
+-                    # 这里只更新后续端口使用的子分组标签，不改动更高层级状态。
+-                    str_current_subgroup = str_comment_text  # 当前端口要继承的子分组标题
+-
+-                    # 当前注释已经切换子分组状态，不再进入后续标题逻辑。
+-                    continue
+-
+-                # 总线或接口类标题应被视作新的大分组边界。
+-                if "总线" in str_comment_text or "接口" in str_comment_text:
+-
+-                    # 更宽泛的接口标题进入新的端口分组层级。
+-                    str_current_group = str_comment_text  # 接口或总线类标题对应的大分组
+-
+-                    # 接口级标题进入新的大分组后，需要清空旧小节状态。
+-                    str_current_section = ""  # 接口或总线类标题后的当前端口小节标题
+-
+-                    # 接口级标题进入新的大分组后，也要清空旧子分组状态。
+-                    str_current_subgroup = ""  # 接口或总线类标题后的当前端口子分组标题
+-
+-                # 其他标题按小节说明处理即可。
+-                else:
+-
+-                    # 非总线类标题继续作为当前端口小节描述。
+-                    str_current_section = str_comment_text  # 普通标题对应的小节说明
+-
+-                    # 切换到普通小节后，不再沿用之前的子分组。
+-                    str_current_subgroup = ""  # 普通标题后的当前端口子分组标题
+-
+-                # 当前注释行只负责维护端口分组状态。
+-                continue
+-
+-            # 把当前端口行拆成代码部分和行尾注释。
+-            str_raw, str_inline_comment = self._split_comment(str_stripped)  # 当前端口行代码与行尾注释
+-
+-            # 提取前置 attributes，并判断是否仍缺少真实端口声明正文。
+-            str_attributes, str_candidate = self._extract_leading_attributes(str_raw)  # 当前端口行属性与候选正文
+-
+-            # 只有 attributes 而没有正文时，需要延迟拼接到下一行声明。
+-            if str_attributes and not str_candidate:
+-
+-                # 累积当前行属性，等待后续端口声明一起解析。
+-                str_pending_attributes = f"{str_pending_attributes} {str_attributes}".strip()  # 累积到下一条端口声明前的属性文本
+-
+-                # 当前行仅承载属性，等待下一条真实端口声明再一起解析。
+-                continue
+-
+-            # 前面已经缓存过独立 attributes 时，需要先拼回当前端口行。
+-            if str_pending_attributes:
+-
+-                # 把前置 attributes 还原到当前真实端口声明前面。
+-                str_raw = f"{str_pending_attributes} {str_raw}".strip()  # 拼回属性后的完整端口声明文本
+-
+-                # 到这里说明缓存属性已经成功并入真实端口声明正文。
+-                str_pending_attributes = ""  # 当前属性缓存已经消费完成
+-
+-            # 先把当前端口代码折叠成单行文本，便于端口解析器复用。
+-            str_port_text = str_raw.replace("\n", " ").strip()  # 传给端口解析器的单行端口文本
+-
+-            # 先把当前端口所在的分组上下文打包，避免参数列表过长。
+-            tuple_port_context = (str_current_group, str_current_section, str_current_subgroup)  # 当前端口的分组上下文
+-
+-            # 再把单行端口文本连同分组上下文交给端口解析器。
+-            port_decl_node = self._parse_port_line(  # 当前端口声明解析结果
+-                str_port_text, str_inline_comment, *tuple_port_context  # 当前端口文本、注释和分组上下文
+-            )
+-
+-            # 端口行无法还原为单条稳定声明时，必须要求用户先规范化输入。
+-            if not port_decl_node:
+-
+-                # 抛出端口声明形态不稳定的统一异常。
+-                raise VerilogFormatterError(
+-                    "> ERR: [Python] port declaration normalization failed."
+-                ) from self._strict_error(
+-                    "unsupported_shape",
+-                    str_stripped,
+-                    "Rewrite each port as a single input/output/inout declaration "
+-                    "before formatting.",
+-                )
+-
+-            # 当前端口声明解析成功后并入端口结果列表。
+-            list_ports.append(port_decl_node)
+-
+-        # 返回模块头端口区解析得到的全部端口声明。
+-        return list_ports
+-
+-    # 解析模块头端口区，并在需要时回退到非 ANSI 端口模式。
+-    def _parse_module_ports(
+-        self, header_text: str, body: str, macro_expansions: dict[str, str] | None = None
+-    ) -> tuple[list[PortDecl], str]:
+-        """
+-        解析模块头中的端口区域，必要时回退到非 ANSI 端口声明方案。
+-
+-        参数:
+-            header_text: 模块头中的端口文本。
+-            body: 模块主体正文。
+-            macro_expansions: 端口宏展开映射。
+-        返回:
+-            tuple[list[PortDecl], str]: 端口声明列表，以及必要时剥离过端口声明的模块主体。
+-        异常:
+-            VerilogFormatterError: ANSI 和非 ANSI 两条端口解析路径都无法稳定恢复时抛出。
+-        """
+-
+-        # 纯空端口头表示当前模块没有显式端口。
+-        if not header_text.strip():
+-
+-            # 空端口头直接返回空端口列表和原始主体。
+-            return [], body
+-
+-        # 优先按 ANSI 风格端口区直接解析。
+-        try:
+-
+-            # ANSI 端口解析成功时，主体正文无需改写。
+-            return self._parse_ports(header_text, macro_expansions), body
+-
+-        # ANSI 风格失败后，再尝试回退到非 ANSI 端口模式。
+-        except VerilogFormatterError:
+-
+-            # 先从模块头里提取裸端口名列表。
+-            list_bare_names = self._parse_non_ansi_port_names(header_text)  # 非 ANSI 端口名列表
+-
+-            # 模块头里没有稳定裸端口名时，沿用原始异常即可。
+-            if not list_bare_names:
+-
+-                # 当前模块头既非 ANSI 也不是可恢复的非 ANSI 形式。
+-                raise
+-
+-            # 使用主体里的 input/output/inout 声明恢复非 ANSI 端口信息。
+-            return self._parse_non_ansi_ports_from_body(list_bare_names, body)
+-
+-    # 从非 ANSI 模块头里提取裸端口名列表。
+-    def _parse_non_ansi_port_names(self, text: str) -> list[str]:
+-        """
+-        提取非 ANSI 模块头中的裸端口名列表。
+-
+-        参数:
+-            text: 非 ANSI 模块头端口文本。
+-        返回:
+-            list[str]: 按出现顺序提取出的裸端口名列表；不匹配时返回空列表。
+-        """
+-
+-        # 收集去掉注释后的裸端口片段文本。
+-        list_fragments: list[str] = []  # 非 ANSI 端口片段列表
+-
+-        # 逐行读取模块头，只保留真实端口名片段。
+-        for str_raw_line in text.splitlines():
+-
+-            # 去掉每行头尾空白，便于识别空行和行注释。
+-            str_stripped = str_raw_line.strip()  # 当前非 ANSI 端口行文本
+-
+-            # 空行和整行注释都不属于裸端口名片段。
+-            if not str_stripped or str_stripped.startswith("//"):
+-
+-                # 当前物理行不承载裸端口名信息。
+-                continue
+-
+-            # 去掉行尾注释后，只保留端口名候选文本。
+-            str_raw, _ = self._split_comment(str_stripped)  # 当前非 ANSI 端口片段代码文本
+-
+-            # 把去空白后的端口片段加入收集列表。
+-            list_fragments.append(str_raw.strip())
+-
+-        # 没有任何有效端口片段时，说明不是非 ANSI 端口头。
+-        if not list_fragments:
+-
+-            # 无片段输入时返回空列表，交由上层决定后续路径。
+-            return []
+-
+-        # 记录按顺序提取出来的裸端口名。
+-        list_names: list[str] = []  # 非 ANSI 端口名结果列表
+-
+-        # 顶层逗号切分后，逐个验证每个端口名候选。
+-        for str_entry in self._split_top_level("\n".join(list_fragments), ","):
+-
+-            # 去掉片段尾部逗号和分号，得到最终候选端口名。
+-            str_candidate = str_entry.strip().rstrip(",;")  # 当前裸端口名候选
+-
+-            # 空候选不构成有效端口名。
+-            if not str_candidate:
+-
+-                # 仅由分隔符造成的空片段可以直接跳过。
+-                continue
+-
+-            # 只有合法标识符才允许作为非 ANSI 端口名。
+-            if not re.fullmatch(r"[A-Za-z_]\w*", str_candidate):
+-
+-                # 只要存在一个非标端口名，就放弃整条非 ANSI 回退路径。
+-                return []
+-
+-            # 当前候选合法时，按原顺序并入端口名列表。
+-            list_names.append(str_candidate)
+-
+-        # 返回解析得到的裸端口名列表。
+-        return list_names
+-
+-    # 根据模块主体中的声明恢复非 ANSI 端口定义，并返回剩余正文。
+-    def _parse_non_ansi_ports_from_body(self, port_names: list[str], body: str) -> tuple[list[PortDecl], str]:
+-        """
+-        从模块主体中的 input/output/inout 声明恢复非 ANSI 端口信息。
+-
+-        参数:
+-            port_names: 模块头中声明的裸端口名顺序。
+-            body: 模块主体原始文本。
+-        返回:
+-            tuple[list[PortDecl], str]: 按模块头顺序恢复出的端口列表，以及去掉已消费端口声明后的剩余主体。
+-        异常:
+-            VerilogFormatterError: 缺少任意非 ANSI 端口声明时抛出。
+-        """
+-
+-        # 把主体拆成物理行，便于按前缀顺序消费声明。
+-        list_lines = body.splitlines()  # 模块主体物理行列表
+-
+-        # 记录已经向前消费到的物理行下标。
+-        int_consumed = 0  # 当前已消费的主体行数
+-
+-        # 用端口名映射缓存已恢复的非 ANSI 端口声明。
+-        dict_parsed: dict[str, PortDecl] = {}  # 已恢复的非 ANSI 端口声明映射
+-
+-        # 收集未被当作非 ANSI 端口声明消费的剩余主体行。
+-        list_remaining_lines: list[str] = []  # 去掉非 ANSI 端口声明后的剩余主体行
+-
+-        # 累积独立属性行，等待拼接到下一条真实端口声明。
+-        str_pending_attributes = ""  # 待拼接到下一条主体端口声明的属性文本
+-
+-        # 从主体开头开始扫描，直到端口声明区结束。
+-        while int_consumed < len(list_lines):
+-
+-            # 读取当前待消费物理行的规范化文本。
+-            str_stripped = list_lines[int_consumed].strip()  # 当前主体行的规范化文本
+-
+-            # 空白行和纯注释行不属于可消费端口声明。
+-            if not str_stripped or str_stripped.startswith("//"):
+-
+-                # 这类行仍需保留在剩余主体中。
+-                list_remaining_lines.append(list_lines[int_consumed])
+-
+-                # 当前保留行已经写回剩余主体，继续消费下一行。
+-                int_consumed += 1  # 下一个待消费的主体行下标
+-
+-                # 注释或空白行不参与非 ANSI 端口恢复。
+-                continue
+-
+-            # 参数声明不属于非 ANSI 端口恢复范围，应整体保留。
+-            if str_stripped.startswith(("parameter", "localparam")):
+-
+-                # 先回收完整参数声明，再整体写回剩余主体。
+-                tuple_declaration_result = self._collect_declaration_statement(list_lines, int_consumed)  # 当前参数声明的文本、注释和结束下标
+-
+-                # 从声明回收结果里只取结束下标，供主体行推进复用。
+-                int_next_index = tuple_declaration_result[2]  # 参数声明结束后的下一物理行下标
+-
+-                # 把完整参数声明原样保留回剩余主体中。
+-                list_remaining_lines.extend(list_lines[int_consumed:int_next_index])
+-
+-                # 当前参数声明已经整体消费完成。
+-                int_consumed = int_next_index  # 参数声明之后的下一物理行下标
+-
+-                # 参数声明不参与非 ANSI 端口恢复。
+-                continue
+-
+-            # 独立属性行要缓存起来，等待下一条真实端口声明拼接。
+-            if str_stripped.startswith("(*"):
+-
+-                # 先拆出属性行里的纯代码部分，方便后续识别真实 attributes。
+-                str_raw, _ = self._split_comment(str_stripped)  # 当前属性行代码部分
+-
+-                # 再从属性行代码里拆出 attributes 以及可能混排的正文。
+-                str_attributes, str_candidate = self._extract_leading_attributes(str_raw)  # 属性行提取结果
+-
+-                # 只有属性没有正文时，继续缓存等待后续端口声明。
+-                if str_attributes and not str_candidate:
+-
+-                    # 累积当前属性文本，供下一条真实端口声明复用。
+-                    str_pending_attributes = f"{str_pending_attributes} {str_attributes}".strip()  # 累积到下一条主体端口声明前的属性文本
+-
+-                    # 当前属性行已经消费完成，继续读取下一条主体行。
+-                    int_consumed += 1  # 属性行之后的下一物理行下标
+-
+-                    # 只有属性没有正文时，当前行不构成真实端口声明。
+-                    continue
+-
+-            # 一旦离开 input/output/inout 声明区，就结束非 ANSI 端口恢复。
+-            if not str_stripped.startswith(("input", "output", "inout")):
+-
+-                # 当前行已经进入模块主体的普通声明或语句区。
+-                break
+-
+-            # 拆出当前端口声明行的代码部分和行尾注释。
+-            str_raw, str_inline_comment = self._split_comment(str_stripped)  # 当前主体端口声明文本与注释
+-
+-            # 若前面缓存过独立属性行，需要先拼回当前端口声明。
+-            if str_pending_attributes:
+-
+-                # 还原属性前缀，让端口解析器看到完整声明。
+-                str_raw = f"{str_pending_attributes} {str_raw}".strip()  # 拼回属性后的完整主体端口声明
+-
+-                # 走到这里说明属性前缀已经顺利拼回当前主体端口声明本体。
+-                str_pending_attributes = ""  # 当前主体端口声明已消费的属性缓存
+-
+-            # 现在可以把主体里的这条声明按非 ANSI 端口规则还原。
+-            port_decl_node = self._parse_port_line(  # 当前非 ANSI 端口解析结果
+-                str_raw, str_inline_comment, "", "", ""  # 非 ANSI 端口文本、注释和空分组上下文
+-            )
+-
+-            # 无法还原为单条端口声明时，必须要求先规范输入。
+-            if not port_decl_node:
+-
+-                # 抛出非 ANSI 端口声明形态不稳定的统一异常。
+-                raise VerilogFormatterError(
+-                    "> ERR: [Python] non-ANSI port normalization failed."
+-                ) from self._strict_error(
+-                    "unsupported_shape",
+-                    str_stripped,
+-                    "Rewrite each port declaration into a single input/output/inout "
+-                    "form before formatting.",
+-                )
+-
+-            # 用端口名缓存当前恢复出的非 ANSI 端口声明。
+-            dict_parsed[port_decl_node.name] = port_decl_node  # 当前端口名对应的恢复结果
+-
+-            # 当前端口声明已经消费，继续向下一物理行推进。
+-            int_consumed += 1  # 下一条待消费的主体行下标
+-
+-            # 模块头中的全部裸端口名都已恢复后，可以停止扫描端口区。
+-            if all(name in dict_parsed for name in port_names):
+-
+-                # 非 ANSI 端口恢复目标已经全部达成。
+-                break
+-
+-        # 统计模块头中仍未在主体里找到声明的端口名。
+-        list_missing = [name for name in port_names if name not in dict_parsed]  # 缺失的非 ANSI 端口名列表
+-
+-        # 只要仍有端口名缺失，就不能继续保守格式化。
+-        if list_missing:
+-
+-            # 抛出非 ANSI 端口声明缺失的统一异常。
+-            raise VerilogFormatterError(
+-                "> ERR: [Python] non-ANSI port declaration lookup failed."
+-            ) from self._strict_error(
+-                "unsupported_shape",
+-                ", ".join(list_missing),
+-                "Provide matching input/output/inout declarations for each non-ANSI "
+-                "module port before formatting.",
+-            )
+-
+-        # 按模块头中的端口顺序重建最终端口列表。
+-        list_ordered_ports = [dict_parsed[name] for name in port_names]  # 按模块头顺序排列的端口列表
+-
+-        # 把尚未消费的主体剩余部分重新接回结果中。
+-        list_remaining_lines.extend(list_lines[int_consumed:])
+-
+-        # 返回恢复出的端口列表以及去掉端口声明后的剩余主体。
+-        return list_ordered_ports, "\n".join(list_remaining_lines)
++        if obj_delay is None:
++            return super()._split_always_header(text)
++        str_body = (obj_delay.group("body") or "").strip()
++        return f"always #{obj_delay.group('delay')}", str_body
+--- installed/scripts/python/quality/formatter_backend/syntax_utils.py
++++ project/scripts/python/quality/formatter_backend/syntax_utils.py
+@@ -1,1940 +1,43 @@
+-"""提供 Verilog formatter 共享的语法、表达式和命名工具。"""
++"""Narrow rendering adaptation layered on the installed syntax helpers."""
++
+ from __future__ import annotations
+ 
+-# 正则用于解析 Verilog 片段、表达式 token 和语句边界。
++import importlib.util
+ import re
++import sys
++from pathlib import Path
+ 
+-# strict mode 需要构造统一 formatter 异常。
+-from .models import VerilogFormatterError
+ 
+-# 语法工具 mixin 集中承载 formatter 后端共享的小型解析逻辑。
+-class SyntaxUtilsMixin:
+-    """提供表达式规范化、命名归一和语句解析辅助能力。"""
++def _load_upstream_module():
++    """Load the installed implementation under a private sibling name."""
+ 
+-    # raw block 行首闭合关键字会影响当前行缩进。
+-    RAW_BLOCK_LEADING_CLOSE_PATTERN = re.compile(  # raw 行首闭合匹配
+-        r"^(?:endcase|endfunction|endtask|endgenerate|endmodule|endspecify|end)\b(?P<rest>.*)$"  # Verilog 块闭合关键字
+-    )
++    path_current = Path(__file__).resolve()
++    package = sys.modules[__package__]
++    for path_entry in package.__path__:
++        path_candidate = (Path(path_entry) / path_current.name).resolve()
++        if path_candidate == path_current or not path_candidate.is_file():
++            continue
++        str_name = f"{__package__}._installed_syntax_utils"
++        spec = importlib.util.spec_from_file_location(str_name, path_candidate)
++        if spec is None or spec.loader is None:
++            break
++        module = importlib.util.module_from_spec(spec)
++        sys.modules[str_name] = module
++        spec.loader.exec_module(module)
++        return module
++    raise ImportError("installed formatter syntax_utils.py was not found")
+ 
+-    # 单行 Verilog 文本按 `//` 分离代码和右侧注释。
+-    def _split_comment(self, entry: str) -> tuple[str, str]:
+-        """
+-        拆分一行 Verilog 中的代码片段和行注释。
+ 
+-        :param entry: 可能包含 `//` 注释的单行文本。
+-        :return: 代码文本和去掉外围空白后的注释文本。
+-        """
++_upstream = _load_upstream_module()
+ 
+-        # 没有行注释标记时，整行都属于代码部分。
+-        if "//" not in entry:
+ 
+-            # 空注释字符串让调用方沿用无注释路径。
+-            return entry, ""
++class SyntaxUtilsMixin(_upstream.SyntaxUtilsMixin):
++    """Keep delay-control rendering lexically separated from ``begin``."""
+ 
+-        # 拆分一次即可保留注释正文中的额外 `//`。
+-        str_raw, str_comment = entry.split("//", 1)  # 代码片段和注释片段
++    def _normalize_always_header(self, header: str) -> str:
++        """Preserve the installed normalization and add one required delay spacer."""
+ 
+-        # 注释正文去掉两端空白，代码片段保持原有空白给上游处理。
+-        return str_raw, str_comment.strip()
+-
+-    # 顶层切分只在括号深度为零时识别分隔符。
+-    def _split_top_level(self, text: str, delimiter: str) -> list[str]:
+-        """
+-        按顶层分隔符切分表达式或关联列表。
+-
+-        :param text: 待切分的 Verilog 片段。
+-        :param delimiter: 只在括号外生效的单字符分隔符。
+-        :return: 去掉空项后的顶层片段列表。
+-        """
+-
+-        # list_result 保存已经遇到完整顶层分隔符的片段。
+-        list_result: list[str] = []  # 顶层切分结果
+-
+-        # list_current 累积当前片段的原始字符。
+-        list_current: list[str] = []  # 当前顶层片段字符
+-
+-        # int_depth 跟踪圆括号、方括号和花括号的嵌套层级。
+-        int_depth = 0  # 当前括号深度
+-
+-        # 逐字符扫描可以避免误切端口表达式中的逗号或分号。
+-        for str_char in text:
+-
+-            # 左括号类字符让后续分隔符暂时失效。
+-            if str_char in "([{":
+-
+-                # 进入更深层级后，只有配对闭合才会回到顶层。
+-                int_depth += 1  # 顶层切分括号深度增加
+-
+-            # 右括号类字符结束一层嵌套。
+-            elif str_char in ")]}":
+-
+-                # 保持原算法行为，不额外钳制异常负深度。
+-                int_depth -= 1  # 顶层切分括号深度减少
+-
+-            # 当前字符是顶层分隔符时结束一个片段。
+-            if str_char == delimiter and int_depth == 0:
+-
+-                # 完成的片段立即去除外围空白后入列。
+-                list_result.append("".join(list_current).strip())
+-
+-                # 下一个片段从空字符缓存开始。
+-                list_current = []  # 下一个顶层片段字符缓存
+-
+-            # 普通字符继续归入当前片段。
+-            else:
+-
+-                # 保留字符原貌，后续规范化函数再处理空白。
+-                list_current.append(str_char)
+-
+-        # 扫描结束后，最后一个片段没有尾随分隔符也要输出。
+-        if list_current:
+-
+-            # 末尾片段同样去掉外围空白。
+-            list_result.append("".join(list_current).strip())
+-
+-        # 空片段不参与调用方的参数、端口或 for 子句处理。
+-        return [item for item in list_result if item]
+-
+-    # 命名前缀应用前先剥离 formatter 已管理的旧前缀。
+-    def _apply_prefix(self, name: str, prefix: str) -> str:
+-        """
+-        给信号基础名应用指定前缀。
+-
+-        :param name: 原始信号名或已经带旧前缀的名称。
+-        :param prefix: 目标命名前缀。
+-        :return: 带目标前缀且不会重复前缀的信号名。
+-        """
+-
+-        # str_stripped_name 是去掉已知前缀后的信号基础名。
+-        str_stripped_name = self._strip_known_prefixes(name)  # 前缀剥离后的信号名
+-
+-        # 基础名已经以目标前缀开头时不重复追加。
+-        return f"{prefix}{str_stripped_name}" if not str_stripped_name.startswith(prefix) else str_stripped_name
+-
+-    # 后缀驱动的信号分类规则来自 formatter 配置。
+-    def _signal_category_suffix_rules(self) -> tuple[tuple[tuple[str, ...], str], ...]:
+-        """
+-        返回计数器、标志、编码器和解码器后缀对应的前缀规则。
+-
+-        :param: 无外部业务参数。
+-        :return: 后缀集合与目标前缀组成的不可变规则表。
+-        """
+-
+-        # 调用方按顺序匹配，先命中的分类决定最终前缀。
+-        return (
+-            (("_counter", "_count", "_cnt"), self.config["naming"]["counter_prefix"]),
+-            (("_flag", "_flg"), self.config["naming"]["flag_prefix"]),
+-            (("_encode", "_enc"), self.config["naming"]["encoder_prefix"]),
+-            (("_decode", "_dec"), self.config["naming"]["decoder_prefix"]),
+-        )
+-
+-    # 已管理分类前缀用于识别不应重复添加的信号名。
+-    def _managed_signal_category_prefixes(self) -> tuple[str, ...]:
+-        """
+-        返回 formatter 会自动管理的信号分类前缀。
+-
+-        :param: 无外部业务参数。
+-        :return: 计数器、标志、编码器和解码器前缀。
+-        """
+-
+-        # 这些前缀在剥离旧命名时需要被统一移除。
+-        return (
+-            self.config["naming"]["counter_prefix"],
+-            self.config["naming"]["flag_prefix"],
+-            self.config["naming"]["encoder_prefix"],
+-            self.config["naming"]["decoder_prefix"],
+-        )
+-
+-    # 分类前缀检查用于避免把已有规范名再次重命名。
+-    def _has_managed_signal_category_prefix(self, name: str) -> bool:
+-        """
+-        判断信号名是否已经带有 formatter 管理的分类前缀。
+-
+-        :param name: 待检查的信号名。
+-        :return: 已带管理前缀时返回 True。
+-        """
+-
+-        # str_lower_name 统一大小写比较，兼容输入中的大小写差异。
+-        str_lower_name = name.lower()  # 小写信号名
+-
+-        # 任一管理前缀命中即可视为已分类。
+-        return any(
+-            str_lower_name.startswith(str_prefix.lower())
+-            for str_prefix in self._managed_signal_category_prefixes()
+-        )
+-
+-    # 后缀匹配把 legacy 命名转换为配置化分类前缀。
+-    def _match_signal_category_suffix(self, name: str) -> tuple[str, str] | None:
+-        """
+-        根据信号后缀判断需要追加的分类前缀。
+-
+-        :param name: 原始信号名。
+-        :return: 命中时返回目标前缀和剥离后缀的基础名。
+-        """
+-
+-        # str_stripped_name 先移除已有方向或分类前缀。
+-        str_stripped_name = self._strip_known_prefixes(name)  # 待匹配后缀的基础名
+-
+-        # str_lower_name 用于大小写不敏感的后缀判断。
+-        str_lower_name = str_stripped_name.lower()  # 小写基础名
+-
+-        # 分类规则按配置顺序扫描，保持旧 formatter 的优先级。
+-        for tuple_suffixes, str_prefix in self._signal_category_suffix_rules():
+-
+-            # 同一分类可能接受多个历史后缀。
+-            for str_suffix in tuple_suffixes:
+-
+-                # 未命中当前后缀时继续尝试同类其他后缀。
+-                if not str_lower_name.endswith(str_suffix):
+-
+-                    # 当前后缀没有提供分类依据。
+-                    continue
+-
+-                # str_base_name 是去掉语义后缀后的真实信号基础名。
+-                str_base_name = str_stripped_name[: -len(str_suffix)].rstrip("_")  # 分类后缀剥离后的名称
+-
+-                # 只有后缀没有基础名时拒绝重命名。
+-                if not str_base_name:
+-
+-                    # 空基础名无法组成合法信号名。
+-                    return None
+-
+-                # 返回目标前缀和基础名，供调用方拼接新名称。
+-                return str_prefix, str_base_name
+-
+-        # 没有分类后缀时不触发后缀驱动重命名。
+-        return None
+-
+-    # 后缀驱动归一化只在明确命中分类后缀时生效。
+-    def _normalize_suffix_driven_signal_name(self, name: str) -> str | None:
+-        """
+-        将带语义后缀的信号名转换为配置化前缀命名。
+-
+-        :param name: 原始信号名。
+-        :return: 命中后缀规则时返回新名称，否则返回 None。
+-        """
+-
+-        # tuple_match 保存命中的目标前缀和基础名。
+-        tuple_match = self._match_signal_category_suffix(name)  # 后缀分类匹配结果
+-
+-        # 没有分类后缀时交给其他命名规则处理。
+-        if tuple_match is None:
+-
+-            # None 表示本函数没有产生改名建议。
+-            return None
+-
+-        # 拆出前缀和基础名用于应用统一前缀逻辑。
+-        str_prefix, str_base_name = tuple_match  # 分类前缀和基础名
+-
+-        # 复用前缀 helper，避免重复添加已存在的分类前缀。
+-        return self._apply_prefix(str_base_name, str_prefix)
+-
+-    # 内部输出基础名优先使用后缀分类规则。
+-    def _normalize_internal_output_base_name(self, name: str) -> str:
+-        """
+-        归一化内部输出信号的基础名。
+-
+-        :param name: 原始输出相关信号名。
+-        :return: 去除旧前缀后可继续追加输出后缀的基础名。
+-        """
+-
+-        # str_category_name 保存后缀分类命中的规范名。
+-        str_category_name = self._normalize_suffix_driven_signal_name(name)  # 后缀驱动分类名
+-
+-        # 后缀规则命中时优先保留其语义分类。
+-        if str_category_name is not None:
+-
+-            # 分类名已经完成前缀处理，可以直接返回。
+-            return str_category_name
+-
+-        # 无分类后缀时只剥离已知旧前缀。
+-        return self._strip_known_prefixes(name)
+-
+-    # 输入端口命名需要特殊处理时钟和复位。
+-    def _normalize_input_port_name(self, base: str) -> str:
+-        """
+-        归一化输入端口基础名。
+-
+-        :param base: 已剥离方向后缀和旧前缀的端口基础名。
+-        :return: 配置化的输入端口名称。
+-        """
+-
+-        # str_lower_base 用于识别常见时钟和复位别名。
+-        str_lower_base = base.lower()  # 小写输入端口基础名
+-
+-        # 常见 clock 别名统一映射为默认时钟名。
+-        if str_lower_base in {"clk", "clock"}:
+-
+-            # 默认时钟名来自 reset_clock 配置。
+-            return self.config["reset_clock"]["default_clock"]
+-
+-        # 低有效复位别名统一映射为默认复位名。
+-        if str_lower_base in {"rstn", "rst_n", "resetn", "reset_n", "aresetn", "areset_n", "arstn", "arst_n"}:
+-
+-            # 配置默认复位通常携带低有效语义。
+-            return self.config["reset_clock"]["default_reset"]
+-
+-        # 高有效复位别名使用高有效默认名。
+-        if str_lower_base in {"rst", "reset", "areset", "arst"}:
+-
+-            # helper 按配置生成高有效复位名。
+-            return self._default_high_reset_name()
+-
+-        # 普通输入端口使用配置化输入前缀。
+-        return self._apply_prefix(base, self.config["naming"]["input_prefix"])
+-
+-    # 已知前缀剥离为所有命名归一化提供共同起点。
+-    def _strip_known_prefixes(self, name: str) -> str:
+-        """
+-        循环剥离 formatter 管理的方向和分类前缀。
+-
+-        :param name: 原始信号或端口名。
+-        :return: 去掉已知前缀和内部输出后缀后的基础名。
+-        """
+-
+-        # list_known_prefixes 按配置列出所有可重复剥离的前缀。
+-        list_known_prefixes = [
+-            self.config["naming"]["input_prefix"],  # 输入端口前缀
+-            self.config["naming"]["output_prefix"],  # 输出端口前缀
+-            self.config["naming"]["inout_prefix"],  # 双向端口前缀
+-            self.config["naming"]["parameter_prefix"],  # 参数前缀
+-            self.config["naming"]["state_prefix"],  # 状态枚举前缀
+-            self.config["naming"]["register_prefix"],  # 寄存器前缀
+-            self.config["naming"]["counter_prefix"],  # 计数器前缀
+-            self.config["naming"]["state_signal_prefix"],  # 状态信号前缀
+-            self.config["naming"]["encoder_prefix"],  # 编码器前缀
+-            self.config["naming"]["decoder_prefix"],  # 解码器前缀
+-            self.config["naming"]["flag_prefix"],  # 标志信号前缀
+-        ]  # 可剥离命名前缀表
+-
+-        # str_working_name 在循环剥离过程中持续更新。
+-        str_working_name = name  # 当前待剥离名称
+-
+-        # bool_changed 控制多轮剥离，处理叠加前缀。
+-        bool_changed = True  # 本轮是否剥离过前缀
+-
+-        # 只要本轮剥掉过前缀，就继续尝试下一轮。
+-        while bool_changed:
+-
+-            # 每轮开始先假定没有变化。
+-            bool_changed = False  # 本轮尚未剥离前缀
+-
+-            # 逐个尝试配置中的已知前缀。
+-            for str_prefix in list_known_prefixes:
+-
+-                # 命中前缀时从当前名称头部移除。
+-                if str_working_name.startswith(str_prefix):
+-
+-                    # 保留剩余部分给下一轮继续判断。
+-                    str_working_name = str_working_name[len(str_prefix) :]  # 移除一个已知前缀后的名称
+-
+-                    # 标记本轮发生变化，外层 while 需要继续。
+-                    bool_changed = True  # 触发下一轮前缀检查
+-
+-        # 内部输出后缀属于生成器私有命名，也应从基础名中剥离。
+-        if str_working_name.endswith(self.config["naming"]["internal_output_suffix"]):
+-
+-            # 去掉内部输出后缀，恢复用户语义基础名。
+-            str_working_name = str_working_name[: -len(self.config["naming"]["internal_output_suffix"])]  # 剥离内部输出后缀
+-
+-        # 返回可供后续添加方向或分类前缀的基础名。
+-        return str_working_name
+-
+-    # 端口方向短后缀 `_i` 和 `_o` 只在末尾出现时剥离。
+-    def _strip_terminal_port_direction_suffix(self, name: str) -> str:
+-        """
+-        移除端口名末尾的 `_i` 或 `_o` 方向后缀。
+-
+-        :param name: 原始端口名。
+-        :return: 去掉末尾方向后缀后的端口名。
+-        """
+-
+-        # 只有长度足够的名称才可能安全移除两字符后缀。
+-        if len(name) > 2 and (name.endswith("_i") or name.endswith("_o")):
+-
+-            # 返回去掉方向后缀的端口基础名。
+-            return name[:-2]
+-
+-        # 无方向后缀时保持原名。
+-        return name
+-
+-    # 端口基础名先剥离配置前缀，再剥离末尾方向后缀。
+-    def _normalize_port_base_name(self, name: str) -> str:
+-        """
+-        归一化端口名的基础部分。
+-
+-        :param name: 原始端口名。
+-        :return: 可重新套用方向前缀的基础名。
+-        """
+-
+-        # 前缀剥离结果再进入 `_i/_o` 后缀剥离。
+-        return self._strip_terminal_port_direction_suffix(self._strip_known_prefixes(name))
+-
+-    # always 头部规范化只处理空白和 begin 拼接样式。
+-    def _normalize_always_header(self, header: str) -> str:
+-        """
+-        规范化 always 头部的敏感列表和 begin 空白。
+-
+-        :param header: 原始 always 头部文本。
+-        :return: 统一空白后的 always 头部文本。
+-        """
+-
+-        # str_normalized 保留原始头部语义，只收敛格式差异。
+-        str_normalized = header.replace("always@", "always@")  # always 头部工作文本
+-
+-        # 星号敏感列表统一写为 always@(*)。
+-        str_normalized = re.sub(r"always\s*@\s*\*", "always@(*)", str_normalized)  # 星号敏感列表
+-
+-        # 带括号敏感列表去掉 @ 与左括号之间的空白。
+-        str_normalized = re.sub(r"always\s*@\s*\(", "always@(", str_normalized)  # 括号敏感列表
+-
+-        # begin 紧跟右括号，保持 formatter 既有输出样式。
+-        str_normalized = str_normalized.replace(") begin", ")begin")  # always begin 拼接文本
+-
+-        # 返回规范化后的 always 头部。
++        str_normalized = super()._normalize_always_header(header)
++        if re.fullmatch(r"always[ \t]+#[ \t]*(?:\d+(?:\.\d+)?|[A-Za-z_]\w*)", str_normalized):
++            return f"{str_normalized.rstrip()} "
+         return str_normalized
+-
+-    # begin 头部识别同时接受命名块写法。
+-    def _is_begin_header(self, text: str) -> bool:
+-        """
+-        判断文本是否为 begin 或带 label 的 begin 头部。
+-
+-        :param text: 待检查的语句行。
+-        :return: 是 begin 头部时返回 True。
+-        """
+-
+-        # str_code_part 去掉右侧注释后再判断 begin 结构。
+-        str_code_part, _ = self._split_comment(text.strip())  # 去注释后的 begin 候选
+-
+-        # str_stripped_code 去除外围空白以兼容缩进行。
+-        str_stripped_code = str_code_part.strip()  # begin 候选语句
+-
+-        # 三种 begin 形式都表示打开一个显式块。
+-        return (
+-            str_stripped_code == "begin"
+-            or str_stripped_code.startswith("begin:")
+-            or str_stripped_code.startswith("begin :")
+-        )
+-
+-    # 表达式空白规范化先修复数字字面量，再走 token 级格式化。
+-    def _normalize_expression_spacing(self, text: str) -> str:
+-        """
+-        规范化 Verilog 表达式中的空白。
+-
+-        :param text: 原始表达式文本。
+-        :return: token 级空白规范化后的表达式。
+-        """
+-
+-        # str_expression 先修复基数数字字面量内部的空白。
+-        str_expression = self._normalize_based_number_spacing(text.strip())  # 数字字面量预处理后的表达式
+-
+-        # 空表达式直接返回，避免 tokenizer 产生无意义 token。
+-        if not str_expression:
+-
+-            # 保持调用方传入的空表达式语义。
+-            return str_expression
+-
+-        # list_tokens 保存表达式 tokenizer 识别出的最小语法片段。
+-        list_tokens = self._tokenize_expression_segment(str_expression)  # 表达式 token 序列
+-
+-        # token 序列交给统一 formatter 决定运算符周围空白。
+-        return self._normalize_expression_tokens(list_tokens)
+-
+-    # 基数数字字面量中的空格会破坏 Verilog 词法，需要先压紧。
+-    def _normalize_based_number_spacing(self, text: str) -> str:
+-        """
+-        去除 Verilog 基数数字字面量内部的非法空白。
+-
+-        :param text: 原始表达式文本。
+-        :return: 修复 size、base 和 digits 间空白后的文本。
+-        """
+-
+-        # 替换时只删除字面量内部空白，不影响表达式其他位置。
+-        return re.sub(
+-            r"(?P<size>\d+)\s*'\s*(?P<base>[sS]?[bBoOdDhH])\s*(?P<digits>[0-9a-fA-F_xXzZ?]+)",
+-            lambda match: (
+-                f"{match.group('size')}'"
+-                f"{match.group('base')}"
+-                f"{match.group('digits')}"
+-            ),
+-            text,
+-        )
+-
+-    # 声明规格只规范化方括号范围，不处理 direction 或 signed。
+-    def _normalize_decl_spec_spacing(self, text: str) -> str:
+-        """
+-        规范化声明规格中的 packed range 空白。
+-
+-        :param text: 声明规格文本。
+-        :return: range 内部表达式规范化后的声明规格。
+-        """
+-
+-        # 空规格表示声明没有位宽，直接保持为空。
+-        if not text:
+-
+-            # 调用方据此省略位宽片段。
+-            return text
+-
+-        # 每个方括号范围独立规范化，避免影响其他声明关键字。
+-        return re.sub(r"\[[^\]]+\]", lambda match: self._normalize_decl_range_token(match.group(0)), text)
+-
+-    # 参数声明规格需要在非 range 末尾保留一个分隔空格。
+-    def _format_param_decl_spec(self, decl_spec: str) -> str:
+-        """
+-        格式化 parameter/localparam 的声明规格。
+-
+-        :param decl_spec: 参数类型、signed 或位宽片段。
+-        :return: 可直接拼接参数名的声明规格文本。
+-        """
+-
+-        # str_decl_spec_value 保存 range 规范化后的声明规格。
+-        str_decl_spec_value = self._normalize_decl_spec_spacing(decl_spec)  # 参数声明规格文本
+-
+-        # 没有声明规格时不插入多余空格。
+-        if not str_decl_spec_value:
+-
+-            # 空字符串让调用方直接输出参数名。
+-            return ""
+-
+-        # 位宽 range 已经以 `]` 结尾时后续拼接逻辑会处理间隔。
+-        return str_decl_spec_value if str_decl_spec_value.endswith("]") else f"{str_decl_spec_value} "
+-
+-    # 单个 packed range token 只在确认方括号完整时处理。
+-    def _normalize_decl_range_token(self, text: str) -> str:
+-        """
+-        规范化 `[left:right]` 或单表达式 range token。
+-
+-        :param text: 含方括号的声明 range 文本。
+-        :return: range 内表达式空白规范化后的文本。
+-        """
+-
+-        # 非完整方括号 token 保持原样，避免误改其他语法。
+-        if not text.startswith("[") or not text.endswith("]"):
+-
+-            # 调用方仍可把原 token 拼回声明。
+-            return text
+-
+-        # str_expression 是去掉方括号后的 range 内部文本。
+-        str_expression = text[1:-1].strip()  # range 内部表达式
+-
+-        # 空 range 不是合法声明，但 formatter 不在这里修复语义。
+-        if not str_expression:
+-
+-            # 保守返回原 token。
+-            return text
+-
+-        # int_colon_index 定位 range 内顶层冒号。
+-        int_colon_index = self._find_top_level_colon(str_expression)  # 顶层冒号位置
+-
+-        # 没有顶层冒号时按单表达式 range 处理。
+-        if int_colon_index == -1:
+-
+-            # 单表达式仍需要走表达式空白规范化。
+-            return f"[{self._normalize_expression_spacing(str_expression)}]"
+-
+-        # str_left_range 是冒号左侧的高位或基址表达式。
+-        str_left_range = self._normalize_expression_spacing(str_expression[:int_colon_index].strip())  # range 左表达式
+-
+-        # str_right_range 是冒号右侧的低位或宽度表达式。
+-        str_right_range = self._normalize_expression_spacing(str_expression[int_colon_index + 1 :].strip())  # range 右表达式
+-
+-        # packed range 输出不在冒号两侧保留空格。
+-        return f"[{str_left_range}:{str_right_range}]"
+-
+-    # indexed part-select 只在顶层识别 `+:` 或 `-:`。
+-    def _find_top_level_indexed_part_select(self, text: str) -> tuple[int, str] | None:
+-        """
+-        查找表达式顶层的 indexed part-select 操作符。
+-
+-        :param text: 方括号内部的表达式文本。
+-        :return: 命中时返回操作符位置和操作符文本。
+-        """
+-
+-        # int_depth 跟踪括号层级，只有零深度才允许识别 part-select。
+-        int_depth = 0  # 当前扫描括号深度
+-
+-        # bool_in_string 避免字符串字面量中的 `+:` 被当成操作符。
+-        bool_in_string = False  # 是否处在字符串字面量中
+-
+-        # int_index 指向当前扫描字符。
+-        int_index = 0  # 当前扫描下标
+-
+-        # 至少剩两个字符时才可能匹配 `+:` 或 `-:`。
+-        while int_index < len(text) - 1:
+-
+-            # str_char 是当前扫描字符。
+-            str_char = text[int_index]  # 当前扫描字符
+-
+-            # 未转义双引号会切换字符串扫描状态。
+-            if self._is_unescaped_double_quote(text, int_index):
+-
+-                # 字符串状态翻转后继续看下一个字符。
+-                bool_in_string = not bool_in_string  # 字符串扫描状态翻转
+-
+-                # 引号本身不参与括号深度或操作符匹配。
+-                int_index += 1  # 越过当前引号后的下标
+-
+-                # 继续扫描字符串状态变化后的字符。
+-                continue
+-
+-            # 字符串内部内容全部跳过。
+-            if bool_in_string:
+-
+-                # 字符串字符不影响 Verilog 表达式层级。
+-                int_index += 1  # 字符串内部下一个字符下标
+-
+-                # 继续扫描后续字符。
+-                continue
+-
+-            # 分隔符 helper 统一维护圆、方和花括号深度。
+-            int_depth = self._advance_group_depth(str_char, int_depth)  # 当前字符处理后的表达式层级
+-
+-            # 顶层两字符候选才可能是 indexed part-select。
+-            str_operator = text[int_index : int_index + 2]  # indexed part-select 候选操作符
+-
+-            # 顶层 `+:` 或 `-:` 表示 indexed part-select。
+-            if int_depth == 0 and str_operator in {"+:", "-:"}:
+-
+-                # 返回位置和操作符，调用方据此拆分左右表达式。
+-                return int_index, str_operator
+-
+-            # 当前字符处理完成，进入下一字符。
+-            int_index += 1  # part-select 扫描下一字符下标
+-
+-        # 扫描完整个文本仍未找到顶层 indexed part-select。
+-        return None
+-
+-    # 引号 helper 判断当前位置是否打开或关闭字符串范围。
+-    def _is_unescaped_double_quote(self, text: str, int_index: int) -> bool:
+-        """判断当前字符是否为未转义双引号。
+-
+-        :param text: 当前完整表达式文本。
+-        :param int_index: 待判断字符下标。
+-        :return: 当前字符可切换字符串状态时返回 True。
+-        """
+-
+-        # 非双引号字符不会改变字符串扫描状态。
+-        if text[int_index] != '"':
+-
+-            # 调用方可直接继续普通结构扫描。
+-            return False
+-
+-        # 起始引号或前一字符非反斜杠时属于未转义引号。
+-        return int_index == 0 or text[int_index - 1] != "\\"
+-
+-    # 分隔符深度 helper 统一处理圆、方和花括号层级。
+-    def _advance_group_depth(self, str_char: str, int_depth: int) -> int:
+-        """根据单个分隔符字符推进表达式嵌套深度。
+-
+-        :param str_char: 当前扫描字符。
+-        :param int_depth: 当前表达式嵌套深度。
+-        :return: 当前字符处理后的非负嵌套深度。
+-        """
+-
+-        # 左分隔符打开一层嵌套表达式。
+-        if str_char in "([{":
+-
+-            # 深层范围中的操作符不属于调用方顶层。
+-            return int_depth + 1
+-
+-        # 右分隔符关闭最近一层嵌套表达式。
+-        if str_char in ")]}":
+-
+-            # 异常多出的右分隔符保持零深度下限。
+-            return max(0, int_depth - 1)
+-
+-        # 普通字符不改变表达式层级。
+-        return int_depth
+-
+-    # part-select 左侧若包含二元算术，紧凑化会损害可读性。
+-    def _has_obvious_arithmetic_operator(self, text: str) -> bool:
+-        """
+-        判断表达式中是否存在明确的二元算术操作符。
+-
+-        :param text: 待检查的表达式文本。
+-        :return: 存在非一元算术操作时返回 True。
+-        """
+-
+-        # list_tokens 用于区分一元正负号和二元算术操作。
+-        list_tokens = self._tokenize_expression_segment(text.strip())  # 算术符号判定 token
+-
+-        # str_previous_symbol 保存前一个 token，辅助判断当前符号是否为一元。
+-        str_previous_symbol: str | None = None  # 前一个表达式 token
+-
+-        # set_arithmetic_ops 只包含会影响 part-select 紧凑策略的算术符号。
+-        set_arithmetic_ops = {"+", "-", "*", "/", "%", "<<", ">>"}  # 二元算术候选符号
+-
+-        # set_operator_context 表示后续正负号可被视为一元符号的位置。
+-        set_operator_context = {
+-            "(",  # 子表达式起点
+-            "{",  # 拼接表达式起点
+-            ",",  # 参数或拼接分隔
+-            "?",  # 三目条件起点
+-            ":",  # 三目分支起点
+-            "=",  # 赋值右侧起点
+-            "==",  # 比较右侧起点
+-            "!=",  # 不等比较的右操作数起点
+-            "===",  # case equality 右侧起点
+-            "!==",  # 全等不等比较右操作数起点
+-            "<=",  # 比较或非阻塞后续起点
+-            ">=",  # 大于等于比较右操作数起点
+-            "<<",  # 移位右侧起点
+-            ">>",  # 右移表达式右操作数起点
+-            "+",  # 加法右侧起点
+-            "-",  # 减法右侧起点
+-            "*",  # 乘法右侧起点
+-            "/",  # 除法右侧起点
+-            "%",  # 取模右侧起点
+-            "&",  # 按位与右侧起点
+-            "|",  # 按位或右侧起点
+-            "^",  # 异或右侧起点
+-            "<",  # 小于比较右操作数起点
+-            ">",  # 大于比较右操作数起点
+-            "&&",  # 逻辑与右侧起点
+-            "||",  # 逻辑或右侧起点
+-        }  # 一元符号上下文集合
+-
+-        # 按 token 顺序判断算术符号是否为二元操作。
+-        for str_token in list_tokens:
+-
+-            # 只有候选算术符号需要进一步区分一元或二元。
+-            if str_token in set_arithmetic_ops:
+-
+-                # bool_unary 表示当前正负号处在表达式起点或操作符之后。
+-                bool_unary = str_token in {"+", "-"} and (  # 算术符号一元判定
+-                    str_previous_symbol is None  # 表达式开头的正负号
+-                    or str_previous_symbol in set_operator_context  # 操作符后的正负号
+-                )  # 当前符号是否为一元正负号
+-
+-                # 非一元算术操作会让 part-select 左侧保持带空格格式。
+-                if not bool_unary:
+-
+-                    # 调用方据此避免把复杂算术压成紧凑格式。
+-                    return True
+-
+-            # 当前 token 成为下一轮的一元上下文依据。
+-            str_previous_symbol = str_token  # 算术扫描上一 token
+-
+-        # 没有发现明确二元算术操作。
+-        return False
+-
+-    # 方括号 token 根据内容选择紧凑或表达式规范化形式。
+-    def _compact_expression_bracket_token(self, text: str) -> str:
+-        """
+-        规范化单个方括号表达式 token。
+-
+-        :param text: tokenizer 保留的完整方括号 token。
+-        :return: 适合声明 range 或 part-select 的方括号文本。
+-        """
+-
+-        # 非方括号 token 不属于本函数处理范围。
+-        if not text.startswith("[") or not text.endswith("]"):
+-
+-            # 调用方继续按普通 token 处理。
+-            return text
+-
+-        # str_expression 是方括号内部表达式。
+-        str_expression = text[1:-1].strip()  # 方括号内部文本
+-
+-        # 空方括号保持原样，避免隐藏上游语法异常。
+-        if not str_expression:
+-
+-            # 保守返回原始 token。
+-            return text
+-
+-        # tuple_indexed_part_select 定位顶层 `+:` 或 `-:` 操作符。
+-        tuple_indexed_part_select = self._find_top_level_indexed_part_select(str_expression)  # 顶层 part-select 定位结果
+-
+-        # indexed part-select 需要按左右表达式分别处理。
+-        if tuple_indexed_part_select is not None:
+-
+-            # 拆出操作符位置和操作符文本。
+-            int_operator_index, str_operator = tuple_indexed_part_select  # part-select 操作符位置和值
+-
+-            # str_left_expression 是基址表达式。
+-            str_left_expression = str_expression[:int_operator_index].strip()  # part-select 基址表达式
+-
+-            # str_right_expression 是宽度表达式。
+-            str_right_expression = str_expression[int_operator_index + len(str_operator) :].strip()  # part-select 宽度表达式
+-
+-            # 左右任一侧缺失时仅压缩空白，不尝试推断语义。
+-            if not str_left_expression or not str_right_expression:
+-
+-                # str_compact_expression 保留原 token 内容但移除所有空白。
+-                str_compact_expression = re.sub(r"\s+", "", str_expression)  # 非完整 part-select 紧凑文本
+-
+-                # 返回紧凑方括号 token。
+-                return f"[{str_compact_expression}]"
+-
+-            # 简单基址表达式使用传统紧凑 part-select 样式。
+-            if not self._has_obvious_arithmetic_operator(str_left_expression):
+-
+-                # str_compact_left 去除基址表达式内部空白。
+-                str_compact_left = re.sub(r"\s+", "", str_left_expression)  # 紧凑 part-select 基址
+-
+-                # str_compact_right 去除宽度表达式内部空白。
+-                str_compact_right = re.sub(r"\s+", "", str_right_expression)  # 紧凑 part-select 宽度
+-
+-                # 紧凑 indexed part-select 不在操作符两侧保留空格。
+-                return f"[{str_compact_left}{str_operator}{str_compact_right}]"
+-
+-            # 复杂基址表达式保留运算符空白以避免可读性下降。
+-            str_normalized_left = self._normalize_expression_spacing(str_left_expression)  # 规范化 part-select 基址
+-
+-            # 宽度表达式同样走普通表达式规范化。
+-            str_normalized_right = self._normalize_expression_spacing(str_right_expression)  # 规范化 part-select 宽度
+-
+-            # 复杂 indexed part-select 在操作符两侧保留空格。
+-            return f"[{str_normalized_left} {str_operator} {str_normalized_right}]"
+-
+-        # int_colon_index 定位普通 range 的顶层冒号。
+-        int_colon_index = self._find_top_level_colon(str_expression)  # 方括号顶层冒号位置
+-
+-        # 没有冒号时按简单下标或单表达式处理。
+-        if int_colon_index == -1:
+-
+-            # str_compact_expression 去除下标表达式内部空白。
+-            str_compact_expression = re.sub(r"\s+", "", str_expression)  # 紧凑下标表达式
+-
+-            # 单下标 token 使用紧凑形式。
+-            return f"[{str_compact_expression}]"
+-
+-        # str_left_range 是冒号左侧表达式。
+-        str_left_range = self._normalize_expression_spacing(str_expression[:int_colon_index].strip())  # 方括号左 range
+-
+-        # str_right_range 是冒号右侧表达式。
+-        str_right_range = self._normalize_expression_spacing(str_expression[int_colon_index + 1 :].strip())  # 方括号右 range
+-
+-        # 普通 range 冒号两侧不保留空格。
+-        return f"[{str_left_range}:{str_right_range}]"
+-
+-    # 方括号 token 需要整体保留，避免 range 内部被普通运算符规则拆散。
+-    def _read_bracket_token_end(self, text: str, int_start_index: int) -> int:
+-        """
+-        读取从 `[` 开始的完整方括号 token 结束位置。
+-
+-        :param text: 表达式全文。
+-        :param int_start_index: 左方括号所在下标。
+-        :return: 方括号 token 的右开结束下标。
+-        """
+-
+-        # int_depth 从首个左方括号开始计数。
+-        int_depth = 1  # 方括号嵌套深度
+-
+-        # int_close_index 指向待检查字符。
+-        int_close_index = int_start_index + 1  # 方括号扫描下标
+-
+-        # 扫描到深度归零或文本结束为止。
+-        while int_close_index < len(text) and int_depth > 0:
+-
+-            # 左方括号表示进入嵌套 range。
+-            if text[int_close_index] == "[":
+-
+-                # 嵌套深度增加后需要更多右方括号闭合。
+-                int_depth += 1  # 方括号嵌套进入
+-
+-            # 右方括号闭合当前 range 层级。
+-            elif text[int_close_index] == "]":
+-
+-                # 深度归零后当前字符也属于 token。
+-                int_depth -= 1  # 方括号嵌套退出
+-
+-            # 继续检查下一个字符。
+-            int_close_index += 1  # 方括号扫描推进
+-
+-        # 返回右开边界，未闭合时自然落到文本末尾。
+-        return int_close_index
+-
+-    # 字符串 token 保留引号和内部内容。
+-    def _read_string_token_end(self, text: str, int_start_index: int) -> int:
+-        """
+-        读取双引号字符串 token 的结束位置。
+-
+-        :param text: 表达式全文。
+-        :param int_start_index: 起始双引号下标。
+-        :return: 字符串 token 的右开结束下标。
+-        """
+-
+-        # int_close_index 从起始引号之后开始找闭合引号。
+-        int_close_index = int_start_index + 1  # 字符串扫描下标
+-
+-        # 扫描直到遇到未转义双引号或文本结束。
+-        while int_close_index < len(text):
+-
+-            # 未转义双引号闭合当前字符串 token。
+-            if text[int_close_index] == '"' and text[int_close_index - 1] != "\\":
+-
+-                # 右边界需要包含闭合引号本身。
+-                int_close_index += 1  # 字符串闭合后的右开下标
+-
+-                # 找到闭合引号后停止扫描。
+-                break
+-
+-            # 普通字符串字符继续向后扫描。
+-            int_close_index += 1  # 字符串扫描推进
+-
+-        # 返回字符串 token 的右开边界。
+-        return int_close_index
+-
+-    # 宏 token 由反引号和后续标识符字符组成。
+-    def _read_macro_token_end(self, text: str, int_start_index: int) -> int:
+-        """
+-        读取 Verilog 宏引用 token 的结束位置。
+-
+-        :param text: 表达式全文。
+-        :param int_start_index: 反引号所在下标。
+-        :return: 宏 token 的右开结束下标。
+-        """
+-
+-        # int_close_index 从反引号后的第一个字符开始。
+-        int_close_index = int_start_index + 1  # 宏名扫描下标
+-
+-        # 宏名接受字母数字、下划线和美元符号。
+-        while int_close_index < len(text) and (text[int_close_index].isalnum() or text[int_close_index] in "_$"):
+-
+-            # 当前字符仍属于宏名。
+-            int_close_index += 1  # 宏名扫描推进
+-
+-        # 返回宏引用 token 的右开边界。
+-        return int_close_index
+-
+-    # 普通标识符和系统函数名共享同一字符集合。
+-    def _read_identifier_token_end(self, text: str, int_start_index: int) -> int:
+-        """
+-        读取标识符 token 的结束位置。
+-
+-        :param text: 表达式全文。
+-        :param int_start_index: 标识符起始下标。
+-        :return: 标识符 token 的右开结束下标。
+-        """
+-
+-        # int_close_index 从首字符之后继续扫描。
+-        int_close_index = int_start_index + 1  # 标识符扫描下标
+-
+-        # Verilog 标识符后续字符接受字母数字、下划线和美元符号。
+-        while int_close_index < len(text) and (text[int_close_index].isalnum() or text[int_close_index] in "_$"):
+-
+-            # 当前字符仍属于标识符。
+-            int_close_index += 1  # 标识符扫描推进
+-
+-        # 返回标识符 token 的右开边界。
+-        return int_close_index
+-
+-    # 数字 token 保留基数、未知态和下划线。
+-    def _read_number_token_end(self, text: str, int_start_index: int) -> int:
+-        """
+-        读取 Verilog 数字字面量 token 的结束位置。
+-
+-        :param text: 表达式全文。
+-        :param int_start_index: 数字首字符下标。
+-        :return: 数字 token 的右开结束下标。
+-        """
+-
+-        # int_close_index 从首位数字之后开始扫描。
+-        int_close_index = int_start_index + 1  # 数字字面量扫描下标
+-
+-        # Verilog 数字可包含基数标记、未知态、问号和下划线。
+-        while int_close_index < len(text) and re.fullmatch(r"[A-Za-z0-9_'xXzZ?]", text[int_close_index]):
+-
+-            # 当前字符仍属于数字字面量。
+-            int_close_index += 1  # 数字字面量扫描推进
+-
+-        # 返回数字 token 的右开边界。
+-        return int_close_index
+-
+-    # 多字符运算符必须先于单字符运算符匹配。
+-    def _match_multi_char_operator(
+-        self,
+-        text: str,
+-        int_start_index: int,
+-        tuple_multi_char_ops: tuple[str, ...],
+-    ) -> str | None:
+-        """
+-        尝试从当前位置匹配多字符 Verilog 运算符。
+-
+-        :param text: 表达式全文。
+-        :param int_start_index: 当前扫描下标。
+-        :param tuple_multi_char_ops: 按优先级排列的多字符运算符。
+-        :return: 命中的运算符文本，未命中时返回 None。
+-        """
+-
+-        # 按传入顺序匹配，保证三字符运算符优先于两字符运算符。
+-        for str_operator in tuple_multi_char_ops:
+-
+-            # 当前位置以该运算符开头即视为命中。
+-            if text.startswith(str_operator, int_start_index):
+-
+-                # 返回命中的完整运算符 token。
+-                return str_operator
+-
+-        # 没有多字符运算符从当前位置开始。
+-        return None
+-
+-    # 表达式 tokenizer 保留 Verilog 字面量、宏、括号 token 和多字符运算符。
+-    def _tokenize_expression_segment(self, text: str) -> list[str]:
+-        """
+-        将表达式文本切分为 formatter 可处理的 token 序列。
+-
+-        :param text: 原始表达式文本。
+-        :return: 保留 Verilog 词法边界的 token 列表。
+-        """
+-
+-        # list_tokens 收集按原表达式顺序产生的 token。
+-        list_tokens: list[str] = []  # 表达式 token 列表
+-
+-        # int_index 指向 tokenizer 主循环的当前字符。
+-        int_index = 0  # tokenizer 当前下标
+-
+-        # tuple_multi_char_ops 按最长优先列出需要整体保留的运算符。
+-        tuple_multi_char_ops = ("===", "!==", "<=", ">=", "==", "!=", "&&", "||", "<<", ">>", "+:", "-:")  # 多字符运算符
+-
+-        # set_single_char_ops 是可独立成 token 的单字符运算符。
+-        set_single_char_ops = set("=+-*/%&|^<>?:~!")  # 单字符运算符集合
+-
+-        # set_punctuation 保存表达式中的分组和分隔符。
+-        set_punctuation = set("(){}.,;")  # 表达式标点集合
+-
+-        # 主循环每次消费一个完整 token。
+-        while int_index < len(text):
+-
+-            # str_char 是 tokenizer 本轮检查的字符。
+-            str_char = text[int_index]  # tokenizer 当前字符
+-
+-            # 空白只承担分隔作用，不进入 token 序列。
+-            if str_char.isspace():
+-
+-                # 跳过空白后继续扫描下一个 token。
+-                int_index += 1  # 空白后的扫描下标
+-
+-                # 空白不生成 token。
+-                continue
+-
+-            # 方括号 range 或 part-select 作为整体 token 保留。
+-            if str_char == "[":
+-
+-                # int_close_index 是方括号 token 的右开边界。
+-                int_close_index = self._read_bracket_token_end(text, int_index)  # 方括号 token 结束下标
+-
+-                # 追加完整方括号片段，内部稍后单独规范化。
+-                list_tokens.append(text[int_index:int_close_index])
+-
+-                # 下一轮从方括号 token 后继续。
+-                int_index = int_close_index  # 方括号 token 后的扫描下标
+-
+-                # 方括号 token 已消费。
+-                continue
+-
+-            # 字符串字面量作为整体 token 保留。
+-            if str_char == '"':
+-
+-                # int_close_index 是字符串 token 的右开边界。
+-                int_close_index = self._read_string_token_end(text, int_index)  # 字符串 token 结束下标
+-
+-                # 追加包含引号的字符串 token。
+-                list_tokens.append(text[int_index:int_close_index])
+-
+-                # 下一轮从字符串 token 后继续。
+-                int_index = int_close_index  # 字符串 token 后的扫描下标
+-
+-                # 字符串 token 已消费。
+-                continue
+-
+-            # 反引号宏作为整体 token 保留。
+-            if str_char == "`":
+-
+-                # int_close_index 是宏 token 的右开边界。
+-                int_close_index = self._read_macro_token_end(text, int_index)  # 宏 token 结束下标
+-
+-                # 追加完整宏名。
+-                list_tokens.append(text[int_index:int_close_index])
+-
+-                # 下一轮从宏 token 后继续。
+-                int_index = int_close_index  # 宏 token 后的扫描下标
+-
+-                # 宏 token 已消费。
+-                continue
+-
+-            # 标识符或系统函数名按连续标识符字符切分。
+-            if str_char.isalpha() or str_char in "_$":
+-
+-                # int_close_index 是标识符 token 的右开边界。
+-                int_close_index = self._read_identifier_token_end(text, int_index)  # 标识符 token 结束下标
+-
+-                # 追加完整标识符。
+-                list_tokens.append(text[int_index:int_close_index])
+-
+-                # 下一轮从标识符后继续。
+-                int_index = int_close_index  # 标识符 token 后的扫描下标
+-
+-                # 标识符 token 已消费。
+-                continue
+-
+-            # 数字字面量保留基数和未知态字符。
+-            if str_char.isdigit():
+-
+-                # int_close_index 是数字 token 的右开边界。
+-                int_close_index = self._read_number_token_end(text, int_index)  # 数字 token 结束下标
+-
+-                # 追加完整数字字面量。
+-                list_tokens.append(text[int_index:int_close_index])
+-
+-                # 下一轮从数字 token 后继续。
+-                int_index = int_close_index  # 数字 token 后的扫描下标
+-
+-                # 数字 token 已消费。
+-                continue
+-
+-            # 多字符运算符优先匹配，避免被拆成单字符。
+-            str_operator = self._match_multi_char_operator(text, int_index, tuple_multi_char_ops)  # 多字符运算符候选
+-
+-            # 命中多字符运算符时整体追加。
+-            if str_operator is not None:
+-
+-                # 追加完整运算符 token。
+-                list_tokens.append(str_operator)
+-
+-                # 扫描下标跨过整个运算符。
+-                int_index += len(str_operator)  # 多字符运算符后的扫描下标
+-
+-                # 多字符运算符已消费。
+-                continue
+-
+-            # 单字符标点或运算符直接作为一个 token。
+-            if str_char in set_punctuation or str_char in set_single_char_ops:
+-
+-                # 追加单字符 token。
+-                list_tokens.append(str_char)
+-
+-                # 进入下一个字符。
+-                int_index += 1  # 单字符 token 后的扫描下标
+-
+-                # 单字符 token 已消费。
+-                continue
+-
+-            # 未识别字符保守作为单字符 token 保留。
+-            list_tokens.append(str_char)
+-
+-            # 未识别字符只消费当前一个字符。
+-            int_index += 1  # 未识别 token 后的扫描下标
+-
+-        # 返回完整 token 序列。
+-        return list_tokens
+-
+-    # 表达式拼接前经常需要去掉刚追加的尾随空格。
+-    def _trim_expression_parts_space(self, list_parts: list[str]) -> None:
+-        """
+-        原地移除表达式输出片段末尾的空格。
+-
+-        :param list_parts: 正在累积的表达式输出片段。
+-        :return: 无返回值，直接修改 list_parts。
+-        """
+-
+-        # 只清理 formatter 主动插入的空格片段。
+-        while list_parts and list_parts[-1] == " ":
+-
+-            # 删除尾部空格，避免逗号、分号或右括号前出现空白。
+-            list_parts.pop()
+-
+-    # 逗号和分号需要先清理前导空格再决定是否补后置空格。
+-    def _append_expression_separator(
+-        self,
+-        list_parts: list[str],
+-        str_token: str,
+-        str_upcoming_symbol: str | None,
+-    ) -> None:
+-        """
+-        向表达式输出片段追加逗号或分号。
+-
+-        :param list_parts: 正在累积的表达式输出片段。
+-        :param str_token: 当前分隔符 token。
+-        :param str_upcoming_symbol: 下一个 token，可能为 None。
+-        :return: 无返回值，结果直接追加到 list_parts。
+-        """
+-
+-        # 分隔符前不保留 formatter 插入的空格。
+-        self._trim_expression_parts_space(list_parts)
+-
+-        # 当前分隔符按原 token 追加。
+-        list_parts.append(str_token)
+-
+-        # 逗号后如果还跟普通表达式，需要保留一个空格。
+-        if str_token == "," and str_upcoming_symbol not in {None, ")", "}", ";"}:
+-
+-            # 空格隔开后续参数或拼接元素。
+-            list_parts.append(" ")
+-
+-    # 右括号和点号都会吃掉前一个多余空格。
+-    def _append_expression_tight_token(self, list_parts: list[str], str_token: str) -> None:
+-        """
+-        追加不能带前置空格的紧贴 token。
+-
+-        :param list_parts: 正在累积的表达式输出片段。
+-        :param str_token: 右括号、右花括号或点号。
+-        :return: 无返回值，结果直接追加到 list_parts。
+-        """
+-
+-        # 右侧闭合符和成员访问点前不允许保留空格。
+-        self._trim_expression_parts_space(list_parts)
+-
+-        # 追加当前紧贴 token。
+-        list_parts.append(str_token)
+-
+-    # 一元操作符只在表达式起点或操作符之后成立。
+-    def _is_expression_unary_operator(self, str_token: str, str_previous_symbol: str | None) -> bool:
+-        """
+-        判断当前运算符是否应按一元运算符格式化。
+-
+-        :param str_token: 当前运算符 token。
+-        :param str_previous_symbol: 前一个 token，可能为 None。
+-        :return: 当前 token 是一元运算符时返回 True。
+-        """
+-
+-        # 只有这些符号在 Verilog 表达式中可能作为一元运算符。
+-        if str_token not in {"~", "!", "+", "-", "&", "|", "^"}:
+-
+-            # 其他运算符都按二元或三目操作处理。
+-            return False
+-
+-        # 表达式开头的一元符号紧贴后续操作数。
+-        if str_previous_symbol is None:
+-
+-            # 没有前驱 token 时当前符号只能解释为一元。
+-            return True
+-
+-        # 操作符或开分组之后的一元符号不应插入前置空格。
+-        return str_previous_symbol in {
+-            "(", "{", ",", "?", ":", "=", "==", "!=", "===", "!==", "<=", ">=", "<<", ">>",
+-            "+", "-", "*", "/", "%", "&", "|", "^", "<", ">", "&&", "||",
+-        }
+-
+-    # 表达式运算符负责在二元操作两侧补空格。
+-    def _append_expression_operator(
+-        self,
+-        list_parts: list[str],
+-        str_token: str,
+-        str_previous_symbol: str | None,
+-        str_upcoming_symbol: str | None,
+-    ) -> bool:
+-        """
+-        追加表达式运算符并返回它是否按一元处理。
+-
+-        :param list_parts: 正在累积的表达式输出片段。
+-        :param str_token: 当前运算符 token。
+-        :param str_previous_symbol: 前一个 token，可能为 None。
+-        :param str_upcoming_symbol: 下一个 token，可能为 None。
+-        :return: 当前运算符按一元格式化时返回 True。
+-        """
+-
+-        # bool_unary 标记当前符号是否紧贴后续操作数。
+-        bool_unary = self._is_expression_unary_operator(str_token, str_previous_symbol)  # 当前运算符一元状态
+-
+-        # 一元运算符在表达式起点或开括号后不保留前置空格。
+-        if bool_unary:
+-
+-            # 表达式起点附近清理可能存在的空格。
+-            if str_previous_symbol in {None, "(", "{"}:
+-
+-                # 删除 formatter 早先追加的空格。
+-                self._trim_expression_parts_space(list_parts)
+-
+-            # 一元符号直接贴近操作数。
+-            list_parts.append(str_token)
+-
+-        # 二元和三目相关运算符两侧按普通表达式空白处理。
+-        else:
+-
+-            # 运算符前只保留一个空格。
+-            self._trim_expression_parts_space(list_parts)
+-
+-            # 前面已有内容时补一个操作符前空格。
+-            if list_parts:
+-
+-                # 让二元运算符与左操作数分隔。
+-                list_parts.append(" ")
+-
+-            # 追加当前运算符。
+-            list_parts.append(str_token)
+-
+-            # 后续不是闭合符、分隔符或结尾时补一个操作符后空格。
+-            if str_upcoming_symbol not in {None, ")", "}", ";", ","}:
+-
+-                # 让右操作数和当前运算符保持一个空格。
+-                list_parts.append(" ")
+-
+-        # 调用方需要记住该 token 是否一元，影响下一个普通 atom 的空格。
+-        return bool_unary
+-
+-    # 普通 atom 根据前一个 token 决定是否补空格。
+-    def _append_expression_atom(self, list_parts: list[str], str_token: str, bool_previous_unary: bool) -> None:
+-        """
+-        追加普通表达式 atom。
+-
+-        :param list_parts: 正在累积的表达式输出片段。
+-        :param str_token: 当前普通 token。
+-        :param bool_previous_unary: 前一个 token 是否是一元运算符。
+-        :return: 无返回值，结果直接追加到 list_parts。
+-        """
+-
+-        # 普通 atom 前如果已有相邻 atom，需要补一个空格。
+-        if list_parts:
+-
+-            # 开分组、成员访问点和一元符号之后不补空格。
+-            if list_parts[-1] not in {" ", "(", "{", "."} and not bool_previous_unary:
+-
+-                # 插入普通 token 之间的分隔空格。
+-                list_parts.append(" ")
+-
+-        # 追加当前普通 token。
+-        list_parts.append(str_token)
+-
+-    # 运算符 token 集中判断，避免主格式化循环堆积分支。
+-    def _is_expression_operator_token(self, str_token: str) -> bool:
+-        """
+-        判断 token 是否属于表达式运算符。
+-
+-        :param str_token: 待检查 token。
+-        :return: token 是运算符时返回 True。
+-        """
+-
+-        # 这些 token 需要按一元、二元或三目运算符规则处理。
+-        return str_token in {
+-            "===", "!==", "<=", ">=", "==", "!=", "&&", "||", "<<", ">>", "+:", "-:",
+-            "=", "+", "-", "*", "/", "%", "&", "|", "^", "<", ">", "?", ":", "~", "!",
+-        }
+-
+-    # token 序列归一化是表达式格式化的最后一步。
+-    def _normalize_expression_tokens(self, tokens: list[str]) -> str:
+-        """
+-        将 token 序列拼接为规范化表达式文本。
+-
+-        :param tokens: tokenizer 输出的表达式 token 序列。
+-        :return: 空白规范化后的表达式文本。
+-        """
+-
+-        # 空 token 序列对应空表达式。
+-        if not tokens:
+-
+-            # 调用方保留空表达式语义。
+-            return ""
+-
+-        # list_parts 保存逐 token 追加的输出片段。
+-        list_parts: list[str] = []  # 表达式输出片段
+-
+-        # str_previous_symbol 记录上一 token，辅助判断一元运算符。
+-        str_previous_symbol: str | None = None  # 上一个表达式 token
+-
+-        # bool_previous_unary 影响普通 atom 是否与前一 token 分隔。
+-        bool_previous_unary = False  # 上一个 token 是否为一元运算符
+-
+-        # 按 token 顺序生成规范化表达式。
+-        for int_index, str_token in enumerate(tokens):
+-
+-            # str_upcoming_symbol 用于判断当前逗号或运算符后是否补空格。
+-            str_upcoming_symbol = tokens[int_index + 1] if int_index + 1 < len(tokens) else None  # 下一个表达式 token
+-
+-            # 逗号和分号具有专门的后置空格策略。
+-            if str_token in {",", ";"}:
+-
+-                # 分隔符 helper 会原地追加到输出片段。
+-                self._append_expression_separator(list_parts, str_token, str_upcoming_symbol)
+-
+-                # 分隔符之后的一元状态重置。
+-                str_previous_symbol = str_token  # 分隔符成为上一 token
+-
+-                # 分隔符本身不会贴合下一个 atom。
+-                bool_previous_unary = False  # 分隔符不是一元运算符
+-
+-                # 分隔符分支不再进入其他拼接路径。
+-                continue
+-
+-            # 右括号和点号前需要收紧空格。
+-            if str_token in {")", "}", "."}:
+-
+-                # 紧贴 token helper 会清理前置空格。
+-                self._append_expression_tight_token(list_parts, str_token)
+-
+-                # 当前 token 成为下一轮上下文。
+-                str_previous_symbol = str_token  # 紧贴 token 成为上一 token
+-
+-                # 闭合符或点号之后按普通 token 间距判断。
+-                bool_previous_unary = False  # 紧贴 token 不是一元运算符
+-
+-                # 紧贴 token 分支不再进入普通 atom 路径。
+-                continue
+-
+-            # 方括号 token 内部有独立的 range/part-select 规则。
+-            if str_token.startswith("[") and str_token.endswith("]"):
+-
+-                # 方括号 token 先规范化内部表达式再追加。
+-                list_parts.append(self._compact_expression_bracket_token(str_token))
+-
+-                # 方括号 token 作为普通 atom 结束一元状态。
+-                str_previous_symbol = str_token  # 方括号 token 成为上一 token
+-
+-                # 方括号 token 后续不再继承一元贴合规则。
+-                bool_previous_unary = False  # 方括号 token 不是一元运算符
+-
+-                # 方括号 token 分支不再进入普通 atom 路径。
+-                continue
+-
+-            # 左括号和左花括号直接打开分组。
+-            if str_token in {"(", "{"}:
+-
+-                # 开分组符不需要前置整理。
+-                list_parts.append(str_token)
+-
+-                # 后续 token 根据开分组上下文判断一元符号。
+-                str_previous_symbol = str_token  # 开分组符成为上一 token
+-
+-                # 开分组符自身不按一元符号记录。
+-                bool_previous_unary = False  # 开分组符不是一元运算符
+-
+-                # 开分组符分支不再进入普通 atom 路径。
+-                continue
+-
+-            # 运算符需要区分一元和二元格式。
+-            if self._is_expression_operator_token(str_token):
+-
+-                # helper 写入运算符，并返回它是否按一元形式处理。
+-                if self._append_expression_operator(
+-                    list_parts,  # 运算符输出目标片段
+-                    str_token,  # 当前运算符 token
+-                    str_previous_symbol,  # 上一个 token
+-                    str_upcoming_symbol,  # 下一个 token
+-                ):
+-
+-                    # 一元运算符后，下一普通片段需要贴合当前符号。
+-                    bool_previous_unary = True  # 下一普通片段不补前置空格
+-
+-                # 二元或三目符号之后恢复普通空格规则。
+-                else:
+-
+-                    # 后续普通片段可以按常规相邻 token 规则补空格。
+-                    bool_previous_unary = False  # 下一普通片段使用常规空格
+-
+-                # 当前运算符成为下一轮上下文。
+-                str_previous_symbol = str_token  # 运算符成为上一 token
+-
+-                # 运算符分支不再进入普通 atom 路径。
+-                continue
+-
+-            # 剩余 token 按普通 atom 规则追加。
+-            self._append_expression_atom(list_parts, str_token, bool_previous_unary)
+-
+-            # 普通 atom 结束一元状态。
+-            str_previous_symbol = str_token  # 普通 atom 成为上一 token
+-
+-            # 下一个 atom 需要重新按普通间距判断。
+-            bool_previous_unary = False  # 普通 atom 不是一元运算符
+-
+-        # 拼接所有片段并移除表达式两端空白。
+-        return "".join(list_parts).strip()
+-
+-    # 带括号的控制头只规范化括号内部表达式。
+-    def _normalize_parenthesized_expression(self, text: str, prefix: str) -> str:
+-        """
+-        规范化指定关键字后的括号表达式。
+-
+-        :param text: 原始控制头或语句文本。
+-        :param prefix: 需要匹配的关键字前缀。
+-        :return: 括号内部表达式规范化后的文本。
+-        """
+-
+-        # 非目标前缀文本不属于本次处理范围。
+-        if not text.startswith(prefix):
+-
+-            # 保持调用方传入文本不变。
+-            return text
+-
+-        # int_open_index 是前缀后预期左括号的位置。
+-        int_open_index = len(prefix)  # 控制头左括号候选下标
+-
+-        # 前缀后没有左括号时不能安全解析表达式范围。
+-        if int_open_index >= len(text) or text[int_open_index] != "(":
+-
+-            # 保守返回原文本。
+-            return text
+-
+-        # int_close_index 定位与左括号匹配的右括号。
+-        int_close_index = self._find_matching_paren_in_text(text, int_open_index)  # 控制头右括号位置
+-
+-        # 括号不闭合时不尝试重排文本。
+-        if int_close_index == -1:
+-
+-            # 保持异常控制头原样，交给上层兼容路径。
+-            return text
+-
+-        # str_expression 保存括号内部规范化后的条件或选择表达式。
+-        str_expression = self._normalize_expression_spacing(text[int_open_index + 1 : int_close_index])  # 括号内部表达式
+-
+-        # str_remainder 保留右括号后的 begin、label 或其他尾部文本。
+-        str_remainder = text[int_close_index + 1 :].strip()  # 括号右侧尾随文本
+-
+-        # begin 紧跟右括号时沿用 formatter 的无空格样式。
+-        if not str_remainder or str_remainder.startswith("begin"):
+-
+-            # 返回无额外空格的控制头。
+-            return f"{prefix}({str_expression}){str_remainder}"
+-
+-        # 其他尾部文本前保留一个空格。
+-        return f"{prefix}({str_expression}) {str_remainder}"
+-
+-    # 循环控制头按分号拆分三段表达式后逐段规范化。
+-    def _normalize_for_header(self, text: str) -> str:
+-        """
+-        规范化 Verilog for 控制头中的三个表达式段。
+-
+-        :param text: 原始 for 控制头文本。
+-        :return: 分号分隔段规范化后的 for 头部。
+-        """
+-
+-        # 只有紧凑 `for(` 形式进入本函数处理。
+-        if not text.startswith("for("):
+-
+-            # 非 for 头部保持原样。
+-            return text
+-
+-        # int_close_index 定位 for 条件括号的闭合位置。
+-        int_close_index = self._find_matching_paren_in_text(text, 3)  # for 头部右括号位置
+-
+-        # 括号不闭合时不能安全拆分三段表达式。
+-        if int_close_index == -1:
+-
+-            # 保留原始 for 头部文本。
+-            return text
+-
+-        # str_payload 是 for 括号内部的 init/condition/step 文本。
+-        str_payload = text[4:int_close_index]  # for 括号内部文本
+-
+-        # list_parts 按顶层分号拆出 for 的三个组成段。
+-        list_parts = self._split_top_level(str_payload, ";")  # for 头部顶层分号片段
+-
+-        # list_normalized_parts 逐段应用普通表达式空白规则。
+-        list_normalized_parts = [self._normalize_expression_spacing(str_part) for str_part in list_parts]  # for 头部规范化片段
+-
+-        # str_remainder 保留右括号后的 begin 或 label。
+-        str_remainder = text[int_close_index + 1 :].strip()  # for 头部尾随文本
+-
+-        # 循环控制三段之间固定使用分号加空格。
+-        return f"for({'; '.join(list_normalized_parts)}){str_remainder}"
+-
+-    # 顶层冒号查找需要避开 part-select 和赋值类操作符。
+-    def _find_top_level_colon(self, text: str) -> int:
+-        """
+-        查找表达式顶层的普通冒号。
+-
+-        :param text: 待扫描文本。
+-        :return: 顶层普通冒号下标，未找到时返回 -1。
+-        """
+-
+-        # int_depth 跟踪括号层级，非零时忽略冒号。
+-        int_depth = 0  # 顶层冒号扫描括号深度
+-
+-        # int_index 指向顶层冒号扫描的当前字符。
+-        int_index = 0  # 顶层冒号扫描下标
+-
+-        # 按字符扫描以区分 range、三目和 label 边界。
+-        while int_index < len(text):
+-
+-            # str_char 是顶层冒号扫描本轮字符。
+-            str_char = text[int_index]  # 顶层冒号扫描字符
+-
+-            # 分隔符 helper 保持顶层冒号扫描的非负深度。
+-            int_depth = self._advance_group_depth(str_char, int_depth)  # 当前字符处理后的冒号扫描层级
+-
+-            # 非冒号或嵌套冒号都不能作为结果。
+-            if str_char != ":" or int_depth != 0:
+-
+-                # 继续扫描下一字符。
+-                int_index += 1  # 非候选字符处理后的下标
+-
+-                # 当前字符不满足顶层冒号条件。
+-                continue
+-
+-            # str_previous_char 用于识别 `+:` 或 `-:`。
+-            str_previous_char = text[int_index - 1] if int_index > 0 else ""  # 冒号前一字符
+-
+-            # str_next_char 用于识别 `:=` 风格或其他赋值尾部。
+-            str_next_char = text[int_index + 1] if int_index + 1 < len(text) else ""  # 冒号后一字符
+-
+-            # part-select 或赋值相关冒号不是普通顶层冒号。
+-            if str_previous_char in "+-" or str_next_char == "=":
+-
+-                # 跳过当前冒号继续扫描后续文本。
+-                int_index += 1  # 跳过特殊冒号后的下标
+-
+-                # 当前冒号不作为结果返回。
+-                continue
+-
+-            # 返回第一个普通顶层冒号位置。
+-            return int_index
+-
+-            # 当前字符处理完成后推进扫描。
+-            int_index += 1  # 顶层冒号扫描下一下标
+-
+-        # 未发现普通顶层冒号。
+-        return -1
+-
+-    # 过程赋值、连续赋值和 label 前缀在这里统一重排空白。
+-    def _normalize_assignment_like_statement(self, text: str) -> str:
+-        """
+-        规范化赋值类语句中操作符两侧的空白。
+-
+-        :param text: 原始语句文本。
+-        :return: 赋值操作符和两侧表达式规范化后的语句。
+-        """
+-
+-        # str_stripped_text 去掉外围空白后判断语句形态。
+-        str_stripped_text = text.strip()  # 去空白后的语句文本
+-
+-        # 只有分号结尾语句才按赋值语句处理。
+-        if not str_stripped_text.endswith(";"):
+-
+-            # 非完整语句保持原文本。
+-            return str_stripped_text
+-
+-        # str_prefix 保留连续赋值的 assign 关键字。
+-        str_prefix = ""  # 赋值语句前缀
+-
+-        # str_body 去掉末尾分号后用于查找赋值操作符。
+-        str_body = str_stripped_text[:-1].strip()  # 去分号后的赋值主体
+-
+-        # 连续赋值需要保留 assign 前缀。
+-        if str_body.startswith("assign "):
+-
+-            # 连续赋值前缀单独保存，右侧主体继续规范化。
+-            str_prefix = "assign "  # 连续赋值前缀
+-
+-            # 去掉 assign 后只检查实际赋值主体。
+-            str_body = str_body[len(str_prefix) :].strip()  # assign 后的赋值主体
+-
+-            # 带 delay 的 assign 暂不重排，避免改变延迟语义文本。
+-            if str_body.startswith("#"):
+-
+-                # 返回原始完整语句。
+-                return str_stripped_text
+-
+-        # str_label_prefix 保存过程块 label 前缀。
+-        str_label_prefix = ""  # 赋值语句块标签前缀
+-
+-        # int_colon_index 定位可能的 label 冒号。
+-        int_colon_index = self._find_top_level_colon(str_body)  # 赋值主体顶层冒号
+-
+-        # 顶层冒号存在时，检查它是否分隔 label 和赋值主体。
+-        if int_colon_index != -1:
+-
+-            # str_label_head 保存冒号左侧的标签候选。
+-            str_label_head = str_body[:int_colon_index]  # label 候选文本
+-
+-            # str_label_tail 保存冒号右侧的赋值候选。
+-            str_label_tail = str_body[int_colon_index + 1 :]  # label 后赋值候选文本
+-
+-            # label 后必须有赋值且不能是 begin 块。
+-            if (
+-                str_label_tail.strip()
+-                and not str_label_tail.strip().startswith("begin")
+-                and self._find_procedural_assignment_operators(str_label_tail)
+-            ):
+-
+-                # label 前缀保留冒号和一个空格。
+-                str_label_prefix = f"{str_label_head.strip()}: "  # 规范化 label 前缀
+-
+-                # 赋值主体切换为 label 后的文本。
+-                str_body = str_label_tail.strip()  # label 后赋值主体
+-
+-        # list_assignment_positions 保存主体内可用赋值操作符位置。
+-        list_assignment_positions = self._find_procedural_assignment_operators(str_body)  # 赋值操作符位置列表
+-
+-        # 未找到赋值操作符时不改写语句。
+-        if not list_assignment_positions:
+-
+-            # 原语句可能是函数调用或其他过程语句。
+-            return str_stripped_text
+-
+-        # int_operator_index 只取最左侧赋值操作符。
+-        int_operator_index = list_assignment_positions[0]  # 首个赋值操作符位置
+-
+-        # str_operator 区分非阻塞和阻塞赋值。
+-        str_operator = "<=" if str_body.startswith("<=", int_operator_index) else "="  # 赋值操作符文本
+-
+-        # str_lhs 规范化赋值左侧表达式。
+-        str_lhs = self._normalize_expression_spacing(str_body[:int_operator_index].strip())  # 赋值左表达式
+-
+-        # str_rhs 规范化赋值右侧表达式。
+-        str_rhs = self._normalize_expression_spacing(str_body[int_operator_index + len(str_operator) :].strip())  # 赋值右表达式
+-
+-        # 重新拼接 assign、label、lhs、operator 和 rhs。
+-        return f"{str_prefix}{str_label_prefix}{str_lhs} {str_operator} {str_rhs};"
+-
+-    # 点名参数或端口关联只规范化括号内部表达式。
+-    def _normalize_named_association_line(self, text: str) -> str:
+-        """
+-        规范化 `.name(expr)` 形式关联行。
+-
+-        :param text: 原始参数或端口关联行。
+-        :return: actual 表达式规范化后的关联行。
+-        """
+-
+-        # match_association 只匹配完整点名关联行。
+-        match_association: re.Match[str] | None = re.match(  # 点名关联匹配结果
+-            r"^(?P<head>\.\w+)\((?P<expr>.*)\)(?P<suffix>,?)$",  # formal、actual 和尾逗号捕获模式
+-            text,  # 待匹配的关联行文本
+-        )
+-
+-        # 非点名关联保持原样。
+-        if not match_association:
+-
+-            # 调用方可能继续按普通语句处理。
+-            return text
+-
+-        # str_expression 是括号内部 actual 表达式。
+-        str_expression = self._normalize_expression_spacing(match_association.group("expr").strip())  # 点名关联 actual 表达式
+-
+-        # 保留 `.formal(` 前缀和可选尾逗号。
+-        return f"{match_association.group('head')}({str_expression}){match_association.group('suffix')}"
+-
+-    # 语句空白替换规则保持旧 formatter 的执行顺序。
+-    def _statement_spacing_substitutions(self) -> tuple[tuple[str, str], ...]:
+-        """
+-        返回普通语句规范化使用的正则替换表。
+-
+-        :param: 无外部业务参数。
+-        :return: 按执行顺序排列的 pattern/replacement 二元组。
+-        """
+-
+-        # 替换顺序会影响 always、if 和 begin 的最终拼接形态。
+-        return (
+-            (r"always\s*@\s*\*", "always@(*)"),
+-            (r"always\s*@\s*\(", "always@("),
+-            (r"\belse\s+if\s*\(", "else if("),
+-            (r"\bif\s*\(", "if("),
+-            (r"\bcase\s*\(", "case("),
+-            (r"\bfor\s*\(", "for("),
+-            (r"\bwhile\s*\(", "while("),
+-            (r"if\(\s*!", "if(!"),
+-            (r"\)\s*begin", ")begin"),
+-            (r":\s*begin\b", ":begin"),
+-            (r"\bbegin\s*:\s*", "begin:"),
+-            (r"\)\s*:\s*", "):"),
+-            (r"\bend\s+else\b", "end else"),
+-        )
+-
+-    # 普通语句代码先做关键字空白替换，再进入表达式级规范化。
+-    def _normalize_statement_code(self, code: str) -> str:
+-        """
+-        规范化单行 Verilog 代码部分。
+-
+-        :param code: 已去掉右侧注释的代码文本。
+-        :return: 关键字、关联、赋值和控制头空白规范化后的代码。
+-        """
+-
+-        # str_normalized 是逐步应用规则的工作文本。
+-        str_normalized = code  # 语句规范化工作文本
+-
+-        # str_stripped 去掉外围空白后用于判断是否跳过处理。
+-        str_stripped = str_normalized.strip()  # 去外围空白语句
+-
+-        # 空行、预处理和块注释不进入语句规范化。
+-        if (
+-            not str_stripped
+-            or str_stripped.startswith("//")
+-            or str_stripped.startswith("`")
+-            or "/*" in str_stripped
+-            or "*/" in str_stripped
+-        ):
+-
+-            # 返回去空白文本，保持这些行的原始语义。
+-            return str_stripped
+-
+-        # 按既定顺序应用关键字和 begin 空白替换。
+-        for str_pattern, str_replacement in self._statement_spacing_substitutions():
+-
+-            # 当前替换只处理语法关键字附近的空白。
+-            str_normalized = re.sub(str_pattern, str_replacement, str_normalized)  # 语句正则替换结果
+-
+-        # 点名关联表达式先做 actual 侧规范化。
+-        str_normalized = self._normalize_named_association_line(str_normalized)  # 点名关联规范化结果
+-
+-        # 赋值语句再规范化赋值操作符两侧。
+-        str_normalized = self._normalize_assignment_like_statement(str_normalized)  # 赋值语句规范化结果
+-
+-        # 条件控制头括号内部表达式规范化。
+-        str_normalized = self._normalize_parenthesized_expression(str_normalized, "if")  # if 头部规范化结果
+-
+-        # 分支链控制头括号内部表达式规范化。
+-        str_normalized = self._normalize_parenthesized_expression(str_normalized, "else if")  # 分支链头部规范化结果
+-
+-        # case 选择表达式规范化。
+-        str_normalized = self._normalize_parenthesized_expression(str_normalized, "case")  # 选择分支头部规范化结果
+-
+-        # 循环条件表达式规范化。
+-        str_normalized = self._normalize_parenthesized_expression(str_normalized, "while")  # 条件循环头部规范化结果
+-
+-        # 循环头部按分号拆分后逐段规范化。
+-        str_normalized = self._normalize_for_header(str_normalized)  # 三段循环头部规范化结果
+-
+-        # 条件分支头还需要复用控制节点格式化中的条件折叠逻辑。
+-        if str_normalized.startswith("if(") or str_normalized.startswith("else if("):
+-
+-            # 条件 header helper 负责剥离冗余括号和统一 begin 位置。
+-            str_normalized = self._normalize_if_condition_header(str_normalized)  # if 条件头最终文本
+-
+-        # 返回所有规则处理后的语句代码。
+-        return str_normalized
+-
+-    # 单行语句规范化会先拆右侧注释，避免注释内容被正则改写。
+-    def _normalize_statement_line(self, line: str) -> str:
+-        """
+-        规范化一整行 Verilog 语句。
+-
+-        :param line: 原始单行 Verilog 文本。
+-        :return: 代码和右侧注释分别规范化后的文本。
+-        """
+-
+-        # str_stripped 去掉外围空白后判断行类型。
+-        str_stripped = line.strip()  # 去外围空白行文本
+-
+-        # 空行、注释、预处理和块注释边界保持原样。
+-        if (
+-            not str_stripped
+-            or str_stripped.startswith("//")
+-            or str_stripped.startswith("`")
+-            or "/*" in str_stripped
+-            or "*/" in str_stripped
+-        ):
+-
+-            # 返回去外围空白后的特殊行文本。
+-            return str_stripped
+-
+-        # str_raw_code 和 str_comment 分别保存代码和行注释。
+-        str_raw_code, str_comment = self._split_comment(str_stripped)  # 单行代码和注释片段
+-
+-        # str_normalized_code 只对代码片段应用语法规范化。
+-        str_normalized_code = self._normalize_statement_code(str_raw_code.strip())  # 规范化后的代码片段
+-
+-        # 存在右侧注释时需要拼回注释。
+-        if str_comment:
+-
+-            # 只有注释没有代码时按纯注释行输出。
+-            if not str_normalized_code:
+-
+-                # 逗号开头注释保持旧兼容拼接方式。
+-                return f"//{str_comment}" if str_comment.startswith(",") else f"// {str_comment}"
+-
+-            # 普通代码行在代码和注释之间保留一个空格。
+-            return (
+-                f"{str_normalized_code} //{str_comment}"
+-                if str_comment.startswith(",")
+-                else f"{str_normalized_code} // {str_comment}"
+-            )
+-
+-        # 无右侧注释时直接返回规范化代码。
+-        return str_normalized_code
+-
+-    # raw block 缩进调整只关心行首闭合关键字数量。
+-    def _raw_block_leading_close_count(self, line: str) -> int:
+-        """
+-        判断 raw 行是否以块闭合关键字开头。
+-
+-        :param line: raw block 中的一行文本。
+-        :return: 行首闭合关键字命中时返回 1，否则返回 0。
+-        """
+-
+-        # 命中预编译模式即表示当前行先闭合一层缩进。
+-        return 1 if self.RAW_BLOCK_LEADING_CLOSE_PATTERN.match(line.strip()) else 0
+-
+-    # 去掉行首闭合关键字后，剩余文本用于计算后续打开块。
+-    def _strip_raw_block_leading_close(self, line: str) -> str:
+-        """
+-        移除 raw 行首部的块闭合关键字。
+-
+-        :param line: raw block 中的一行文本。
+-        :return: 去掉闭合关键字后的剩余文本。
+-        """
+-
+-        # match_close 捕获闭合关键字后的剩余文本。
+-        match_close = self.RAW_BLOCK_LEADING_CLOSE_PATTERN.match(line.strip())  # raw 缩进闭合关键字匹配
+-
+-        # 命中时只返回闭合关键字后面的剩余部分。
+-        return match_close.group("rest").lstrip() if match_close else line.strip()
+-
+-    # 单行缩进增量由 begin/case 打开数减去 end/endcase 闭合数得到。
+-    def _statement_indent_delta(self, line: str) -> int:
+-        """
+-        计算当前 raw 行对下一行缩进层级的影响。
+-
+-        :param line: 已规范化的 raw 行文本。
+-        :return: 打开块数量减去闭合块数量后的缩进增量。
+-        """
+-
+-        # str_raw_code 去掉右侧注释后参与结构关键字统计。
+-        str_raw_code, _ = self._split_comment(line.strip())  # raw 行代码片段
+-
+-        # str_working 先移除行首闭合关键字，避免重复计算当前行缩进。
+-        str_working = self._strip_raw_block_leading_close(str_raw_code)  # 缩进增量统计文本
+-
+-        # int_open_count 统计 begin 关键字数量。
+-        int_open_count = len(re.findall(r"\bbegin\b", str_working))  # begin 打开数量
+-
+-        # case/casez/casex 同样会打开一个缩进层级。
+-        int_open_count += len(re.findall(r"\b(?:case|casez|casex)\b", str_working))  # 选择块打开数量
+-
+-        # int_close_count 统计普通过程块闭合数量。
+-        int_close_count = len(re.findall(r"\bend\b", str_working))  # end 闭合数量
+-
+-        # 选择块闭合关键字会额外减少下一行缩进。
+-        int_close_count += len(re.findall(r"\bendcase\b", str_working))  # 选择块闭合数量
+-
+-        # 正数表示下一行加深缩进，负数表示下一行减小缩进。
+-        return int_open_count - int_close_count
+-
+-    # strict mode 错误使用统一 formatter 异常承载摘要和建议。
+-    def _strict_error(self, category: str, statement: str, suggestion: str) -> VerilogFormatterError:
+-        """
+-        构造 strict mode 下的 formatter 异常。
+-
+-        :param category: strict 检查类别。
+-        :param statement: 触发错误的原始语句。
+-        :param suggestion: 面向调用方的修复建议。
+-        :return: 带摘要和建议的 VerilogFormatterError。
+-        """
+-
+-        # str_summary 压缩过长语句，避免错误信息过宽。
+-        str_summary = self._summarize_statement(statement)  # strict 错误语句摘要
+-
+-        # 返回统一异常对象，调用方负责抛出。
+-        return VerilogFormatterError(f"Strict mode [{category}]: {str_summary}. Suggestion: {suggestion}")
+-
+-    # 错误摘要压缩连续空白并限制最大长度。
+-    def _summarize_statement(self, statement: str, limit: int = 120) -> str:
+-        """
+-        生成适合错误信息展示的单行语句摘要。
+-
+-        :param statement: 原始语句文本。
+-        :param limit: 摘要最大字符数。
+-        :return: 压缩空白并按长度截断后的摘要。
+-        """
+-
+-        # str_compact 把多行和连续空白压缩为单空格。
+-        str_compact = " ".join(statement.split())  # 单行语句摘要
+-
+-        # 短语句可以完整展示。
+-        if len(str_compact) <= limit:
+-
+-            # 返回未截断摘要。
+-            return str_compact
+-
+-        # 过长语句末尾用省略号表示截断。
+-        return str_compact[: limit - 3] + "..."
+-
+-    # 缩进字符串由 formatter 配置的 indent_unit 重复组成。
+-    def _indent(self, level: int) -> str:
+-        """
+-        生成指定层级的 Verilog 缩进。
+-
+-        :param level: 缩进层级。
+-        :return: 对应层级的缩进字符串。
+-        """
+-
+-        # 直接复用实例配置的缩进单元。
+-        return self.indent_unit * level
+--- installed/scripts/python/quality/quality_gate_structure_rules.py
++++ project/scripts/python/quality/quality_gate_structure_rules.py
+@@ -12,7 +12,7 @@
+ from typing import Any
+ 
+ # formatter_ast 与 rulebook 仍是这些子模块依赖的唯一结构化入口。
+-from .formatter_backend.banners import display_width
++from .formatter_backend.banners import display_width, extract_banner_title, is_banner_line
+ from .formatter_ast import build_ast_report_for_path, iter_verilog_sources, read_verilog_source
+ from .declaration_region_policy import (
+     declaration_region_title,
+@@ -3845,11 +3845,15 @@
+     tuple_region_keywords = _configured_region_keywords()  # 当前文件应遵守的区域横幅顺序
+ 
+     # list_found 保存源码中出现的已知区域标题。
++    module_lines = str_text.splitlines()[
++        max(0, int(dict_module.get("line_start") or 1) - 1):
++        int(dict_module.get("line_end") or len(str_text.splitlines()))
++    ]
+     list_found = [
+-        str_keyword  # 已命中的 Erie 区域标题
+-        for str_keyword in tuple_region_keywords  # 遍历当前生效的区域顺序表
+-        if str_keyword in str_text  # 仅记录源码实际包含的区域标题
+-    ]  # 源码中命中的 Erie 区域横幅标题
++        extract_banner_title(line)
++        for line in module_lines
++        if is_banner_line(line) and extract_banner_title(line) in tuple_region_keywords
++    ]
+ 
+     # 非平凡模块必须至少有区域横幅。
+     if not list_found:
+@@ -3869,14 +3873,10 @@
+         return list_issues
+ 
+     # list_positions 按既定顺序记录区域标题在源码中的位置。
+-    list_positions = [
+-        str_text.find(str_keyword)  # 区域横幅在源码中的字符偏移
+-        for str_keyword in tuple_region_keywords  # 按当前规范区域顺序扫描
+-        if str_keyword in str_text  # 仅记录已出现标题的位置
+-    ]  # 已命中区域横幅在源码中的出现位置
++    list_positions = [tuple_region_keywords.index(title) for title in list_found]
+ 
+     # 区域出现顺序必须和 REGION_KEYWORDS 一致。
+-    if list_positions != sorted(list_positions):
++    if list_positions != sorted(list_positions) or len(list_found) != len(set(list_found)):
+ 
+         # 顺序错乱会影响生成 RTL 的可扫描性。
+         list_issues.append(
+@@ -3890,7 +3890,7 @@
+         )
+ 
+     # 有实例化时必须放在实例化区域，由顺序规则决定参数检查区是否覆盖最终位置。
+-    if dict_module.get("instances") and "模块实例化区域" not in str_text:
++    if dict_module.get("instances") and "模块实例化区域" not in list_found:
+ 
+         # 实例区域缺失时登记 VG031。
+         list_issues.append(
+--- installed/scripts/python/quality/vg_comb_targets.py
++++ project/scripts/python/quality/vg_comb_targets.py
+@@ -3682,6 +3682,84 @@
+     # 调用方据此区分局部恢复与完全无法定位连接。
+     return int_endpoint_count
+ 
++# 已知方向的 external output actual 只在 parent 端建立不透明 producer。
++def _append_external_output_driver(
++    root: DefinitionRoot,
++    parent_path: tuple[str, ...],
++    parent: SpecializedModule,
++    instance: dict[str, Any],
++    actual: dict[str, Any],
++    reason: str,
++    drivers: dict[ScopedTarget, list[ProducerRef]],
++) -> None:
++    """为 typed external output/inout 追加局部未知 producer。"""
++
++    # external output 可以暴露方向冲突，不能像未知 formal 那样排除 parent input。
++    for str_target in _actual_targets(actual):
++
++        # 当前 actual 的每个静态引用都保留其既有 producer，供多驱动检查合并。
++        scoped_endpoint = ScopedTarget(root.identity, parent_path, parent.key, str_target)
++        _append_endpoint_driver(
++            drivers,
++            scoped_endpoint,
++            ProducerRef(
++                "unknown_instance",
++                scoped_endpoint,
++                _span_tuple(instance.get("span")),
++                reason,
++            ),
++        )
++
++# 唯一 typed external interface 按 formal direction 建立不透明层级边界。
++def _handle_external_interface_instance(
++    state: HierarchyBuildState,
++    parent_path: tuple[str, ...],
++    parent: SpecializedModule,
++    instance: dict[str, Any],
++) -> bool:
++    """仅让 external output/inout 驱动 parent；input 永远保持 sink。"""
++
++    # 同名 external interface 必须唯一，重名时回退既有保守未知路径。
++    tuple_interfaces = dict(state.index.external_interfaces).get(
++        str(instance.get("module_name") or ""), ()
++    )
++    if len(tuple_interfaces) != 1:
++        return False
++
++    # 端口事实和实例关联都必须完整；不完整时不能猜测 formal ownership。
++    dict_interface = _mapping(tuple_interfaces[0])
++    list_ports = [dict(item) for item in dict_interface.get("ports", []) if isinstance(item, dict)]
++    tuple_binding = _bind_port_associations(list_ports, instance)
++    if tuple_binding[1] or any(
++        str(port.get("direction") or "").lower() not in {"input", "output", "inout"}
++        for port in list_ports
++    ):
++        return False
++
++    # input actual 只送入 opaque child；output/inout 才能成为 parent producer。
++    dict_directions = {
++        str(port.get("name") or ""): str(port.get("direction") or "").lower()
++        for port in list_ports
++    }
++    for str_formal, dict_actual in tuple_binding[0]:
++        str_direction = dict_directions[str_formal]
++        if str_direction == "input":
++            continue
++        _append_external_output_driver(
++            state.root,
++            parent_path,
++            parent,
++            instance,
++            dict_actual,
++            "external output implementation is unknown"
++            if str_direction == "output"
++            else "external inout ownership is unresolved",
++            state.drivers,
++        )
++
++    # 内部实现、输出值和时序均未推断；只确认了 formal direction ownership。
++    return True
++
+ # hierarchy builder 状态把共享输出容器从递归参数中收拢。
+ @dataclass
+ class HierarchyBuildState:
+@@ -4479,6 +4557,14 @@
+     # index 阶段已经局部分类缺失、重复和 external-only 引用。
+     str_reference_reason = str(instance.get("reference_unknown_reason") or "")  # 当前 child 实现解析原因
+ 
++    # 唯一 external interface 只提供 typed opaque 边界，不递归伪造内部实现。
++    if str_reference_reason and _handle_external_interface_instance(
++        state, parent_path, parent, instance
++    ):
++
++        # typed input sink 已被隔离，output/inout 仍保留局部未知 producer。
++        return
++
+     # 不唯一实现不能生成确定 child graph。
+     if str_reference_reason:
+ 
+--- installed/scripts/python/quality/vg_contract_liveness.py
++++ project/scripts/python/quality/vg_contract_liveness.py
+@@ -287,6 +287,62 @@
+     }
+ 
+ # evaluate_liveness_gate 执行 VG153 和 VG154。
++def _static_width(item: dict[str, Any]) -> int | None:
++    """仅证明静态完整总线；参数、数组和部分连接保持阻断。"""
++    if item.get("unpacked"):
++        return None
++    width = re.sub(r"\s+", "", str(item.get("width") or ""))
++    if not width:
++        return 1
++    match = re.fullmatch(r"\[(\d+):(\d+)\]", width)
++    return abs(int(match[1]) - int(match[2])) + 1 if match else None
++
++
++def _instance_drivers(module, local_facts, catalog):
++    """从已有 formatter AST 证明命名连接的唯一输出驱动，不重解析 RTL。"""
++    declared = {name: item["object"] for name, item in local_facts["declarations"].items()}
++    declared.update({port["name"]: port for port in module.get("ports", [])})
++    candidates = {}
++    unresolved = set()
++    for instance in module.get("instances", []):
++        child = catalog.get(instance.get("module_name"))
++        if child is None:
++            continue  # 未知接口仍由 VG097 和原 VG153 阻断，绝不伪造驱动。
++        formals = {port["name"]: port for port in child.get("ports", [])}
++        for association in instance.get("port_associations", []):
++            formal = formals.get(association.get("formal_name"))
++            if formal is None or formal.get("direction") != "output":
++                continue
++            actual = association.get("actual") or {}
++            names = set(actual.get("references") or [])
++            name = str(actual.get("text") or "").strip()
++            node = actual.get("expression") or {}
++            parent = declared.get(name)
++            supported = (
++                instance.get("parse_complete") and instance.get("association_style") == "named"
++                and not instance.get("has_params") and not instance.get("parameter_overrides")
++                and not instance.get("array_range_text")
++                and not child.get("params") and not child.get("generates") and not module.get("generates")
++                and parent is not None and parent.get("kind", "wire") == "wire"
++                and actual.get("kind") == "expression" and names == {name}
++                and node.get("node_kind") == "identifier" and (node.get("name") or node.get("text")) == name
++                and actual.get("static_lvalue_segments") == [{"name": name}]
++                and _static_width(parent) is not None and _static_width(parent) == _static_width(formal)
++                and bool(parent.get("signed")) == bool(formal.get("signed"))
++            )
++            if not supported:
++                unresolved.update(names or {name or "<unresolved_actual>"})
++                continue
++            candidates.setdefault(name, []).append(instance.get("instance_name"))
++    drivers = set()
++    for name, instances in candidates.items():
++        if len(instances) != 1 or name in local_facts["drivers"] or name in unresolved:
++            unresolved.add(name)
++        else:
++            drivers.add(name)
++    return drivers, unresolved
++
++
+ def evaluate_liveness_gate(facts: VgFacts, str_gate_id: str) -> VgEvaluation:
+     """检查读取无驱动和声明无使用问题。
+ 
+@@ -303,8 +359,19 @@
+     # 存在内部声明或端口时进入生存性适用范围。
+     bool_applicable = False  # 当前 RTL 是否出现候选声明
+ 
++    modules = list(_source_modules(facts))
++    catalog = {}
++    duplicates = set()
++    for _, module in modules:
++        name = module.get("name")
++        if name in catalog:
++            duplicates.add(name)
++        catalog[name] = module
++    for name in duplicates:
++        catalog.pop(name)  # 重名定义不选择任意实现。
++
+     # 每个模块独立计算声明、读取和驱动关系。
+-    for obj_source, dict_module in _source_modules(facts):
++    for obj_source, dict_module in modules:
+ 
+         # 当前模块的结构化生存性事实。
+         dict_signal_facts = _module_signal_facts(dict_module, obj_source.lines)  # 当前模块声明驱动读取事实
+@@ -320,6 +387,16 @@
+ 
+         # VG153 只检查内部声明和输出端口，不检查 parameter/localparam。
+         if str_gate_id == "VG153":
++
++            instance_drivers, unresolved = _instance_drivers(dict_module, dict_signal_facts, catalog)
++            set_drivers.update(instance_drivers)
++            for name in sorted(unresolved):
++                list_findings.append(_finding(
++                    obj_source, dict_module, line=None,
++                    message="子模块输出的完整位宽或唯一驱动关系无法确认。",
++                    evidence=name,
++                    metadata=(("symbol", name), ("driver_state", "unresolved_instance_output")),
++                ))
+ 
+             # 读取且没有驱动的内部声明属于确定阻断。
+             for str_name, dict_declaration in dict_declarations.items():
+--- installed/scripts/python/quality/vg_expression_rules.py
++++ project/scripts/python/quality/vg_expression_rules.py
+@@ -1,1029 +1,103 @@
+-"""实现表达式、条件和位宽相关 RTL VG 门禁。"""
++"""Project-local relational-width fix over the installed VG expression rules."""
+ 
+-# future annotations 延后解析 VG 数据模型类型。
+ from __future__ import annotations
+ 
+-# re 在 formatter AST 已确认的 module 文本内匹配表达式构造。
++import importlib.util
+ import re
++import sys
++from pathlib import Path
+ 
+-# Callable 描述固定编号到规则函数的路由表。
+-from typing import Callable
+-
+-# facts 提供可信 module 文本、行号和结构化声明。
++from . import vg_value_facts
++from .vg_rule_models import VgEvaluation, VgFinding, failed, inconclusive, passed
+ from .vg_semantic_facts import VgFacts, iter_trusted_modules
+ 
+-# models 统一逐门禁状态和定位证据。
+-from .vg_rule_models import VgEvaluation, VgFinding, failed, inconclusive, passed
+ 
+-# value_facts 是表达式与分支规则共享的常量和位宽事实实现。
+-from . import vg_value_facts
++def _load_upstream_module():
++    """Load the installed implementation so every unaffected gate stays upstream."""
+ 
+-# XZ_LITERAL 只匹配显式包含 X/Z 数位的 Verilog 定宽字面量。
+-XZ_LITERAL = r"\b\d*'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]*[xXzZ][0-9a-fA-F_xXzZ?]*\b"  # X/Z 字面量模式
++    path_current = Path(__file__).resolve()
++    package = sys.modules[__package__]
++    for path_entry in package.__path__:
++        path_candidate = (Path(path_entry) / path_current.name).resolve()
++        if path_candidate == path_current or not path_candidate.is_file():
++            continue
++        str_name = f"{__package__}._installed_vg_expression_rules"
++        spec = importlib.util.spec_from_file_location(str_name, path_candidate)
++        if spec is None or spec.loader is None:
++            break
++        module = importlib.util.module_from_spec(spec)
++        sys.modules[str_name] = module
++        spec.loader.exec_module(module)
++        return module
++    raise ImportError("installed vg_expression_rules.py was not found")
+ 
+-# UNSIZED_NUMBER 排除定宽字面量、标识符和位选择中的十进制数字。
+-UNSIZED_NUMBER = r"(?<!['\w\[:])\d+(?!['\w\]:])"  # 未显式声明位宽和进制的数字模式
+ 
+-# SIZED_LITERAL 是位宽规则可静态求值的定宽字面量形式。
+-SIZED_LITERAL = r"\d+'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]+"  # 可提取前缀位宽的字面量模式
++_upstream = _load_upstream_module()
++SIZED_LITERAL = _upstream.SIZED_LITERAL
+ 
+-# SIMPLE_OPERAND 限定当前批次只判断标识符和显式定宽字面量。
+-SIMPLE_OPERAND = rf"(?:[A-Za-z_]\w*|{SIZED_LITERAL})"  # 高置信二元操作数模式
+ 
+-# evaluate_expression_gate 把固定编号路由到表达式规则实现。
+ def evaluate_expression_gate(str_gate_id: str, facts: VgFacts) -> VgEvaluation:
+-    """执行表达式规则组中的指定 VG 门禁。
++    """Use the local slice-aware VG085 implementation and delegate all other gates."""
+ 
+-    参数:
+-        str_gate_id: 当前执行的固定 VG 表达式门禁编号。
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        当前表达式规则的逐门禁结论。
+-    """
++    if str_gate_id == "VG085":
++        return _relational_width(facts)
++    return _upstream.evaluate_expression_gate(str_gate_id, facts)
+ 
+-    # 路由表只包含统一 VG 语义引擎分配给本模块的激活编号。
+-    dict_evaluators: dict[str, Callable[[VgFacts], VgEvaluation]] = {  # 固定编号到表达式规则函数的映射
+-        "VG072": _xz_arithmetic,  # X/Z 算术表达式检查
+-        "VG074": _logic_operator_scalar_operands,  # 逻辑运算符标量操作数检查
+-        "VG078": _xz_condition,  # X/Z 条件表达式检查
+-        "VG085": _relational_width,  # 关系表达式位宽检查
+-        "VG101": _xz_branch_condition,  # X/Z 分支控制检查
+-        "VG122": _arithmetic_result_width,  # 算术结果溢出检查
+-        "VG125": _literal_declared_width_matches_value,  # 字面量声明位宽检查
+-        "VG134": _arithmetic_sign_consistency,  # 算术操作数符号一致性检查
+-        "VG137": _assignment_width,  # 赋值两侧位宽检查
+-        "VG138": _explicit_literal,  # 常量显式位宽进制检查
+-    }
+ 
+-    # engine 已保证编号属于本模块，直接执行唯一对应函数。
+-    return dict_evaluators[str_gate_id](facts)
++def _relational_width(facts: VgFacts) -> VgEvaluation:
++    """Compare widths of trusted simple relational operands, including fixed selects."""
+ 
+-# _literal_declared_width_matches_value 比较定宽常量声明与最小数值宽度。
+-def _literal_declared_width_matches_value(facts: VgFacts) -> VgEvaluation:
+-    """检查定宽字面量的声明位宽是否等于其最小实际位宽。
++    bool_applicable = False
++    bool_unknown = False
++    list_findings: list[VgFinding] = []
++    str_identifier = r"[A-Za-z_]\w*"
++    str_select = rf"{str_identifier}\s*\[\s*[^\[\]]+?\s*\]"
++    str_plain_identifier = rf"{str_identifier}(?!\s*\[)"
++    str_operand = rf"(?:{SIZED_LITERAL}|{str_select}|{str_plain_identifier})"
++    str_pattern = rf"(?<!['\w])({str_operand})\s*(==|!=|<|>)\s*({str_operand})"
+ 
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        位宽不一致的失败证据或适用性结论。
+-    """
+-
+-    # findings 专门保存需要调整声明宽度的字面量位置。
+-    list_findings: list[VgFinding] = []  # 声明位宽与实际位宽不一致证据
+-
+-    # applicable 区分无字面量输入与检查后合规。
+-    bool_applicable = False  # 是否发现可静态求值的定宽字面量
+-
+-    # 模式分别捕获声明位宽、进制和数位。
+-    str_pattern = (  # 声明位宽、进制和数位三个捕获组
+-        r"\b(\d+)'[sS]?([bBoOdDhH])"
+-        r"([0-9a-fA-F_xXzZ?]+)(?![0-9a-fA-F_xXzZ?])"
+-    )
+-
+-    # 每个可信 module 独立扫描可静态求值的定宽字面量。
+-    for source_facts, _, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 保留匹配对象以生成精确证据位置和原文。
++    for source_facts, dict_module, str_module_text, int_base_line in iter_trusted_modules(facts):
++        dict_widths = vg_value_facts.module_widths(dict_module)
++        dict_parameter_values = vg_value_facts.module_instance_parameter_values(dict_module)
+         for obj_match in re.finditer(str_pattern, str_module_text):
+-
+-            # 当前匹配使规则进入适用状态。
+-            bool_applicable = True  # 已发现规则适用的定宽字面量
+-
+-            # 第一捕获组提供声明位宽。
+-            int_declared_width = int(obj_match.group(1))  # 字面量声明位宽
+-
+-            # 第二捕获组统一为小写进制标识。
+-            str_base = obj_match.group(2).lower()  # 归一化进制标识
+-
+-            # 第三捕获组移除仅用于可读性的下划线。
+-            str_digits = obj_match.group(3).replace("_", "")  # 移除可读分隔符后的数位
+-
+-            # X/Z/? 数位没有可比较的确定数值宽度，交由专门未知态规则处理。
+-            if re.search(r"[xXzZ?]", str_digits):
+-
+-                # 继续检查当前 module 的其他确定数值字面量。
++            bool_applicable = True
++            str_left = obj_match.group(1)
++            str_right = obj_match.group(3)
++            int_left_width = _expression_width(str_left, dict_widths, dict_parameter_values)
++            int_right_width = _expression_width(str_right, dict_widths, dict_parameter_values)
++            if int_left_width is None or int_right_width is None:
++                bool_unknown = True
+                 continue
+-
+-            # 参数声明和全零常量的宽度保留设计接口语义，最近换行位置用于定位字面量所在声明行。
+-            int_line_start = str_module_text.rfind("\n", 0, obj_match.start()) + 1  # 当前源码行起始偏移
+-
+-            # 行前缀用于识别 parameter/localparam 合同。
+-            str_line_prefix = str_module_text[int_line_start : obj_match.start()]  # 字面量之前的声明文本
+-
+-            # 参数宽度与显式全零宽度都是设计合同，不按数值最小宽度收缩。
+-            if re.search(r"\b(?:parameter|localparam)\b", str_line_prefix) or (
+-                str_base == "d" and int(str_digits, 10) == 0
+-            ):
+-
+-                # 当前字面量属于合同宽度，继续扫描其他字面量。
++            if int_left_width == int_right_width:
+                 continue
+-
+-            # 受限求值器只处理已排除未知态的确定数值。
+-            int_actual_width = _literal_actual_width(str_base, str_digits)  # 当前数值的最小位宽
+-
+-            # 声明宽度已经精确时无需生成诊断。
+-            if int_declared_width == int_actual_width:
+-
+-                # 继续检查当前 module 的其他字面量。
+-                continue
+-
+-            # 把 module 内偏移换算为一基文件行号。
+-            int_line = int_base_line + str_module_text.count("\n", 0, obj_match.start())  # 当前字面量一基行号
+-
+-            # 报告声明宽度与最小数值宽度的确定差异。
++            int_line = int_base_line + str_module_text.count("\n", 0, obj_match.start())
+             list_findings.append(
+                 VgFinding(
+                     source_facts.relative_path,
+                     int_line,
+-                    f"字面量声明为 {int_declared_width} 位，但实际值只需要 {int_actual_width} 位。",
+-                    obj_match.group(0),
++                    "表达式两侧位宽不一致。",
++                    obj_match.group(0).strip(),
+                 )
+             )
+ 
+-    # 任一宽度差异都使本门禁失败。
+     if list_findings:
+-
+-        # 返回全部字面量证据，支持批量修复。
+         return failed(*list_findings)
+-
+-    # 没有违规时保留规则是否实际适用的信息。
++    if bool_unknown:
++        return inconclusive("存在无法静态确定的表达式位宽。")
+     return passed(applicable=bool_applicable)
+ 
+-# _literal_actual_width 对确定数位执行受限的最小宽度求值。
+-def _literal_actual_width(str_base: str, str_digits: str) -> int:
+-    """计算受支持定宽字面量的最小实际位宽。
+ 
+-    参数:
+-        str_base: 已归一化的小写进制标识。
+-        str_digits: 已移除分隔符的字面量数位。
+-    返回:
+-        至少为一位的最小表示宽度。
+-    """
++def _expression_width(
++    str_expression: str,
++    dict_widths: dict[str, int | None],
++    dict_parameter_values: dict[str, int],
++) -> int | None:
++    """Reuse shared width facts, adding parameter-resolved fixed part-select bounds."""
+ 
+-    # 非十进制字面量按每个数位的固定承载位数计算。
+-    if str_base != "d":
+-
+-        # 二、八、十六进制分别按一、三、四位展开。
+-        return max(1, len(str_digits) * {"b": 1, "o": 3, "h": 4}[str_base])
+-
+-    # 防御性保留未知态分支，避免未来调用方绕过上游过滤。
+-    if re.search(r"[xXzZ?]", str_digits):
+-
+-        # 未知十进制数位按最保守的每位四比特估计。
+-        return max(1, len(str_digits) * 4)
+-
+-    # 确定数值按进制映射为 Python 整数解析基数，以便计算精确最小宽度。
+-    int_radix = {"b": 2, "o": 8, "d": 10, "h": 16}[str_base]  # 当前字面量数值进制
+-
+-    # 确定数位转换为非负整数值。
+-    int_value = int(str_digits, int_radix)  # 解析后的非负整数值
+-
+-    # 零值也至少需要一个表示位。
+-    return max(1, int_value.bit_length())
+-
+-# _logic_operator_scalar_operands 禁止逻辑运算符直接消费多位向量。
+-def _logic_operator_scalar_operands(facts: VgFacts) -> VgEvaluation:
+-    """检查逻辑与、逻辑或两侧是否为可证明的标量表达式。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG074 的通过、失败或不确定结论。
+-    """
+-
+-    # 逻辑表达式使用统一的简单二元表达式扫描器。
+-    return _binary_expression_gate(facts, str_rule="logic")
+-
+-# _arithmetic_result_width 检查目标是否容纳简单算术表达式的完整结果。
+-def _arithmetic_result_width(facts: VgFacts) -> VgEvaluation:
+-    """比较简单算术结果所需位宽与赋值目标位宽。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG122 的通过、失败或不确定结论。
+-    """
+-
+-    # 算术宽度规则复用同一受限表达式扫描边界。
+-    return _binary_expression_gate(facts, str_rule="overflow")
+-
+-# _arithmetic_sign_consistency 禁止简单算术表达式混用有符号和无符号操作数。
+-def _arithmetic_sign_consistency(facts: VgFacts) -> VgEvaluation:
+-    """比较简单算术表达式两侧的声明符号属性。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG134 的通过、失败或不确定结论。
+-    """
+-
+-    # 符号规则沿用相同匹配结果，避免建立第二套表达式抽取器。
+-    return _binary_expression_gate(facts, str_rule="sign")
+-
+-# _binary_expression_gate 对高置信简单赋值表达式执行三类规则判断。
+-def _binary_expression_gate(facts: VgFacts, *, str_rule: str) -> VgEvaluation:
+-    """执行逻辑标量、算术位宽或符号一致性判断。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-        str_rule: logic、overflow 或 sign 规则选择器。
+-    返回:
+-        当前规则的确定结论或事实不足结论。
+-    """
+-
+-    # findings 汇总当前规则的全部确定违规。
+-    list_findings: list[VgFinding] = []  # 当前规则的定位证据
+-
+-    # applicable 只在发现目标二元表达式后置位。
+-    bool_applicable = False  # 是否存在当前规则关心的表达式
+-
+-    # unknown 防止未声明操作数被静默视为通过。
+-    bool_unknown = False  # 是否存在无法静态判断的表达式
+-
+-    # 每个 formatter 可信 module 独立建立声明事实。
+-    for source_facts, dict_module, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 位宽表统一来自共享 value facts。
+-        dict_widths = vg_value_facts.module_widths(dict_module)  # 当前 module 的信号位宽
+-
+-        # signed 字段由 formatter 对端口和内部声明统一提供。
+-        dict_signed = _module_signedness(dict_module)  # 当前 module 的信号符号属性
+-
+-        # 逻辑规则和算术规则只选择各自运算符集合。
+-        str_operator = (  # 当前规则允许匹配的运算符
+-            r"&&|\|\|" if str_rule == "logic" else r"\+|-|\*|/|%"  # 逻辑或算术运算符集合
+-        )
+-
+-        # 受限模式只接受简单目标和简单二元操作数。
+-        str_pattern = (  # 简单二元赋值模式
+-            rf"(?:assign\s+)?\b([A-Za-z_]\w*)\s*(?:<=|=)\s*"
+-            rf"({SIMPLE_OPERAND})\s*({str_operator})\s*({SIMPLE_OPERAND})\s*;"
+-        )
+-
+-        # 每条匹配独立产生确定证据或未知标记。
+-        for obj_match in re.finditer(str_pattern, str_module_text):
+-
+-            # 匹配成功证明规则适用。
+-            bool_applicable = True  # 当前 module 存在目标表达式
+-
+-            # 捕获目标、左右操作数和运算符供规则分支复用。
+-            str_target, str_left, str_operator_text, str_right = obj_match.groups()  # 当前二元赋值的四个语义字段
+-
+-            # 三类规则通过独立助手返回违规、通过或未知。
+-            str_outcome = _binary_expression_outcome(  # 当前表达式的三态判断结果
+-                str_rule=str_rule,  # 当前规则选择器
+-                str_target=str_target,  # 赋值目标名称
+-
+-                # 二元表达式主体保持 formatter 原始操作数顺序。
+-                str_left=str_left,  # 左操作数文本
+-                str_operator=str_operator_text,  # 二元运算符文本
+-                str_right=str_right,  # 右操作数文本
+-
+-                # 共享声明事实供单条规则计算宽度和符号。
+-                dict_widths=dict_widths,  # 当前 module 位宽事实
+-                dict_signed=dict_signed,  # 当前 module 符号事实
+-            )
+-
+-            # 未知事实只登记状态，不制造定位诊断。
+-            if str_outcome == "unknown":
+-
+-                # 继续扫描其他表达式以优先收集确定违规。
+-                bool_unknown = True  # 当前表达式无法静态判断
+-
+-                # 当前匹配没有确定 finding。
+-                continue
+-
+-            # 只有 violation 才形成逐行修复证据。
+-            if str_outcome == "violation":
+-
+-                # module 基线结合匹配前换行数得到一基行号。
+-                int_line = int_base_line + str_module_text.count("\n", 0, obj_match.start())  # 当前违规的一基源码行号
+-
+-                # 规则选择器映射到稳定的中文诊断。
+-                dict_messages = {  # 规则选择器到用户诊断的映射
+-                    "logic": "逻辑运算符直接使用多位向量操作数。",  # 标量逻辑违规说明
+-                    "overflow": "算术结果位宽超过赋值目标位宽。",  # 完整结果截断风险说明
+-                    "sign": "算术表达式混用有符号和无符号操作数。",  # 符号扩展歧义说明
+-                }  # 三类表达式审查的稳定用户诊断
+-
+-                # finding 保留原始赋值表达式便于修复。
+-                list_findings.append(
+-                    VgFinding(
+-                        source_facts.relative_path,
+-                        int_line,
+-                        dict_messages[str_rule],
+-                        obj_match.group(0).strip(),
+-                    )
+-                )
+-
+-    # 确定违规优先于同文件其他未知表达式。
+-    if list_findings:
+-
+-        # 返回全部确定命中。
+-        return failed(*list_findings)
+-
+-    # 没有违规但存在未知目标时保持 fail-closed。
+-    if bool_unknown:
+-
+-        # 不同规则共享同一事实不足说明。
+-        return inconclusive("存在无法静态确定的二元表达式事实。")
+-
+-    # 全部适用表达式通过或没有目标形状时返回通过。
+-    return passed(applicable=bool_applicable)
+-
+-# _binary_expression_outcome 计算单条简单二元赋值的规则结果。
+-def _binary_expression_outcome(
+-    *,
+-    str_rule: str,
+-    str_target: str,
+-
+-    # 以下三个参数共同描述二元表达式主体。
+-    str_left: str,
+-    str_operator: str,
+-    str_right: str,
+-
+-    # 共享事实仅服务当前表达式，不在助手内重新解析 module。
+-    dict_widths: dict[str, int | None],
+-    dict_signed: dict[str, bool],
+-) -> str:
+-    """返回单条表达式的 pass、violation 或 unknown。
+-
+-    参数:
+-        str_rule: 当前规则选择器。
+-        str_target: 赋值目标名称。
+-        str_left: 左操作数文本。
+-        str_operator: 二元运算符文本。
+-        str_right: 右操作数文本。
+-        dict_widths: 当前 module 位宽事实。
+-        dict_signed: 当前 module 符号事实。
+-    返回:
+-        pass、violation 或 unknown 三态字符串。
+-    """
+-
+-    # 三个操作数宽度统一通过共享表达式事实求取。
+-    int_target_width = vg_value_facts.expression_width(str_target, dict_widths)  # 赋值目标位宽
+-
+-    # 左操作数宽度用于标量和算术结果判断。
+-    int_left_width = vg_value_facts.expression_width(str_left, dict_widths)  # 左操作数位宽
+-
+-    # 右操作数独立求宽，未知值不会继承左侧结果。
+-    int_right_width = vg_value_facts.expression_width(str_right, dict_widths)  # 右操作数位宽
+-
+-    # 逻辑规则要求两侧都可证明为单位宽。
+-    if str_rule == "logic":
+-
+-        # 任一未知宽度都无法给出可信结论。
+-        if int_left_width is None or int_right_width is None:
+-
+-            # 未声明或复杂操作数保留未知状态。
+-            return "unknown"
+-
+-        # 任一多位操作数即违反标量逻辑约束。
+-        return "violation" if max(int_left_width, int_right_width) > 1 else "pass"
+-
+-    # 溢出规则需要目标和两侧位宽全部已知。
+-    if str_rule == "overflow":
+-
+-        # 缺少任一位宽都保持未知。
+-        if int_target_width is None or int_left_width is None or int_right_width is None:
+-
+-            # 目标或操作数宽度不足时不猜测溢出结论。
+-            return "unknown"
+-
+-        # 加减结果额外保留进位或借位。
+-        if str_operator in {"+", "-"}:
+-
+-            # 较宽操作数再增加一位形成完整结果。
+-            int_required_width = max(int_left_width, int_right_width) + 1  # 加减完整结果位宽
+-
+-        # 乘法结果需要容纳两侧位宽总和。
+-        elif str_operator == "*":
+-
+-            # 两个操作数的位数共同决定完整乘积范围。
+-            int_required_width = int_left_width + int_right_width  # 乘法完整结果位宽
+-
+-        # 除法和取模不扩大左操作数结果范围。
+-        else:
+-
+-            # 左操作数宽度是当前受限规则的安全上界。
+-            int_required_width = int_left_width  # 除法或取模结果位宽
+-
+-        # 目标不足以容纳完整结果时报告溢出风险。
+-        return "violation" if int_target_width < int_required_width else "pass"
+-
+-    # 符号规则需要两个操作数都具有可确定符号属性。
+-    bool_left_signed = _expression_signedness(str_left, dict_signed)  # 左操作数符号属性
+-
+-    # 右操作数符号独立解析，避免继承左侧声明。
+-    bool_right_signed = _expression_signedness(str_right, dict_signed)  # 右操作数符号属性
+-
+-    # 未声明符号来源不能被默认为 unsigned。
+-    if bool_left_signed is None or bool_right_signed is None:
+-
+-        # 未声明操作数保持未知状态。
+-        return "unknown"
+-
+-    # 两侧符号属性不同即形成混用。
+-    return "violation" if bool_left_signed != bool_right_signed else "pass"
+-
+-# _module_signedness 提取 formatter 声明中的显式 signed 属性。
+-def _module_signedness(dict_module: dict[str, object]) -> dict[str, bool]:
+-    """返回当前 module 的信号名称到 signed 标志映射。
+-
+-    参数:
+-        dict_module: formatter AST 中的单个 module 报告。
+-    返回:
+-        信号名称到显式 signed 标志的映射。
+-    """
+-
+-    # 端口和内部声明共享 signed 字段。
+-    return {
+-        str(dict_item.get("name") or ""): bool(dict_item.get("signed", False))
+-        for str_collection in ("ports", "decls")
+-        for dict_item in dict_module.get(str_collection, []) or []
+-        if str(dict_item.get("name") or "")
+-    }
+-
+-# _expression_signedness 读取简单标识符或定宽字面量的符号属性。
+-def _expression_signedness(str_expression: str, dict_signed: dict[str, bool]) -> bool | None:
+-    """返回简单算术操作数的 signed 属性；未知时返回 None。
+-
+-    参数:
+-        str_expression: 简单标识符或定宽字面量。
+-        dict_signed: 当前 module 的声明符号映射。
+-    返回:
+-        确定符号标志；表达式不受支持时返回 None。
+-    """
+-
+-    # 标识符必须来自 formatter 已确认声明。
+-    if re.fullmatch(r"[A-Za-z_]\w*", str_expression):
+-
+-        # 未声明标识符从映射查询得到 None。
+-        return dict_signed.get(str_expression)
+-
+-    # 定宽字面量只有显式 s 修饰时视为 signed。
+-    if re.fullmatch(r"\d+'[sS][bBoOdDhH][0-9a-fA-F_xXzZ?]+", str_expression):
+-
+-        # 显式 s 修饰符确定有符号语义。
+-        return True
+-
+-    # 其他定宽字面量是确定的 unsigned。
+-    if re.fullmatch(r"\d+'[bBoOdDhH][0-9a-fA-F_xXzZ?]+", str_expression):
+-
+-        # 无 s 修饰的定宽字面量按无符号处理。
+-        return False
+-
+-    # 区间端点超出受限整数语法时停止静态求值。
+-    return None
+-
+-# _xz_arithmetic 禁止未知态字面量进入算术运算。
+-def _xz_arithmetic(facts: VgFacts) -> VgEvaluation:
+-    """检查算术表达式是否包含 X/Z 字面量。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG072 的确定性执行结论。
+-    """
+-
+-    # 双向模式覆盖未知态字面量位于运算符任一侧的情况。
+-    return _pattern_gate(
+-        facts,
+-        rf"[^;\n]*(?:\+|-|\*|/|%)[^;\n]*{XZ_LITERAL}|{XZ_LITERAL}[^;\n]*(?:\+|-|\*|/|%)",
+-        "算术表达式包含 X/Z 字面量。",
+-    )
+-
+-# _open_drain_assign_ranges 提取同模块直接 inout 端口上的简单 0/Z 连续赋值。
+-def _open_drain_assign_ranges(dict_module: dict[str, object]) -> set[tuple[int, int]]:
+-    """返回可从 VG078 文本命中中排除的 open-drain 赋值行范围。
+-
+-    参数:
+-        dict_module: formatter AST 提供的单个可信 module 事实。
+-    返回:
+-        合法 open-drain 连续赋值的一基起止行号集合。
+-    """
+-
+-    # 只有当前 module 直接声明的 inout 端口可以使用 open-drain 豁免。
+-    set_inout_names = {  # 当前 module 的直接 inout 端口名
+-        str(dict_port.get("name") or "")  # formatter 规范化后的端口名
+-        for dict_port in dict_module.get("ports", [])  # 当前 module 的全部端口事实
+-        if str(dict_port.get("direction") or "").lower() == "inout"  # 只保留双向端口
+-    }
+-
+-    # 简单三元模式禁止条件或数据分支继续嵌套问号和冒号。
+-    obj_pattern = re.compile(  # 精确匹配 0/Z 或 Z/0 的一位三元表达式
+-        r"^\s*(?P<condition>[^?:]+?)\s*\?\s*"
+-        r"(?P<true>1'[bB][0zZ])\s*:\s*"
+-        r"(?P<false>1'[bB][0zZ])\s*$",
+-        re.DOTALL,  # 允许 formatter 保留的跨行 RHS 排版
+-    )
+-
+-    # range 集合只记录同时满足端口、表达式和分支值合同的连续赋值。
+-    set_ranges: set[tuple[int, int]] = set()  # 合法 open-drain assign 的源码行范围
+-
+-    # formatter assigns 只包含连续赋值，不会混入 procedural assignment。
+-    for dict_assign in dict_module.get("assigns", []):
+-
+-        # 左值必须是端口名本身，位选、拼接和内部网络都不接受。
+-        str_lhs = str(dict_assign.get("lhs") or "").strip()  # 当前连续赋值左值
+-
+-        # 非 inout 直接端口不进入表达式豁免判断。
+-        if str_lhs not in set_inout_names:
+-
+-            # 继续检查下一个连续赋值。
+-            continue
+-
+-        # RHS 保留 formatter 已拆分的完整连续赋值表达式。
+-        str_rhs = str(dict_assign.get("rhs") or "").strip()  # 当前连续赋值右值
+-
+-        # fullmatch 防止简单三元前后夹带其他一般数据选择。
+-        obj_match = obj_pattern.fullmatch(str_rhs)  # 简单 open-drain 三元匹配结果
+-
+-        # 非简单三元表达式必须继续由 VG078 检查。
+-        if obj_match is None:
+-
+-            # 当前连续赋值不属于豁免边界。
+-            continue
+-
+-        # 条件部分本身不得使用任何 X/Z 字面量。
+-        if re.search(XZ_LITERAL, obj_match.group("condition")):
+-
+-            # 条件未知态仍是 VG078 的明确违规。
+-            continue
+-
+-        # 分支集合必须恰好包含一位低电平和一位高阻释放。
+-        set_branches = {  # 忽略大小写后的两个数据分支
+-            obj_match.group("true").lower(),  # 条件为真时的数据值
+-            obj_match.group("false").lower(),  # 条件为假时的数据值
+-        }
+-
+-        # 1/Z、0/X 和相同分支均不属于 open-drain 赋值。
+-        if set_branches != {"1'b0", "1'bz"}:
+-
+-            # 当前一般三态选择继续保留 VG078 finding。
+-            continue
+-
+-        # AST 行范围让调用方只跳过当前合法 assign 内的具体正则命中。
+-        set_ranges.add(
+-            (
+-                int(dict_assign["line_start"]),  # 连续赋值起始源码行
+-                int(dict_assign["line_end"]),  # 连续赋值结束源码行
+-            )
+-        )
+-
+-    # 返回当前 module 中全部合法 open-drain 连续赋值范围。
+-    return set_ranges
+-
+-# _xz_condition 禁止未知态字面量参与布尔或三目判断。
+-def _xz_condition(facts: VgFacts) -> VgEvaluation:
+-    """检查条件和三目表达式是否包含 X/Z 字面量。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG078 的确定性执行结论。
+-    """
+-
+-    # findings 保存排除合法 open-drain assign 后剩余的全部违规证据。
+-    list_findings: list[VgFinding] = []  # VG078 的非法 X/Z 条件或数据选择证据
+-
+-    # 原模式继续覆盖 if 条件和三目运算符两侧的未知态字面量。
+-    str_pattern = (  # VG078 既有 X/Z 条件与三目选择模式
+-        rf"(?:if\s*\([^\n)]*{XZ_LITERAL}|\?[^;\n]*{XZ_LITERAL}|{XZ_LITERAL}[^;\n]*\?)"  # 保持原规则覆盖面
+-    )
+-
+-    # 每个可信 module 独立计算其 inout 端口和合法 assign 范围。
+-    for source_facts, dict_module, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 合法范围不得跨 module 或跨文件复用。
+-        set_open_drain_ranges = _open_drain_assign_ranges(dict_module)  # 当前 module 的 open-drain assign 范围
+-
+-        # 逐个正则命中决定是否由对应 AST assign 精确豁免。
+-        for obj_match in re.finditer(str_pattern, str_module_text, flags=re.IGNORECASE | re.MULTILINE):
+-
+-            # module 内偏移换算后才能与 AST assign 的绝对行范围比较。
+-            int_line = int_base_line + str_module_text.count("\n", 0, obj_match.start())  # 当前 VG078 命中行号
+-
+-            # 仅当前具体命中落在合法 open-drain assign 范围时跳过。
+-            if any(int_start <= int_line <= int_end for int_start, int_end in set_open_drain_ranges):
+-
+-                # 合法 0/Z 数据分支不是条件未知态违规。
+-                continue
+-
+-            # 其余命中保持原有 VG078 finding 文本和精确证据。
+-            list_findings.append(
+-                VgFinding(
+-                    source_facts.relative_path,  # 未获豁免构造所在的 RTL 路径
+-                    int_line,  # 未知态字面量的定位行
+-                    "条件表达式包含 X/Z 字面量。",  # VG078 稳定错误说明
+-                    obj_match.group(0).strip(),  # 未知态附近的源码证据
+-                )
+-            )
+-
+-    # 任一未豁免命中都使 VG078 确定失败。
+-    if list_findings:
+-
+-        # 返回全部违规，避免合法和非法构造并存时漏掉非法项。
+-        return failed(*list_findings)
+-
+-    # 没有非法命中时按既有文本规则语义返回不适用通过。
+-    return passed(applicable=False)
+-
+-# _xz_branch_condition 专门覆盖 if 与 case 控制表达式。
+-def _xz_branch_condition(facts: VgFacts) -> VgEvaluation:
+-    """检查分支控制表达式是否包含 X/Z 字面量。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG101 的确定性执行结论。
+-    """
+-
+-    # case、casex 和 casez 控制项都进入相同未知态检查。
+-    return _pattern_gate(
+-        facts,
+-        rf"(?:if\s*\([^\n)]*{XZ_LITERAL}|case[xz]?\s*\([^\n)]*{XZ_LITERAL})",
+-        "分支控制表达式包含 X/Z 字面量。",
+-    )
+-
+-# _relational_width 复用通用位宽比较并限定关系表达式。
+-def _relational_width(facts: VgFacts) -> VgEvaluation:
+-    """比较简单关系表达式两侧的可判定位宽。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG085 的通过、失败或不确定结论。
+-    """
+-
+-    # relational_only 选择比较运算符匹配路径。
+-    return _width_gate(facts, relational_only=True)
+-
+-# _assignment_width 将同一求宽算法切换到连续和过程赋值语法。
+-def _assignment_width(facts: VgFacts) -> VgEvaluation:
+-    """比较简单赋值两侧的可判定位宽。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG137 的通过、失败或不确定结论。
+-    """
+-
+-    # relational_only 关闭后选择连续或过程赋值匹配路径。
+-    return _width_gate(facts, relational_only=False)
+-
+-# _explicit_literal 拒绝赋值和参数中的无尺寸十进制数。
+-def _explicit_literal(facts: VgFacts) -> VgEvaluation:
+-    """检查常量是否显式声明位宽与进制。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-    返回:
+-        VG138 的确定性执行结论。
+-    """
+-
+-    # 前置负向断言避免把位选择下标误判为无尺寸字面量。
+-    return _pattern_gate(
+-        facts,
+-        rf"(?:=|parameter\s+\w+\s*=)[^;\n]*{UNSIZED_NUMBER}",
+-        "常量未显式声明位宽和进制。",
+-    )
+-
+-# _width_gate 对简单标识符和定宽字面量执行静态位宽比较。
+-def _width_gate(facts: VgFacts, *, relational_only: bool) -> VgEvaluation:
+-    """执行关系或赋值表达式的简单位宽比较。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-        relational_only: True 检查关系表达式，False 检查赋值。
+-    返回:
+-        失败证据、不确定原因或确定通过结论。
+-    """
+-
+-    # applicable 区分没有目标表达式和已完成静态比较。
+-    bool_applicable = False  # 是否发现符合本规则形状的表达式
+-
+-    # findings 保存所有可确定的两侧位宽冲突。
+-    list_findings: list[VgFinding] = []  # 位宽不一致的定位证据
+-
+-    # unknown 表示至少一条目标表达式无法静态求宽。
+-    bool_unknown = False  # 是否存在无法静态确定的表达式
+-
+-    # 位宽只在 formatter 已确认的 module 边界内推断。
+-    for source_facts, dict_module, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 当前 module 的端口、声明和常量形成标识符位宽表。
+-        dict_widths = _module_widths(dict_module)  # 当前 module 的信号位宽映射
+-
+-        # 右值范围故意限制为定宽字面量或简单标识符。
+-        str_value = rf"(?:{SIZED_LITERAL}|\w+)"  # 可确定宽度的简单右值模式
+-
+-        # 关系和赋值语句使用不同捕获组，但共享后续求宽逻辑。
+-        str_pattern = (  # 当前规则模式及其左右值捕获组
+-            rf"(?<!['\w])([A-Za-z_]\w*)\s*(==|!=|<|>)\s*({str_value})"  # 关系表达式排除定宽字面量内部的伪标识符
+-            if relational_only  # True 时使用比较运算符模式
+-            else rf"(?:assign\s+)?\b(\w+)\s*(?:<=|=)\s*({str_value})\s*;"  # False 时使用赋值模式
+-        )
+-
+-        # 每个匹配表达式独立求取左右位宽。
+-        for obj_match in re.finditer(str_pattern, str_module_text):
+-
+-            # 至少发现一条目标表达式即标记规则适用。
+-            bool_applicable = True  # 当前 module 已出现目标表达式
+-
+-            # 第一捕获组在两种模式中都是左值标识符。
+-            str_left = obj_match.group(1)  # 当前表达式左侧标识符
+-
+-            # 关系模式的右值位于第三组，赋值模式位于第二组。
+-            str_right = obj_match.group(3) if relational_only else obj_match.group(2)  # 当前表达式右侧值
+-
+-            # 左值宽度来自当前 module 的声明表。
+-            int_left_width = _expression_width(str_left, dict_widths)  # 左侧表达式位宽
+-
+-            # 右值可来自声明表或定宽字面量前缀。
+-            int_right_width = _expression_width(str_right, dict_widths)  # 右侧表达式位宽
+-
+-            # 任一侧未知时保留不确定状态，避免误报通过。
+-            if int_left_width is None or int_right_width is None:
+-
+-                # 后续仍继续收集其他可确定的冲突。
+-                bool_unknown = True  # 当前目标表达式无法完成静态求宽
+-
+-                # 当前匹配没有足够事实生成失败证据。
+-                continue
+-
+-            # 两侧已知且不同即形成确定违规。
+-            if int_left_width != int_right_width:
+-
+-                # 匹配起点结合 module 基线得到一基源码行号。
+-                int_line = int_base_line + str_module_text.count("\n", 0, obj_match.start())  # 位宽冲突所在行
+-
+-                # finding 保留原始表达式便于直接修复。
+-                list_findings.append(
+-                    VgFinding(
+-                        source_facts.relative_path,  # 位宽冲突所在 RTL 文件
+-                        int_line,  # 位宽冲突的一基源码行号
+-                        "表达式两侧位宽不一致。",  # 固定 VG 诊断文本
+-                        obj_match.group(0).strip(),  # 原始关系或赋值表达式
+-                    )
+-                )
+-
+-    # 确定冲突优先于其他表达式的不确定状态。
+-    if list_findings:
+-
+-        # 返回全部可定位的位宽冲突。
+-        return failed(*list_findings)
+-
+-    # 没有确定冲突但存在未知宽度时必须 fail-closed。
+-    if bool_unknown:
+-
+-        # 不确定状态明确说明静态证据不足。
+-        return inconclusive("存在无法静态确定的表达式位宽。")
+-
+-    # 所有可判断表达式均同宽，或规则不适用。
+-    return passed(applicable=bool_applicable)
+-
+-# _module_widths 从 formatter AST 构建当前 module 的简单位宽表。
+-def _module_widths(dict_module: dict[str, object]) -> dict[str, int | None]:
+-    """通过共享事实模块提取端口、声明和局部常量的简单位宽。
+-
+-    参数:
+-        dict_module: formatter AST 中的单个 module 报告。
+-    返回:
+-        标识符到确定位宽或未知值的映射。
+-    """
+-
+-    # 共享事实模块是位宽解析的唯一实现来源，避免兼容入口复制分支逻辑。
+-    return vg_value_facts.module_widths(dict_module)
+-
+-# _parse_width 解析常量或单参数加减常量的 Verilog 区间。
+-def _parse_width(str_width: str, dict_parameter_values: dict[str, int]) -> int | None:
+-    """解析声明区间并计算信号位宽。
+-
+-    参数:
+-        str_width: formatter 提供的声明区间文本。
+-        dict_parameter_values: 可供区间引用的 parameter 整数表。
+-    返回:
+-        确定位宽；无法静态解析时返回 None。
+-    """
+-
+-    # 标量声明没有区间时按一位处理。
+-    if not str_width:
+-
+-        # Verilog 标量默认宽度为一位。
+-        return 1
+-
+-    # 捕获区间左右端点，不尝试解析复杂算术表达式。
+-    obj_match: re.Match[str] | None = re.search(  # 声明区间端点匹配结果
+-        r"\[\s*([\w+-]+)\s*:\s*([\w+-]+)\s*\]",  # 捕获声明区间的左右端点
+-        str_width,  # formatter 提供的原始区间文本
+-    )
+-
+-    # formatter 未提供受支持区间时保留未知状态。
+-    if obj_match is None:
+-
+-        # 上层会把未知宽度转成 inconclusive。
++    int_width = vg_value_facts.expression_width(str_expression, dict_widths)
++    if int_width is not None:
++        return int_width
++    obj_select = re.fullmatch(r"[A-Za-z_]\w*\s*(\[[^\[\]]+\])", str_expression.strip())
++    if obj_select is None or ":" not in obj_select.group(1):
+         return None
+-
+-    # 左端点可为数字、参数或参数加减数字。
+-    int_left = _constant_integer(obj_match.group(1), dict_parameter_values)  # 区间左端点整数
+-
+-    # 右端点使用相同受限表达式语法。
+-    int_right = _constant_integer(obj_match.group(2), dict_parameter_values)  # 区间右端点整数
+-
+-    # 任一端点未知都会使整个位宽不可确定。
+-    if int_left is None or int_right is None:
+-
+-        # 不猜测复杂参数表达式的结果。
+-        return None
+-
+-    # Verilog 闭区间位宽等于端点差绝对值加一。
+-    return abs(int_left - int_right) + 1
+-
+-# _constant_integer 解析数字或单个参数加减数字。
+-def _constant_integer(str_expression: str, dict_parameter_values: dict[str, int]) -> int | None:
+-    """解析受限整数表达式。
+-
+-    参数:
+-        str_expression: 数字、参数或参数加减数字文本。
+-        dict_parameter_values: 已知 parameter 整数表。
+-    返回:
+-        确定整数；不支持或未知时返回 None。
+-    """
+-
+-    # 受限语法避免对任意 Verilog 表达式做不可靠求值。
+-    obj_match: re.Match[str] | None = re.fullmatch(  # 受限整数表达式匹配结果
+-        r"(\w+)(?:([+-])(\d+))?",  # 基值以及可选加减增量捕获组
+-        str_expression.strip(),  # 去除声明文本两侧空白
+-    )
+-
+-    # 不支持的表达式保持未知。
+-    if obj_match is None:
+-
+-        # 上层不会把无法解析的表达式当成通过。
+-        return None
+-
+-    # 基值可以是十进制数字或已知 parameter。
+-    str_base = obj_match.group(1)  # 表达式基础数字或参数名
+-
+-    # 数字直接转换，符号则查询 parameter 表。
+-    int_value = int(str_base) if str_base.isdigit() else dict_parameter_values.get(str_base)  # 表达式基础整数
+-
+-    # 基值未知或没有增减项时直接返回当前结果。
+-    if int_value is None or obj_match.group(2) is None:
+-
+-        # None 会由调用方传播为未知宽度。
+-        return int_value
+-
+-    # 第三捕获组是确定的非负十进制增量。
+-    int_delta = int(obj_match.group(3))  # 参数表达式的加减增量
+-
+-    # 第二捕获组决定增量方向。
+-    return int_value + int_delta if obj_match.group(2) == "+" else int_value - int_delta
+-
+-# _parameter_integer 读取可安全用于区间求值的十进制 parameter。
+-def _parameter_integer(str_value: str) -> int | None:
+-    """读取无符号十进制 parameter 的整数值。
+-
+-    参数:
+-        str_value: formatter 提供的 parameter 常量文本。
+-    返回:
+-        十进制整数；不支持的常量形式返回 None。
+-    """
+-
+-    # 同时接纳裸十进制和显式十进制进制前缀。
+-    obj_match: re.Match[str] | None = re.fullmatch(  # parameter 十进制常量匹配结果
+-        r"(?:(?:\d+)'[dD])?(\d+)",  # 裸十进制或显式十进制常量模式
+-        str_value.strip(),  # 去除常量文本两侧空白
+-    )
+-
+-    # 未匹配时不尝试隐式进制或表达式求值。
+-    return None if obj_match is None else int(obj_match.group(1))
+-
+-# _constant_width 推断 localparam 的确定结果位宽。
+-def _constant_width(str_value: str, dict_parameter_values: dict[str, int]) -> int | None:
+-    """推断定宽字面量或常量重复连接的结果位宽。
+-
+-    参数:
+-        str_value: localparam 的原始常量文本。
+-        dict_parameter_values: 可供重复次数引用的 parameter 表。
+-    返回:
+-        确定结果位宽；不支持的形式返回 None。
+-    """
+-
+-    # 定宽字面量的前缀直接声明结果位宽。
+-    obj_literal: re.Match[str] | None = re.fullmatch(  # 定宽字面量匹配结果
+-        rf"(\d+)'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]+",  # 捕获 localparam 字面量的显式位宽
+-        str_value.strip(),  # 去除 localparam 文本两侧空白
+-    )
+-
+-    # 普通定宽字面量无需进一步推断。
+-    if obj_literal is not None:
+-
+-        # 第一捕获组就是显式声明的位宽。
+-        return int(obj_literal.group(1))
+-
+-    # 重复连接只接纳简单次数和单个定宽字面量。
+-    obj_repeat: re.Match[str] | None = re.fullmatch(  # 常量重复连接匹配结果
+-        r"\{(\w+)\{(\d+)'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]+\}\}",  # 捕获重复次数和内部位宽
+-        str_value.strip(),  # 去除重复连接文本两侧空白
+-    )
+-
+-    # 其他连接或算术形式保持未知。
+-    if obj_repeat is None:
+-
+-        # 上层会把未知 localparam 宽度传播为 inconclusive。
+-        return None
+-
+-    # 重复次数可为数字或已知 parameter。
+-    int_count = _constant_integer(obj_repeat.group(1), dict_parameter_values)  # 重复连接次数
+-
+-    # 总宽度等于重复次数乘内部字面量位宽。
+-    return None if int_count is None else int_count * int(obj_repeat.group(2))
+-
+-# _expression_width 统一读取简单标识符或字面量位宽。
+-def _expression_width(str_expression: str, dict_widths: dict[str, int | None]) -> int | None:
+-    """返回简单标识符或定宽字面量的位宽。
+-
+-    参数:
+-        str_expression: 位宽规则捕获的简单表达式文本。
+-        dict_widths: 当前 module 的标识符位宽表。
+-    返回:
+-        确定位宽；未知标识符或不支持形式返回 None。
+-    """
+-
+-    # 字面量分支直接读取显式位宽前缀。
+-    obj_literal: re.Match[str] | None = re.fullmatch(  # 简单定宽字面量匹配结果
+-        rf"(\d+)'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]+",  # 捕获简单字面量的显式位宽
+-        str_expression,  # 位宽规则捕获的原始右值文本
+-    )
+-
+-    # 匹配成功时不依赖声明表。
+-    if obj_literal is not None:
+-
+-        # 第一捕获组是字面量显式位宽。
+-        return int(obj_literal.group(1))
+-
+-    # 其余受支持形式都是当前 module 的简单标识符。
+-    return dict_widths.get(str_expression)
+-
+-# 表达式规则保留既有内部函数名，并让 module_widths 别名统一指向共享声明事实。
+-_module_widths = vg_value_facts.module_widths  # 共享 module 位宽入口
+-
+-# parse_width 别名保留本模块内部调用合同。
+-_parse_width = vg_value_facts.parse_width  # 共享声明区间解析入口
+-
+-# constant_integer 别名统一参数区间整数求值语义。
+-_constant_integer = vg_value_facts.constant_integer  # 共享受限整数解析入口
+-
+-# parameter_integer 别名统一十进制参数识别语义。
+-_parameter_integer = vg_value_facts.parameter_integer  # 共享 parameter 整数入口
+-
+-# constant_width 别名统一 localparam 结果位宽推断。
+-_constant_width = vg_value_facts.constant_width  # 共享常量宽度入口
+-
+-# expression_width 别名让既有规则复用扩展后的表达式求宽。
+-_expression_width = vg_value_facts.expression_width  # 共享表达式位宽入口
+-
+-# _pattern_gate 在可信 module 边界内执行文本型表达式规则。
+-def _pattern_gate(facts: VgFacts, str_pattern: str, str_message: str) -> VgEvaluation:
+-    """扫描指定模式并生成精确行号证据。
+-
+-    参数:
+-        facts: formatter AST 构建的可信扫描事实。
+-        str_pattern: 当前固定规则的正则模式。
+-        str_message: 命中时写入 finding 的诊断文本。
+-    返回:
+-        包含全部命中证据的失败结论或不适用通过结论。
+-    """
+-
+-    # findings 保存可信 module 中的全部正则命中。
+-    list_findings: list[VgFinding] = []  # 当前文本规则的违规证据
+-
+-    # module 文本排除 formatter 无法确认的顶层噪声。
+-    for source_facts, _, str_module_text, int_base_line in iter_trusted_modules(facts):
+-
+-        # 多行和大小写选项覆盖常见 Verilog 书写差异。
+-        for obj_match in re.finditer(str_pattern, str_module_text, flags=re.IGNORECASE | re.MULTILINE):
+-
+-            # 匹配偏移结合 module 基线得到一基源码行号。
+-            int_line = int_base_line + str_module_text.count("\n", 0, obj_match.start())  # 当前模式命中行号
+-
+-            # finding 保留原始匹配片段便于修复。
+-            list_findings.append(
+-                VgFinding(
+-                    source_facts.relative_path,  # 违规表达式所在 RTL 文件
+-                    int_line,  # 当前命中的一基源码行号
+-                    str_message,  # 当前固定规则的诊断文本
+-                    obj_match.group(0).strip(),  # 正则命中的原始代码片段
+-                )
+-            )
+-
+-    # 任一确定命中都使固定门禁失败。
+-    if list_findings:
+-
+-        # 返回全部命中，避免只修复第一处后重复往返。
+-        return failed(*list_findings)
+-
+-    # 没有目标构造时文本规则按不适用通过。
+-    return passed(applicable=False)
++    return vg_value_facts.parse_width(obj_select.group(1), dict_parameter_values)
+--- installed/scripts/python/workflow/__init__.py
++++ project/scripts/python/workflow/__init__.py
+@@ -0,0 +1,4 @@
++"""仅覆盖经过本工程验证的规格入口，其他工作流仍使用原运行时。"""
++from pkgutil import extend_path
++
++__path__ = extend_path(__path__, __name__)
+--- installed/scripts/python/workflow/spec_document.py
++++ project/scripts/python/workflow/spec_document.py
+@@ -460,14 +460,19 @@
+     # RTL 路径是源交叉核验和产物布局的第二连接键。
+     str_rtl_path = _safe_rtl_path(module_value.get("rtl_path"), "{}.rtl_path".format(str_prefix))  # 统一后的 RTL 路径用于源文件交叉核验
+ 
+-    # 接口必须含非空 ports，空模块没有严谨的信号规范。
++    # 只有显式声明的测试台可使用零端口规格，生产设计仍要求完整端口。
++    str_module_role = module_value.get("module_role", "design")
++    if not isinstance(str_module_role, str) or str_module_role not in {"design", "testbench"}:
++        raise SpecDocumentError("> ERR: [Python] {}.module_role must be design or testbench.".format(str_prefix))
++
++    # 空列表与接口缺失不同，不能通过角色声明绕过接口类型检查。
+     interfaces_value = module_value.get("interfaces")  # 接口原始对象
+ 
+     # 端口列表状态在归一化前单独计算，便于 fail-closed。
+     bool_ports_ok = (  # interfaces.ports 是否为非空列表
+         isinstance(interfaces_value, Mapping)  # 确认接口字段是可读取的映射对象
+         and isinstance(interfaces_value.get("ports"), list)  # 确认 ports 使用有序列表表达端口
+-        and bool(interfaces_value["ports"])  # 确认接口至少声明一个可审查端口
++        and (bool(interfaces_value["ports"]) or str_module_role == "testbench")
+     )  # 端口列表判定
+ 
+     # 缺少接口端口时提前阻断 Markdown 生成。
+@@ -830,6 +835,12 @@
+     # 汇总来自多个 RTL 文件的模块接口事实。
+     dict_interfaces: dict[str, set[str]] = {}  # 汇总后的 RTL 接口
+ 
++    # 零端口测试台使用既有 formatter AST 核验，禁止添加第二个解析器。
++    bool_zero_port_testbench = any(
++        item.get("module_role") == "testbench" and item.get("interfaces", {}).get("ports") == []
++        for item in list_modules if isinstance(item, Mapping)
++    )
++
+     # 逐文件读取并合并 module/port 事实。
+     for path_source in list_paths:
+ 
+@@ -840,7 +851,20 @@
+             return ["> ERR: [Python] Verilog source does not exist: {}".format(path_source)]
+ 
+         # 读取结果合并到跨文件接口索引，重复 module 由后续集合检查发现。
+-        dict_interfaces.update(extract_verilog_interfaces(path_source.read_text(encoding="utf-8")))
++        str_source = path_source.read_text(encoding="utf-8")
++        if bool_zero_port_testbench:
++            from scripts.python.quality.formatter_ast import build_ast_report_for_text
++            dict_ast = build_ast_report_for_text(str_source, source_path=path_source)
++            if dict_ast["summary"]["parse_errors"] or not dict_ast["modules"]:
++                return ["> ERR: [Python] formatter AST source cross-check failed: {}: {}".format(
++                    path_source, dict_ast["diagnostics"])]
++            for dict_source_module in dict_ast["modules"]:
++                str_source_name = dict_source_module["name"]
++                if str_source_name in dict_interfaces:
++                    return ["> ERR: [Python] duplicate RTL module {}.".format(str_source_name)]
++                dict_interfaces[str_source_name] = {port["name"] for port in dict_source_module["ports"]}
++        else:
++            dict_interfaces.update(extract_verilog_interfaces(str_source))
+ 
+     # 规格声明名称是额外 RTL module 检查的基线。
+     set_expected_names = {str(item.get("name")) for item in list_modules if isinstance(item, Mapping)}  # 规格模块名称

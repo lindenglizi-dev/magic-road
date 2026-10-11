@@ -1,0 +1,69 @@
+{
+  "status": "PYTHON_REFERENCE_PASS_BEFORE_RTL",
+  "scope": "one internal timing cut before the immutable pre-round core",
+  "public_interface_change": "none",
+  "immutable_blocks": [
+    "road_round_shift pre instance",
+    "silu_shared_unit",
+    "road_round_shift post instance",
+    "road_mac_probe"
+  ],
+  "cut_register": {
+    "depth": 1,
+    "payload": {
+      "product": "signed[63:0]",
+      "shift": "[5:0]",
+      "tag": "[15:0]",
+      "valid": "1 bit"
+    },
+    "ready_equation": "!cut_valid || pre_round_advance",
+    "capture": "scalar_valid && cut_ready",
+    "round_transfer": "cut_valid && pre_round_advance",
+    "same_edge_priority": "when both occur, the old cut token enters round and the new scalar replaces it",
+    "reset": "asynchronous active-low reset clears valid and payload",
+    "fault": "any existing sticky fault event clears cut_valid in the same edge"
+  },
+  "preserved_contracts": {
+    "numeric": "bit-identical product, lane coefficient, shift, tag, round, SiLU and saturation",
+    "scalar_ii": 1,
+    "atomic_group_admission": "unchanged two-entry result FIFO and Q+R<=2",
+    "metadata": "unchanged external eight-entry tag FIFO; observed SiLU occupancy remains <=6",
+    "table_reload": "new admissions stop while table_valid is held; old cut and pipeline work continues until global empty; standalone wrapper emptiness excludes runner reservation, while the runner IDLE/table gate supplies that reservation fence",
+    "fatal_recovery": "sticky block until external reset and full table reload"
+  },
+  "changed_contracts": {
+    "accepted_scalar_to_output_valid_after_nba": "v10 23 -> proposed v11 24",
+    "accepted_scalar_to_first_write_edge": "v10 24 -> proposed v11 25",
+    "pre_occupancy_limit": "v10 9 -> proposed v11 10",
+    "scalar_obligation_bound": "v10 30 -> v11 structural safe upper bound 31; directed model and RTL measurements are reported separately"
+  },
+  "directed_model_measurements": {
+    "empty_pipeline": {
+      "max_obligations": 30,
+      "max_pre": 10
+    },
+    "tail_already_valid": {
+      "max_obligations": 22,
+      "max_pre": 10
+    },
+    "interpretation": "31 is a structural safe upper bound, not an observed value; empty admission is in triples so its observed obligation count is a multiple of three"
+  },
+  "model_abstraction": {
+    "fatal_fault": "the Python model removes masked old tokens for simple external reasoning; frozen RTL subcores may retain internal bits until reset, so this model proves only external output suppression, stopped admission, and reset plus full-table-reload recovery",
+    "reservation_scope": "the Python global-idle predicate includes the runner reservation; the standalone postprocess wrapper has no reservation port, so the runner IDLE/table gate is required for the stronger composed-system fence"
+  },
+  "counter_mapping": {
+    "o_pre_accept": "scalar accepted into the elastic cut",
+    "cnt_pre_inflight_increment": "same elastic-cut acceptance",
+    "cnt_pre_inflight_decrement": "unchanged pre-result acceptance into SiLU",
+    "o_pre_busy": "true for either cut or pre-round occupancy through cnt_pre_inflight",
+    "global_empty": "cnt_pre_inflight==0 therefore includes the cut"
+  },
+  "forbidden_shortcuts": [
+    "do not gate or modify either round core",
+    "do not accept a scalar when cut_valid && !pre_round_advance",
+    "do not clear cut_valid merely because table_valid is held",
+    "do not recompute coefficient or tag from a later group after capture",
+    "do not add MAC overlap, network shrink, constraint relaxation or public ports"
+  ]
+}

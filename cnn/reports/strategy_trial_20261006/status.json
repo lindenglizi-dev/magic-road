@@ -1,0 +1,101 @@
+{
+  "status": "stopped_at_data_gates_no_new_training",
+  "date_local": "2026-10-06",
+  "plan": "cnn/reports/error_diagnosis_20261006/RoadYOLO_策略选择与后续执行计划_20261006.txt",
+  "plan_sha256": "af9ddc95898755cb3d8fbf4a6efd99f48e1abb823af87091936b5c1b0c86fb0e",
+  "entire_plan_completed": false,
+  "production_training_started": false,
+  "production_epochs_completed_this_execution": 0,
+  "model_weights_changed": false,
+  "source_labels_changed": false,
+  "rtl_changed": false,
+  "formal_acceptance": false,
+  "latest_followup": {
+    "report": "本次推进结果_20261006.txt",
+    "official_small_candidates_checked": 2,
+    "new_native_frames_prepared": 24,
+    "total_ground_review_frames_prepared": 148,
+    "candidate_physical_ground_cameras": 3,
+    "third_camera_role": "courtyard auxiliary person/background stress, not road camera",
+    "third_road_camera_gate_passed": false,
+    "human_signed_new_frames": 0,
+    "training_started": false
+  },
+  "steps": {
+    "0": {
+      "status": "partial_preflight_not_training_clearance",
+      "frozen_files_verified": 84,
+      "frozen_mismatches": 0,
+      "frozen_epoch7_sha256": "17c3cd644bd80a5f66e24eb3f510126fbb5db5bbb302e39250d78d339b6e5d42",
+      "selected_source_images_verified": 128,
+      "full_19050_train_images_teacher_evaluator_closure_rehashed": false,
+      "training_launch_fail_closed_process_guard_implemented": false,
+      "final_read_only_process_check": {
+        "query_permission": "approved_elevated_read_only",
+        "all_python_commands": "14 markitdown_mcp service processes only; no RoadYOLO process",
+        "gpu_compute_applications": [],
+        "gpu_temperature_c": 36,
+        "gpu_memory_mib": 0,
+        "gpu_utilization_percent": 0,
+        "snapshot_not_continuous_monitor": true
+      }
+    },
+    "1": {
+      "status": "review_material_prepared_human_confirmation_pending",
+      "frames": 128,
+      "frames_per_category": 32,
+      "categories": ["bicycle", "motorcycle", "localization_or_semantic_suspect", "ordinary_control"],
+      "sequences": 44,
+      "same_sequence_min_gap_frames": 60,
+      "fps_verified": false,
+      "human_signed_frames": 0,
+      "ai_preliminary_review_not_gold": "train_review/ai_preliminary_observations.json",
+      "known_issue": "train_001 target 26 contains a visible rider but no overlapping source person or ignore box; parked motorcycle counterexamples forbid blanket person-label generation",
+      "passed": false
+    },
+    "2": {
+      "status": "blocked_physical_camera_count_and_complete_ground_truth",
+      "authoritative_receipt": "ground_review/authoritative_v2/ground_review_receipt.json",
+      "authoritative_receipt_sha256": "39986520eaed8a4d4b38024350998bf4860d2a51090156726af5c2333eab38a0",
+      "frames": 124,
+      "source_clips": 5,
+      "physical_cameras": 2,
+      "required_physical_cameras": 3,
+      "source_box_rows": 989,
+      "source_provided_time_groups": {"person": 100, "vehicle": 282},
+      "human_verified_time_groups": {"person": 0, "vehicle": 0},
+      "human_signed_frames": 0,
+      "physical_camera_family_train_val_separation_fully_verified": false,
+      "rejected_attempt": "ground_review root package camera gate counted scene IDs, not physical cameras; only authoritative_v2 may be used",
+      "passed": false
+    },
+    "3": {"status": "not_run_prerequisite_data_gates_failed", "teacher_train_coverage_frames": 0},
+    "4": {"status": "not_run_prerequisite_data_gates_failed", "new_teacher_cache_created": false},
+    "5": {
+      "status": "schedule_implementation_CPU_tests_passed_actual_experiments_blocked",
+      "cpu_report": "finetune_schedule/report.json",
+      "parent_independent_retest": "python -B -m cnn.test_finetune_schedule: exit 0, PASS",
+      "constant_learning_rate": 0.001,
+      "planned_horizon_epochs": 5,
+      "planned_first_pause_epoch": 2,
+      "supervised_actual_epochs": 0,
+      "distillation_actual_epochs": 0,
+      "CPU_tiny_training_is_accuracy_evidence": false
+    },
+    "6": {"status": "not_run_no_new_S_D_comparison"},
+    "7": {"status": "blocked_ground_truth_and_camera_family_gates"},
+    "8": {"status": "blocked_stable_FP32_candidate_not_frozen"}
+  },
+  "bounded_repairs": [
+    "Probe script import failure corrected by module invocation; sandbox output denial corrected by approved scoped run.",
+    "Ground camera miscount corrected once in authoritative_v2; original attempt preserved and rejected.",
+    "Degenerate CPU test image produced non-finite gradients; only test stimulus corrected, then tests passed."
+  ],
+  "stop_reason": "Missing verified complete annotations and a third independent physical camera are evidence prerequisites, not software errors; cannot satisfy them by inventing labels, changing camera counts, or claiming AI review is a human signature.",
+  "resume_requires": [
+    "Confirm rider/person/vehicle/ignore corrections in the fixed 128-frame review; export a separate version if corrections are made.",
+    "Add at least one verified independent physical camera with at least 24 complete annotated frames; verify camera-family separation from train.",
+    "Complete full-frame ground-truth review and verify at least 100 de-correlated target-time groups per class.",
+    "Before launching GPU work, close full source/data/teacher/evaluation SHA binding and repeat fail-closed process/resource checks."
+  ]
+}

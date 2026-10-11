@@ -1,0 +1,147 @@
+{
+  "modules": [
+    {
+      "name": "road_selftest_display",
+      "feature": "board_selftest",
+      "rtl_path": "rtl/road_selftest_display.v",
+      "description": "独立首板计算自检，不是完整CNN或识别验收。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "源域100MHz",
+            "description": "源域100MHz"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "源域同步释放复位",
+            "description": "源域同步释放复位"
+          },
+          {
+            "name": "i_payload",
+            "direction": "input",
+            "width": 256,
+            "role": "源域动态诊断包",
+            "description": "源域动态诊断包"
+          },
+          {
+            "name": "i_pixel_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "目标75MHz像素时钟",
+            "description": "目标75MHz像素时钟"
+          },
+          {
+            "name": "i_pixel_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "像素域同步释放复位",
+            "description": "像素域同步释放复位"
+          },
+          {
+            "name": "i_vsync",
+            "direction": "input",
+            "width": 1,
+            "role": "VTC消隐区VS",
+            "description": "VTC消隐区VS"
+          },
+          {
+            "name": "i_de",
+            "direction": "input",
+            "width": 1,
+            "role": "VTC有效像素",
+            "description": "VTC有效像素"
+          },
+          {
+            "name": "o_rgb",
+            "direction": "output",
+            "width": 24,
+            "role": "一拍延迟TEST状态色",
+            "description": "一拍延迟TEST状态色"
+          },
+          {
+            "name": "o_vsync",
+            "direction": "output",
+            "width": 1,
+            "role": "一拍延迟VS",
+            "description": "一拍延迟VS"
+          },
+          {
+            "name": "o_de",
+            "direction": "output",
+            "width": 1,
+            "role": "一拍延迟DE",
+            "description": "一拍延迟DE"
+          },
+          {
+            "name": "o_active_payload",
+            "direction": "output",
+            "width": 256,
+            "role": "整帧冻结诊断快照",
+            "description": "整帧冻结诊断快照"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "100MHz计算；75MHz像素；375MHz串行，官方PLL相关时钟"
+      },
+      "reset": {
+        "assertion": "异步立即取消",
+        "release": "每域两拍；计算壳原协议保留"
+      },
+      "behavior": [
+        "req等于两拍同步ack时冻结payload并翻转req，直到ack返回前保持载荷。目标两拍同步req，仅VS上升沿采样完整载荷并确认。",
+        "中间进度可以合并；终态保持且最终可发布。套间核复位不触碰CDC，全局复位取消双方请求并清active。",
+        "固定TEST点阵、黄RUN/绿PASS/红FAIL、256位诊断带和显示本地心跳；RGB/VS/DE共同延迟一拍。无识别框。"
+      ],
+      "constraints": [
+        "PH1P35MDG324/-3，不增加时序例外。真实资源/时序待当前顶层验证。"
+      ],
+      "corner_cases": [
+        "发送反压、缺表、错字、超时、全局复位、套间局部复位、快照忙时终态。"
+      ],
+      "verification_cases": [
+        "tb_board_selftest正常/停顿/错误/缺表/超时/复位；tb_selftest_display。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "snapshot_at_vs",
+          "title": "road_selftest_display接口周期",
+          "scenario": "snapshot_at_vs",
+          "description": "不同域示意而非固定跨域拍数；载荷在请求同步前已冻结，VS采样后ack返回，期间不覆盖。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "request",
+                "wave": "01......"
+              },
+              {
+                "name": "hold_payload",
+                "wave": "x=.....x",
+                "data": [
+                  "frozen"
+                ]
+              },
+              {
+                "name": "request_sync",
+                "wave": "0..1...."
+              },
+              {
+                "name": "VS",
+                "wave": "0....10."
+              },
+              {
+                "name": "ack",
+                "wave": "0.....1."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

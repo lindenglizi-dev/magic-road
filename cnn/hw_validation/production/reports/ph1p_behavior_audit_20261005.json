@@ -1,0 +1,429 @@
+{
+  "schema": "ph1p-behavior-audit-v1",
+  "audit_date": "2026-10-05",
+  "timezone": "Asia/Shanghai",
+  "scope": {
+    "task_class": [
+      "analyze",
+      "validate"
+    ],
+    "target": "The exact PH1P_LOGIC_ERAM instance used by silu_shared_unit.v",
+    "source_changes": false,
+    "training_run": false,
+    "flash_or_board_action": false,
+    "td_flow_run": false,
+    "repository_is_git": false
+  },
+  "overall_status": {
+    "vendor_functional_model_executed": true,
+    "interface_contract_confirmed": true,
+    "functional_behavior_partially_observed": true,
+    "hardware_timing_contract_confirmed": false,
+    "collision_contract_confirmed": false,
+    "power_up_memory_contract_confirmed": false,
+    "physical_eram_mapping_confirmed": false,
+    "production_integration_release": false,
+    "summary": "The exact official encrypted PH1P functional model compiled and ran under ModelSim with its official PH1P_PHY_GSR dependency. The run confirms several functional-model observations for the exact 20x1024 SP/NOREG configuration, but it does not supply SDF timing, silicon power-up, collision guarantees, or TD mapping evidence."
+  },
+  "evidence_classes": {
+    "public_primitive_interface": {
+      "authority": "Official Anlogic UG1310 guide and the clear-text header before the encrypted model payload",
+      "can_prove": [
+        "module and port names",
+        "directions and parameterized widths",
+        "legal parameter names and documented choices",
+        "documented signal roles",
+        "that PH1P_LOGIC_ERAM represents an ERAM20K resource"
+      ],
+      "cannot_prove": [
+        "edge-to-output delay",
+        "write collision result",
+        "silicon initialization value",
+        "actual synthesis mapping"
+      ]
+    },
+    "encrypted_vendor_functional_model": {
+      "authority": "Official TD 6.2.1 sim_release PH1P sources executed by ModelSim",
+      "can_prove": [
+        "observed behavior of this exact model build and parameter set",
+        "that the encrypted model was successfully decrypted, elaborated, and executed",
+        "that PH1P_PHY_GSR is a required simulation companion top"
+      ],
+      "cannot_prove": [
+        "post-route timing",
+        "silicon behavior where the public manual leaves behavior undefined",
+        "physical resource mapping",
+        "board behavior"
+      ]
+    },
+    "handwritten_behavior_model": {
+      "path": "cnn/hw_validation/production/silu/tb_ph1p_logic_eram_runtime_model.v",
+      "sha256": "0e42914a2258e8fa9ed1088ede13d6cdd636fe9b8e76bc58155946ae179abd31",
+      "used_in_vendor_test": false,
+      "status": "testbench convenience model only",
+      "restriction": "Its synchronous read and write implementation is not Anlogic evidence and is not used to justify any confirmed vendor behavior."
+    }
+  },
+  "official_sources": {
+    "library_guide": {
+      "path": "E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\doc\\UG1310_PH1P_Libraries_Guide_for_HDL_Designs.pdf",
+      "sha256": "5f53fb94bd3a018291429b11234c7d56248a87918ffb0be14890271bf27592f1",
+      "document_id": "UG1310_1.2",
+      "document_date": "2025.02",
+      "relevant_printed_pages": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "relevant_pdf_pages": [
+        32,
+        33,
+        34,
+        35
+      ],
+      "visually_inspected": true
+    },
+    "eram_model": {
+      "path": "E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\sim_release\\ph1p\\ph1p_logic_eram.v",
+      "sha256": "70d89b70bdd51812ad86b91e88526b4604ebb117516efda5af976fcddb2e69af",
+      "public_header_sha256": "9e1c7a39b4f0d8ecbe78301a737674beac63b53237d1970b0003439822cb1627",
+      "public_header_end_offset": 9077,
+      "model_version": "0.21",
+      "protected_payload": true,
+      "protected_payload_manually_interpreted": false
+    },
+    "gsr_model": {
+      "path": "E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\sim_release\\ph1p\\ph1p_phy_gsr.v",
+      "sha256": "787312a19b4007bef3b76986bce267966b2d04c1871290ce29905629e38f1524",
+      "public_module": "PH1P_PHY_GSR",
+      "public_version": "0.2"
+    }
+  },
+  "actual_silu_binding": {
+    "rtl_path": "cnn/hw_validation/production/silu/silu_shared_unit.v",
+    "rtl_sha256": "ee9beb80decb4f276b9ff81214c22f044a71ac1ffc8c72beb1378e6ddb07a7ed",
+    "instance": "PH1P_LOGIC_ERAM_Inst_silu_table",
+    "dimensions": {
+      "data_width_a": 20,
+      "data_width_b": 20,
+      "address_width_a": 10,
+      "address_width_b": 10,
+      "depth_a": 1024,
+      "depth_b": 1024,
+      "nominal_bits": 20480
+    },
+    "parameters": {
+      "BYTE_ENABLE": 0,
+      "BYTE_A": 1,
+      "BYTE_B": 1,
+      "MODE": "SP",
+      "REGMODE_A": "NOREG",
+      "REGMODE_B": "NOREG",
+      "WRITEMODE_A": "NORMAL",
+      "WRITEMODE_B": "NORMAL",
+      "RESETMODE_A": "ASYNC",
+      "RESETMODE_B": "ASYNC",
+      "OREGSET_A": "RESET",
+      "OREGSET_B": "RESET",
+      "SSROVERCE": "DISABLE",
+      "ECC_DECODE": "DISABLE",
+      "ECC_ENCODE": "DISABLE",
+      "ASYNC_RESET_RELEASE_A": "ASYNC",
+      "ASYNC_RESET_RELEASE_B": "ASYNC",
+      "CLKMODE": "ASYNC",
+      "DEBUGGABLE": "NO",
+      "PACKABLE": "NO",
+      "FORCE_KEEP": "ON",
+      "INIT_FILE": "NONE",
+      "FILL_ALL": "NONE",
+      "IMPLEMENT": "20K"
+    },
+    "port_connections": {
+      "clka": "i_clk",
+      "cea": "1'b1",
+      "ocea": "1'b0",
+      "wea": "flag_table_write_enable",
+      "rsta": "1'b0",
+      "bea": "1'b0",
+      "dia": "wire_table_write_data",
+      "addra": "wire_table_address",
+      "clkb": "i_clk",
+      "ceb": "1'b0",
+      "oceb": "1'b0",
+      "web": "1'b0",
+      "rstb": "1'b0",
+      "beb": "1'b0",
+      "dib": "20'd0",
+      "addrb": "10'd0"
+    },
+    "effective_port_use": "Single active A port. B is disabled even though its clock is connected. The primitive reset is never asserted by the current SiLU instance."
+  },
+  "documented_public_contract": {
+    "resource": "ERAM20K",
+    "clock": {
+      "clka": "A-port synchronous clock",
+      "clkb": "B-port synchronous clock"
+    },
+    "enables": {
+      "cea": "A-port output enable, active high",
+      "ceb": "B-port output enable, active high",
+      "ocea": "A-port output-register enable, active high, documented as relevant only when an output register is present",
+      "oceb": "B-port output-register/read enable, active high, documented as relevant only when an output register is present"
+    },
+    "writes": {
+      "wea": "A-port write enable, active high",
+      "web": "B-port write enable, active high",
+      "bea": "A-port byte enable, active high",
+      "beb": "B-port byte enable, active high",
+      "byte_enable_zero": "BYTE_A and BYTE_B are 1 when BYTE_ENABLE is 0; the configuration disables byte subdivision"
+    },
+    "output_mode": {
+      "REGMODE_A": "NOREG",
+      "REGMODE_B": "NOREG",
+      "manual_constraint": "When the output has no register, RESETMODE_A/B must be ASYNC, not SYNC",
+      "current_binding_matches_constraint": true
+    },
+    "reset": {
+      "rsta": "A-port reset, active high",
+      "rstb": "B-port reset, active high",
+      "current_binding": "both tied low"
+    },
+    "initialization": {
+      "INIT_FILE": "NONE",
+      "FILL_ALL": "NONE",
+      "runtime_loader_is_only_design_data_source": true,
+      "hardware_power_up_value_documented": false
+    },
+    "manual_header_discrepancy": {
+      "manual_parameter_spelling": "CLK_MODE",
+      "model_header_and_current_instance_spelling": "CLKMODE",
+      "resolution": "The exact vendor model header spelling was used; it compiled successfully. No semantic meaning beyond the documented ASYNC/SYNC choices is inferred."
+    }
+  },
+  "vendor_simulation": {
+    "status": "completed_with_warnings",
+    "simulator": {
+      "name": "ModelSim SE-64",
+      "version": "2020.4 Compiler/Simulator 2020.10 Oct 13 2020",
+      "vlog_path": "D:\\modeltech64_2020.4\\win64\\vlog.exe",
+      "vlog_sha256": "39e7f5cbae66a5aa65a179f5ab8faee01a0c53dc838e5e2b76510ac6c77e80a6",
+      "vsim_path": "D:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "vsim_sha256": "011f110291dc69707d7118e8f8d712b91438e0c837f9bc10ce6bf53c1d048cfd"
+    },
+    "test_directory": "cnn/hw_validation/production/ph1p_behavior_test",
+    "testbench": {
+      "path": "cnn/hw_validation/production/ph1p_behavior_test/tb_ph1p_vendor_behavior.v",
+      "sha256": "8e5c848bd7c72de79f5b1d652ff4bcff39f618e3e6b7bf62871f8997f57d5470",
+      "kind": "observation-only isolated testbench",
+      "self_model_used": false
+    },
+    "dependency_discovery": {
+      "initial_elaboration_status": "failed as expected when PH1P_PHY_GSR was absent",
+      "initial_error": "vopt-7063: Failed to find PH1P_PHY_GSR.done_gwe",
+      "resolution": "Compiled the official same-TD-version ph1p_phy_gsr.v and elaborated PH1P_PHY_GSR as a companion top. No local replacement was created."
+    },
+    "commands": [
+      {
+        "command": "vlib work",
+        "timeout_limit_seconds": 30,
+        "exit_code": 0
+      },
+      {
+        "command": "vlog -work work -l compile_vendor.log E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\sim_release\\ph1p\\ph1p_logic_eram.v .\\tb_ph1p_vendor_behavior.v",
+        "timeout_limit_seconds": 30,
+        "exit_code": 0,
+        "errors": 0,
+        "warnings": 0
+      },
+      {
+        "command": "vlog -work work -l compile_gsr.log E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\sim_release\\ph1p\\ph1p_phy_gsr.v",
+        "timeout_limit_seconds": 30,
+        "exit_code": 0,
+        "errors": 0,
+        "warnings": 0
+      },
+      {
+        "command": "vlog -work work -l compile_tb_final.log .\\tb_ph1p_vendor_behavior.v",
+        "timeout_limit_seconds": 30,
+        "exit_code": 0,
+        "errors": 0,
+        "warnings": 0
+      },
+      {
+        "command": "vsim -c -lib work PH1P_PHY_GSR tb_ph1p_vendor_behavior -l simulate_vendor_final.log -do run -all; quit -f",
+        "timeout_limit_seconds": 30,
+        "exit_code": 0,
+        "errors": 0,
+        "warnings": 2
+      }
+    ],
+    "binding_evidence": [
+      "compile_vendor.log reports Compiling module PH1P_LOGIC_ERAM from the exact official source command",
+      "compile_gsr.log reports Compiling module PH1P_PHY_GSR from the exact official source command",
+      "simulate_vendor_final.log reports Loading work.PH1P_PHY_GSR(fast)",
+      "simulate_vendor_final.log reports Loading work.tb_ph1p_vendor_behavior(fast)",
+      "The only PH1P_LOGIC_ERAM definition compiled into the isolated work library was the official encrypted vendor source"
+    ],
+    "logs": [
+      {
+        "path": "cnn/hw_validation/production/ph1p_behavior_test/compile_vendor.log",
+        "sha256": "15188cea2c4306cb99e8a94685453ec5f7af051488d5476f3be33f040eae779d"
+      },
+      {
+        "path": "cnn/hw_validation/production/ph1p_behavior_test/compile_gsr.log",
+        "sha256": "0f6d5b94f396ae817e4d16ec6c7be0c31ef3dbf9493f50e6f51a1e87a9fe08d4"
+      },
+      {
+        "path": "cnn/hw_validation/production/ph1p_behavior_test/compile_tb_final.log",
+        "sha256": "90a68f0e38d1c282e3dcb0a35961fea2259072a5a889786410d2cf544f90d4a2"
+      },
+      {
+        "path": "cnn/hw_validation/production/ph1p_behavior_test/simulate_vendor_final.log",
+        "sha256": "2e9b332e396555346ec8111bc58a22d76daf62e96b0ec35a722eb9bd6d7e82a0"
+      }
+    ],
+    "warnings": [
+      {
+        "count": 2,
+        "code": "vopt-2697",
+        "source": "official ph1p_logic_eram.v line 165",
+        "text": "Out-of-bounds INIT_FILE part-select warnings during optimization",
+        "impact": "The model still elaborated and the test completed. These warnings prevent a warning-free claim and should be raised with Anlogic if this model is used for regression signoff."
+      }
+    ]
+  },
+  "observed_exact_configuration_behavior": {
+    "evidence_level": "official encrypted functional-model observation without SDF",
+    "startup": {
+      "observation": "PH1P_PHY_GSR is required. The final test waited through a 61 ns guard before functional accesses.",
+      "hardware_contract": "unknown; the helper is a simulation model, not a board startup measurement"
+    },
+    "read_latency": {
+      "status": "confirmed_for_functional_model",
+      "observation": "With address and CEA stable before a rising CLKA edge, NOREG data was correct at the test point 1 ns after that same edge. Example: address 7 read at the 95 ns edge produced 0x12345 at 96 ns.",
+      "cycle_statement": "The address is sampled on rising CLKA and data is observable during the cycle immediately following that edge. A synchronous consumer can safely treat it as a one-edge read and sample on the next rising edge, subject to real implementation timing.",
+      "not_proven": [
+        "exact clock-to-output delay",
+        "setup/hold limits",
+        "post-route timing"
+      ]
+    },
+    "cea_stall": {
+      "status": "confirmed_for_functional_model",
+      "observation": "With CEA low for rising edges at 125 ns and 135 ns, DOA held 0x12345 while ADDRA changed.",
+      "contract_limit": "No hidden multi-request queue was exercised or inferred."
+    },
+    "ocea_with_noreg": {
+      "status": "confirmed_for_functional_model_and_consistent_with_manual",
+      "observation": "Reads updated DOA while OCEA was 0; setting OCEA to 1 did not add a visible stage. The guide states OCEA is relevant only when an output register is present.",
+      "current_silu_connection_supported": true
+    },
+    "write_and_mask": {
+      "status": "confirmed_for_functional_model",
+      "observation": "With BYTE_ENABLE=0, BEA=0, CEA=1, and WEA=1, writes to addresses 7, 8, and 9 were retained and read back.",
+      "interpretation": "For this exact no-byte-subdivision configuration the model does not require BEA high for a whole-word write.",
+      "not_proven": "Other BYTE_ENABLE or BEA configurations were not tested."
+    },
+    "write_mode_normal": {
+      "status": "observed_not_guaranteed",
+      "observation": "On the address-9 write edge, DOA retained the previous value 0x2abcd; the following read edge produced new value 0x54321.",
+      "restriction": "UG1310 names NORMAL but does not define collision return data at edge precision. Upper-level scheduling must not rely on this observed old-output behavior as a silicon guarantee."
+    },
+    "reset": {
+      "status": "confirmed_for_functional_model",
+      "observation": "Asserting RSTA asynchronously between clock edges drove DOA to 0 within the 1 ns observation interval. After release, address 8 still read 0x2abcd on the first read edge, so array contents were retained in this run.",
+      "current_silu_relevance": "The current instance ties RSTA low, so SiLU reset does not invoke primitive reset. SiLU must continue invalidating transactions/table state at wrapper level."
+    },
+    "initialization": {
+      "status": "model_observation_only",
+      "observation": "Address 10, never written by the test, returned 0 after GSR while INIT_FILE and FILL_ALL were NONE.",
+      "hardware_contract": "unknown; UG1310 does not state that silicon memory powers up to zero. The production design must fully runtime-load all 1024 words before inference."
+    },
+    "b_port": {
+      "status": "not_tested",
+      "reason": "The actual SiLU configuration disables CEB and WEB, so B-port data behavior is outside the active contract."
+    },
+    "ecc": {
+      "status": "not_tested",
+      "reason": "ECC encode/decode and error injection are disabled in the actual configuration."
+    }
+  },
+  "unknown_or_unproven_semantics": [
+    {
+      "item": "same-address read/write collision guarantee",
+      "status": "unknown",
+      "required_evidence": "A PH1P timing/collision specification or written Anlogic support statement for MODE=SP, WRITEMODE_A=NORMAL"
+    },
+    {
+      "item": "exact clock-to-output timing and consumer setup",
+      "status": "unknown",
+      "required_evidence": "Post-map/post-route timing model or SDF and the target speed-grade timing specification"
+    },
+    {
+      "item": "hardware power-up memory contents with INIT_FILE=NONE and FILL_ALL=NONE",
+      "status": "unknown",
+      "required_evidence": "Official silicon configuration documentation or board experiment"
+    },
+    {
+      "item": "behavior during clock stoppage or asynchronous clock-mode corner cases",
+      "status": "unknown",
+      "required_evidence": "Detailed CLKMODE documentation and targeted vendor simulation"
+    },
+    {
+      "item": "model optimization warnings on INIT_FILE",
+      "status": "unresolved_warning",
+      "required_evidence": "Anlogic-confirmed compatible ModelSim version or a corrected vendor model"
+    }
+  ],
+  "physical_mapping": {
+    "status": "not_obtained",
+    "td_executable_detected": true,
+    "td_path": "E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\bin\\td.exe",
+    "td_sha256": "37e758a4ac746ce1dd8ea79fc20b53882f71236e773f634e3039147d62b9ec86",
+    "reason_not_run": "This audit was authorized for read-only evidence checking and isolated vendor simulation, not a TD synthesis/map run. No existing report was found that maps this exact SiLU RTL hash and named instance.",
+    "unrelated_existing_evidence": "An existing video-baseline report states total ERAM=40, but it is not a build containing this exact SiLU instance and cannot prove its mapping.",
+    "required_next_evidence": [
+      "A TD project targeting the actual PH1P35MDG324 part and exact silu_shared_unit.v SHA-256",
+      "Synthesis/map log proving PH1P_LOGIC_ERAM_Inst_silu_table is resolved, retained, and not a black box",
+      "Instance-level resource report showing one ERAM20K in 20x1024 SP configuration",
+      "Netlist or technology schematic linking the logical instance to the physical ERAM primitive",
+      "Post-map/post-route timing report for CLKA to DOA and downstream capture"
+    ]
+  },
+  "design_implications": {
+    "safe_to_use_now": [
+      "Treat the active A port as a synchronous one-edge read in the functional model",
+      "Hold the lookup pipeline when CEA is low if the wrapper ever makes CEA controllable",
+      "Keep OCEA low in NOREG as the current instance does",
+      "Use whole-word writes with BYTE_ENABLE=0 and runtime-load all 1024 entries",
+      "Keep load and inference phases disjoint to avoid dependence on undocumented collision behavior",
+      "On wrapper reset, cancel in-flight validity and require a full table reload because primitive RSTA is tied low"
+    ],
+    "not_safe_to_claim": [
+      "Guaranteed zero-valued hardware memory after configuration",
+      "A documented old-data or new-data collision result",
+      "A measured 1 ns hardware read delay",
+      "One physical ERAM was actually mapped",
+      "Vendor-functional-model success releases SiLU for production integration"
+    ]
+  },
+  "public_delivery_matrix": {
+    "compile": "not_run_this_audit_for_production_rtl; isolated vendor test compile passed",
+    "ast": "not_run_this_audit",
+    "readability": "not_run_this_audit",
+    "comment": "not_run_this_audit",
+    "naming": "not_run_this_audit",
+    "profile": "not_run_this_audit",
+    "testbench": "isolated observation test executed; not a production self-check gate",
+    "toolchain": "partial: ModelSim functional simulation passed with two vendor-model warnings; TD mapping and hardware validation not run"
+  },
+  "final_decision": {
+    "behavior_audit_complete": true,
+    "vendor_model_binding_confirmed": true,
+    "behavior_contract_scope": "functional-model observations only",
+    "eram_mapping_gate": "blocked",
+    "hardware_contract_gate": "blocked on timing/collision/power-up evidence",
+    "integration_release": false
+  }
+}

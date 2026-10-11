@@ -1,0 +1,163 @@
+RoadYOLO ROM参数入口寄存候选：实测结果与停止决定
+日期：2026-10-10；候选1；独立诊断，不是生产交付
+
+一、结论先行
+
+本候选功能通过、物理时序失败，不提升为后续默认基线。
+原RAM写使能类setup违例在本次实现中不再出现，但新增内部使能/权重装载
+违例，内部失败端点由3变为47，最差setup由-0.165ns变为-0.822ns。
+这不是“修好了”，也不是47次数值计算错误；是本次真实实现不能可靠满足100MHz。
+保留本失败候选及日志，不换seed、不重复等价布局，不覆盖旧版本。
+
+二、改动在哪里、具体改变什么
+
+本目录 rtl/road_rom_down2_top.v 是唯一改变功能的RTL。
+增加47位单笔参数保持：valid1、kind3、address11、signed data32；
+增加1位外部halo所有权寄存。综合网表确认这48个寄存位真实保留。
+预取ready只代表入口缓存接收；实际runner提交另计。
+满时不接收新参数，不支持同拍弹出替换；原多周期预取源不需要另造FIFO。
+参数排空、pref_done、1024项表装载完成后，按预沿空状态注册移交。
+fault立即禁止有效提交，下一边沿清pending/owner；复位取消旧事务并重新装表。
+外部halo仍直通；未改变最后halo装载与随后start协议。
+
+复用的其他11份RTL保持旧版本字节不变，内部算术、II、数值、接口不变。
+固定测试参数、56块ROM的4480项物理INIT参数与旧实现相同。
+joint.sdc、目标器件、100MHz约束不变；无新增时序例外。
+辅助改动：run.py、两份TB、ingress_reference.py、构建/规范/报告文件。
+完整路径入口：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/rom_ingress_register_20261010/
+
+三、已完成的验证
+
+1. Python单笔缓存守恒与排空移交模型通过。
+2. 原64项回归通过，原向量、周期、trace和窗口逐项保持一致。
+3. 7次联合DW/PW数值运行通过，中间及最终结果与冻结向量一致。
+4. 新入口压力测试通过：652参数捕获=652实际提交，1024表项、1296 halo；
+   80拍长反压、满入口payload保持、禁止提前halo/start、故障即时屏蔽、
+   满缓存复位、装表中复位、末参数阻塞时复位、恢复后无旧事务泄漏。
+5. 厂商ModelSim编译/运行Errors=0；既有厂商模型warning保留，不宣称零warning。
+6. PH1P35MDG324、速度等级-3、100MHz完成真实综合、布局布线及报告导出。
+7. 旧771个冻结文件运行前后哈希未变；本候选其他11份复用RTL哈希未变。
+
+四、周期对比：功能开销不等于物理通过
+
+无停顿小块核心：旧1687，本候选1687周期，无加速、无退化。
+预取器自身计数：7911周期；统一边沿窗口pref_done=7912、ready=7913，
+本候选排空移交延迟实测1周期。7911不能冒充完整可启动时间。
+结果导出：384周期；外部halo装载与预取、核心、导出分别计时。
+核心互斥分类：容量停顿976、提交249、MAC发射222、发射等待195、其他排空45；
+合计1687。各算子忙周期存在重叠，不能另外叠加到这1687上。
+随机反压运行核心为2626/2585/2494周期；测试边沿调整改变了随机序列相位，
+不能与旧随机反压运行的微小差异当作优化效果。
+这里只证明一个真实down2小块的测试参数行为，不外推67层5FPS或真实模型精度。
+
+五、资源与时序对比（全部含验证壳、完整ROM和小块计算链）
+
+指标                         旧ROM联合基线       本入口候选
+Slice                        10735              10745（+10）
+寄存器                       11487              11613（+126）
+LUT6                         7808               7832（+24）
+DSP                          30                 30
+ERAM                         57                 57
+顶层IO                       50                 50
+内部setup最差余量            -0.165ns           -0.822ns
+内部setup唯一失败端点         3                  47
+内部hold最差余量              +0.025ns           +0.020ns
+内部recovery最差余量          +1.936ns           +2.806ns
+寄存器内部removal最差余量     +0.224ns           +0.267ns
+
+源码新增48位不等于全网表只增加48寄存器；综合优化与物理复制后总寄存器增加126。
+不能用本壳的资源余量声明整机视频/DDR/CNN全部装得下。
+
+全量报告all_paths.timing包含RAM/DSP端点，不能只挑寄存器间报告。
+当前全量逐端点最差路径的内部removal记录为0，并非可据此宣称已签核；
+另外查询internal.timing的寄存器内部removal得到+0.267ns，仍保留外部复位失败。
+ERAM输入setup/hold最差+2.923/+0.020ns，DSP输入+1.892/+0.023ns。
+STA报告覆盖100%，Slow/Fast Max/Min启用；每端点选最差路径，
+不是每个角点独立全量报告全部保存的额外签核证明。
+
+外部诊断约束未签核：本候选setup 1端点/-1.030ns、hold 80端点/-0.900ns、
+removal 349端点/-1.258ns；外部recovery无负余量。
+自动引脚、诊断I/O延迟不是真实外设时序，未编造板级输入延迟消除违例。
+
+六、失败具体在哪里；为何不能只说“加寄存器就好”
+
+A. 原目标RAM写使能类
+同一筛选规则ramread.*.we的setup：旧255条记录中3条失败、最差-0.165ns；
+新297条记录中0条失败、最差+0.023ns。合成对象编号会变化，
+这是同类端点复核，不是假装旧synthetic编号与新编号一一等同。
+数据/地址/装载所有权切分确实改变了目标锥，但仅剩23ps裕量，不代表整体成功。
+
+B. 新主要失败：预重定标推进使能
+37个唯一端点，53条负余量记录，最差-0.822ns。
+源：u_chain/reg_retire_count[3]；终点：u_pre/u_round/reg_half[59].cea。
+路径经过flag_empty相关控制，再到round.i_advance分发；最大扇出484。
+数据路径10.577ns，其中cell1.366ns、net9.211ns（88%）。
+最后一级i_advance_dup_6单根网络就耗5.927ns。
+因此当前首要问题是控制扇出和布线，而不是乘积精度或重新增加算术流水拍。
+旧同类round端点最差+2.477ns，新实现映射/放置后变负；
+冻结源码不保证加入ROM接入后的物理边界仍相同。
+仅一次旧/新实现不能证明所有退化都由某一个新寄存器直接造成，
+但失败路径和布线占比已足以拒绝本候选、限定下一项研究对象。
+
+C. 其余两组
+MAC权重装载：9个端点，最差-0.517ns，cnt_output[1]到reg_mac_weight；
+ROM输出使能：1个端点，最差-0.193ns，cnt_output[1]到word_data_o[44].ie。
+旧两类最差分别+0.556/+1.378ns。
+综合优化后的跨模块单元名称不能当作源码真的跨模块传数据的证明，
+应依据连接、使能逻辑与实际延迟核查，不凭单元名再造一个模块。
+
+保留风险：pref_fault/rom_fault等即时故障屏蔽仍是组合路径，未通过延迟fault改变语义。
+本次负余量主要不在原RAM WE故障锥，不能继续只盯预取器反复改写。
+
+七、严格门禁仍未闭合，和物理失败分别记录
+
+同12份RTL范围：旧7419错误/37严格warning，新7513/37；不能加总各门重复计数。
+新增94条审阅未发现新增高置信位宽、多驱动、组合反馈或握手功能缺陷；
+89条是格式/注释/命名，另有复位组合屏蔽与跨层组合预算变化。
+这些判断不等于豁免，所有原始诊断均保留。
+compile通过；ast/readability/comment/naming/profile失败；
+该RTL扫描的testbench/toolchain为not_requested，不能写成全部八门通过。
+
+TB扫描：2811错误/6严格warning；testbench静态项通过，compile/ast失败。
+原两个formatter控制解析失败仍在，新tb_rom_ingress增加第三个。
+报告仅给control parser strict failure，无精确token；不能归咎于always #5，
+因为同报告中其他含always #5的TB可以生成AST。
+复杂force/release/wait控制是待确认的解析器兼容方向，不是已证明原因。
+厂商ModelSim编译和功能运行通过，是另一套独立证据，不能互相替代。
+
+SYN-5025 Using 0 for all undriven pins and nets仍保留；
+check_timing报告两个dummy node类型，涉及DSP mul9_mode/mul9_signed引脚。
+有效操作数和数值回归通过、ROM INIT不变，不足以将所有置零告警一笔勾销。
+无需训练、上板或扩展CRC来解释本轮时序失败。
+
+八、停止决定和最小下一步
+
+不采用本候选；旧基线保留在相邻rom_down2_prefetch_20261010目录。
+更早ROM接入前的计算版本及原checkpoint未动；无需用破坏性命令回退覆盖。
+本轮只进行过一个真实结构候选的一次综合和一次布局布线；
+没有为了抽中通过结果换seed、重复route或覆盖失败报告。
+
+下一步建议需集中批准：允许独立候选触及冻结计算链内部的局部使能分发，
+首先只处理u_pre/u_round的484扇出推进网络，保持同拍推进、元数据同步、
+当前II、数值、反压和故障/复位取消；不能简单将ready/advance延迟一拍。
+先核实TD支持的局部分发/保留方式及综合网表确有变化，再做同向量回归和一次实际实现。
+以内部setup零失败、hold/recovery/removal不退化为通过条件，而非“37降到几个”。
+MAC权重9端点与ROM输出1端点列第二组，先完成第一组再决定，避免同时改多个变量。
+若必须增加容量、接口、流水延迟或时序例外，应另报具体决定，不在本轮偷偷实施。
+
+九、证据入口（均相对本目录，原始文件保留）
+
+result.json / status.json：绑定当前源码、工具、约束、向量、数据库哈希的结果与状态。
+frozen.json / frozen_check.json：771旧文件、11份复用RTL的保护记录。
+physical/input_manifest.json、novelty.json：实际综合输入、48位寄存及阶段锥人工核查。
+physical/pr.db、routed_netlist.v、joint_route.area、all_paths.timing、internal.timing：实际物理证据。
+physical/{eram_inputs,eram_outputs,dsp_inputs,dsp_outputs,external_reset}.timing：分类端点。
+physical/check_timing.rpt、exceptions.rpt、ignored.rpt、synthesis.log、route.log：未删失败与告警。
+regression/receipt.json、simulation_attempt2/{receipt.json,cycles.csv}、ingress_attempt2/receipt.json：功能证据。
+gates/full.json、testbench_gate/testbench.json：严格检查原始状态。
+s/g及RTL/TB旁spec/wave文件：接口及周期图；早期规范生成失败目录也保留。
+
+总结：入口隔离的功能与RAM写使能目标得到证据，但整机内部时序退化。
+当前最有效信息已变成“484扇出、5.927ns单网延迟”，不是继续扩展探针。
+下一步应受控处理核心局部使能分发；未经该项批准，不越过冻结核边界。

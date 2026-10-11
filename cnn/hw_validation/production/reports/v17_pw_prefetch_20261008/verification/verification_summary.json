@@ -1,0 +1,71 @@
+{
+  "candidate": "v17_pw_prefetch_20261008",
+  "rtl_sha256": "689cf1ff06d422d7d9db04722e6c55d8acf8763343d2bd0396b01022b34a93ca",
+  "tb_sha256": "af4cd55d8212f0eac6a6301e6826300f3ee93a299417ec0fa5cbc9a86d4eef11",
+  "reference": {
+    "status": "PASS",
+    "implementation": "Python standard library only",
+    "result": "positions=16 output_groups=8 continuous_accepts=0,1 stalled_accepts=1,4 resets=2 last_fault_cancel=1",
+    "limitation": "readable-python-generator skill was unavailable; this reference is not RTL evidence"
+  },
+  "root_independent_iverilog": {
+    "compile_exit": 0,
+    "vvp_exit": 0,
+    "log": "regression_candidate/root_pw_prefetch_enhanced.log",
+    "log_sha256": "57beb64a31525eb6e65a6e662626d337f10ed17ddd21ec3d2db85448b6feb1ef",
+    "memory_model": "ph1p_logic_eram_runtime_model.v behavioral model",
+    "vendor_ram_simulation": "NOT_RUN"
+  },
+  "child_iverilog": {
+    "compile_exit": -1073741819,
+    "compile_status": "FAILED_AFTER_VVP_ARTIFACT_CREATED",
+    "vvp_exit": 0,
+    "log": "regression_candidate/v17_pw_prefetch_enhanced.log",
+    "log_sha256": "bc1037445a8e4ab2f86f41f86dd88d8863c219a74bfd9ab13e1378dfe489fd67"
+  },
+  "golden_regression": {
+    "legacy_label": "TB_PASS_DOWN2_TILE cases=4",
+    "note": "legacy label covers three full vectors plus original PW-only; directed case4 is additional",
+    "full_cases": [
+      {"case": 0, "core_cycles": 4025, "status": "PASS"},
+      {"case": 1, "core_cycles": 4025, "status": "PASS"},
+      {"case": 2, "core_cycles": 4025, "random_commit_stalls": 982, "status": "PASS"}
+    ],
+    "pw_only": {"case": 3, "core_cycles": 1694, "outputs": 384, "status": "PASS"},
+    "pw_random_ready": {"case": 4, "seed": "1d0f", "core_cycles": 1978, "stall_cycles": 284, "group0_stalls": 142, "group1_stalls": 142, "outputs": 384, "status": "PASS"}
+  },
+  "pw_prefetch_checks": {
+    "group_accepts": {"group0": 128, "group1": 128},
+    "payload": "8 activation, 24 weight, 3 bias and mask checked at every PW group accept",
+    "metadata": "first, last, position, output group and group address checked",
+    "long_stall": "G1 payload and reservation stable for 64 cycles",
+    "reset": "reset before G0 accept and after G1 prefetch; 20-cycle ghost windows clear",
+    "last_group_overflow": "one MAC result, zero pre, zero writeback, zero export"
+  },
+  "retained_checks": [
+    "CAN_RESERVE_4STATE 1024 combinations and 2048 MAC paths",
+    "COUNTER_TRANSITION 16896 known cases and 24 X/Z boundaries",
+    "DW_QUEUE_XPROP 64 combinations including 48 unknown-count cases",
+    "cache and halo control fault/reset checks",
+    "DW lane backpressure/reset, queue-full reset and single-lane numeric fault checks"
+  ],
+  "cycle_evidence": {
+    "full_no_stall": 4025,
+    "pw_only_no_stall": 1694,
+    "pw_first_to_last": 1,
+    "pw_last_to_result_ack": 10,
+    "pw_result_ack_to_next_first": 2
+  },
+  "strict_gate": {
+    "diagnostics": 4021,
+    "compile": "PASS",
+    "overall": "NOT_CLOSED",
+    "note": "diagnostics include operation-budget and state-structure findings and are not all formatting"
+  },
+  "waveform": {
+    "json5": "../spec/waveforms/down2_overlap_tile_runner_pw_prefetch.json5",
+    "svg": "../spec/waveforms/down2_overlap_tile_runner_pw_prefetch.svg",
+    "render_exit": 0,
+    "kind": "contract illustration, not captured simulation waveform"
+  }
+}

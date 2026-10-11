@@ -1,0 +1,147 @@
+{
+  "inspected_hierarchy_driver_findings": [
+    {
+      "file": "ph1p_logic_eram_runtime_model.v",
+      "line": 62,
+      "signal": "memory_words",
+      "actual_driver": "Clocked indexed write in simulation-only RAM model; excluded from TD synthesis.",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 52,
+      "signal": "flag_table_ready",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_table_ready'), ('silu_shared_unit', 'o_table_ready')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 77,
+      "signal": "flag_table_loaded",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_table_loaded'), ('silu_shared_unit', 'o_table_loaded')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 243,
+      "signal": "flag_table_fault",
+      "actual_driver": "[('silu_shared_unit', 'o_table_fault')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 53,
+      "signal": "flag_silu_ready",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_input_ready'), ('road_dynamic_requant', 'o_input_ready'), ('silu_shared_unit', 'o_input_ready')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 148,
+      "signal": "flag_silu_valid",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_output_valid'), ('road_dynamic_requant', 'o_output_valid'), ('silu_shared_unit', 'o_output_valid')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 207,
+      "signal": "wire_silu_data",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_output_data'), ('road_dynamic_requant', 'o_output_data'), ('silu_shared_unit', 'o_output_data')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 233,
+      "signal": "flag_quant_ready",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_input_ready'), ('road_dynamic_requant', 'o_input_ready'), ('silu_shared_unit', 'o_input_ready')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 234,
+      "signal": "flag_quant_valid",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_output_valid'), ('road_dynamic_requant', 'o_output_valid'), ('silu_shared_unit', 'o_output_valid')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 235,
+      "signal": "flag_quant_fault",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_fault'), ('road_dynamic_requant', 'o_fault'), ('road_round_shift', 'o_fault')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 56,
+      "signal": "wire_quant_data",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_output_data'), ('road_dynamic_requant', 'o_output_data'), ('silu_shared_unit', 'o_output_data')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_postprocess.v",
+      "line": 57,
+      "signal": "wire_quant_tag",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_output_tag'), ('road_dynamic_requant', 'o_output_tag')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_requant.v",
+      "line": 26,
+      "signal": "flag_round_valid",
+      "actual_driver": "[('road_round_shift', 'o_result_valid')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_requant.v",
+      "line": 27,
+      "signal": "wire_round_data",
+      "actual_driver": "[('road_round_shift', 'o_result_data')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_requant.v",
+      "line": 28,
+      "signal": "wire_round_tag",
+      "actual_driver": "[('road_round_shift', 'o_result_tag')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "road_dynamic_requant.v",
+      "line": 29,
+      "signal": "flag_round_fault",
+      "actual_driver": "[('road_dynamic_postprocess', 'o_fault'), ('road_dynamic_requant', 'o_fault'), ('road_round_shift', 'o_fault')]",
+      "strict_status": "failed_retained"
+    },
+    {
+      "file": "silu_shared_unit.v",
+      "line": 79,
+      "signal": "wire_table_read_data",
+      "actual_driver": "[('ph1p_logic_eram_runtime_model', 'doa')]",
+      "strict_status": "failed_retained"
+    }
+  ],
+  "retained_semantic_counts": {
+    "VG093": 5,
+    "VG138": 80,
+    "VG145": 23,
+    "VG146": 185,
+    "VG151": 31,
+    "VG153": 17,
+    "VG154": 23
+  },
+  "width_proof": {
+    "max_product_magnitude": 4611686016279904256,
+    "signed_product_bits": 64,
+    "packet_bits": 304,
+    "used_packet_bits": 301,
+    "tail_padding_bits": 3
+  },
+  "limitations": [
+    "Simulation and source driver checks are not exhaustive formal proof.",
+    "VG093 remains failed: immediate cancellation uses reset in ready/valid.",
+    "VG145/VG146 are dependency-cone risks; physical endpoints decide optimization.",
+    "VG138 literal sizing includes style and semantic risk; retained, not blanket waived.",
+    "VG151 entries here are simulation primitive parameter declarations, not deployed arithmetic.",
+    "Multi-driver and combinational-loop conclusions require actual TD DRC too."
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "v12-cache-control-local-verification-v1",
+  "candidate": {
+    "rtl": "../rtl/down2_overlap_tile_runner.v",
+    "rtl_sha256": "4e7d63a513f04a129ee0dbff42f6958454fdd5cbe2c8f0216c176fa29cae5717",
+    "regression_copy_sha256": "4e7d63a513f04a129ee0dbff42f6958454fdd5cbe2c8f0216c176fa29cae5717",
+    "frozen_for_physical_at_hash": true
+  },
+  "change_contract": {
+    "change": "Merge the mutually exclusive reg_dw_cache preload and DW commit writes into one explicit physical write port.",
+    "commit_priority_if_both": true,
+    "load_full_address_bits": 11,
+    "commit_full_address_bits": 9,
+    "physical_address_bits": 8,
+    "actual_write_address_max": 255,
+    "ports_changed": false,
+    "arithmetic_changed": false,
+    "ii_changed": false,
+    "ready_or_fault_changed": false,
+    "reset_changed": false,
+    "fixed_coefficients_changed": false,
+    "timing_exception_added": false
+  },
+  "runner": {
+    "compile_command": "E:/project/qiansai/.tools/iverilog/bin/iverilog.exe -g2001 -Wall -s tb_down2_overlap_tile_runner -o v12_runner_enhanced.vvp ph1p_logic_eram_runtime_model.v road_mac_probe.v road_round_shift.v silu_shared_unit.v road_postprocess_stream.v down2_overlap_tile_runner.v tb_down2_overlap_tile_runner.v",
+    "run_command": "E:/project/qiansai/.tools/iverilog/bin/vvp.exe -l v12_runner_enhanced.log v12_runner_enhanced.vvp",
+    "status": "PASS",
+    "log": "regression_candidate/v12_runner_enhanced.log",
+    "log_sha256": "41eaaf2fb671a68e0adfeceac66164ba910a39215c980db8b2c47b2ba5f99fa0",
+    "testbench_sha256": "a7067a9cd80e28fa566eb43e8143ff0b157be034fcba6340a48a6a57c52779e3",
+    "cases": 4,
+    "no_stall_core_cycles": [5433, 5433],
+    "random_backpressure_core_cycles": 5434,
+    "pw_only_core_cycles": 1822,
+    "full_case_stage_values": 640,
+    "table_high_accepts": 1280,
+    "ack_local_xz_cases": 7,
+    "cache_write_cycle_comparisons": 1537,
+    "cache_preload_writes_compared": 769,
+    "cache_commit_writes_compared": 768,
+    "directed_cache_cases": {
+      "invalid_address_256_fault_without_write": "PASS",
+      "x_address_fault_without_write": "PASS",
+      "reset_no_write": "PASS",
+      "idle_table_fault_closes_load_ready_and_no_write": "PASS",
+      "reachable_commit_tag_known": "PASS",
+      "reachable_dw_channel_0_to_15": "PASS"
+    },
+    "compile_warnings": "14 existing Icarus array-sensitivity warnings; no compile error"
+  },
+  "postprocess": {
+    "compile_command": "E:/project/qiansai/.tools/iverilog/bin/iverilog.exe -g2001 -Wall -s tb_road_postprocess_stream -o v12_postprocess.vvp ph1p_logic_eram_runtime_model.v road_round_shift.v silu_shared_unit.v road_postprocess_stream.v tb_road_postprocess_stream.v",
+    "run_command": "E:/project/qiansai/.tools/iverilog/bin/vvp.exe -l v12_postprocess.log v12_postprocess.vvp",
+    "status": "PASS",
+    "log": "regression_candidate/v12_postprocess.log",
+    "log_sha256": "2c55c47804df3618a33720a1ca053a84870d7d6ed3ae4ca6263b4e53cee66a60",
+    "continuous": 5,
+    "fixed_bubbles": 3,
+    "random_groups": 48,
+    "random_scalars": 96,
+    "pressure_groups": 12,
+    "reset_ages": 25,
+    "fault_cases": 1,
+    "latency_cycles": "24/25"
+  },
+  "four_state_boundary": {
+    "claim": "Reachable metadata only",
+    "detail": "The old nested if writes the cache when an internal layer tag is X because X takes the else branch. The unified ~tag write enable is X and a procedural if does not write. No arbitrary-X equivalence is claimed; every reachable commit tag was asserted known."
+  },
+  "governance": {
+    "readable_verilog_generator": "used",
+    "ponytail": "used",
+    "readable_python_generator_available": false,
+    "readable_script_generator_available": false,
+    "note": "No project Python or script implementation was changed. Strict Verilog gates remain failed and delivery_ready is not claimed."
+  }
+}

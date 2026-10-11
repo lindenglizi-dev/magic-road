@@ -1,0 +1,210 @@
+{
+  "modules": [
+    {
+      "name": "road_dynamic_requant",
+      "feature": "dynamic_requant",
+      "rtl_path": "road_dynamic_requant.v",
+      "description": "Runtime INT32 times UINT31 followed by frozen RNE/saturating INT16 round pipeline.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "clock",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "input_valid",
+            "description": "input_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_accumulator",
+            "direction": "input",
+            "width": 32,
+            "role": "accumulator",
+            "description": "accumulator",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_multiplier",
+            "direction": "input",
+            "width": 31,
+            "role": "multiplier",
+            "description": "multiplier",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_shift",
+            "direction": "input",
+            "width": 6,
+            "role": "shift",
+            "description": "shift",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tag",
+            "direction": "input",
+            "width": 16,
+            "role": "tag",
+            "description": "tag",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_input_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "input_ready",
+            "description": "input_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "output_ready",
+            "description": "output_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "output_valid",
+            "description": "output_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 16,
+            "role": "data",
+            "description": "data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_tag",
+            "direction": "output",
+            "width": 16,
+            "role": "tag",
+            "description": "tag",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "fault",
+            "description": "fault",
+            "clock_domain": "i_clk"
+          }
+        ],
+        "handshake_channels": [
+          {
+            "id": "input",
+            "valid": "i_input_valid",
+            "ready": "o_input_ready",
+            "payload": [
+              "i_accumulator",
+              "i_multiplier",
+              "i_shift",
+              "i_tag"
+            ]
+          },
+          {
+            "id": "output",
+            "valid": "o_output_valid",
+            "ready": "i_output_ready",
+            "payload": [
+              "o_output_data",
+              "o_output_tag",
+              "o_fault"
+            ]
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Cancel product and round valid immediately. Upstream provides synchronized release."
+      },
+      "behavior": [
+        "Input consumption requires valid and ready; all coefficients and tag captured atomically.",
+        "One product register feeds the unchanged nine-stage round kernel.",
+        "Output visible nine rising-edge intervals after input acceptance without stalls; earliest ACK ten intervals.",
+        "II one within this scalar stream; an output stall freezes the complete pipeline.",
+        "Shift63 returns zero and fault; shift0..62 uses RNE and INT16 saturation."
+      ],
+      "constraints": [
+        "Nonnegative INT32 multipliers only; no SiLU, INT8 saturation, ROM or DDR in this module.",
+        "Direct multiplication is a functional baseline, not a three-DSP mapping claim."
+      ],
+      "corner_cases": [
+        "Negative ties, zero multiplier, extreme INT32 products, shift63 fault, reset under stall."
+      ],
+      "verification_cases": [
+        "2396 vectors, continuous input, random bubbles, long output stall, in-flight reset."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "held_result",
+          "title": "Whole-pipeline output backpressure",
+          "scenario": "held-result",
+          "description": "Contract illustration; output payload remains held before ACK.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..............."
+              },
+              {
+                "name": "i_input_valid",
+                "wave": "010............."
+              },
+              {
+                "name": "o_input_ready",
+                "wave": "1.........0..1.."
+              },
+              {
+                "name": "o_output_valid",
+                "wave": "0.........1...0."
+              },
+              {
+                "name": "o_output_data",
+                "wave": "x.........3.....",
+                "data": [
+                  "result"
+                ]
+              },
+              {
+                "name": "i_output_ready",
+                "wave": "0............1.."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

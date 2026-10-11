@@ -1,0 +1,1 @@
+localparam [31:0] C_EXPECTED_CHECKSUM = 32'h60C88426;

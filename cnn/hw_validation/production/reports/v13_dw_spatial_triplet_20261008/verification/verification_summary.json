@@ -1,0 +1,118 @@
+{
+  "candidate": "v13_dw_spatial_triplet_20261008",
+  "recorded_at": "2026-10-08T09:45:00+08:00",
+  "rtl_frozen": true,
+  "conclusion": "FUNCTION_AND_CYCLE_PASS_STRICT_GATE_FAIL_INTERNAL_SETUP_FAIL",
+  "scope": {
+    "changed": "DW scheduler and internal metadata adapter only",
+    "unchanged": [
+      "public ports",
+      "MAC arithmetic",
+      "rounding and saturation",
+      "SiLU interface and table",
+      "PW behavior",
+      "single cache write port",
+      "reset and atomic fault contracts"
+    ],
+    "not_performed_here": [
+      "bitstream",
+      "training",
+      "board or Flash",
+      "timing exception change"
+    ]
+  },
+  "binding": {
+    "rtl/down2_overlap_tile_runner.v": "cbab6698e829dbb5f71d06378b006ca2d0c64341aa288b8fe2d06bdbc3507c68",
+    "verification/regression_candidate/down2_overlap_tile_runner.v": "cbab6698e829dbb5f71d06378b006ca2d0c64341aa288b8fe2d06bdbc3507c68",
+    "verification/regression_candidate/tb_down2_overlap_tile_runner.v": "4c4b84c69c417858fd29757c1432e70aef4db86c5eef91f773cc00c0f41ac95a",
+    "verification/regression_candidate/root_final.vvp": "d187650869f385a76dc637e9c88d5c364fbd7191b65634ae0974325b1ba987ef",
+    "verification/regression_candidate/root_final.log": "412bbf1839b30ff17c6726e244398bbe0ca9a2b66b94ab91c33cc29f1da995e5"
+  },
+  "independent_g2001_regression": {
+    "owner": "root agent",
+    "compile_exit": 0,
+    "run_exit": 0,
+    "top": "tb_down2_overlap_tile_runner",
+    "result": "TB_PASS_DOWN2_TILE cases=4",
+    "full_tile_core_cycles": 4281,
+    "pw_only_core_cycles": 1822,
+    "full_tile_state_cycles": {
+      "storage": 640,
+      "send": 640,
+      "wait": 2560,
+      "dw_post": 384,
+      "drain": 56,
+      "done": 1,
+      "other": 0,
+      "sum": 4281
+    },
+    "dw": {
+      "tasks": 128,
+      "accepted_mac_beats": 384,
+      "post_scalars": 256,
+      "tail_scalars": 64,
+      "unique_commit_addresses": 256,
+      "natural_queue_wait_cycles": 128
+    },
+    "pipeline_stage_values_per_full_tile": {
+      "accumulator": 640,
+      "pre": 640,
+      "silu": 640,
+      "post": 640,
+      "final_exports": 384
+    },
+    "enhanced_checks": {
+      "dw_post_backpressure": "lane0/lane1/lane2 each held 64 cycles; payload and metadata stable",
+      "reset_in_dw_post": "20-cycle no-ghost window passed",
+      "numeric_atomic_fault": "lane1/lane2 positive and negative real arithmetic overflow canceled the whole triplet",
+      "legal_numeric_boundaries": "lane1 positive and lane2 negative legal boundaries did not false-fault",
+      "x_z_directional": "PW 7 cases and DW capture 3 cases passed",
+      "cache_write_port": "1539 writes = 769 loads + 770 commits",
+      "table_valid_macwait": "896 accepts passed"
+    }
+  },
+  "postprocess_standalone": {
+    "rtl_sha256": "a51590f53c62f3a6dc51eaded0c77301b692f0cf2ae95109bd1e73afb29193fb",
+    "vvp_run_exit": 0,
+    "log_sha256": "2c55c47804df3618a33720a1ca053a84870d7d6ed3ae4ca6263b4e53cee66a60",
+    "result": "TB_PASS_POSTPROCESS continuous=5 fixed_bubbles=3 random_groups=48 random_scalars=96 pressure_groups=12 reset_ages=25 fault=1 latency=24/25",
+    "compiler_note": "The local Icarus process terminated abnormally after emitting the VVP artifact, so this record does not claim a local compile pass. The emitted artifact executed with exit 0."
+  },
+  "retained_failures": {
+    "initial_testbench": "v13_triplet_initial.log retains the obsolete DW logical-lane monitor failure; it motivated the monitor correction and is not a design pass.",
+    "local_iverilog": "Local .tools Icarus intermittently terminated with Windows status 0xC0000005 after producing usable artifacts. The root independent g2001 compile is the authoritative compile result.",
+    "strict_rtl_closure": {
+      "delivery_ready": false,
+      "errors": 3962,
+      "compile": "passed",
+      "report": "gates/final_closure.json"
+    },
+    "strict_testbench": {
+      "delivery_ready": false,
+      "errors": 421,
+      "compile": "failed in the style gate because it reports only-single-module support for the TB source",
+      "report": "gates/tb_strict.json",
+      "note": "This gate parser failure is separate from the independent Icarus g2001 compile and simulation pass."
+    },
+    "physical": {
+      "td_exit": 0,
+      "internal_setup_wns_ns": -0.018,
+      "negative_internal_setup_paths": 2,
+      "status": "failed",
+      "owner_record": "physical/physical_status.json"
+    }
+  },
+  "waveform": {
+    "source": "spec/waveforms/down2_overlap_tile_runner_triplet.json5",
+    "source_sha256": "3eb4f887ac75fdf6d88b7cbfa398391623497efea08c9e430c766c32dd72f124",
+    "svg": "spec/waveforms/down2_overlap_tile_runner_triplet.svg",
+    "svg_sha256": "6aa1849d4527dc62fbfcd13c5093c1cb7ae213796ea2be273a9be0bc02892870",
+    "render": "passed with the readable-verilog-generator WaveDrom renderer"
+  },
+  "baseline_selected_hash_check": {
+    "status": "passed",
+    "items": 8,
+    "reported_by": "root agent",
+    "scope": "selected v12 RTL, constraints, routed database and timing evidence; not a full historical audit"
+  }
+}

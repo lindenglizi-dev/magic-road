@@ -1,0 +1,190 @@
+{
+  "status": "functional_pass_but_not_warning_free",
+  "scope": "Read-only aggregation of the existing shell_gate_attempt2/fixed_stress.log and targeted inspection of its referenced physical_attempt2/gate_netlist.v; no simulation, synthesis, TD, training, RTL, netlist, or checker rerun/change.",
+  "sources": {
+    "log": {
+      "path": "shell_gate_attempt2/fixed_stress.log",
+      "sha256": "e667a7df2d7618d69b16864a4655a4ae81ef3d2c10f06a119be3573378dac138",
+      "bytes": 24992712
+    },
+    "netlist": {
+      "path": "physical_attempt2/gate_netlist.v",
+      "sha256": "16a70e102346e9dbaef048d7e762dd5fc1b025680df1b7a4c2fe1b0fe99727bd",
+      "bytes": 13639668
+    }
+  },
+  "observed_outcome": {
+    "pass_marker": "fixed_stress.log:103381 TB_PASS_RUNTIME_LAYER_SHELL tiles=3 exported=1152 guards=3 core_cycles=2607",
+    "simulator_footer": "fixed_stress.log:103385 Errors: 0, Warnings: 102027",
+    "interpretation": "The exercised gold workload passed. This is not evidence that the netlist is warning-free or that every optional/unexercised primitive mode is sound."
+  },
+  "warning_codes": {
+    "vopt-2718": {
+      "count": 96042,
+      "message": "Missing connection for primitive-model port"
+    },
+    "vopt-2685": {
+      "count": 4889,
+      "message": "Too few primitive-model port connections"
+    },
+    "vsim-3016": {
+      "count": 621,
+      "message": "Connected port has simulator type incompatibility",
+      "port_counts": {
+        "d": 548,
+        "ce": 73
+      }
+    },
+    "vopt-2958": {
+      "count": 474,
+      "message": "Implicit open_n wire has no driver"
+    },
+    "vsim-2685": {
+      "count": 1,
+      "message": "Elaboration-phase duplicate of the AL_MAP_LUT1 too-few-port warning"
+    }
+  },
+  "root_cause_buckets": {
+    "ph1p_phy_lslice_superset_interface": {
+      "affected_instances": 3511,
+      "too_few_warnings": 3511,
+      "missing_port_warnings": 92648,
+      "evidence": "All expected-38 shapes are PH1P_PHY_LSLICE-style LUT/adder/ramread cells. Common omitted model ports include cea/ceb/asr/ssr/shift/carry/LUT outputs. Each of dpram_wclk, dpram_byteaddr, dpram_waddr, dpram_we, dpram_shiftmode, dpram_rammode, and dpram_width appears 1439 times.",
+      "classification": "Vendor primitive model exposes a superset interface. The dpram_* names here belong to LSLICE cells and are not evidence that the separate SiLU ERAM data or write enable is disconnected."
+    },
+    "al_map_seq_fixed_mux_ports": {
+      "affected_instances": 1307,
+      "too_few_warnings": 1307,
+      "missing_port_warnings": 1403,
+      "missing_ports": {
+        "ce": 1307,
+        "sr": 96
+      },
+      "classification": "The emitted cell parameters select constant CE/reset muxes where the corresponding runtime pin is omitted. These include bias pipeline registers; their d/q/clock/reset data paths remain present."
+    },
+    "ph1p_dsp_siou_superset_interface": {
+      "affected_instances": 30,
+      "too_few_warnings": 30,
+      "missing_port_warnings": 1125,
+      "breakdown": {
+        "road_mac_probe": "24 instances, expected 53/found 14, 936 missing-port warnings",
+        "requant_pre_post": "6 instances, 189 missing-port warnings"
+      },
+      "classification": "Unused add/logic/ternary-add/carry outputs and controls from the DSP supercell interface are omitted. The listed missing ports do not include xa, y, mult_p, clk, inctrl, muxctrl, opctrl, or rst."
+    },
+    "io_pad_superset_interfaces": {
+      "affected_instances": 38,
+      "too_few_warnings": 38,
+      "missing_port_warnings": 838,
+      "classification": "Input/output pad models omit unused delay, differential, scan, and opposite-direction ports according to configured pad mode."
+    },
+    "single_port_silu_eram_configuration": {
+      "affected_instances": 1,
+      "too_few_warnings": 1,
+      "missing_port_warnings": 27,
+      "omitted_ports": [
+        "probe_redmeet_pb",
+        "probe_redmeet_pa",
+        "pib_rst_redmeet_n",
+        "addrb_casout",
+        "addra_casout",
+        "addrb_casin",
+        "addra_casin",
+        "fifoctrl_re",
+        "fifoctrl_we",
+        "fifoctrl_raddr",
+        "fifoctrl_waddr",
+        "ecc_dbiterrinj",
+        "ecc_sbiterrinj",
+        "ecc_dbiterr",
+        "ecc_sbiterr",
+        "dob_extra",
+        "dob",
+        "orstb",
+        "web",
+        "clkb",
+        "oceb",
+        "addrb",
+        "csb",
+        "dib_extra",
+        "dib",
+        "orsta",
+        "ocea"
+      ],
+      "classification": "Unused B port, ECC, FIFO, cascade, probe, output-register reset/clock-enable features. Active A-side address, clock, chip select, data input, write enable, and data output are connected."
+    },
+    "parameter_only_config_cell": {
+      "affected_instances": 1,
+      "too_few_warnings": 1,
+      "missing_port_warnings": 0,
+      "classification": "PH1P_PHY_CONFIG_V2 config_inst is emitted with parameters and empty parentheses."
+    },
+    "constant_lut_input": {
+      "affected_instances": 1,
+      "too_few_warnings": 2,
+      "missing_port_warnings": 1,
+      "classification": "One AL_MAP_LUT1 constant cell omits input a; the too-few warning is reported once by vopt and once again by vsim."
+    },
+    "implicit_open_control_bits": {
+      "warnings": 474,
+      "breakdown": {
+        "road_mac_probe": 408,
+        "requant_post": 22,
+        "requant_pre": 44
+      },
+      "classification": "Undriven open_n nets occur in DSP supercell control/config vectors, not in the named activation or weight operand nets. They are not blanket-waived: they remain a vendor-netlist/simulation-model fidelity risk for unexercised configurations."
+    },
+    "connected_port_type_mismatches": {
+      "warnings": 621,
+      "breakdown": {
+        "d": 548,
+        "ce": 73,
+        "snapshot_d_bits": 480
+      },
+      "classification": "These warnings identify an incompatible connected type, not an absent connection. They remain a simulator-model fidelity issue even though the fixed workload passed."
+    }
+  },
+  "targeted_connectivity_audit": {
+    "mac_operands": {
+      "finding": "No explicit missing active operand connection found.",
+      "evidence": [
+        "gate_netlist.v:111307-111315 road_mac_probe DSP supercell has clk, inctrl, mult_p, muxctrl, opctrl, rst, xa=reg_activation_front_b, and y=reg_weight_front_b connected.",
+        "The DSP missing-port bucket contains unused add/logic/ternary/carry interface fields, not xa or y.",
+        "The 408 road_mac_probe open_n warnings are control/config-vector positions; they are a residual model-fidelity risk, not evidence that activation or weight operands are absent."
+      ]
+    },
+    "mac_bias": {
+      "finding": "No explicit missing bias data path found.",
+      "evidence": [
+        "gate_netlist.v:95276-95281 reg_mac_bias[0] has ce/clk/d/sr/q connections.",
+        "gate_netlist.v:118421-118424 drives reg_bias_front_b[0] from flag_mac_input_accept and reg_mac_bias[0].",
+        "gate_netlist.v:117178-117182 carries reg_bias_quad[0] into reg_bias_dot[0].",
+        "gate_netlist.v:116002-116007 feeds candidate_beta_sum[22] into the beta accumulator register.",
+        "candidate road_mac_probe.v:205-214 uses reg_bias_dot as the first-dot base and adds the dot product; lines 449-470 commit candidate sums."
+      ],
+      "warning_interpretation": "Bias-register too-few warnings are omitted CE pins where CEMUX is fixed, not missing d/q bias data."
+    },
+    "silu_eram_data_and_enable": {
+      "finding": "No explicit missing active A-side ERAM data or write-enable connection found.",
+      "evidence": [
+        "gate_netlist.v:192776-192778 configures CSA0=1, CSA1=1, CSA2=SIG.",
+        "gate_netlist.v:192882-192889 connects addra, clka, csa[2]=flag_pipeline_enable, dia, dia_extra, wea=flag_table_write_enable, doa, and doa_extra.",
+        "The 27 omitted ERAM ports are the unused B side and optional ECC/FIFO/cascade/probe/output-register controls listed above."
+      ],
+      "warning_interpretation": "The 1439 dpram_we warnings are PH1P_PHY_LSLICE superset pins, not the SiLU PH1P_LOGIC_ERAM wea connection."
+    }
+  },
+  "closure_decision": {
+    "confirmed_disconnect_of_active_mac_operand": false,
+    "confirmed_disconnect_of_active_mac_bias": false,
+    "confirmed_disconnect_of_active_eram_data_or_write_enable": false,
+    "blanket_warning_waiver": false,
+    "residual_risks": [
+      "474 undriven DSP control/config open_n nets",
+      "621 connected-port type incompatibilities",
+      "The passing fixed workload does not cover every primitive mode or future vector"
+    ],
+    "minimum_close_path": "Keep the functional PASS as workload evidence, but close simulator fidelity separately with the exact vendor primitive library/netlist pairing or regenerated vendor netlist, then require code-count deltas plus the same gold cases. Do not alter MAC arithmetic, latency, handshake, or ERAM protocol merely to suppress these warnings.",
+    "extra_authorization": "Read-only triage needs none. Changing vendor libraries/netlist generation or rerunning external tools requires the parent workflow's explicit authorization."
+  }
+}

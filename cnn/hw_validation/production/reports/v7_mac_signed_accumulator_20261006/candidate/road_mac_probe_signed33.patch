@@ -1,0 +1,180 @@
+diff --git "a/..\\..\\v7_minimal_chain_20261006\\inputs\\road_mac_probe.v" b/road_mac_probe.v
+index b0cfd71..a03ceeb 100644
+--- "a/..\\..\\v7_minimal_chain_20261006\\inputs\\road_mac_probe.v"
++++ b/road_mac_probe.v
+@@ -119,10 +119,10 @@ module road_mac_probe
+ 	reg [191:0]reg_weight_front = 192'd0;       // 握手拥有的二十四权重负载
+ 	reg [95:0]reg_bias_front = 96'd0;           // 握手拥有的三路偏置负载
+ 	reg [7:0]reg_mask_front = 8'd0;             // 握手拥有的通道使能掩码
+-	reg [95:0]reg_base_product = 96'd0;         // 输入拍对应的偏置或历史累加值
+-	reg [95:0]reg_base_pair = 96'd0;            // 与相邻对和对齐的累加基值
+-	reg [95:0]reg_base_quad = 96'd0;            // 与四输入和对齐的累加基值
+-	reg [95:0]reg_base_dot = 96'd0;             // 与八输入点积对齐的累加基值
++	reg [98:0]reg_base_product = 99'd0;         // 三路三十三位偏置或历史累加值
++	reg [98:0]reg_base_pair = 99'd0;            // 与相邻对和对齐的累加基值
++	reg [98:0]reg_base_quad = 99'd0;            // 与四输入和对齐的累加基值
++	reg [98:0]reg_base_dot = 99'd0;             // 与八输入点积对齐的累加基值
+ 	reg signed [33:0]reg_candidate_alpha = 34'sd0; // 甲输出完整精度候选
+ 	reg signed [33:0]reg_candidate_beta = 34'sd0; // 乙输出完整精度候选
+ 	reg signed [33:0]reg_candidate_gamma = 34'sd0; // 丙输出完整精度候选
+@@ -132,11 +132,11 @@ module road_mac_probe
+ 	reg signed [33:0]reg_candidate_alpha_final = 34'sd0; // 甲候选判定级
+ 	reg signed [33:0]reg_candidate_beta_final = 34'sd0; // 乙候选判定级
+ 	reg signed [33:0]reg_candidate_gamma_final = 34'sd0; // 丙候选判定级
+-	reg [95:0]reg_publish_data = 96'd0;         // 终态事件使用的低三十二位数据
++	reg [98:0]reg_publish_data = 99'd0;         // 候选写回使用的三路三十三位数据
+ 	reg [31:0]reg_fault_safe_alpha = 32'd0;     // 甲输出故障安全数据
+ 	reg [31:0]reg_fault_safe_beta = 32'd0;      // 乙输出故障安全数据
+ 	reg [31:0]reg_fault_safe_gamma = 32'd0;     // 丙输出故障安全数据
+-	reg [95:0]reg_accumulator = 96'd0;          // 三路跨输入拍保留累加器
++	reg [98:0]reg_accumulator = 99'd0;          // 三路跨输入拍保留三十三位累加器
+ 	reg [5:0]reg_last_pipe = 6'd0;              // 末拍属性到判定级的延迟链
+ 
+ 	//-----------------标志信号-----------------//
+@@ -204,15 +204,15 @@ module road_mac_probe
+ 	wire signed [7:0]weight_gamma_eighth;       // 丙输出末通道有符号权重
+ 
+ 	//候选加法显式符号扩展
+-	wire signed [31:0]base_alpha;               // 甲输出三十二位累加基值
+-	wire signed [31:0]base_beta;                // 乙输出三十二位累加基值
+-	wire signed [31:0]base_gamma;               // 丙输出三十二位累加基值
+-	wire signed [32:0]base_alpha_wide;          // 甲输出扩展累加基值
+-	wire signed [32:0]base_beta_wide;           // 乙输出扩展累加基值
+-	wire signed [32:0]base_gamma_wide;          // 丙输出扩展累加基值
+-	wire signed [32:0]dot_alpha_wide;           // 甲输出扩展点积
+-	wire signed [32:0]dot_beta_wide;            // 乙输出扩展点积
+-	wire signed [32:0]dot_gamma_wide;           // 丙输出扩展点积
++	wire signed [32:0]base_alpha;               // 甲输出三十三位累加基值
++	wire signed [32:0]base_beta;                // 乙输出三十三位累加基值
++	wire signed [32:0]base_gamma;               // 丙输出三十三位累加基值
++	wire signed [32:0]dot_alpha_wide;           // 甲输出三十三位扩展点积
++	wire signed [32:0]dot_beta_wide;            // 乙输出三十三位扩展点积
++	wire signed [32:0]dot_gamma_wide;           // 丙输出三十三位扩展点积
++	wire signed [33:0]candidate_alpha_sum;      // 甲输出两组三十三位操作数完整和
++	wire signed [33:0]candidate_beta_sum;       // 乙输出两组三十三位操作数完整和
++	wire signed [33:0]candidate_gamma_sum;      // 丙输出两组三十三位操作数完整和
+ 
+ 	//-----------------输出信号-----------------//
+ 	//用户接口
+@@ -257,15 +257,15 @@ module road_mac_probe
+ 	assign weight_gamma_sixth = reg_weight_front[175:168]; // 解释丙组第六权重字节符号
+ 	assign weight_gamma_seventh = reg_weight_front[183:176]; // 解释丙组第七权重字节符号
+ 	assign weight_gamma_eighth = reg_weight_front[191:184]; // 解释丙组末权重字节符号
+-	assign base_alpha = reg_base_dot[31:0];     // 解释甲输出累加基值符号
+-	assign base_beta = reg_base_dot[63:32];     // 解释乙输出累加基值符号
+-	assign base_gamma = reg_base_dot[95:64];    // 解释丙输出累加基值符号
+-	assign base_alpha_wide = {base_alpha[31], base_alpha}; // 符号扩展甲输出累加基值
+-	assign base_beta_wide = {base_beta[31], base_beta}; // 符号扩展乙输出累加基值
+-	assign base_gamma_wide = {base_gamma[31], base_gamma}; // 符号扩展丙输出累加基值
++	assign base_alpha = reg_base_dot[32:0];     // 解释甲输出累加基值符号
++	assign base_beta = reg_base_dot[65:33];     // 解释乙输出累加基值符号
++	assign base_gamma = reg_base_dot[98:66];    // 解释丙输出累加基值符号
+ 	assign dot_alpha_wide = {reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha[18], reg_dot_alpha}; // 符号扩展甲输出点积
+ 	assign dot_beta_wide = {reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta[18], reg_dot_beta}; // 符号扩展乙输出点积
+ 	assign dot_gamma_wide = {reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma[18], reg_dot_gamma}; // 符号扩展丙输出点积
++	assign candidate_alpha_sum = base_alpha + dot_alpha_wide; // 保留甲输出加法进位
++	assign candidate_beta_sum = base_beta + dot_beta_wide; // 保留乙输出加法进位
++	assign candidate_gamma_sum = base_gamma + dot_gamma_wide; // 保留丙输出加法进位
+ 
+ 	//---------------输出信号连线---------------//
+ 	//用户接口
+@@ -809,16 +809,16 @@ module road_mac_probe
+ 	//偏置历史基值选择
+ 	always@(posedge i_clk or negedge i_rstn)begin
+ 		if(i_rstn == 1'b0)begin
+-			reg_base_product <= 96'd0;          // 复位清空输入拍累加基值
++			reg_base_product <= 99'd0;          // 复位清空输入拍累加基值
+ 		end else begin
+-			reg_base_product <= flag_first_front ? reg_bias_front : reg_accumulator; // 偏置只在首拍进入一次
++			reg_base_product <= flag_first_front ? {reg_bias_front[95], reg_bias_front[95:64], reg_bias_front[63], reg_bias_front[63:32], reg_bias_front[31], reg_bias_front[31:0]} : reg_accumulator; // 三路偏置各自符号扩展后只在首拍进入
+ 		end
+ 	end
+ 
+ 	//相邻对基值延迟
+ 	always@(posedge i_clk or negedge i_rstn)begin
+ 		if(i_rstn == 1'b0)begin
+-			reg_base_pair <= 96'd0;             // 复位清空相邻对级基值
++			reg_base_pair <= 99'd0;             // 复位清空相邻对级基值
+ 		end else begin
+ 			reg_base_pair <= reg_base_product;  // 对齐相邻对和流水级
+ 		end
+@@ -827,7 +827,7 @@ module road_mac_probe
+ 	//四输入基值延迟
+ 	always@(posedge i_clk or negedge i_rstn)begin
+ 		if(i_rstn == 1'b0)begin
+-			reg_base_quad <= 96'd0;             // 复位清空四输入级基值
++			reg_base_quad <= 99'd0;             // 复位清空四输入级基值
+ 		end else begin
+ 			reg_base_quad <= reg_base_pair;     // 对齐四输入和流水级
+ 		end
+@@ -836,7 +836,7 @@ module road_mac_probe
+ 	//点积基值延迟
+ 	always@(posedge i_clk or negedge i_rstn)begin
+ 		if(i_rstn == 1'b0)begin
+-			reg_base_dot <= 96'd0;              // 复位清空点积级基值
++			reg_base_dot <= 99'd0;              // 复位清空点积级基值
+ 		end else begin
+ 			reg_base_dot <= reg_base_quad;      // 对齐八输入点积流水级
+ 		end
+@@ -847,7 +847,7 @@ module road_mac_probe
+ 		if(i_rstn == 1'b0)begin
+ 			reg_candidate_alpha <= 34'sd0;      // 复位清空甲扩展候选
+ 		end else begin
+-			reg_candidate_alpha <= base_alpha_wide + dot_alpha_wide; // 甲输出扩展累加候选
++			reg_candidate_alpha <= candidate_alpha_sum; // 甲输出扩展累加候选
+ 		end
+ 	end
+ 
+@@ -856,7 +856,7 @@ module road_mac_probe
+ 		if(i_rstn == 1'b0)begin
+ 			reg_candidate_beta <= 34'sd0;       // 复位清空乙扩展候选
+ 		end else begin
+-			reg_candidate_beta <= base_beta_wide + dot_beta_wide; // 乙输出扩展累加候选
++			reg_candidate_beta <= candidate_beta_sum; // 乙输出扩展累加候选
+ 		end
+ 	end
+ 
+@@ -865,7 +865,7 @@ module road_mac_probe
+ 		if(i_rstn == 1'b0)begin
+ 			reg_candidate_gamma <= 34'sd0;      // 复位清空丙扩展候选
+ 		end else begin
+-			reg_candidate_gamma <= base_gamma_wide + dot_gamma_wide; // 丙输出扩展累加候选
++			reg_candidate_gamma <= candidate_gamma_sum; // 丙输出扩展累加候选
+ 		end
+ 	end
+ 
+@@ -923,12 +923,12 @@ module road_mac_probe
+ 		end
+ 	end
+ 
+-	//候选低位发布缓存
++	//候选三十三位写回缓存
+ 	always@(posedge i_clk or negedge i_rstn)begin
+ 		if(i_rstn == 1'b0)begin
+-			reg_publish_data <= 96'd0;          // 复位清空发布数据缓冲
++			reg_publish_data <= 99'd0;          // 复位清空写回数据缓冲
+ 		end else begin
+-			reg_publish_data <= {reg_candidate_gamma_final[31:0], reg_candidate_beta_final[31:0], reg_candidate_alpha_final[31:0]}; // 保持低字对应甲输出
++			reg_publish_data <= {reg_candidate_gamma_final[32:0], reg_candidate_beta_final[32:0], reg_candidate_alpha_final[32:0]}; // 保留三路跨组累加符号位
+ 		end
+ 	end
+ 
+@@ -991,7 +991,7 @@ module road_mac_probe
+ 		if(i_rstn == 1'b0)begin
+ 			flag_overflow_any <= 1'b0;          // 复位清空汇总溢出标志
+ 		end else begin
+-			flag_overflow_any <= flag_overflow_alpha | flag_overflow_beta | flag_overflow_gamma; // 任一路越界即故障
++			flag_overflow_any <= reg_last_pipe[5] & (flag_overflow_alpha | flag_overflow_beta | flag_overflow_gamma); // 仅末组把任一路INT32越界发布为故障
+ 		end
+ 	end
+ 
+@@ -1061,7 +1061,7 @@ module road_mac_probe
+ 	//历史累加结果提交
+ 	always@(posedge i_clk or negedge i_rstn)begin
+ 		if(i_rstn == 1'b0)begin
+-			reg_accumulator <= 96'd0;           // 复位清空跨拍累加历史
++			reg_accumulator <= 99'd0;           // 复位清空跨拍累加历史
+ 		end else if(flag_commit_event == 1'b1)begin
+ 			reg_accumulator <= reg_publish_data; // 写回无溢出的三路候选
+ 		end else begin
+

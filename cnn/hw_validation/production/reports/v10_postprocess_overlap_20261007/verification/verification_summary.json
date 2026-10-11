@@ -1,0 +1,311 @@
+{
+  "status": "FUNCTIONAL_PASS_CONDITIONAL_20M_BUDGET_NOT_MET",
+  "candidate": {
+    "rtl": {
+      "road_postprocess_stream.v": "63392a96003d24ba000a3b0abaa7eafa9c5e49a921e22d2e56949326f1040650",
+      "down2_overlap_tile_runner.v": "df69af9bad06a76d5c2a72caab9dd556f6c0d21f1cbbcd2b0dab4fb5c87e108d"
+    },
+    "testbenches": {
+      "tb_road_postprocess_stream.v": "e52ae724d8fb303209dcb17d3e854dc41e09e921b239619c5b68fed22037b308",
+      "tb_down2_overlap_tile_runner.v": "4e708c9499a3d17f7113efe8d7d774b83965539b22065fb999411503fb6d2cd8"
+    },
+    "latency_contract": {
+      "scalar_pre_accept_to_output_valid": "23 cycles; valid is visible after the t+23 posedge NBA update",
+      "scalar_pre_accept_to_first_transfer": "24th posedge when ready",
+      "round_stages": [
+        9,
+        9
+      ],
+      "silu_stages": 6,
+      "stage_busy_counters": "overlap; never additive"
+    },
+    "standalone_pressure": {
+      "empty_fill": {
+        "withdraw_edge": 2140,
+        "last_accept_edge": 2167,
+        "response_edges": 28,
+        "accepted_groups": 10,
+        "accepted_scalars": 30,
+        "deny_until_release": 43,
+        "max_obligations": 30
+      },
+      "tail_valid": {
+        "withdraw_edge": 4632,
+        "last_accept_edge": 4650,
+        "response_edges": 19,
+        "accepted_groups": 7,
+        "accepted_scalars": 21,
+        "deny_until_release": 52,
+        "max_obligations": 29
+      },
+      "max_occupancy_each_window": {
+        "result_fifo": 2,
+        "pre": 9,
+        "meta": 6,
+        "post": 9
+      },
+      "held_output_stable": true
+    },
+    "random_stress": {
+      "gap_seed": "0x1d0f",
+      "ready_seed": "0xace1",
+      "groups": 48,
+      "scalars": 96,
+      "input_gap_cycles": 175,
+      "output_not_ready_cycles": 67,
+      "source_stable_before_handshake": true,
+      "tag_indexed_no_loss_or_duplicate": true
+    },
+    "reset_ages": {
+      "tested": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "pass_count": 24,
+      "reload_and_new_result_after_each": true,
+      "old_ghost_results": 0
+    },
+    "table_reload": "a held write forwards on the same edge as global-empty && table_ready; all previously accepted old-table results drain first",
+    "runner_cycle_trace": {
+      "source_log": {
+        "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_candidate\\vsim_attempt4.log",
+        "sha256": "61c35472c2d51a5aacf0dd3ea33108f8c76137f3edf06bdf96100a2e1b4a1ee8",
+        "pass_marker": "TB_PASS_DOWN2_TILE cases=4",
+        "tool_errors": 0,
+        "tool_warnings": 2,
+        "missing_file_indications": 0
+      },
+      "no_stall_down2_full": {
+        "jobs": 384,
+        "first_four_jobs": [
+          {
+            "job": 0,
+            "ST_STORAGE": 2,
+            "ST_MAC_SEND": 2,
+            "ST_MAC_WAIT": 10,
+            "input_accepts": 2,
+            "total": 14
+          },
+          {
+            "job": 1,
+            "ST_STORAGE": 2,
+            "ST_MAC_SEND": 2,
+            "ST_MAC_WAIT": 10,
+            "input_accepts": 2,
+            "total": 14
+          },
+          {
+            "job": 2,
+            "ST_STORAGE": 2,
+            "ST_MAC_SEND": 2,
+            "ST_MAC_WAIT": 10,
+            "input_accepts": 2,
+            "total": 14
+          },
+          {
+            "job": 3,
+            "ST_STORAGE": 2,
+            "ST_MAC_SEND": 2,
+            "ST_MAC_WAIT": 10,
+            "input_accepts": 2,
+            "total": 14
+          }
+        ],
+        "mac_state_cycles": 5376,
+        "scheduler_idle_cycles": 54,
+        "start_edge": 1,
+        "core_endpoint_cycles": 5431,
+        "identity": "5376 + 54 + 1 = 5431",
+        "dw": {
+          "jobs": 256,
+          "job_cycles": 3584,
+          "boundary": 27,
+          "endpoint": 3611
+        },
+        "pw": {
+          "jobs": 128,
+          "job_cycles": 1792,
+          "boundary": 28,
+          "endpoint": 1820
+        },
+        "overlapping_busy_observations": {
+          "pre": 3712,
+          "silu": 2560,
+          "post": 3712,
+          "writeback": 640,
+          "rule": "observations overlap and must not be summed with MAC or each other"
+        },
+        "storage_wait_cycles": 0,
+        "storage_wait_interpretation": "zero means no commit/credit stall; two ST_STORAGE fetch cycles per job are already inside the 5376-cycle MAC-state window"
+      },
+      "random_commit_case": {
+        "seed": "0x5eed",
+        "ready_low_cycles": 1300,
+        "output_valid_and_not_ready_cycles": 212,
+        "core_endpoint_cycles": 5431,
+        "all_stage_value_counts": 640
+      }
+    }
+  },
+  "fresh_regressions": {
+    "candidate_runner_four_cases": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_candidate\\vsim_attempt4.log",
+      "sha256": "61c35472c2d51a5aacf0dd3ea33108f8c76137f3edf06bdf96100a2e1b4a1ee8",
+      "pass_marker": "TB_PASS_DOWN2_TILE cases=4",
+      "tool_errors": 0,
+      "tool_warnings": 2,
+      "missing_file_indications": 0
+    },
+    "candidate_standalone_stress": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_candidate\\vsim_postprocess_attempt4.log",
+      "sha256": "c28bb0ab6b1092f944c7514c263a4346e675c9cce297cd6336f87d798b416af6",
+      "pass_marker": "TB_PASS_POSTPROCESS continuous=5 fixed_bubbles=3 random_groups=48",
+      "tool_errors": 0,
+      "tool_warnings": 2,
+      "missing_file_indications": 0
+    },
+    "v9_mac_123": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_v9_mac\\vsim.log",
+      "sha256": "31b345b4b5cf5461dca56e27c283c70b2b87787486c2c322f1401c2d0567e3d3",
+      "pass_marker": "TB_PASS_MAC_STREAM vectors=123",
+      "tool_errors": 0,
+      "tool_warnings": 0,
+      "missing_file_indications": 0
+    },
+    "v8_original_four_layers": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_v8_layers\\vsim.log",
+      "sha256": "bd10e30514d314145256e00da55c62db537f61da85488980911551f2f8669fa9",
+      "pass_marker": "TB_PASS_DOWN2_TILE cases=4",
+      "tool_errors": 0,
+      "tool_warnings": 2,
+      "missing_file_indications": 0
+    },
+    "v9_serial_same_vectors": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_v9_serial_layers\\vsim.log",
+      "sha256": "56c8b8e090f35f5cbd822aa015068917b85d600b02425c5317e55b33758e0bb0",
+      "pass_marker": "TB_PASS_DOWN2_TILE cases=4",
+      "tool_errors": 0,
+      "tool_warnings": 2,
+      "missing_file_indications": 0
+    },
+    "v9_low_io_14": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_v9_shell\\vsim_shell14.log",
+      "sha256": "e13e614b8b8279a0a5344520cf7ae9ab6a5b833b67ec3019c84545d60f9816ff",
+      "pass_marker": "TB_PASS_LOW_IO cases=14",
+      "tool_errors": 0,
+      "tool_warnings": 2,
+      "missing_file_indications": 0
+    },
+    "v9_reset_6": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_v9_shell\\vsim_reset6.log",
+      "sha256": "35049677239a6c9790c61355d4844da253b1a9c35b93e7cd38b50757c5aba214",
+      "pass_marker": "TB_PASS_RESET cases=6",
+      "tool_errors": 0,
+      "tool_warnings": 2,
+      "missing_file_indications": 0
+    },
+    "round_7042": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_round_7042\\simulate.log",
+      "sha256": "cd25a99cfc3cb91f4f96f8b8b6ac8066369dfd0e926da1304b9ab19b214878e3",
+      "pass_marker": "PASS round cases=7042",
+      "tool_errors": 0,
+      "tool_warnings": 0,
+      "missing_file_indications": 0
+    },
+    "silu_65536": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_silu_65536\\vsim_silu65536.log",
+      "sha256": "4d768dbaa7d3438deac8f9e51274a88d1bf0accedfc3001b145485ba8feee72d",
+      "pass_marker": "TB_PASS inputs=65536",
+      "tool_errors": 0,
+      "tool_warnings": 2,
+      "missing_file_indications": 0
+    },
+    "python_reference": {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\reference_self_check_extended.log",
+      "sha256": "7ebc080d89414456a84fe7b71221909789c7951b8e602c0d6ee4d9d88b1535cd",
+      "pass_marker": "REFERENCE_PASS",
+      "tool_errors": 0,
+      "tool_warnings": 0,
+      "missing_file_indications": 0
+    }
+  },
+  "same_vector_copy_audit": {
+    "exact_copy_pairs": 78,
+    "mismatches": 0,
+    "full_manifest": "final_hash_manifest.json"
+  },
+  "cycle_comparison_same_layer_vectors": {
+    "v8_original": {
+      "full": 27393,
+      "dw": 13312,
+      "pw": 14081
+    },
+    "v9_serial_mac": {
+      "full": 23937,
+      "dw": 11008,
+      "pw": 12929
+    },
+    "v10_overlap_no_stall": {
+      "full": 5431,
+      "dw": 3611,
+      "pw": 1820
+    }
+  },
+  "budget": {
+    "conv_layers": 67,
+    "silu_active_layers": 61,
+    "silu_bypass_layers": 6,
+    "silu_active_values": 6833664,
+    "silu_bypass_values": 84672,
+    "fitted_job_cadence_cycles": 63660672,
+    "conditional_layer_boundaries": 1853,
+    "conditional_total_cycles": 63662525,
+    "over_20m": 43662525,
+    "scope": "only down2 G=2 DW/PW measured; other layers extrapolated; DDR/non-conv/decode/NMS/preload/export excluded"
+  },
+  "known_warnings": "ModelSim vendor PH1P_LOGIC_ERAM emits two pre-existing INIT_FILE part-select warnings; final logs have no readmem/fopen failure",
+  "superseded_preserved_evidence": [
+    {
+      "log": "regression_candidate/vsim_attempt1.log",
+      "reason": "real TB observer sampling bug caused post count 605/640"
+    },
+    {
+      "log": "regression_candidate/vsim_postprocess_attempt1.log",
+      "reason": "TB sampled NBA-visible latency at the wrong phase and required an extra illegal reload wait"
+    },
+    {
+      "log": "regression_candidate/vsim_postprocess_attempt2.log",
+      "reason": "printed PASS but reset-age loop reused a task-global index; not valid reset coverage"
+    },
+    {
+      "log": "regression_candidate/vsim_postprocess_attempt3.log",
+      "reason": "real reset coverage passed, but fixed bubbles were not random"
+    },
+    {
+      "log": "reference_self_check.log",
+      "reason": "pre-fix Python reference mishandled SiLU address 1024"
+    }
+  ]
+}

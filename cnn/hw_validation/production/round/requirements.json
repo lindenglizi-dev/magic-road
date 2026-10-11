@@ -1,0 +1,12 @@
+{
+  "module": "road_round_shift",
+  "purpose": "Shared exact nearest-even power-of-two rounding and int16 saturation; multiplier is upstream and not claimed here",
+  "clock_hz": 100000000,
+  "input": "signed int64 product, unsigned shift 0..62, opaque tag16, valid",
+  "pipeline": "nine globally enabled register stages; II one enabled clock; eight enabled rising-edge intervals from acceptance to output",
+  "stall": "i_advance must be low whenever the enclosing pipeline cannot accept its held output; all stages freeze",
+  "fault": "shift63 or INT64_MIN: valid tagged fault, output data unspecified and must not be published",
+  "reset": "asynchronous active-low clears all valid and data state, cancels every in-flight token",
+  "rounding": "abs quotient and remainder, increment above half or tie with odd quotient; restore sign then saturate int16",
+  "excluded": ["32x32 multiplication", "SiLU", "per-layer activation scale", "full CNN", "RAM and DSP mapping"]
+}

@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-02",
+  "status": "PUBLIC_DATA_PIPELINE_IMPLEMENTED_TRAINING_AND_FPGA_ACCEPTANCE_PENDING",
+  "supersedes_training_runner_limitations_in": "implementation_status.json",
+  "production_rtl_modified": false,
+  "training_protocol": {
+    "name": "formal_sgd_warmup_cosine_mosaic_v1",
+    "sha256": "71edf60ecb910d4b56425bb3996ee0483d8673e5f009cf3e65955ed2da6824f7",
+    "implemented": ["SGD", "five_epoch_warmup", "cosine", "four_full_frame_mosaic", "mosaic_off_last_15_epochs", "effective_batch_64", "raw_JPEG_preprocessing", "strict_resume_identity"],
+    "pilot": {
+      "checkpoint": "../runs/protocol20_pilot/last.pt",
+      "train_images": 96,
+      "validation_images": 32,
+      "epochs_completed": 20,
+      "optimizer_steps": 40,
+      "mosaic_epochs": [1, 5],
+      "non_mosaic_epochs": [6, 20],
+      "first_validation_loss": 27.520484924316406,
+      "last_validation_loss": 11.93317723274231,
+      "validation_report": "protocol20_pilot_validation.json",
+      "p95_thresholds": [null, null],
+      "acceptance_passed": false
+    },
+    "raw_input_gpu_smoke": {
+      "checkpoint": "../runs/raw_pipeline_smoke/last.pt",
+      "dataset": "../data/coco_raw_pilot/dataset.json",
+      "workers": 2,
+      "optimizer_steps": 2,
+      "status": "passed_diagnostic_only"
+    }
+  },
+  "public_data": {
+    "full_COCO": {
+      "download_session": 24857,
+      "status_at_report": "train2017_archive_download_in_progress",
+      "expected_train_archive_bytes": 19336861798,
+      "planned_manifest": "../data/coco_full/dataset.json",
+      "purpose": "general_person_and_vehicle_pretraining_not_road_acceptance",
+      "publication_gate": "complete_archives_CRC_and_annotation_image_provenance_checks_before_full_manifest"
+    },
+    "VisDrone_VID": {
+      "adapter": "../public_video.py",
+      "status_at_report": "official_validation_video_archive_download_retry_in_progress",
+      "purpose": "human_labeled_public_video_development_training_and_validation",
+      "limitations": ["seven_validation_sequences_do_not_meet_6_train_3_val_3_newtest_requirement", "rider_person_and_vehicle_box_policy_needs_visual_review", "sequence_isolation_is_not_yet_camera_family_isolation", "no_formal_test_claim"]
+    }
+  },
+  "DDR": {
+    "audit": "ddr_protocol_audit.json",
+    "address_mapping": "vendor_manual_supports_byte_address_right_shift_one_for_configured_interface",
+    "capacity": "64_MiB_configuration_derived_not_board_verified",
+    "write_completion_and_read_visibility": "unverified_blocks_input_slot_publication",
+    "write_data_timing": "vendor_limits_W_to_no_more_than_two_cycles_after_AW_not_unbounded_AXI"
+  },
+  "checks": {
+    "unit_command": "python -B -m unittest cnn.test_integer cnn.test_fetch_coco cnn.test_dataset cnn.test_metrics cnn.test_public_video",
+    "unit_tests_passed": 20,
+    "training_protocol_check": "python -B -m cnn.test_training passed",
+    "model_backward_and_CUDA_accumulation": "python -B -m cnn.test_model passed",
+    "formal_full_pretraining": "not_started_waiting_complete_dataset",
+    "distillation": "teacher_adapter_in_progress_not_completed",
+    "deployment_equivalent_QAT": "not_implemented",
+    "CNN_RTL_eight_gates": "not_run",
+    "board_5FPS_and_30_minutes": "not_run"
+  },
+  "user_input_needed_now": [],
+  "later_physical_input": {
+    "item": "PH1P35_board_connection_and_camera_HDMI_test_access",
+    "purpose": "physical_DDR_mapping_readback_continuous_5FPS_video_and_30_minute_acceptance",
+    "blocks": "stage_F_not_public_data_training"
+  },
+  "accuracy_claim": "none_each_class_P95_R85_unmet"
+}

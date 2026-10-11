@@ -1,0 +1,96 @@
+{
+  "kind": "visdrone_vid_train_development_pool_plan",
+  "source_archive_sha256": "3d7ddd2216524c5a12dcb55cee5bedf99f4625f7093bbf446072f40b8d9c1ea6",
+  "source_clips": 56,
+  "source_family_proxy": "sequence prefix before the second underscore",
+  "source_family_count": 48,
+  "camera_identity_known": false,
+  "split_method": "sort the 48 source-family proxies and assign every fifth family starting at index 4 to val",
+  "split_was_selected_by_density_or_model_performance": false,
+  "whole_family_isolation": true,
+  "train": {
+    "clips": 46,
+    "source_family_proxies": 39,
+    "frames": 19050,
+    "person": {
+      "box_count": 249955,
+      "max_boxes_per_frame": 108,
+      "frames_over_cap32": 1758,
+      "cap32_oracle_recall": 0.8633394010921966
+    },
+    "vehicle": {
+      "box_count": 519362,
+      "max_boxes_per_frame": 107,
+      "frames_over_cap32": 6561,
+      "cap32_oracle_recall": 0.7449351319503544
+    }
+  },
+  "val": {
+    "clips": 10,
+    "source_family_proxies": 9,
+    "frames": 5151,
+    "person": {
+      "box_count": 78746,
+      "max_boxes_per_frame": 64,
+      "frames_over_cap32": 103,
+      "cap32_oracle_recall": 0.9836436136438677
+    },
+    "vehicle": {
+      "box_count": 216104,
+      "max_boxes_per_frame": 136,
+      "frames_over_cap32": 2966,
+      "cap32_oracle_recall": 0.6467811794321253
+    }
+  },
+  "selected_original_categories_present_in_both_splits": [
+    "pedestrian",
+    "people",
+    "bicycle",
+    "car",
+    "van",
+    "truck",
+    "bus",
+    "motor"
+  ],
+  "existing_seven_clip_capacity_reference": {
+    "split_unchanged": true,
+    "train": {
+      "person": {
+        "box_count": 35159,
+        "max_boxes_per_frame": 69,
+        "frames_over_cap32": 676,
+        "cap32_oracle_recall": 0.74103359
+      },
+      "vehicle": {
+        "box_count": 46639,
+        "max_boxes_per_frame": 72,
+        "frames_over_cap32": 484,
+        "cap32_oracle_recall": 0.7611441
+      }
+    },
+    "val": {
+      "person": {
+        "box_count": 15153,
+        "max_boxes_per_frame": 66,
+        "frames_over_cap32": 123,
+        "cap32_oracle_recall": 0.86543918696,
+        "margin_above_0_85_recall_percentage_points": 1.543918696
+      },
+      "vehicle": {
+        "box_count": 11694,
+        "max_boxes_per_frame": 25,
+        "frames_over_cap32": 0,
+        "cap32_oracle_recall": 1.0
+      }
+    }
+  },
+  "cap32_scope": "postprocessing output-capacity oracle only; dense training supervision retains every positive and ignore box",
+  "formal_road_eligible": false,
+  "newtest_assigned": false,
+  "risks": [
+    "clip count and source-family proxy count are not verified independent-camera counts",
+    "the deterministic val split has a vehicle cap32 oracle recall of only 0.6468, so an 85 percent end-to-end vehicle recall claim is impossible under that output cap",
+    "dense frames were not deleted or down-selected to improve the oracle",
+    "camera motion, rider double-box semantics, and source-family identity still require manual review"
+  ]
+}

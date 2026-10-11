@@ -1,0 +1,29 @@
+{
+  "status": "PRE_RTL_REVIEW_PENDING_PROOF_RUN",
+  "change_size": "three runner expressions plus one local wire; no child or core edit",
+  "safety_argument": [
+    "MAC result handling occurs only in ST_MAC_WAIT.",
+    "ST_MAC_WAIT and ST_IDLE are distinct known encodings.",
+    "The runner therefore forces child table-valid low throughout every known-state result-handshake row.",
+    "The removed child table-valid factor is consequently one in those rows.",
+    "The remaining queue, loaded and fault factors are reproduced locally, and child fault is exactly fatal OR table_fault.",
+    "Result valid remains a separate accept qualifier; reservation and state gating are unchanged."
+  ],
+  "required_post_rtl_checks": [
+    "exact-source static and compile gates",
+    "focused assertion that old observable child input accept equals new local accept for known controls",
+    "parent table-valid held high during MAC_WAIT while the accepted result still transfers exactly once",
+    "focused X/Z diagnostic showing and documenting any four-state difference without coercion",
+    "same four DW/PW vectors, all 640 intermediate and writeback values, exact 5433 no-stall cycles",
+    "standalone postprocess regression unchanged",
+    "reset, terminal fault, queue full, long backpressure and random commit-ready cases"
+  ],
+  "risks": [
+    "A missing state or reservation term could acknowledge a MAC result outside the existing transaction boundary.",
+    "Using parent table-valid directly would be wrong; only child table-valid is proven zero in MAC_WAIT.",
+    "Replacing child fault with a partial fault expression could accept after fatal or table load failure.",
+    "Two-state enumeration alone does not establish identical X/Z propagation.",
+    "Cycle or count changes would show unintended scheduling behavior and must fail the candidate."
+  ],
+  "decision": "Do not implement until the 16,384-row known-state proof passes with zero mismatches."
+}

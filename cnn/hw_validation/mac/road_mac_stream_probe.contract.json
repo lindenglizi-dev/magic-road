@@ -1,0 +1,85 @@
+{
+  "modules": [
+    {
+      "name": "road_mac_stream_probe",
+      "feature": "mac_resource_wrapper",
+      "rtl_path": "road_mac_stream_probe.v",
+      "description": "A 140-pin, 32-bit dynamic command wrapper around the verified 8-input by 3-output MAC arithmetic probe.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "100 MHz probe clock.", "clock_domain": "i_clk"},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Asynchronous active-low reset for wrapper and core.", "clock_domain": "i_clk", "active_level": "low"},
+          {"name": "i_command_valid", "direction": "input", "width": 1, "role": "input_valid", "description": "Holds one command word valid until accepted.", "clock_domain": "i_clk"},
+          {"name": "i_command_opcode", "direction": "input", "width": 2, "role": "command_kind", "description": "Selects activation, weight, bias, or control storage.", "clock_domain": "i_clk"},
+          {"name": "i_command_index", "direction": "input", "width": 3, "role": "command_index", "description": "Carries the conventional word index for traceability; fixed-order placement does not decode it.", "clock_domain": "i_clk"},
+          {"name": "i_command_data", "direction": "input", "width": 32, "role": "command_payload", "description": "Runtime data used for every activation, weight, bias, and control bit.", "clock_domain": "i_clk"},
+          {"name": "i_result_ready", "direction": "input", "width": 1, "role": "output_ready", "description": "Accepts the held normal result or fault terminal.", "clock_domain": "i_clk"},
+          {"name": "o_command_ready", "direction": "output", "width": 1, "role": "input_ready", "description": "High only while the one-word command buffer is empty and no complete transaction is waiting for the core.", "clock_domain": "i_clk"},
+          {"name": "o_result_valid", "direction": "output", "width": 1, "role": "output_valid", "description": "Qualifies a held result or fault terminal until ready is asserted.", "clock_domain": "i_clk"},
+          {"name": "o_result_data", "direction": "output", "width": 96, "role": "result_payload", "description": "Three signed INT32 results, forced to zero on overflow fault.", "clock_domain": "i_clk"},
+          {"name": "o_fault", "direction": "output", "width": 1, "role": "overflow_fault", "description": "Marks any core candidate outside signed INT32 range.", "clock_domain": "i_clk"}
+        ],
+        "handshake_channels": [
+          {"id": "command", "valid": "i_command_valid", "ready": "o_command_ready", "payload": ["i_command_opcode", "i_command_index", "i_command_data"]},
+          {"id": "result", "valid": "o_result_valid", "ready": "i_result_ready", "payload": ["o_result_data", "o_fault"]}
+        ]
+      },
+      "parameters": [],
+      "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Payload registers, the command buffer, wrapper transaction progress, and core state return to their idle values."},
+      "behavior": [
+        "The caller sends exactly two opcode-00 activation words, six opcode-01 weight words, three opcode-10 bias words, and one opcode-11 control word in that order.",
+        "Within each class, words arrive low word first; conventional indices are activation zero through one, weight zero through five, bias zero through two, and control zero.",
+        "The wrapper uses opcode to select a shift register but does not validate command index or transaction order; a malformed stream is outside the interface contract and must be discarded with reset before continuing.",
+        "Control data bits seven through zero are the lane mask, bit eight is first, and bit nine is last.",
+        "A legal command transfers only when i_command_valid and o_command_ready are high on a rising edge.",
+        "Each accepted command occupies the one-word buffer for one processing cycle, so command ready remains low until that buffered word has shifted into its class payload.",
+        "After the twelfth buffered word is processed, command ready stays low and the complete payload remains stable until the core accepts it.",
+        "Core result valid, data, ready, and overflow fault semantics pass through unchanged.",
+        "The wrapper exposes 41 input pins and 99 output pins for a total of 140 top-level signal bits."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001 only.",
+        "All 24 weight bytes and all 8 activation bytes originate from runtime i_command_data transfers; no arithmetic operand is a parameter or constant tie.",
+        "The fixed transaction is exactly two activation words, six weight words, three bias words, and one control word.",
+        "The wrapper reuses road_mac_probe without changing its interface or arithmetic pipeline.",
+        "Serial loading is a pin-reduction probe and makes no full-layer or frame-rate throughput claim.",
+        "Each combinational source cone and real-operation budget remains at or below three."
+      ],
+      "corner_cases": [
+        "A malformed or out-of-order partial transaction has no hardware error response and must be cleared by reset before another transaction.",
+        "Reset during partial loading discards the transaction.",
+        "Reset during core reduction cancels the transaction without a late result.",
+        "Result payload and fault remain stable while result valid is high and result ready is low.",
+        "Overflow publishes a fault terminal with zero result payload."
+      ],
+      "verification_cases": [
+        "Python verifies the fixed command layout and that a resource-probe transaction varies every activation and weight byte at runtime.",
+        "The Verilog testbench serializes all 1031 fixed-seed core vectors through the 32-bit command interface.",
+        "The Verilog testbench compares all 24 products, 12 pair sums, 6 quad sums, and 3 dot sums inside the reused core.",
+        "The Verilog testbench checks normal terminals, positive and negative overflow, three-cycle output stalls, malformed partial-stream reset recovery, and asynchronous reset cancellation."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "dynamic_load_and_launch",
+          "title": "Final dynamic words launch one core beat",
+          "scenario": "dynamic-load-and-launch",
+          "description": "The final ordered weight, bias, and control words advance the registered transaction progress; the wrapper then holds the assembled payload valid until the core accepts it.",
+          "wavejson": {
+            "signal": [
+              {"name": "i_clk", "wave": "p........."},
+              {"name": "i_rstn", "wave": "01........"},
+              {"name": "i_command_valid", "wave": "0.111.1..."},
+              {"name": "o_command_ready", "wave": "1....0..1."},
+              {"name": "i_command_opcode", "wave": "x.===.x...", "data": ["weight5", "bias2", "control"]},
+              {"name": "i_command_data", "wave": "x.===.x...", "data": ["w[23:20]", "bias2", "mask/first/last"]},
+              {"name": "flag_all_loaded", "wave": "0....1.0.."},
+              {"name": "flag_core_accept", "wave": "0.....10.."}
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

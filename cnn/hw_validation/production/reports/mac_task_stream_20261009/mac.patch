@@ -1,0 +1,118 @@
+--- frozen_mac
++++ four_credit_mac
+@@ -181,15 +181,27 @@
+ 
+ 	//-----------------输出信号-----------------//
+ 	//保持型用户输出寄存器
+-	reg input_ready_o;                          // last后到结果握手前关闭输入
+-	reg result_valid_o;                         // 背压期间保持结果有效
+-	reg [95:0]result_data_o;                    // 背压期间保持三路结果
+-	reg fault_o;                                // 背压期间保持故障属性
++	wire input_ready_o;                         // 活动归约或可预留终态槽时允许输入
++	wire result_valid_o;                        // 真实终态队列非空
++	wire [95:0]result_data_o;                   // 队头三路原子结果
++	wire fault_o;                               // 队头故障与结果同生存期
++	reg [96:0]reg_result_queue [0:3];           // 四个终态槽，低96位结果，高位故障
++	reg [1:0]ptr_result_read;                   // 仅真实结果握手后前进
++	reg [1:0]ptr_result_write;                  // 末组流水到达后前进
++	reg [2:0]cnt_result_count;                  // 已进入终态队列的任务数
++	reg [2:0]cnt_reserved;                      // first到result_pop全程预留，含在途
++	reg flag_reduction_open;                    // 已接first但尚未接last
++	wire flag_first_accept;                     // 首组握手预留一槽
+ 
+ 	//---------------其他信号连线---------------//
+ 	//握手事件与A5真实宽度加法
+ 	assign flag_input_accept = i_input_valid & input_ready_o; // 只接受ready期间的输入负载
+ 	assign flag_result_accept = result_valid_o & i_result_ready; // 只在双方许可时释放终态
++	assign flag_first_accept = flag_input_accept & i_first;
++	assign input_ready_o = flag_reduction_open | (cnt_reserved < 3'd4) | flag_result_accept;
++	assign result_valid_o = (cnt_result_count != 3'd0);
++	assign result_data_o = result_valid_o ? reg_result_queue[ptr_result_read][95:0] : 96'd0;
++	assign fault_o = result_valid_o & reg_result_queue[ptr_result_read][96];
+ 	assign base_alpha = flag_first_dot ? {reg_bias_dot[31], reg_bias_dot[31:0]} : reg_accumulator_alpha; // first替代甲历史值
+ 	assign base_beta = flag_first_dot ? {reg_bias_dot[63], reg_bias_dot[63:32]} : reg_accumulator_beta; // first替代乙历史值
+ 	assign base_gamma = flag_first_dot ? {reg_bias_dot[95], reg_bias_dot[95:64]} : reg_accumulator_gamma; // first替代丙历史值
+@@ -212,47 +224,42 @@
+ 	assign o_fault = fault_o;                   // 输出原子越界属性
+ 
+ 	//-------------输出信号处理区域-------------//
+-	//last接受后关闭输入，终态握手后重开
+-	always@(posedge i_clk or negedge i_rstn)begin
+-		if(i_rstn == 1'b0)begin
+-			input_ready_o <= 1'b1;              // 保持参考核复位后ready为一
+-		end else if(flag_input_accept & i_last)begin
+-			input_ready_o <= 1'b0;              // last进入流水后禁止下一任务
+-		end else if(flag_result_accept)begin
+-			input_ready_o <= 1'b1;              // 终态被接受后恢复输入许可
+-		end else begin
+-			input_ready_o <= input_ready_o;      // 其余周期保持序列占用状态
+-		end
+-	end
+-
+-	//A6发布并在背压期间保持valid
+-	always@(posedge i_clk or negedge i_rstn)begin
+-		if(i_rstn == 1'b0)begin
+-			result_valid_o <= 1'b0;             // 异步复位取消待收终态
+-		end else begin
+-			result_valid_o <= (result_valid_o & ~i_result_ready) | flag_final_valid_stage0; // 发布或保持唯一终态
+-		end
+-	end
+-
+-	//A6只在发布事件更新结果负载
+-	always@(posedge i_clk or negedge i_rstn)begin
+-		if(i_rstn == 1'b0)begin
+-			result_data_o <= 96'd0;             // 异步复位清空可见结果
+-		end else if(flag_final_valid_stage0)begin
+-			result_data_o <= reg_final_data_stage0; // 锁存末组正常值或三路零值
+-		end else begin
+-			result_data_o <= result_data_o;     // 背压或空闲期间保持负载
+-		end
+-	end
+-
+-	//A6只在发布事件更新故障属性
+-	always@(posedge i_clk or negedge i_rstn)begin
+-		if(i_rstn == 1'b0)begin
+-			fault_o <= 1'b0;                    // 异步复位清除外部故障
+-		end else if(flag_final_valid_stage0)begin
+-			fault_o <= flag_final_fault_stage0; // 锁存与结果同拍的故障属性
+-		end else begin
+-			fault_o <= fault_o;                 // 背压期间保持故障属性
++	//首组预留整个任务的终态槽，满队列也不得截断已经接纳的归约
++	always@(posedge i_clk or negedge i_rstn)begin
++		if(i_rstn == 1'b0)begin
++			cnt_reserved <= 3'd0;
++			flag_reduction_open <= 1'b0;
++		end else begin
++			case({flag_first_accept, flag_result_accept})
++				2'b10: cnt_reserved <= cnt_reserved + 3'd1;
++				2'b01: cnt_reserved <= cnt_reserved - 3'd1;
++				default: cnt_reserved <= cnt_reserved;
++			endcase
++			if(flag_input_accept)begin
++				flag_reduction_open <= ~i_last;
++			end
++		end
++	end
++
++	//A6终态入环；数据无需复位，计数和读指针阻止旧负载泄漏
++	always@(posedge i_clk or negedge i_rstn)begin
++		if(i_rstn == 1'b0)begin
++			ptr_result_read <= 2'd0;
++			ptr_result_write <= 2'd0;
++			cnt_result_count <= 3'd0;
++		end else begin
++			if(flag_result_accept)begin
++				ptr_result_read <= ptr_result_read + 2'd1;
++			end
++			if(flag_final_valid_stage0)begin
++				reg_result_queue[ptr_result_write] <= {flag_final_fault_stage0, reg_final_data_stage0};
++				ptr_result_write <= ptr_result_write + 2'd1;
++			end
++			case({flag_final_valid_stage0, flag_result_accept})
++				2'b10: cnt_result_count <= cnt_result_count + 3'd1;
++				2'b01: cnt_result_count <= cnt_result_count - 3'd1;
++				default: cnt_result_count <= cnt_result_count;
++			endcase
+ 		end
+ 	end
+ 

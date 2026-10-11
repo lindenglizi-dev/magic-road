@@ -1,0 +1,1887 @@
+{
+  "contract": {
+    "status": "algorithm_and_coordinate_reference_not_cycle_accurate_rle_ccl",
+    "mode": "deployed",
+    "input": "1280x720 BGR decoded frame with zero-based frame_index",
+    "gray": "(R>>2)+(G>>1)+(B>>2), uint8",
+    "sampling": "analysis[y,x]=gray[5*y,5*x], yielding deployed 256x144; this deliberately does not use background_model.v's generic default FRAME_HEIGHT=150",
+    "learning": "first frame initializes; next three frames use toward(old,new,shift=2,min_step=1); no candidates during four learning frames",
+    "difference": "foreground when abs(gray-background) >= 20",
+    "threshold": 20,
+    "post_learning_update": "deployed: background_update_enable=1, freeze_foreground=1, toward shift=4 with minimum step one",
+    "cleanup": "zero-padded 3x3 sum >=3 and center pixel must be one",
+    "run_filter": "after cleanup, discard each horizontal run shorter than MIN_RUN_LENGTH=2",
+    "components": "8-connected; area is foreground pixel count; inclusive bbox; top four by descending area then scan label",
+    "coordinate_mapping": "candidate boxes use inclusive analysis coordinates; source_sample_box multiplies each coordinate by five and denotes sampled source locations",
+    "frame_identity": "output frame_index equals the input video frame consumed for that mask; no display/HDMI identity is inferred",
+    "unmodeled_rtl_limits": "MAX_RUN=64, MAX_LABEL=32, overflow/discard behavior, and cycle-level label-union timing are not modeled"
+  },
+  "video": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\public_data\\raw\\virat_ground_v2\\video_original\\VIRAT_S_000200_00_000100_000171.mp4",
+  "video_sha256": "a8888e14bb2a1d38368a10cfd949916fcf9acc9972d3dacc3cbbc502c8d8a568",
+  "script_sha256": "5d75e053ca7a6c30e24a468825e5775c5e8183279539c592795a35888f8ebc61",
+  "parameters": {
+    "requested_frame_count": 70,
+    "start_frame": 1840,
+    "threshold": 20,
+    "mode": "deployed"
+  },
+  "processed_frames": 70,
+  "learning_frames": 4,
+  "candidate_frames": 59,
+  "candidate_count": 59,
+  "frames": [
+    {
+      "frame_index": 1840,
+      "learning": true,
+      "background_ready": false,
+      "learned_frame_count": 1,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "candidates": []
+    },
+    {
+      "frame_index": 1841,
+      "learning": true,
+      "background_ready": false,
+      "learned_frame_count": 2,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "candidates": []
+    },
+    {
+      "frame_index": 1842,
+      "learning": true,
+      "background_ready": false,
+      "learned_frame_count": 3,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "candidates": []
+    },
+    {
+      "frame_index": 1843,
+      "learning": true,
+      "background_ready": true,
+      "learned_frame_count": 4,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "candidates": []
+    },
+    {
+      "frame_index": 1844,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 34,
+      "foreground_pixels_clean": 28,
+      "foreground_pixels_after_min_run": 22,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 22,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 171,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            855,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1845,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 40,
+      "foreground_pixels_clean": 32,
+      "foreground_pixels_after_min_run": 28,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 28,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 171,
+          "ymax": 135,
+          "source_sample_box": [
+            825,
+            650,
+            855,
+            675
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1846,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 40,
+      "foreground_pixels_clean": 35,
+      "foreground_pixels_after_min_run": 28,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 26,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 171,
+          "ymax": 134,
+          "source_sample_box": [
+            825,
+            650,
+            855,
+            670
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1847,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 41,
+      "foreground_pixels_clean": 37,
+      "foreground_pixels_after_min_run": 33,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 28,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 172,
+          "ymax": 135,
+          "source_sample_box": [
+            825,
+            650,
+            860,
+            675
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1848,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 35,
+      "foreground_pixels_clean": 30,
+      "foreground_pixels_after_min_run": 23,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 19,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 171,
+          "ymax": 135,
+          "source_sample_box": [
+            825,
+            650,
+            855,
+            675
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1849,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 46,
+      "foreground_pixels_clean": 42,
+      "foreground_pixels_after_min_run": 36,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 30,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 171,
+          "ymax": 135,
+          "source_sample_box": [
+            825,
+            650,
+            855,
+            675
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1850,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 48,
+      "foreground_pixels_clean": 42,
+      "foreground_pixels_after_min_run": 39,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 37,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 172,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            860,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1851,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 48,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 34,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 172,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            860,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1852,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 45,
+      "foreground_pixels_clean": 38,
+      "foreground_pixels_after_min_run": 31,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 28,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 172,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            860,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1853,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 48,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 31,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 172,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            860,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1854,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 49,
+      "foreground_pixels_clean": 44,
+      "foreground_pixels_after_min_run": 38,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 32,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 172,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            860,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1855,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 46,
+      "foreground_pixels_after_min_run": 36,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 30,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 173,
+          "ymax": 138,
+          "source_sample_box": [
+            825,
+            650,
+            865,
+            690
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1856,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 53,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 33,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 18,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 173,
+          "ymax": 134,
+          "source_sample_box": [
+            825,
+            650,
+            865,
+            670
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1857,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 59,
+      "foreground_pixels_clean": 53,
+      "foreground_pixels_after_min_run": 40,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 27,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 173,
+          "ymax": 135,
+          "source_sample_box": [
+            825,
+            650,
+            865,
+            675
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1858,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 57,
+      "foreground_pixels_clean": 53,
+      "foreground_pixels_after_min_run": 45,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 33,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 173,
+          "ymax": 135,
+          "source_sample_box": [
+            825,
+            650,
+            865,
+            675
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1859,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 57,
+      "foreground_pixels_clean": 50,
+      "foreground_pixels_after_min_run": 45,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 32,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 173,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            865,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1860,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 44,
+      "foreground_pixels_after_min_run": 36,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 26,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 174,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            870,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1861,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 53,
+      "foreground_pixels_clean": 46,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 25,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 174,
+          "ymax": 134,
+          "source_sample_box": [
+            825,
+            650,
+            870,
+            670
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1862,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 57,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 42,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 31,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 174,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            870,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1863,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 56,
+      "foreground_pixels_clean": 48,
+      "foreground_pixels_after_min_run": 44,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 38,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 175,
+          "ymax": 139,
+          "source_sample_box": [
+            825,
+            650,
+            875,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1864,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 46,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 26,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 175,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            875,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1865,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 56,
+      "foreground_pixels_clean": 49,
+      "foreground_pixels_after_min_run": 43,
+      "candidates": [
+        {
+          "component_label": 1,
+          "area": 32,
+          "xmin": 165,
+          "ymin": 130,
+          "xmax": 175,
+          "ymax": 136,
+          "source_sample_box": [
+            825,
+            650,
+            875,
+            680
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1866,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 46,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": []
+    },
+    {
+      "frame_index": 1867,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 55,
+      "foreground_pixels_clean": 49,
+      "foreground_pixels_after_min_run": 41,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 22,
+          "xmin": 172,
+          "ymin": 133,
+          "xmax": 176,
+          "ymax": 139,
+          "source_sample_box": [
+            860,
+            665,
+            880,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1868,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 38,
+      "candidates": []
+    },
+    {
+      "frame_index": 1869,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 55,
+      "foreground_pixels_clean": 49,
+      "foreground_pixels_after_min_run": 46,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 23,
+          "xmin": 172,
+          "ymin": 133,
+          "xmax": 177,
+          "ymax": 138,
+          "source_sample_box": [
+            860,
+            665,
+            885,
+            690
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1870,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 56,
+      "foreground_pixels_clean": 50,
+      "foreground_pixels_after_min_run": 42,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 23,
+          "xmin": 173,
+          "ymin": 133,
+          "xmax": 177,
+          "ymax": 138,
+          "source_sample_box": [
+            865,
+            665,
+            885,
+            690
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1871,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 46,
+      "foreground_pixels_after_min_run": 42,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 23,
+          "xmin": 173,
+          "ymin": 134,
+          "xmax": 177,
+          "ymax": 140,
+          "source_sample_box": [
+            865,
+            670,
+            885,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1872,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 45,
+      "foreground_pixels_after_min_run": 39,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 18,
+          "xmin": 173,
+          "ymin": 134,
+          "xmax": 178,
+          "ymax": 137,
+          "source_sample_box": [
+            865,
+            670,
+            890,
+            685
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1873,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 53,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 42,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 23,
+          "xmin": 173,
+          "ymin": 134,
+          "xmax": 178,
+          "ymax": 139,
+          "source_sample_box": [
+            865,
+            670,
+            890,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1874,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 54,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 42,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 23,
+          "xmin": 174,
+          "ymin": 134,
+          "xmax": 179,
+          "ymax": 139,
+          "source_sample_box": [
+            870,
+            670,
+            895,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1875,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 58,
+      "foreground_pixels_clean": 51,
+      "foreground_pixels_after_min_run": 49,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 30,
+          "xmin": 174,
+          "ymin": 134,
+          "xmax": 179,
+          "ymax": 140,
+          "source_sample_box": [
+            870,
+            670,
+            895,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1876,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 48,
+      "foreground_pixels_after_min_run": 39,
+      "candidates": []
+    },
+    {
+      "frame_index": 1877,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 53,
+      "foreground_pixels_clean": 44,
+      "foreground_pixels_after_min_run": 38,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 19,
+          "xmin": 174,
+          "ymin": 135,
+          "xmax": 179,
+          "ymax": 139,
+          "source_sample_box": [
+            870,
+            675,
+            895,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1878,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 42,
+      "foreground_pixels_after_min_run": 35,
+      "candidates": []
+    },
+    {
+      "frame_index": 1879,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 56,
+      "foreground_pixels_clean": 50,
+      "foreground_pixels_after_min_run": 42,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 21,
+          "xmin": 175,
+          "ymin": 135,
+          "xmax": 181,
+          "ymax": 138,
+          "source_sample_box": [
+            875,
+            675,
+            905,
+            690
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1880,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 50,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 16,
+          "xmin": 175,
+          "ymin": 135,
+          "xmax": 180,
+          "ymax": 138,
+          "source_sample_box": [
+            875,
+            675,
+            900,
+            690
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1881,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 54,
+      "foreground_pixels_clean": 45,
+      "foreground_pixels_after_min_run": 40,
+      "candidates": []
+    },
+    {
+      "frame_index": 1882,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 55,
+      "foreground_pixels_clean": 46,
+      "foreground_pixels_after_min_run": 41,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 22,
+          "xmin": 176,
+          "ymin": 135,
+          "xmax": 181,
+          "ymax": 140,
+          "source_sample_box": [
+            880,
+            675,
+            905,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1883,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 57,
+      "foreground_pixels_clean": 49,
+      "foreground_pixels_after_min_run": 44,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 25,
+          "xmin": 176,
+          "ymin": 135,
+          "xmax": 181,
+          "ymax": 140,
+          "source_sample_box": [
+            880,
+            675,
+            905,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1884,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 38,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 19,
+          "xmin": 177,
+          "ymin": 135,
+          "xmax": 181,
+          "ymax": 139,
+          "source_sample_box": [
+            885,
+            675,
+            905,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1885,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 54,
+      "foreground_pixels_clean": 45,
+      "foreground_pixels_after_min_run": 40,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 21,
+          "xmin": 177,
+          "ymin": 135,
+          "xmax": 181,
+          "ymax": 139,
+          "source_sample_box": [
+            885,
+            675,
+            905,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1886,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 55,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 42,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 16,
+          "xmin": 177,
+          "ymin": 135,
+          "xmax": 181,
+          "ymax": 138,
+          "source_sample_box": [
+            885,
+            675,
+            905,
+            690
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1887,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 48,
+      "foreground_pixels_clean": 41,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 18,
+          "xmin": 177,
+          "ymin": 135,
+          "xmax": 182,
+          "ymax": 139,
+          "source_sample_box": [
+            885,
+            675,
+            910,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1888,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 54,
+      "foreground_pixels_clean": 46,
+      "foreground_pixels_after_min_run": 38,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 20,
+          "xmin": 178,
+          "ymin": 135,
+          "xmax": 182,
+          "ymax": 139,
+          "source_sample_box": [
+            890,
+            675,
+            910,
+            695
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1889,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 45,
+      "foreground_pixels_after_min_run": 38,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 20,
+          "xmin": 178,
+          "ymin": 136,
+          "xmax": 182,
+          "ymax": 140,
+          "source_sample_box": [
+            890,
+            680,
+            910,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1890,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 54,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 19,
+          "xmin": 178,
+          "ymin": 136,
+          "xmax": 183,
+          "ymax": 140,
+          "source_sample_box": [
+            890,
+            680,
+            915,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1891,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 45,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 19,
+          "xmin": 178,
+          "ymin": 136,
+          "xmax": 183,
+          "ymax": 140,
+          "source_sample_box": [
+            890,
+            680,
+            915,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1892,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 45,
+      "foreground_pixels_after_min_run": 34,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 18,
+          "xmin": 179,
+          "ymin": 136,
+          "xmax": 183,
+          "ymax": 140,
+          "source_sample_box": [
+            895,
+            680,
+            915,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1893,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 53,
+      "foreground_pixels_clean": 46,
+      "foreground_pixels_after_min_run": 39,
+      "candidates": [
+        {
+          "component_label": 4,
+          "area": 20,
+          "xmin": 179,
+          "ymin": 136,
+          "xmax": 184,
+          "ymax": 140,
+          "source_sample_box": [
+            895,
+            680,
+            920,
+            700
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1894,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 33,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 19,
+          "xmin": 179,
+          "ymin": 136,
+          "xmax": 184,
+          "ymax": 141,
+          "source_sample_box": [
+            895,
+            680,
+            920,
+            705
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1895,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 41,
+      "foreground_pixels_after_min_run": 33,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 19,
+          "xmin": 180,
+          "ymin": 137,
+          "xmax": 184,
+          "ymax": 141,
+          "source_sample_box": [
+            900,
+            685,
+            920,
+            705
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1896,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 47,
+      "foreground_pixels_clean": 39,
+      "foreground_pixels_after_min_run": 29,
+      "candidates": []
+    },
+    {
+      "frame_index": 1897,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 42,
+      "foreground_pixels_after_min_run": 35,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 21,
+          "xmin": 181,
+          "ymin": 137,
+          "xmax": 185,
+          "ymax": 141,
+          "source_sample_box": [
+            905,
+            685,
+            925,
+            705
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1898,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 42,
+      "foreground_pixels_after_min_run": 34,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 20,
+          "xmin": 182,
+          "ymin": 137,
+          "xmax": 186,
+          "ymax": 141,
+          "source_sample_box": [
+            910,
+            685,
+            930,
+            705
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1899,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 42,
+      "foreground_pixels_after_min_run": 33,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 19,
+          "xmin": 182,
+          "ymin": 137,
+          "xmax": 186,
+          "ymax": 141,
+          "source_sample_box": [
+            910,
+            685,
+            930,
+            705
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1900,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 54,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 40,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 26,
+          "xmin": 182,
+          "ymin": 137,
+          "xmax": 187,
+          "ymax": 141,
+          "source_sample_box": [
+            910,
+            685,
+            935,
+            705
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1901,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 42,
+      "foreground_pixels_after_min_run": 32,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 19,
+          "xmin": 182,
+          "ymin": 138,
+          "xmax": 187,
+          "ymax": 141,
+          "source_sample_box": [
+            910,
+            690,
+            935,
+            705
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1902,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 33,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 19,
+          "xmin": 183,
+          "ymin": 138,
+          "xmax": 188,
+          "ymax": 142,
+          "source_sample_box": [
+            915,
+            690,
+            940,
+            710
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1903,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 53,
+      "foreground_pixels_clean": 44,
+      "foreground_pixels_after_min_run": 34,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 20,
+          "xmin": 183,
+          "ymin": 138,
+          "xmax": 189,
+          "ymax": 141,
+          "source_sample_box": [
+            915,
+            690,
+            945,
+            705
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1904,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 44,
+      "foreground_pixels_after_min_run": 37,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 23,
+          "xmin": 183,
+          "ymin": 138,
+          "xmax": 189,
+          "ymax": 142,
+          "source_sample_box": [
+            915,
+            690,
+            945,
+            710
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1905,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 56,
+      "foreground_pixels_clean": 47,
+      "foreground_pixels_after_min_run": 38,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 24,
+          "xmin": 184,
+          "ymin": 138,
+          "xmax": 189,
+          "ymax": 143,
+          "source_sample_box": [
+            920,
+            690,
+            945,
+            715
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1906,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 56,
+      "foreground_pixels_clean": 48,
+      "foreground_pixels_after_min_run": 40,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 26,
+          "xmin": 184,
+          "ymin": 138,
+          "xmax": 190,
+          "ymax": 142,
+          "source_sample_box": [
+            920,
+            690,
+            950,
+            710
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1907,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 32,
+      "candidates": []
+    },
+    {
+      "frame_index": 1908,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 51,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 33,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 19,
+          "xmin": 185,
+          "ymin": 139,
+          "xmax": 190,
+          "ymax": 143,
+          "source_sample_box": [
+            925,
+            695,
+            950,
+            715
+          ]
+        }
+      ]
+    },
+    {
+      "frame_index": 1909,
+      "learning": false,
+      "background_ready": true,
+      "analysis_shape": [
+        256,
+        144
+      ],
+      "threshold_comparison": "abs(gray-background) >= threshold",
+      "foreground_pixels_raw": 52,
+      "foreground_pixels_clean": 43,
+      "foreground_pixels_after_min_run": 35,
+      "candidates": [
+        {
+          "component_label": 3,
+          "area": 21,
+          "xmin": 185,
+          "ymin": 139,
+          "xmax": 191,
+          "ymax": 143,
+          "source_sample_box": [
+            925,
+            695,
+            955,
+            715
+          ]
+        }
+      ]
+    }
+  ]
+}

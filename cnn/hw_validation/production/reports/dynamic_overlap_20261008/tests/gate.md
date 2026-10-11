@@ -1,0 +1,115 @@
+# Verilog deliverable gate
+
+Root: `E:\project\qiansai\anlogic_topic2_work\lab1_sc500_road_vision\cnn\hw_validation\production\reports\dynamic_overlap_20261008\tests\tb_road_dynamic_postprocess.v`
+Delivery ready: `False`
+Summary: **105 error(s)**, **0 strict warning(s)**
+
+## Other deliverable findings
+
+| Severity | Code | Path | Line | Message |
+|---|---|---|---:|---|
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:4` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:5` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:7` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:8` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:9` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:10` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:11` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:12` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:13` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:14` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:15` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:16` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:17` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:18` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:19` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:20` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:21` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:22` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:24` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:25` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:26` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:27` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:28` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:29` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:30` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:31` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:32` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:33` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:34` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:35` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:36` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:37` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:38` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:39` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:40` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:42` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:43` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:44` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:45` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:46` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:47` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:48` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:49` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:50` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:51` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:53` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:54` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:55` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:56` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:57` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:58` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:59` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:60` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:61` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:62` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:63` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:64` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:65` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:66` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:67` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:68` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:69` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:70` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:71` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:72` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:73` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:74` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:75` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:76` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:77` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:78` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:80` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:82` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:118` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:132` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:173` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:187` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:188` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:189` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:190` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:204` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:205` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:223` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:239` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:246` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:247` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:248` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:249` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:266` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:267` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:268` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:305` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:306` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:330` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:331` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:332` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:333` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:354` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:355` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:390` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:391` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:404` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:405` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:421` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_dynamic_postprocess.v:505` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |

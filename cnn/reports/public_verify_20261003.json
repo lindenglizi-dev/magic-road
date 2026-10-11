@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "role": "independent_verify_read_only",
+  "as_of": "2026-10-03T02:19:00+08:00",
+  "overall_status": "pass_no_blocking_defect_found_with_explicit_limits",
+  "scope": {
+    "reviewed": [
+      "COCO selected-class zero-extent handling and provenance",
+      "full-frame ignore effect on background and explicit positive supervision",
+      "single-read raw-image SHA guard in the training loader",
+      "INT32 bias and full-width requantization guards",
+      "UINT16 separable 5-to-2 resize equivalence",
+      "shared_tables_v2 source binding, serialization, no-overwrite behavior, and equality to v1 payloads",
+      "published full COCO manifest and current training progress boundary"
+    ],
+    "excluded": [
+      "No blind, reserve, or newtest pixels or annotations were opened",
+      "No source or functional code was modified",
+      "No training process was started, stopped, or waited to completion",
+      "No road-domain acceptance or 300-epoch completion claim was evaluated"
+    ]
+  },
+  "workspace": {
+    "git_repository": false,
+    "branch": null,
+    "source_sha256": {
+      "cnn/dataset.py": "0f9e07b29e41161afa06f2e0fed7d6e5bbedc84761ab91745bfffb5802d35e64",
+      "cnn/integer.py": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+      "cnn/train.py": "22204a2ff2931866e9b4c3a2b6db6671590a79fe25e0c89ee39a96f410049f4a",
+      "cnn/loss.py": "dc1c2c6423a154bb4eecd579fc7433345197557b1caa8fcb78435c95dcb01adb",
+      "cnn/export_tables.py": "38842ba5828bc63275294f8aa2d498ae31621fd6a916b8a348ce8f61907a394b",
+      "cnn/test_dataset.py": "ae8e6242606b482efda3b6401d76b2026680fa32c99c2321572ed7a5508641e8",
+      "cnn/test_integer.py": "b17af104f6be776d4a6526f5723ddf6fb327fa2c47fedc3c734d520dec509d92",
+      "cnn/test_model.py": "f5b2b0768e8ccba38cc47e380993cf26702af54e54b1d5ed537b170f9642e0f6",
+      "cnn/test_export_tables.py": "d3e74ad4e5fd90d94016c06f061131de3365178435d218f12260956660258e25"
+    }
+  },
+  "full_coco": {
+    "dataset_path": "cnn/data/coco_full/dataset.json",
+    "dataset_sha256": "0bee36fd90cc78fd48cfc5a8d80ace60b66ce72ebe8eafaeb116602561566100",
+    "published_counts": {
+      "train": 118287,
+      "val": 5000
+    },
+    "annotation_sha256_verified_against_receipt": {
+      "instances_train2017.json": "610fce4944abdeb15354cc765333805529359d12d88f2f711393ca586901d01d",
+      "instances_val2017.json": "e8c7f7908f1d7278341fae127d0da654f102f11bd7b21d8aeefa635b8c810b6f"
+    },
+    "degenerate_selected_annotations": {
+      "train_count": 1,
+      "val_count": 0,
+      "independent_scan_method": "read-only mmap scan of public COCO annotation JSON for selected categories, zero area and a zero bbox extent",
+      "record": {
+        "annotation_id": 2206849,
+        "image_id": 550395,
+        "category_id": 1,
+        "bbox": [9.98, 188.56, 5.54, 0.0],
+        "area": 0.0,
+        "iscrowd": 0
+      }
+    },
+    "affected_dataset_row": {
+      "source_frame": 550395,
+      "retained_positive_boxes": 7,
+      "retained_positive_labels": [0, 0, 0, 0, 0, 0, 0],
+      "ignore_boxes": [[0.0, 0.0, 512.0, 288.0]],
+      "ignore_metadata": [{"label": -1, "crowd": false}],
+      "annotation_complete": true,
+      "incomplete_frame": false
+    },
+    "provenance_sha256": "4933457dd13e4f044bacdcd942b2e8ca979d6c999367bfc1054399e4d0794a7c",
+    "integrity_report_sha256": "3ab1a48810254e5d1be9d021294cb5dccd1d813b9fea04620bcb3f62ede2b521"
+  },
+  "verified_controls": [
+    {
+      "control": "zero-extent whitelist is narrow",
+      "result": "pass",
+      "evidence": "Only selected categories with a four-value finite bbox, nonnegative width and height, at least one zero extent, and source area exactly zero take the exception. Other nonpositive extents reach _scaled_box and fail closed; nonfinite coordinates and nonpositive source dimensions are rejected."
+    },
+    {
+      "control": "unknown background without deleting positives",
+      "result": "pass",
+      "evidence": "The affected row retains seven valid person boxes and adds one full-frame wildcard ignore. YOLOXLoss masks objectness negatives across the frame, then clears ignore on assigned foreground anchors before objectness, IoU, and class losses. The focused numerical contract test preserves foreground count, IoU loss, and class loss relative to the no-ignore baseline."
+    },
+    {
+      "control": "annotation tamper and tuple integrity",
+      "result": "pass_with_scope",
+      "evidence": "build_coco_manifest compares each full annotation JSON SHA-256 with the download receipt before adaptation. The provenance records the original id, image_id, category_id, bbox, area, policy, and enclosing annotation SHA-256. Integrity is therefore bound by the complete source-file hash; there is no separate per-tuple hash."
+    },
+    {
+      "control": "raw image content guard with one read per row",
+      "result": "pass",
+      "evidence": "load_dataset_manifest audits schema and completeness without image reads, computes one SHA-256 per normalized row, and requires raw_image content to equal source_sha256. Independent check_manifest on coco_raw_pilot returned 96 train and 32 val while its SHA spy and forced mismatch checks passed."
+    },
+    {
+      "control": "requantize and bias input range",
+      "result": "pass",
+      "evidence": "requantize validates integer dtype and INT32 source, nonnegative INT32 multiplier, and shift 0..62 before int64 conversion. conv2d validates integer bias and INT32 range before accumulation. Fraction-based expected values cover INT32 extrema, multipliers 0/1/INT32_MAX, shifts 0/1/31/62, and INT16 saturation; UINT64_MAX and float inputs are rejected."
+    },
+    {
+      "control": "UINT16 separable resize equivalence",
+      "result": "pass",
+      "evidence": "Horizontal maximum is 1275 and vertical total maximum is 6375, so UINT16 cannot overflow. For positive integer totals and odd divisor 25, (total+12)//25 equals nearest-even because half ties cannot occur. Tests compare a full random 720p frame with the independent int32 einsum reference and exhaust all totals 0..6375."
+    },
+    {
+      "control": "shared table export and source binding",
+      "result": "pass",
+      "evidence": "shared_tables_v2 manifest integer_source_sha256 and contract_sha256 exactly match the current files. Export uses exclusive directory creation, exclusive asset files, and publishes manifest last. Binary and hex round-trip tests cover all six assets and recorded hashes."
+    },
+    {
+      "control": "shared_tables_v2 numerical equality to v1",
+      "result": "pass",
+      "evidence": "All twelve non-manifest .bin/.hex files have byte-identical SHA-256 values across v1 and v2. Only source-binding metadata changed; LUT and exhaustive golden values did not."
+    }
+  ],
+  "findings": [
+    {
+      "id": "PV3-001",
+      "severity": "low",
+      "classification": "future_split_evaluation_limit_not_current_blocker",
+      "status": "open",
+      "locations": [
+        "cnn/dataset.py:328",
+        "cnn/dataset.py:331",
+        "cnn/evaluate.py:59",
+        "cnn/metrics.py:67"
+      ],
+      "evidence": "The full-frame unknown region is metadata crowd=false, so the evaluator applies IoU rather than prediction-area IoA. A small prediction inside a full-frame ignore would not reach IoU 0.5 and would remain a false positive. The only current degenerate selected annotation is in train and val has zero, so this does not affect the published validation metrics or current optimizer run.",
+      "minimal_fix_when_needed": "Before admitting a degenerate annotation into val/newtest, define a distinct full_frame_unknown evaluation policy or carry it as an IoA-style ignore without relabeling ordinary non-crowd ignores."
+    },
+    {
+      "id": "PV3-002",
+      "severity": "info",
+      "classification": "evidence_boundary",
+      "status": "documented",
+      "evidence": "The original degenerate tuple has no standalone tuple SHA-256. Its integrity is transitively supported by the verified complete annotation-file SHA-256 and the copied tuple fields in provenance. This is sufficient to recompute and audit the current record, but callers must not claim a separately signed tuple receipt."
+    }
+  ],
+  "verification_commands": [
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_dataset cnn.test_integer cnn.test_fetch_coco cnn.test_metrics cnn.test_public_video cnn.test_export_tables -v",
+      "result": "pass: 24 tests"
+    },
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m cnn.test_training",
+      "result": "pass: training protocol checks passed"
+    },
+    {
+      "command": "check_manifest(cnn/data/coco_raw_pilot/dataset.json)",
+      "result": "pass: 96 train, 32 val; one SHA call per row and forced raw source mismatch rejected"
+    },
+    {
+      "command": "check_numeric_contract()",
+      "result": "pass: includes full-frame ignore positive-supervision assertions"
+    },
+    {
+      "command": "read-only SHA comparison of shared_tables_v1 and shared_tables_v2",
+      "result": "pass: all twelve non-manifest payload files byte-identical; v2 source hashes match current integer.py and contract.json"
+    }
+  ],
+  "training_observation": {
+    "source": "cnn/runs/coco_full_pretrain300/train_log.jsonl",
+    "last_event_observed": {
+      "epoch_number": 1,
+      "optimizer_steps_completed": 220,
+      "optimizer_steps_total": 554700,
+      "epoch_samples": 14080,
+      "mosaic": true
+    },
+    "claim_boundary": "This proves full-data optimization started and reached at least step 220. It does not prove epoch 1 completed, any checkpoint was published, validation ran, 300 epochs completed, accuracy gates passed, or deployment readiness. Previous sessions 13915 and 3620 failed before training and contributed no optimizer updates."
+  },
+  "not_independently_rerun_this_review": [
+    "Full cnn.test_model CUDA accumulation/backward suite; coordinator reported it passed",
+    "The active full-pretraining process beyond the single observed log snapshot"
+  ],
+  "acceptance_boundary": "COCO is pretraining supervision, not road-domain acceptance data. No result here changes formal_road_acceptance_eligible=false."
+}

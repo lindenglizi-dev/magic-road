@@ -1,0 +1,69 @@
+{
+  "modules": [
+    {
+      "name": "tb_dynamic_shell_vectors",
+      "feature": "step1",
+      "rtl_path": "tb_dynamic_shell_vectors.v",
+      "description": "Independent evidence probe; no production change.",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "internal test clock",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "internal test reset",
+        "active": "low",
+        "synchronous": false,
+        "values": "Cancel old transactions; reload table before calculation."
+      },
+      "behavior": [
+        "Verify runtime operands against frozen integer results; do not change the DUT."
+      ],
+      "constraints": [
+        "Diagnostic only; no bitgen, new timing exceptions or board claim."
+      ],
+      "corner_cases": [
+        "Output must remain stable during backpressure; reset cancels pending work."
+      ],
+      "verification_cases": [
+        "Use actual installed vendor models and retained logs."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "hold",
+          "title": "Payload ownership",
+          "scenario": "ready_valid",
+          "description": "Handshake protocol schematic, not measured pipeline latency.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "valid",
+                "wave": "0.1...0..."
+              },
+              {
+                "name": "ready",
+                "wave": "1.0..1...."
+              },
+              {
+                "name": "payload",
+                "wave": "x.=...x...",
+                "data": [
+                  "held until handshake"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

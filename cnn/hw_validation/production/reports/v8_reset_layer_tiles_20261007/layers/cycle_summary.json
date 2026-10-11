@@ -1,0 +1,50 @@
+{
+  "clock_hz": 100000000,
+  "endpoint_definitions": {
+    "preload": "first accepted SiLU table address 0 to accepted RUN",
+    "core": "accepted RUN to done pulse; equals sum of mutually exclusive categories",
+    "export": "accepted export start to final output handshake under the TB backpressure pattern"
+  },
+  "full_tiles": {
+    "cases": ["edge_full", "interior_full", "bottom_right_full"],
+    "preload_cycles": 2894,
+    "table_writes": 1024,
+    "cache_writes": 1864,
+    "core_cycles": 27393,
+    "categories": {
+      "mac": 8064,
+      "pre": 6400,
+      "silu": 4480,
+      "post": 6400,
+      "writeback": 640,
+      "storage_wait": 768,
+      "scheduler_idle": 641
+    },
+    "layers": {
+      "dw": {"core_cycles": 13312, "mac": 5376, "pre": 2560, "silu": 1792, "post": 2560, "writeback": 256, "storage_wait": 512, "scheduler_idle": 256},
+      "pw": {"core_cycles": 14081, "mac": 2688, "pre": 3840, "silu": 2688, "post": 3840, "writeback": 384, "storage_wait": 256, "scheduler_idle": 385}
+    },
+    "export_cycles": 449,
+    "export_transfers": 384
+  },
+  "pw_standalone": {
+    "preload_cycles": 1692,
+    "table_writes": 1024,
+    "cache_writes": 664,
+    "core_cycles": 14081,
+    "categories": {
+      "mac": 2688,
+      "pre": 3840,
+      "silu": 2688,
+      "post": 3840,
+      "writeback": 384,
+      "storage_wait": 256,
+      "scheduler_idle": 385
+    },
+    "layer_counters": {"dw_core_cycles": 0, "pw_core_cycles": 14081},
+    "export_cycles": 449,
+    "export_transfers": 384
+  },
+  "storage_wait_boundary": "one local array-read and operand-register preparation cycle per accepted MAC group; not external DDR or dynamic memory backpressure",
+  "comparison_boundary": "not comparable to v7 position-chain latency because the endpoints and scheduled work differ"
+}

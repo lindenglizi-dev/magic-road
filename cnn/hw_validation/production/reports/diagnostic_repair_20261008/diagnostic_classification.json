@@ -1,0 +1,109 @@
+{
+  "scope_counts": {
+    "original_full": {
+      "errors": 1539,
+      "strict_warnings": 7,
+      "checks": {
+        "compile": "passed",
+        "ast": "failed",
+        "readability": "failed",
+        "comment": "failed",
+        "naming": "failed",
+        "profile": "failed",
+        "testbench": "not_requested",
+        "toolchain": "not_requested"
+      }
+    },
+    "hardware": {
+      "errors": 1441,
+      "strict_warnings": 5,
+      "checks": {
+        "compile": "passed",
+        "ast": "failed",
+        "readability": "failed",
+        "comment": "failed",
+        "naming": "failed",
+        "profile": "failed",
+        "testbench": "not_requested",
+        "toolchain": "not_requested"
+      }
+    },
+    "model": {
+      "errors": 260,
+      "strict_warnings": 2,
+      "checks": {
+        "compile": "passed",
+        "ast": "failed",
+        "readability": "failed",
+        "comment": "failed",
+        "naming": "failed",
+        "profile": "failed",
+        "testbench": "not_requested",
+        "toolchain": "not_requested"
+      }
+    },
+    "candidate": {
+      "errors": 1443,
+      "strict_warnings": 5,
+      "checks": {
+        "compile": "passed",
+        "ast": "failed",
+        "readability": "failed",
+        "comment": "failed",
+        "naming": "failed",
+        "profile": "failed",
+        "testbench": "not_requested",
+        "toolchain": "not_requested"
+      }
+    }
+  },
+  "counts_additive": false,
+  "semantic_review": [
+    {
+      "rule": "VG153",
+      "scope": "Original six files",
+      "findings": 25,
+      "confirmed_real_drivers": 25,
+      "evidence": "24 named child outputs plus behavioral indexed memory write; no wire-to-reg edits",
+      "strict_state": "still failed, not waived"
+    },
+    {
+      "rule": "VG155",
+      "findings": 2,
+      "consumers": [
+        "state_current",
+        "reg_tx_index"
+      ],
+      "evidence": "ST_TX makes TX valid; ready-only consumption occurs in that state and reset is guarded",
+      "strict_state": "two identities retained; no functional duplicate-transfer observed"
+    },
+    {
+      "rule": "VG098",
+      "findings": 14,
+      "evidence": "Six shell plus eight dynamic non-idle states have input/reset-reachable transitions",
+      "limit": "Manual reachable-state reasoning, not unbounded liveness proof"
+    },
+    {
+      "rule": "VG138",
+      "findings": 80,
+      "hardware_unsized": 72,
+      "model_defaults": 7,
+      "comment_match": 1,
+      "strict_state": "72 hardware formatting requirements genuinely outstanding; comment match kept"
+    },
+    {
+      "rule": "VG097/VG132",
+      "evidence": "PH1P governed interface and real ERAM netlist exist; checker clock/primitive recognition still incomplete",
+      "action": "No port renaming or global checker relaxation; add narrow positive/negative adapter tests before claiming closure"
+    }
+  ],
+  "tool_failures": [
+    "Icarus unchanged shell compilation access exception 0xC0000005; partial VVP not accepted",
+    "ModelSim restricted launch WinError623; host launch and actual regressions passed",
+    "First TD readback assumed original logical reset alias; routed tool cloned only final stage",
+    "Second readback broad DSP wildcard included nonphysical aliases; exact PH1P physical REF_NAME fixed query only",
+    "Spec initial permission failure then nested workspace scope failure; root cwd retry rendered WaveDrom successfully"
+  ],
+  "delivery_pass": false,
+  "checker_modified": false
+}

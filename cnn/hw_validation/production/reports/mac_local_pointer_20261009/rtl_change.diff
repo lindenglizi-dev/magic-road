@@ -1,0 +1,11 @@
+--- frozen/road_mac_probe.v
++++ candidate/road_mac_probe.v
+@@ -186,7 +186,7 @@
+ 	wire [95:0]result_data_o;                   // 队头三路原子结果
+ 	wire fault_o;                               // 队头故障与结果同生存期
+ 	reg [96:0]reg_result_queue [0:3];           // 四个终态槽，低96位结果，高位故障
+-	reg [1:0]ptr_result_read;                   // 仅真实结果握手后前进
++	(* preserve *) reg [1:0]ptr_result_read;                   // 仅真实结果握手后前进
+ 	reg [1:0]ptr_result_write;                  // 末组流水到达后前进
+ 	reg [2:0]cnt_result_count;                  // 已进入终态队列的任务数
+ 	reg [2:0]cnt_reserved;                      // first到result_pop全程预留，含在途

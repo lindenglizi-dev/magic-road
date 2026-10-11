@@ -1,0 +1,122 @@
+RoadYOLO首板自主计算自检：P0/P1实测报告
+日期：2026-10-10；工程非Git，采用独立目录和SHA256清单回退。
+
+一、先看未通过/未完成项
+
+1. 尚未形成可直接上板的交付：实物板型、版本、晶振及I/O银行电压未确认；外部复位入口和四路TMDS外部接收契约未签核。
+2. 真实完整综合网表自主运行与初始化仿真已通过，但未进行TMDS解码或完整视频帧接收检查，仍不能宣称HDMI实物画面通过。
+3. 严格交付门未闭合。实际ModelSim/TD结果与技能八门分开，不把布局布线成功替代严格交付。
+4. 此候选不含摄像头/ISP/DDR、完整模型ROM/整网/后处理及真实部署权重；不是人车识别，不证明5 FPS、精度或Flash启动。
+5. 保留两项低优先级诊断边界：超时阈值检查500000，在进入FAIL拍计数显示500001；非法脚本末计数故障actual字段仍可能记录最后响应字而非计数。正常三套自检不受影响，本轮没有为这两项重写/重跑算术核。
+
+二、本轮到底完成了哪一级
+
+完成一个独立的自主自检顶层，并完成其真实综合、布局布线及双快慢角STA：
+  初始化脚本ROM→固定ready/valid播放器→原16位窄口壳→冻结DW/PW计算链
+  原结果读口→逐索引/数据比较→冻结快照CDC→官方PLL/VTC/HDMI状态显示。
+新增RTL只有rtl/road_board_selftest_top.v、road_board_selftest_player.v、road_selftest_display.v。
+原mac_ce_fanout_local_20261010的8份计算RTL复制到core/，与来源逐文件一致；113个原依赖/报告/工具冻结文件复核无变化。
+没有覆盖生产工程，没有训练，没有生成任何测试/部署位流，没有连接板卡或写Flash。
+
+三、结构与协议
+
+外部6位逻辑I/O：50MHz时钟、低有效复位、四路TMDS正端。TD实际占10个PAD，另4个是差分负端。
+使用官方PLL的100/75/375MHz输出，720p有效1280×720，总时序1650×750，约60.606Hz；仍待显示器实测。
+复位为外部rstn与PLL lock共同产生即时取消，再按计算/像素域两级同步释放；计算壳原同步释放仍保留。
+每套局部复位断言8拍、释放后等8拍，重新装满1024项SiLU表，再装1948条32位载荷。
+完整消费31字状态，检查table_loaded、table_fault/runner_fault/shell_fault、done且非busy及1687核心周期。
+每套比较384对索引/结果及C000；3套1152个结果全部一致才PASS。ERROR/超时锁存FAIL并保留首错。
+动态操作数经原装载接口进入原缓存/寄存器，不能综合成常量结果；没有checksum代替逐项对拍。
+源端冻结256位载荷到VS边界采样后确认，中途不覆盖；只显示固定TEST、状态色、二进制诊断带和显示心跳，不画检测框。
+
+脚本采用19×32768词同步ROM，实际28774条有效指令。逻辑包77,824字节，物理占32块ERAM。
+这是固定自检脚本，不是模型参数ROM，也不宣称最省存储；通过后退出自检主线，不继续开发脚本压缩/通用加载器。
+
+四、功能实测
+
+最终收据：simulation_attempt3/receipt.json；显示详情display.log。
+  normal：三套1152字节一致，3072个表项和5844条载荷真正被原壳接受。
+  stalls：独立RX/TX气泡及长反压，数据保持，三套一致。
+  wrong：期望值翻转必须FAIL；missing：缺表必须FAIL；timeout：禁止输入必须FAIL。
+  reset：装表/载荷/运行/导出4处立即取消后恢复通过。
+  held_reset：RX-held及TX-held两处取消后恢复通过，未泄漏旧结果。
+  display：7次帧边界、pending期间终态、复位恢复及292670拍RGB/DE/VS检查通过。
+显示新增独立坐标参考，覆盖TEST点阵、主体PASS/FAIL色、诊断带边界、心跳区域及消隐黑色；仿真不代替亚稳态或显示器兼容性检查。
+上述RTL仿真覆盖原核和播放器/显示；不包含加密HDMI完整顶层，另由实际综合网表检查补证。
+mapped_simulation/receipt.json：真实TD gate_netlist.v加匹配厂商原语模型，自行运行PLL/ROM/核，不force内部时钟、操作数或状态；case=3、compared=1152、core_last=1687通过。
+在1,258,230ns仿真时间取得PASS，墙钟约8分42秒，未超过600秒上限。未加SDF，未解码TMDS；不能把它当作完整HDMI帧或板测。
+网表优化后的诊断别名总线部分未保留常量位可能显示Z；本测试只对仍被实际消费的status/cases/compared/core字段做精确断言，不据整个别名十六进制值宣称全部诊断位无X/Z。
+
+五、周期：不把串行测试装载当作CNN吞吐
+
+                    预装载    启动到完整完成状态响应   导出/比较     端点总周期
+  无停顿三套         105901            5193               9228           120322
+  反压三套           133207            5273              12798           151278
+三分类互斥，逐项相加等于端点总周期。无停顿占比分别约88.01%、4.32%、7.67%。
+每个小块原核计时仍1687周期，三块核心1687×3=5061周期；轮询/命令窗口额外132周期已包含在5193中。
+100MHz下无停顿三套测试约1.20322ms；这不是完整层或整网时间。保持原核II、算术、反压和故障行为，无加速收益宣称。
+
+六、真实新顶层物理结果
+
+工具TD V6.2.168116；器件PH1P35MDG324，speed 3；数据库physical_attempt2/pr.db。
+包含：8份冻结核、播放器ROM/比较器/CDC/画面、官方PLL/VTC/HDMI发送链。
+  Slice 9696/21216=45.70%；DSP 30/40；ERAM20K 38/108；2040个分布式RAM LUT；10 PAD；1 PLL。
+  RAM可分摊：脚本ROM32、原SiLU1、官方HDMI5。DSP：MAC24，现有动态前/后重定标6。
+Slice为整顶层打包后资源，不能按层级LUT/寄存器表可靠分摊，不伪造“纯核Slice”。
+对比旧38位诊断壳8038 Slice/30 DSP/1 ERAM：新实际顶层+1658 Slice、DSP不变、+37 ERAM。两者顶层/引脚不同，仅供成本参照，不是单变量时序收益。
+
+实际布线双角点全量报告：all_endpoints.timing，STA覆盖99.98%。
+  setup +0.110ns；hold +0.020ns；recovery +1.750ns；removal +0.043ns。
+  没有已约束路径的负裕量；violations.timing无违例路径，不使用该空过滤报告的0ns作为最差裕量。
+  setup最差：前重定标round的result_tag_o[1]→reg_quotient_increment[17].cea；4级逻辑，扇出826，数据延迟9.569ns中布线8.629ns。
+  hold最差：官方HDMI视频数据寄存器→内部视频FIFO ERAM数据输入。
+  recovery最差：像素同步释放→HDMI串行移位寄存器；removal最差：原核release_done→MAC组计数器。
+这说明当前100MHz计算链在此布局上可工作，裕量仍偏薄；不代表更大整网或新ROM接入后也通过。
+
+DSP/ERAM专门报告的最差裕量：
+  DSP输入setup/hold/recovery/removal = +0.435/+0.034/+2.789/+0.172ns。
+  DSP输出setup/hold = +3.648/+0.296ns。
+  ERAM输入setup/hold/recovery/removal = +3.916/+0.020/+2.605/+0.632ns。
+  ERAM输出setup/hold = +5.380/+0.677ns。
+精确值以evidence_attempt2/timing_checks.json和对应原报告为准。
+
+跨域覆盖不是只看Clock Summary的CC标记：全量实际端点已核到
+  100→75MHz：255条setup/255条hold，最差+1.947/+0.064ns；
+  75→100MHz：1条setup/1条hold，最差+2.395/+0.181ns；
+  75→375MHz：35条setup/35条hold，+0.523/+0.088ns；22条recovery/removal，+1.750/+0.093ns。
+没有新增false path、MCP、异步组或虚构I/O delay。三条generated-clock master连通诊断保留；实际跨域端点已被分析，不能仅凭这条工具提示宣称跨域全部漏检或全部无需核对。
+外部i_rstn无输入延迟，四路TMDS无输出延迟；保留外部未签核状态，不用99.98%覆盖率代替真实板级契约。
+
+七、映射、初始化及厂商诊断
+
+gate_netlist.v实有30个DSP和38个ERAM原语，MAC、前后重定标、SiLU及缓存路径没有被裁成固定PASS。
+脚本ERAM含非零INIT参数；实际完整映射顶层已从其自主装载并逐项比较通过，仍不是配置加载后的实物初始化证据。
+网表仿真收尾Errors=0、Warnings=114100。按实际日志分类：vopt-2685端口数量6423，vopt-2718端口缺失106029，vopt-2958隐式未驱动548（546为导出open_n占位，另2在厂商PLL模型），PLL端口宽度vopt-2241为2，vsim-3016连接类型1097，vsim-2685为1。
+这些是厂商原语模型与TD导出网表的接口告警，不是114100个新的源码错误；仍未逐端口关闭，保留原日志及分类，不称零告警、不修改模型屏蔽。
+本次SYN-5025对应唯一SYN-5013：官方HDMI未驱动按键去抖reset，输出本来未用于发送主链；保留官方文件，不是激活、权重、偏置或RAM有效端口被置零。
+路由DRC报告无多驱动、无异常时序路径；保留32个MSlice无使用寄存器属性等冗余属性诊断，不称零告警。
+实际ROM/PLL副本、SDC/ADC、构建Tcl、工程、工具已补充到evidence_attempt4/physical_input_closure.json；这是实现后封存，RTL与实现前manifest逐一复核，ROM副本与参考一致。最终候选/工具模型/收据/数据库哈希见同目录candidate_final_freeze.json。
+
+八、严格八门的真实状态
+
+最终gate_attempt2：
+对象       compile  ast     readability comment naming profile testbench/toolchain
+新3份RTL   passed   failed  failed      failed  failed passed  not_requested
+冻结8核    passed   failed  failed      failed  failed failed  not_requested
+3份TB      passed   passed  passed      failed  passed passed  not_requested
+新RTL1229错误/7严格警告；冻结核5499/37；TB54/0。对象范围/默认规则不同于历史PH1P适配报告，不能把差值当成新增RTL缺陷；8核哈希未变。
+其中ast为formatter模板检查失败，parse_errors为0；风格、注释、命名大量未闭合。握手/计数/驱动风险经本轮人工审查及实际厂商回归分别留证，不由总条数推断功能正确或错误。
+技能testbench/toolchain未在该严格入口登记，实际ModelSim/TD记录另存，不把not_requested改成passed。
+三个真实RTL已有注册生成的规格及WaveDrom；无端口TB用tests/测试规格与覆盖范围.txt如实记录，不伪造端口以凑规格。
+可选专属Python/Tcl技能缺失未宣称通过；本次使用项目既有构建方式和真实工具执行。
+
+九、下一步唯一主交付与需要配合
+
+P1软件侧自主功能、映射初始化及实际新顶层资源/时序已有证据。板型/引脚确认与外部契约、严格发布门仍未闭合；当前结论是“保留独立诊断候选，尚不生成/下载”。
+完成板级确认并取得单独测试映像生成及JTAG授权后才进入P2；严格门未闭合时也必须明确以诊断测试范围审批，不能宣称生产发布，不写Flash。
+需要板卡型号/版本、芯片/晶振照片或对应原理图，核实C4/R10及四对TMDS的实际连接/银行电压；这些不是训练标签，也不是程序已经读取板子。
+工程记录的差分对：G16/H16、F17/E18、H14/H13、C17/D18；这次实际TD已按该分配实现，实物对应关系仍未核实。
+板测通过后立刻转P3完整down2连续576个tile与真实DDR微闭环，再整网；不扩大CRC、自检显示或通用控制协议。
+板未到手时可以准备完整层参考/固定调度，但不能据此把P2标为完成，也不能跳过必要存储语义。
+
+总结：已获得包含真实DW/PW及官方HDMI的新自主顶层，功能回归和实际布线时序有证据；目前仍是独立诊断候选，不是已上板的CNN识别系统。

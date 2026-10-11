@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-02",
+  "overall": "PARTIAL_IMPLEMENTATION_NOT_ACCEPTED",
+  "project": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "git": "not_a_repository_no_commit_or_push",
+  "production_top_replaced": false,
+  "stage_A": {
+    "status": "isolated_template_routed_not_all_gates_passed",
+    "receipt": "../template/verification_receipt.json",
+    "slices": 12358,
+    "eram": 40,
+    "dsp": 8,
+    "setup_wns_ns": 1.408,
+    "hold_wns_ns": 0.020,
+    "sta_coverage_percent": 95.64,
+    "strict_quality_gate": "FAILED_1091_errors",
+    "ddr_address_unit_and_write_commit": "UNVERIFIED"
+  },
+  "stage_B": {
+    "status": "float_model_and_diagnostic_training_only",
+    "architecture_hash": "106ccd0f223b1cefaff8e36408d3968aee3e4a1703d17e27786db58eb8124595",
+    "conv_layers": 67,
+    "conv_weights": 113100,
+    "folded_bias_values": 2501,
+    "mac_per_frame": 214465536,
+    "silu_layers": 61,
+    "prediction_positions": 12096,
+    "actual_device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "torch": "2.7.1+cu126",
+    "coco_train_images": 96,
+    "coco_validation_images": 32,
+    "dataset_sha256": "13202db98e52033e876021d0a19b675de3e32bff663b9b130b7353766d8ed3df",
+    "dataset_content_sha256": "b1086ce29a9fb5188d383174009afebfa446df30dd3628b87476219384a475da",
+    "diagnostic_epochs": 3,
+    "optimizer_steps": 6,
+    "target_effective_batch": 64,
+    "tail_effective_batch": 32,
+    "validation_loss_by_epoch": [27.19089365005493, 24.70372200012207, 20.807363510131836],
+    "validation_thresholds": [null, null],
+    "p95_r85_pass": false,
+    "validation_report": "coco_diagnostic_v2_validation.json",
+    "checkpoint": "../runs/coco_diagnostic_v2/last.pt",
+    "diagnostic_limitations": [
+      "128-image subset is not full COCO pretraining or road fine-tuning",
+      "runner has no Mosaic or five-epoch warmup/cosine",
+      "no adapted official YOLOX-S teacher cache; distillation not run",
+      "QAT CLI fails closed; experimental fake quant is not deployment-equivalent",
+      "validation uses FP32 CNN plus Q7.8 decoder, not INT8 CNN",
+      "AP score floor 0.05; ignore class/crowd metadata absent",
+      "no frozen independent test, subgroup report or cluster confidence interval"
+    ]
+  },
+  "stage_C": {
+    "status": "arithmetic_reference_only_not_full_integer_network",
+    "implemented": ["area_5_to_2_RGB", "RNE_saturation", "grouped_INT32_convolution", "SiLU_sigmoid_exp_tables", "decode_Top128_NMS32_per_class"],
+    "missing": ["per_layer_scale_contract", "complete_hardware_equivalent_QAT", "integer_network_graph", "trained_model_ROM_package", "all_layer_gold_vectors"]
+  },
+  "stages_D_E_F": "NOT_IMPLEMENTED_OR_ACCEPTED",
+  "verification": {
+    "unit_test_command": "python -m unittest cnn.test_integer cnn.test_metrics cnn.test_dataset cnn.test_fetch_coco",
+    "unit_tests_passed": 14,
+    "model_check_command": "python -m cnn.test_model",
+    "model_shape_backward_and_CUDA_accumulation": "passed",
+    "model_CUDA_peak_allocated_mib": 366.78,
+    "model_CUDA_peak_reserved_mib": 432.0,
+    "new_CNN_RTL_eight_gates": "NOT_RUN_no_CNN_RTL",
+    "board_thirty_minute_test": "NOT_RUN",
+    "five_FPS": "UNVERIFIED"
+  },
+  "formal_road_data_blocker": {
+    "audited_train_scenes": 2,
+    "audited_val_scenes": 2,
+    "unseen_newtest_scenes": 0,
+    "audited_frames_with_incomplete_annotation": 14,
+    "required_scenes": [6, 3, 3],
+    "required_decorrelated_test_groups_per_class": 300,
+    "needed": "Complete person/vehicle frame labels including two-wheelers, camera/source-family-separated validation and untouched newtest, and physical board testing access. Teacher predictions cannot replace human truth."
+  },
+  "not_claimed": ["95_percent_accuracy", "P95_R85", "INT8_equivalence", "complete_FPGA_CNN", "five_FPS", "whole_chip_resource_fit", "full_timing_closure"]
+}

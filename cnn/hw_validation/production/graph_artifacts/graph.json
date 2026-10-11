@@ -1,0 +1,4025 @@
+{
+  "architecture_sha256": "106ccd0f223b1cefaff8e36408d3968aee3e4a1703d17e27786db58eb8124595",
+  "input": {
+    "dtype": "uint8",
+    "layout": "NHWC",
+    "shape_hwc": [
+      288,
+      512,
+      3
+    ]
+  },
+  "layout": {
+    "channel_padding": false,
+    "multi_byte_order": "little",
+    "name": "tile4x4_hwc",
+    "pixel_order": "row_major_hwc",
+    "tile_bytes": "16*C*bytes_per_element",
+    "tile_order": "row_major"
+  },
+  "memory": {
+    "address_unit": "byte_unverified_do_not_enable_dma",
+    "allocation_alignment": 4096,
+    "arena_end": 67108864,
+    "feature_begin": 55574528,
+    "feature_end": 62779392,
+    "input_slots": [
+      {
+        "allocated_bytes": 524288,
+        "base": 54525952,
+        "dtype": "uint8",
+        "layout": "NHWC",
+        "valid_bytes": 442368
+      },
+      {
+        "allocated_bytes": 524288,
+        "base": 55050240,
+        "dtype": "uint8",
+        "layout": "NHWC",
+        "valid_bytes": 442368
+      }
+    ],
+    "liveness_reuse": false
+  },
+  "nodes": [
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 0,
+      "input_shape_hwc": [
+        288,
+        512,
+        3
+      ],
+      "inputs": [
+        "input"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 15925248,
+      "name": "stem.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "stem.conv",
+      "output_shape_hwc": [
+        144,
+        256,
+        16
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 589824,
+        "base": 55574528,
+        "bytes_per_element": 1,
+        "channels_stored": 16,
+        "end": 56164352,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 589824
+      },
+      "stride": [
+        2,
+        2
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 16,
+      "index": 1,
+      "input_shape_hwc": [
+        144,
+        256,
+        16
+      ],
+      "inputs": [
+        "stem.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 1327104,
+      "name": "down2.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down2.dw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        16
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 147456,
+        "base": 56164352,
+        "bytes_per_element": 1,
+        "channels_stored": 16,
+        "end": 56311808,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 147456
+      },
+      "stride": [
+        2,
+        2
+      ],
+      "weights": 144
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 2,
+      "input_shape_hwc": [
+        72,
+        128,
+        16
+      ],
+      "inputs": [
+        "down2.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 3538944,
+      "name": "down2.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down2.pw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 221184,
+        "base": 56311808,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 56532992,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 221184
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 384
+    },
+    {
+      "allocation": null,
+      "axis": "C",
+      "index": 3,
+      "inputs": [
+        "down2.pw.conv"
+      ],
+      "name": "split.00",
+      "op": "split_view",
+      "outputs": [
+        {
+          "channel_offset": 0,
+          "channels": 12,
+          "output": "split.00.0"
+        },
+        {
+          "channel_offset": 12,
+          "channels": 12,
+          "output": "split.00.1"
+        }
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 12,
+      "index": 4,
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "inputs": [
+        "split.00.1"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 995328,
+      "name": "csp2.blocks.0.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp2.blocks.0.dw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 56532992,
+        "bytes_per_element": 1,
+        "channels_stored": 12,
+        "end": 56643584,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 108
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 5,
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "inputs": [
+        "csp2.blocks.0.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "csp2.blocks.0.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp2.blocks.0.pw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 56643584,
+        "bytes_per_element": 1,
+        "channels_stored": 12,
+        "end": 56754176,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 144,
+      "write_transform": {
+        "bypass": "split.00.1",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 6,
+      "inputs": [
+        "split.00.1",
+        "csp2.blocks.0.pw.conv"
+      ],
+      "name": "residual.00",
+      "op": "residual_view",
+      "output": "residual.00",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "storage_alias": "csp2.blocks.0.pw.conv"
+    },
+    {
+      "dtype": "int8",
+      "groups": 12,
+      "index": 7,
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "inputs": [
+        "residual.00"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 995328,
+      "name": "csp2.blocks.1.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp2.blocks.1.dw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 56754176,
+        "bytes_per_element": 1,
+        "channels_stored": 12,
+        "end": 56864768,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 108
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 8,
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "inputs": [
+        "csp2.blocks.1.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "csp2.blocks.1.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp2.blocks.1.pw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 56864768,
+        "bytes_per_element": 1,
+        "channels_stored": 12,
+        "end": 56975360,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 144,
+      "write_transform": {
+        "bypass": "residual.00",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 9,
+      "inputs": [
+        "residual.00",
+        "csp2.blocks.1.pw.conv"
+      ],
+      "name": "residual.01",
+      "op": "residual_view",
+      "output": "residual.01",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "storage_alias": "csp2.blocks.1.pw.conv"
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 10,
+      "inputs": [
+        "split.00.0",
+        "residual.01"
+      ],
+      "name": "concat.00",
+      "op": "concat_view",
+      "output": "concat.00",
+      "shape_hwc": [
+        72,
+        128,
+        24
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 11,
+      "input_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "inputs": [
+        "concat.00"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 5308416,
+      "name": "csp2.out.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp2.out.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 221184,
+        "base": 56975360,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 57196544,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 221184
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 576
+    },
+    {
+      "dtype": "int8",
+      "groups": 24,
+      "index": 12,
+      "input_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "inputs": [
+        "csp2.out.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 497664,
+      "name": "down3.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down3.dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 57196544,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 57253888,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        2,
+        2
+      ],
+      "weights": 216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 13,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "down3.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 2654208,
+      "name": "down3.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down3.pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 57253888,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 57364480,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 1152
+    },
+    {
+      "allocation": null,
+      "axis": "C",
+      "index": 14,
+      "inputs": [
+        "down3.pw.conv"
+      ],
+      "name": "split.01",
+      "op": "split_view",
+      "outputs": [
+        {
+          "channel_offset": 0,
+          "channels": 24,
+          "output": "split.01.0"
+        },
+        {
+          "channel_offset": 24,
+          "channels": 24,
+          "output": "split.01.1"
+        }
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 24,
+      "index": 15,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "split.01.1"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 497664,
+      "name": "csp3.blocks.0.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp3.blocks.0.dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 57364480,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 57421824,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 16,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "csp3.blocks.0.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "csp3.blocks.0.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp3.blocks.0.pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 57421824,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 57479168,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 576,
+      "write_transform": {
+        "bypass": "split.01.1",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 17,
+      "inputs": [
+        "split.01.1",
+        "csp3.blocks.0.pw.conv"
+      ],
+      "name": "residual.02",
+      "op": "residual_view",
+      "output": "residual.02",
+      "shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "storage_alias": "csp3.blocks.0.pw.conv"
+    },
+    {
+      "dtype": "int8",
+      "groups": 24,
+      "index": 18,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "residual.02"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 497664,
+      "name": "csp3.blocks.1.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp3.blocks.1.dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 57479168,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 57536512,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 19,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "csp3.blocks.1.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "csp3.blocks.1.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp3.blocks.1.pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 57536512,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 57593856,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 576,
+      "write_transform": {
+        "bypass": "residual.02",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 20,
+      "inputs": [
+        "residual.02",
+        "csp3.blocks.1.pw.conv"
+      ],
+      "name": "residual.03",
+      "op": "residual_view",
+      "output": "residual.03",
+      "shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "storage_alias": "csp3.blocks.1.pw.conv"
+    },
+    {
+      "dtype": "int8",
+      "groups": 24,
+      "index": 21,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "residual.03"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 497664,
+      "name": "csp3.blocks.2.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp3.blocks.2.dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 57593856,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 57651200,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 22,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "csp3.blocks.2.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "csp3.blocks.2.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp3.blocks.2.pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 57651200,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 57708544,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 576,
+      "write_transform": {
+        "bypass": "residual.03",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 23,
+      "inputs": [
+        "residual.03",
+        "csp3.blocks.2.pw.conv"
+      ],
+      "name": "residual.04",
+      "op": "residual_view",
+      "output": "residual.04",
+      "shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "storage_alias": "csp3.blocks.2.pw.conv"
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 24,
+      "inputs": [
+        "split.01.0",
+        "residual.04"
+      ],
+      "name": "concat.01",
+      "op": "concat_view",
+      "output": "concat.01",
+      "shape_hwc": [
+        36,
+        64,
+        48
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 25,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "concat.01"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 5308416,
+      "name": "csp3.out.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp3.out.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 57708544,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 57819136,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 26,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "csp3.out.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 248832,
+      "name": "down4.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down4.dw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 57819136,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 57851904,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        2,
+        2
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 27,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "down4.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 2654208,
+      "name": "down4.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down4.pw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 61440,
+        "base": 57851904,
+        "bytes_per_element": 1,
+        "channels_stored": 96,
+        "end": 57913344,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 61440
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 4608
+    },
+    {
+      "allocation": null,
+      "axis": "C",
+      "index": 28,
+      "inputs": [
+        "down4.pw.conv"
+      ],
+      "name": "split.02",
+      "op": "split_view",
+      "outputs": [
+        {
+          "channel_offset": 0,
+          "channels": 48,
+          "output": "split.02.0"
+        },
+        {
+          "channel_offset": 48,
+          "channels": 48,
+          "output": "split.02.1"
+        }
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 29,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "split.02.1"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 248832,
+      "name": "csp4.blocks.0.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp4.blocks.0.dw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 57913344,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 57946112,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 30,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "csp4.blocks.0.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "csp4.blocks.0.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp4.blocks.0.pw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 57946112,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 57978880,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304,
+      "write_transform": {
+        "bypass": "split.02.1",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 31,
+      "inputs": [
+        "split.02.1",
+        "csp4.blocks.0.pw.conv"
+      ],
+      "name": "residual.05",
+      "op": "residual_view",
+      "output": "residual.05",
+      "shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "storage_alias": "csp4.blocks.0.pw.conv"
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 32,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "residual.05"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 248832,
+      "name": "csp4.blocks.1.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp4.blocks.1.dw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 57978880,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 58011648,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 33,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "csp4.blocks.1.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "csp4.blocks.1.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp4.blocks.1.pw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 58011648,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 58044416,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304,
+      "write_transform": {
+        "bypass": "residual.05",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 34,
+      "inputs": [
+        "residual.05",
+        "csp4.blocks.1.pw.conv"
+      ],
+      "name": "residual.06",
+      "op": "residual_view",
+      "output": "residual.06",
+      "shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "storage_alias": "csp4.blocks.1.pw.conv"
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 35,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "residual.06"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 248832,
+      "name": "csp4.blocks.2.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp4.blocks.2.dw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 58044416,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 58077184,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 36,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "csp4.blocks.2.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "csp4.blocks.2.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp4.blocks.2.pw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 58077184,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 58109952,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304,
+      "write_transform": {
+        "bypass": "residual.06",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 37,
+      "inputs": [
+        "residual.06",
+        "csp4.blocks.2.pw.conv"
+      ],
+      "name": "residual.07",
+      "op": "residual_view",
+      "output": "residual.07",
+      "shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "storage_alias": "csp4.blocks.2.pw.conv"
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 38,
+      "inputs": [
+        "split.02.0",
+        "residual.07"
+      ],
+      "name": "concat.02",
+      "op": "concat_view",
+      "output": "concat.02",
+      "shape_hwc": [
+        18,
+        32,
+        96
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 39,
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "inputs": [
+        "concat.02"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 5308416,
+      "name": "csp4.out.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "csp4.out.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 61440,
+        "base": 58109952,
+        "bytes_per_element": 1,
+        "channels_stored": 96,
+        "end": 58171392,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 61440
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 9216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 40,
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "inputs": [
+        "csp4.out.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "sppf.squeeze.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "sppf.squeeze.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 16384,
+        "base": 58171392,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 58187776,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 15360
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int8",
+      "index": 41,
+      "input_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "inputs": [
+        "sppf.squeeze.conv"
+      ],
+      "kernel": [
+        5,
+        5
+      ],
+      "name": "pool.00",
+      "op": "maxpool",
+      "operator_padding_value": -128,
+      "output": "pool.00",
+      "output_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "padding": [
+        2,
+        2
+      ],
+      "storage": {
+        "allocated_bytes": 16384,
+        "base": 58187776,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 58204160,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 15360
+      },
+      "stride": [
+        1,
+        1
+      ]
+    },
+    {
+      "dtype": "int8",
+      "index": 42,
+      "input_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "inputs": [
+        "pool.00"
+      ],
+      "kernel": [
+        5,
+        5
+      ],
+      "name": "pool.01",
+      "op": "maxpool",
+      "operator_padding_value": -128,
+      "output": "pool.01",
+      "output_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "padding": [
+        2,
+        2
+      ],
+      "storage": {
+        "allocated_bytes": 16384,
+        "base": 58204160,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 58220544,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 15360
+      },
+      "stride": [
+        1,
+        1
+      ]
+    },
+    {
+      "dtype": "int8",
+      "index": 43,
+      "input_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "inputs": [
+        "pool.01"
+      ],
+      "kernel": [
+        5,
+        5
+      ],
+      "name": "pool.02",
+      "op": "maxpool",
+      "operator_padding_value": -128,
+      "output": "pool.02",
+      "output_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "padding": [
+        2,
+        2
+      ],
+      "storage": {
+        "allocated_bytes": 16384,
+        "base": 58220544,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 58236928,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 15360
+      },
+      "stride": [
+        1,
+        1
+      ]
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 44,
+      "inputs": [
+        "sppf.squeeze.conv",
+        "pool.00",
+        "pool.01",
+        "pool.02"
+      ],
+      "name": "concat.03",
+      "op": "concat_view",
+      "output": "concat.03",
+      "shape_hwc": [
+        18,
+        32,
+        96
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 45,
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "inputs": [
+        "concat.03"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 5308416,
+      "name": "sppf.out.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "sppf.out.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 61440,
+        "base": 58236928,
+        "bytes_per_element": 1,
+        "channels_stored": 96,
+        "end": 58298368,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 61440
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 9216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 46,
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "inputs": [
+        "sppf.out.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 2654208,
+      "name": "lateral4.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "lateral4.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 58298368,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 58331136,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 4608
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 47,
+      "inputs": [
+        "lateral4.conv"
+      ],
+      "name": "upsample.00",
+      "op": "nearest_view",
+      "output": "upsample.00",
+      "scale": [
+        2,
+        2
+      ],
+      "shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "source_index": {
+        "x": "x//2",
+        "y": "y//2"
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 48,
+      "inputs": [
+        "upsample.00",
+        "csp3.out.conv"
+      ],
+      "name": "concat.04",
+      "op": "concat_view",
+      "output": "concat.04",
+      "shape_hwc": [
+        36,
+        64,
+        96
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 49,
+      "input_shape_hwc": [
+        36,
+        64,
+        96
+      ],
+      "inputs": [
+        "concat.04"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 10616832,
+      "name": "fuse3_td.reduce.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse3_td.reduce.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 58331136,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 58441728,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 4608
+    },
+    {
+      "allocation": null,
+      "axis": "C",
+      "index": 50,
+      "inputs": [
+        "fuse3_td.reduce.conv"
+      ],
+      "name": "split.03",
+      "op": "split_view",
+      "outputs": [
+        {
+          "channel_offset": 0,
+          "channels": 24,
+          "output": "split.03.0"
+        },
+        {
+          "channel_offset": 24,
+          "channels": 24,
+          "output": "split.03.1"
+        }
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 24,
+      "index": 51,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "split.03.1"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 497664,
+      "name": "fuse3_td.block.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse3_td.block.dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 58441728,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 58499072,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 52,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "fuse3_td.block.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "fuse3_td.block.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse3_td.block.pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 58499072,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 58556416,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 576,
+      "write_transform": {
+        "bypass": "split.03.1",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 53,
+      "inputs": [
+        "split.03.1",
+        "fuse3_td.block.pw.conv"
+      ],
+      "name": "residual.08",
+      "op": "residual_view",
+      "output": "residual.08",
+      "shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "storage_alias": "fuse3_td.block.pw.conv"
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 54,
+      "inputs": [
+        "split.03.0",
+        "residual.08"
+      ],
+      "name": "concat.05",
+      "op": "concat_view",
+      "output": "concat.05",
+      "shape_hwc": [
+        36,
+        64,
+        48
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 55,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "concat.05"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 2654208,
+      "name": "lateral3.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "lateral3.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 58556416,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 58613760,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 1152
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 56,
+      "inputs": [
+        "lateral3.conv"
+      ],
+      "name": "upsample.01",
+      "op": "nearest_view",
+      "output": "upsample.01",
+      "scale": [
+        2,
+        2
+      ],
+      "shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "source_index": {
+        "x": "x//2",
+        "y": "y//2"
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 57,
+      "inputs": [
+        "upsample.01",
+        "csp2.out.conv"
+      ],
+      "name": "concat.06",
+      "op": "concat_view",
+      "output": "concat.06",
+      "shape_hwc": [
+        72,
+        128,
+        48
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 58,
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "inputs": [
+        "concat.06"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 10616832,
+      "name": "fuse2_td.reduce.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse2_td.reduce.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 221184,
+        "base": 58613760,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 58834944,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 221184
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 1152
+    },
+    {
+      "allocation": null,
+      "axis": "C",
+      "index": 59,
+      "inputs": [
+        "fuse2_td.reduce.conv"
+      ],
+      "name": "split.04",
+      "op": "split_view",
+      "outputs": [
+        {
+          "channel_offset": 0,
+          "channels": 12,
+          "output": "split.04.0"
+        },
+        {
+          "channel_offset": 12,
+          "channels": 12,
+          "output": "split.04.1"
+        }
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 12,
+      "index": 60,
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "inputs": [
+        "split.04.1"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 995328,
+      "name": "fuse2_td.block.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse2_td.block.dw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 58834944,
+        "bytes_per_element": 1,
+        "channels_stored": 12,
+        "end": 58945536,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 108
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 61,
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "inputs": [
+        "fuse2_td.block.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "fuse2_td.block.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse2_td.block.pw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 58945536,
+        "bytes_per_element": 1,
+        "channels_stored": 12,
+        "end": 59056128,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 144,
+      "write_transform": {
+        "bypass": "split.04.1",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 62,
+      "inputs": [
+        "split.04.1",
+        "fuse2_td.block.pw.conv"
+      ],
+      "name": "residual.09",
+      "op": "residual_view",
+      "output": "residual.09",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "storage_alias": "fuse2_td.block.pw.conv"
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 63,
+      "inputs": [
+        "split.04.0",
+        "residual.09"
+      ],
+      "name": "concat.07",
+      "op": "concat_view",
+      "output": "concat.07",
+      "shape_hwc": [
+        72,
+        128,
+        24
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 24,
+      "index": 64,
+      "input_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "inputs": [
+        "concat.07"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 497664,
+      "name": "down3_bu.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down3_bu.dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 59056128,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 59113472,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        2,
+        2
+      ],
+      "weights": 216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 65,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "down3_bu.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 2654208,
+      "name": "down3_bu.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down3_bu.pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 59113472,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 59224064,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 1152
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 66,
+      "inputs": [
+        "down3_bu.pw.conv",
+        "concat.05"
+      ],
+      "name": "concat.08",
+      "op": "concat_view",
+      "output": "concat.08",
+      "shape_hwc": [
+        36,
+        64,
+        96
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 67,
+      "input_shape_hwc": [
+        36,
+        64,
+        96
+      ],
+      "inputs": [
+        "concat.08"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 10616832,
+      "name": "fuse3_bu.reduce.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse3_bu.reduce.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 59224064,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 59334656,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 4608
+    },
+    {
+      "allocation": null,
+      "axis": "C",
+      "index": 68,
+      "inputs": [
+        "fuse3_bu.reduce.conv"
+      ],
+      "name": "split.05",
+      "op": "split_view",
+      "outputs": [
+        {
+          "channel_offset": 0,
+          "channels": 24,
+          "output": "split.05.0"
+        },
+        {
+          "channel_offset": 24,
+          "channels": 24,
+          "output": "split.05.1"
+        }
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 24,
+      "index": 69,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "split.05.1"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 497664,
+      "name": "fuse3_bu.block.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse3_bu.block.dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 59334656,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 59392000,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 216
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 70,
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "inputs": [
+        "fuse3_bu.block.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "fuse3_bu.block.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse3_bu.block.pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 57344,
+        "base": 59392000,
+        "bytes_per_element": 1,
+        "channels_stored": 24,
+        "end": 59449344,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 55296
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 576,
+      "write_transform": {
+        "bypass": "split.05.1",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 71,
+      "inputs": [
+        "split.05.1",
+        "fuse3_bu.block.pw.conv"
+      ],
+      "name": "residual.10",
+      "op": "residual_view",
+      "output": "residual.10",
+      "shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "storage_alias": "fuse3_bu.block.pw.conv"
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 72,
+      "inputs": [
+        "split.05.0",
+        "residual.10"
+      ],
+      "name": "concat.09",
+      "op": "concat_view",
+      "output": "concat.09",
+      "shape_hwc": [
+        36,
+        64,
+        48
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 73,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "concat.09"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 248832,
+      "name": "down4_bu.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down4_bu.dw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 59449344,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 59482112,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        2,
+        2
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 74,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "down4_bu.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 2654208,
+      "name": "down4_bu.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "down4_bu.pw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 61440,
+        "base": 59482112,
+        "bytes_per_element": 1,
+        "channels_stored": 96,
+        "end": 59543552,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 61440
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 4608
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 75,
+      "inputs": [
+        "down4_bu.pw.conv",
+        "sppf.out.conv"
+      ],
+      "name": "concat.10",
+      "op": "concat_view",
+      "output": "concat.10",
+      "shape_hwc": [
+        18,
+        32,
+        192
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 76,
+      "input_shape_hwc": [
+        18,
+        32,
+        192
+      ],
+      "inputs": [
+        "concat.10"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 10616832,
+      "name": "fuse4_bu.reduce.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse4_bu.reduce.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 61440,
+        "base": 59543552,
+        "bytes_per_element": 1,
+        "channels_stored": 96,
+        "end": 59604992,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 61440
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 18432
+    },
+    {
+      "allocation": null,
+      "axis": "C",
+      "index": 77,
+      "inputs": [
+        "fuse4_bu.reduce.conv"
+      ],
+      "name": "split.06",
+      "op": "split_view",
+      "outputs": [
+        {
+          "channel_offset": 0,
+          "channels": 48,
+          "output": "split.06.0"
+        },
+        {
+          "channel_offset": 48,
+          "channels": 48,
+          "output": "split.06.1"
+        }
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 78,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "split.06.1"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 248832,
+      "name": "fuse4_bu.block.dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse4_bu.block.dw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 59604992,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 59637760,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 79,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "fuse4_bu.block.dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "fuse4_bu.block.pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "fuse4_bu.block.pw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 59637760,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 59670528,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304,
+      "write_transform": {
+        "bypass": "split.06.1",
+        "op": "post_silu_output_requant_add_sat8",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 80,
+      "inputs": [
+        "split.06.1",
+        "fuse4_bu.block.pw.conv"
+      ],
+      "name": "residual.11",
+      "op": "residual_view",
+      "output": "residual.11",
+      "shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "storage_alias": "fuse4_bu.block.pw.conv"
+    },
+    {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 81,
+      "inputs": [
+        "split.06.0",
+        "residual.11"
+      ],
+      "name": "concat.11",
+      "op": "concat_view",
+      "output": "concat.11",
+      "shape_hwc": [
+        18,
+        32,
+        96
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 82,
+      "input_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "inputs": [
+        "concat.07"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 10616832,
+      "name": "head2.stem.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head2.stem.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 442368,
+        "base": 59670528,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 60112896,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 442368
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 1152
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 83,
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "inputs": [
+        "head2.stem.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 3981312,
+      "name": "head2.cls_dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head2.cls_dw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 442368,
+        "base": 60112896,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 60555264,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 442368
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 84,
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "inputs": [
+        "head2.cls_dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 21233664,
+      "name": "head2.cls_pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head2.cls_pw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 442368,
+        "base": 60555264,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 60997632,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 442368
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int16_q7_8",
+      "groups": 1,
+      "index": 85,
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "inputs": [
+        "head2.cls_pw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 884736,
+      "name": "head2.cls_out",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head2.cls_out",
+      "output_shape_hwc": [
+        72,
+        128,
+        2
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 36864,
+        "base": 60997632,
+        "bytes_per_element": 2,
+        "channels_stored": 2,
+        "end": 61034496,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 36864
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 96
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 86,
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "inputs": [
+        "head2.stem.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 3981312,
+      "name": "head2.reg_dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head2.reg_dw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 442368,
+        "base": 61034496,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 61476864,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 442368
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 87,
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "inputs": [
+        "head2.reg_dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 21233664,
+      "name": "head2.reg_pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head2.reg_pw.conv",
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 442368,
+        "base": 61476864,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 61919232,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 442368
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int16_q7_8",
+      "groups": 1,
+      "index": 88,
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "inputs": [
+        "head2.reg_pw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 2211840,
+      "name": "head2.reg_out",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head2.reg_out",
+      "output_shape_hwc": [
+        72,
+        128,
+        5
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 94208,
+        "base": 61919232,
+        "bytes_per_element": 2,
+        "channels_stored": 5,
+        "end": 62013440,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 92160
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 240
+    },
+    {
+      "allocation": null,
+      "dtype": "int16_q7_8",
+      "index": 89,
+      "inputs": [
+        "head2.reg_out",
+        "head2.cls_out"
+      ],
+      "name": "concat.12",
+      "op": "concat_view",
+      "output": "concat.12",
+      "shape_hwc": [
+        72,
+        128,
+        7
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 90,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "concat.09"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 5308416,
+      "name": "head3.stem.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head3.stem.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 62013440,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62124032,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 91,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "head3.stem.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 995328,
+      "name": "head3.cls_dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head3.cls_dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 62124032,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62234624,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 92,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "head3.cls_dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 5308416,
+      "name": "head3.cls_pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head3.cls_pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 62234624,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62345216,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int16_q7_8",
+      "groups": 1,
+      "index": 93,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "head3.cls_pw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 221184,
+      "name": "head3.cls_out",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head3.cls_out",
+      "output_shape_hwc": [
+        36,
+        64,
+        2
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 12288,
+        "base": 62345216,
+        "bytes_per_element": 2,
+        "channels_stored": 2,
+        "end": 62357504,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 9216
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 96
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 94,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "head3.stem.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 995328,
+      "name": "head3.reg_dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head3.reg_dw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 62357504,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62468096,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 95,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "head3.reg_dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 5308416,
+      "name": "head3.reg_pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head3.reg_pw.conv",
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 110592,
+        "base": 62468096,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62578688,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 110592
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int16_q7_8",
+      "groups": 1,
+      "index": 96,
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "inputs": [
+        "head3.reg_pw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 552960,
+      "name": "head3.reg_out",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head3.reg_out",
+      "output_shape_hwc": [
+        36,
+        64,
+        5
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 24576,
+        "base": 62578688,
+        "bytes_per_element": 2,
+        "channels_stored": 5,
+        "end": 62603264,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 23040
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 240
+    },
+    {
+      "allocation": null,
+      "dtype": "int16_q7_8",
+      "index": 97,
+      "inputs": [
+        "head3.reg_out",
+        "head3.cls_out"
+      ],
+      "name": "concat.13",
+      "op": "concat_view",
+      "output": "concat.13",
+      "shape_hwc": [
+        36,
+        64,
+        7
+      ]
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 98,
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "inputs": [
+        "concat.11"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 2654208,
+      "name": "head4.stem.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head4.stem.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 62603264,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62636032,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 4608
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 99,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "head4.stem.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 248832,
+      "name": "head4.cls_dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head4.cls_dw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 62636032,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62668800,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 100,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "head4.cls_dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "head4.cls_pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head4.cls_pw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 62668800,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62701568,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int16_q7_8",
+      "groups": 1,
+      "index": 101,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "head4.cls_pw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 55296,
+      "name": "head4.cls_out",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head4.cls_out",
+      "output_shape_hwc": [
+        18,
+        32,
+        2
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 4096,
+        "base": 62701568,
+        "bytes_per_element": 2,
+        "channels_stored": 2,
+        "end": 62705664,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 2560
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 96
+    },
+    {
+      "dtype": "int8",
+      "groups": 48,
+      "index": 102,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "head4.stem.conv"
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "macs": 248832,
+      "name": "head4.reg_dw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head4.reg_dw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 62705664,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62738432,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 432
+    },
+    {
+      "dtype": "int8",
+      "groups": 1,
+      "index": 103,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "head4.reg_dw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 1327104,
+      "name": "head4.reg_pw.conv",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head4.reg_pw.conv",
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 32768,
+        "base": 62738432,
+        "bytes_per_element": 1,
+        "channels_stored": 48,
+        "end": 62771200,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 30720
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 2304
+    },
+    {
+      "dtype": "int16_q7_8",
+      "groups": 1,
+      "index": 104,
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "inputs": [
+        "head4.reg_pw.conv"
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "macs": 138240,
+      "name": "head4.reg_out",
+      "op": "conv",
+      "operator_padding_value": 0,
+      "output": "head4.reg_out",
+      "output_shape_hwc": [
+        18,
+        32,
+        5
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "storage": {
+        "allocated_bytes": 8192,
+        "base": 62771200,
+        "bytes_per_element": 2,
+        "channels_stored": 5,
+        "end": 62779392,
+        "layout": "tile4x4_hwc",
+        "partial_tile_invalid_fill": 0,
+        "raw_bytes": 6400
+      },
+      "stride": [
+        1,
+        1
+      ],
+      "weights": 240
+    },
+    {
+      "allocation": null,
+      "dtype": "int16_q7_8",
+      "index": 105,
+      "inputs": [
+        "head4.reg_out",
+        "head4.cls_out"
+      ],
+      "name": "concat.14",
+      "op": "concat_view",
+      "output": "concat.14",
+      "shape_hwc": [
+        18,
+        32,
+        7
+      ]
+    }
+  ],
+  "outputs": [
+    "concat.12",
+    "concat.13",
+    "concat.14"
+  ],
+  "release_blocks": [
+    "DDR address unit",
+    "write visibility fence",
+    "read return ownership",
+    "residual and concat scale alignment"
+  ],
+  "schema": "road_yolo_production_graph_v1",
+  "source_sha256": {
+    "cnn/contract.json": "4c6aed237469ee17425e586797816def1ab5ea657ffd2cc07da0f4efc2dfcc5a",
+    "cnn/hw_validation/production/deployment_contract.json": "5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681",
+    "cnn/hw_validation/production/graph.py": "8df08989729771739e9c1a9c920e9a37e8319b5a0bad92e6e6efca95dba59d54",
+    "cnn/integer.py": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+    "cnn/model.py": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c"
+  },
+  "status": "static_schedule_only_fail_closed",
+  "summary": {
+    "allocations": 70,
+    "concat": 15,
+    "conv": 67,
+    "feature_allocated_bytes": 7204864,
+    "macs": 214465536,
+    "max_pointwise_input_channels": 192,
+    "pool": 3,
+    "raw_head_bytes": 169344,
+    "residual": 12,
+    "split": 7,
+    "upsample": 2
+  }
+}

@@ -1,0 +1,132 @@
+Failed to find real location of D:\Python313\python.exe
+scripts.python.quality.formatter_backend.models.VerilogFormatterError: Strict mode [case_normalization_violation]: end. Suggestion: Use '<item>: begin ... end' or '<item>: statement;' style case items.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\project\qiansai\anlogic_topic2_work\lab1_sc500_road_vision\cnn\hw_validation\production\reports\v11_internal_timing_20261007\rtl\evidence\parser_probe.py", line 39, in <module>
+    backend.format_text(
+    ~~~~~~~~~~~~~~~~~~~^
+        SOURCE.read_text(encoding="utf-8"), SOURCE
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\engine.py", line 345, in format_text
+    format_route_result_format_route_result: FormatRouteResult = self._route_format_text(source, source_path)  # 写回路由结果。
+                                                                 ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\engine.py", line 390, in _route_format_text
+    text=self._format_text_normalize(source, source_path),
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\engine.py", line 510, in _format_text_normalize
+    return self._format_single_module_text(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        str_clean_source,
+        ^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        header_metadata=header_metadata_data,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\engine.py", line 1105, in _format_single_module_text
+    initial_state = self._collect_initial_module_state(source)  # 单 module 初始状态。
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\engine.py", line 599, in _collect_initial_module_state
+    dict_body_items = self._parse_body(str_body)  # 声明、assign、过程块和保底块分桶树。
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_parse_mixin.py", line 295, in _parse_body
+    tuple_handler = self._dispatch_body_line(  # body 结构分派状态
+        dict_body_items,  # 正在填充的 module body 分类桶
+    ...<3 lines>...
+        list_pending_comments,  # 等待绑定到结构块的注释链
+    )  # body 行分派器状态三元组
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_parse_mixin.py", line 480, in _dispatch_body_line
+    tuple_always_result = self._handle_always_body_line(  # 过程块分支状态
+        dict_body_items,  # always 过程块写入桶
+    ...<3 lines>...
+        list_pending_comments,  # 过程块前导注释链
+    )  # always 过程块的处理状态和出口
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_parse_mixin.py", line 1114, in _handle_always_body_line
+    tuple_block_result = self._handle_block_always_body(  # 返回块状 always 的命中状态和闭合下标
+        dict_body_items,  # 块状 always 写入的 body 分类桶
+    ...<9 lines>...
+        list_pending_comments,  # 仅附着到块状 always 的说明注释
+    )  # begin/end always 解析结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_parse_mixin.py", line 1414, in _handle_block_always_body
+    payload_always = self._build_always_payload(  # begin/end always 的结构化过程块模型
+        str_header,  # 触发列表或组合敏感列表
+        list_content_lines,  # 不含外层 begin/end 的控制语句
+        list_pending_comments,  # 只附着到当前过程块的前导说明
+    )  # 外层 begin/end always 的结构化结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_parse_mixin.py", line 200, in _build_always_payload
+    always_block_obj_payload = self._analyze_always_block(  # 构造写入 always 与 blocks 的过程块对象
+        header,  # always 触发头文本
+    ...<3 lines>...
+        lvalues=list_lvalues,  # 解析后的左值对象
+    )
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\rename_mixin.py", line 717, in _analyze_always_block
+    tuple_control_parse = self._parse_control_nodes(lines, 0, set(), "always")  # 控制节点解析结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 93, in _parse_control_nodes
+    tuple_structured_result = self._parse_structured_control_entry(lines, int_index, context, str_statement)  # 结构化控制入口的派发结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 284, in _parse_structured_control_entry
+    node_if, int_next_index = self._parse_if_node(lines, start, context)  # 当前条件分支节点与结束位置
+                              ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 674, in _parse_if_node
+    return self._parse_if_begin_node(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        lines,
+        ^^^^^^
+    ...<4 lines>...
+        str_remainder,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 940, in _parse_if_begin_node
+    tuple_else_result = self._parse_else_branch(lines, int_next_index, context, str_inline_else)  # 同行 else 解析结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 1035, in _parse_else_branch
+    tuple_else_begin_result = func_parse_nodes(lines, start + 1, {"end"}, context)  # else begin 体的递归解析结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 93, in _parse_control_nodes
+    tuple_structured_result = self._parse_structured_control_entry(lines, int_index, context, str_statement)  # 结构化控制入口的派发结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 284, in _parse_structured_control_entry
+    node_if, int_next_index = self._parse_if_node(lines, start, context)  # 当前条件分支节点与结束位置
+                              ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 674, in _parse_if_node
+    return self._parse_if_begin_node(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        lines,
+        ^^^^^^
+    ...<4 lines>...
+        str_remainder,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 909, in _parse_if_begin_node
+    tuple_body_result = self._parse_control_nodes(lines, int_body_start, {"end"}, context)  # 多行 begin 主体解析结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 93, in _parse_control_nodes
+    tuple_structured_result = self._parse_structured_control_entry(lines, int_index, context, str_statement)  # 结构化控制入口的派发结果
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 275, in _parse_structured_control_entry
+    node_case, int_next_index = self._parse_case_node(lines, start, context)  # case 节点解析结果
+                                ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_parse_mixin.py", line 1524, in _parse_case_node
+    self._raise_control_error(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        "case_normalization_violation",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        str_statement,
+        ^^^^^^^^^^^^^^
+        "Use '<item>: begin ... end' or '<item>: statement;' style case items.",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\project\qiansai\anlogic_topic2_work\lab1_sc500_road_vision\cnn\hw_validation\production\reports\v11_internal_timing_20261007\rtl\evidence\parser_probe.py", line 33, in traced_raise
+    original_raise(category, statement, suggestion)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\.codex\skills\readable-verilog-generator\scripts\python\quality\formatter_backend\control_node_normalize.py", line 32, in _raise_control_error
+    raise VerilogFormatterError("> ERR: [Python] control parser strict failure.") from self._strict_error(
+    ...<3 lines>...
+    )
+scripts.python.quality.formatter_backend.models.VerilogFormatterError: > ERR: [Python] control parser strict failure.
+CATEGORY=case_normalization_violation STATEMENT='end'
+FRAME=_parse_case_node INDEX=32 FRAGMENT=['reg_dw_cache[i_load_addr] <= i_load_data[7:0];', "flag_dw_cache_loaded <= (i_load_addr == 11'd255);", "cnt_expected_dw_cache <= (i_load_addr == 11'd255) ? 9'd0 : i_load_addr + 1'b1;", "end else begin flag_load_fault <= 1'b1; end", 'end', "3'd2:begin", "if((i_load_addr == cnt_expected_dw_weight) || (i_load_addr == 11'd0))begin", 'reg_dw_weight[i_load_addr] <= i_load_data[7:0];', "flag_dw_weight_loaded <= (i_load_addr == 11'd143);"]
+FRAME=_parse_structured_control_entry INDEX=18 FRAGMENT=["flag_load_fault <= 1'b0;", 'end else begin', 'if(flag_load_accept)begin', "cnt_preload_writes <= cnt_preload_writes + 1'b1;", 'case(i_load_kind)', "3'd0:begin", "if((i_load_addr == cnt_expected_halo) || (i_load_addr == 11'd0))begin", 'reg_halo[i_load_addr] <= i_load_data[7:0];', "flag_halo_loaded <= (i_load_addr == 11'd1295);"]
+FRAME=_parse_control_nodes INDEX=18 FRAGMENT=["flag_load_fault <= 1'b0;", 'end else begin', 'if(flag_load_accept)begin', "cnt_preload_writes <= cnt_preload_writes + 1'b1;", 'case(i_load_kind)', "3'd0:begin", "if((i_load_addr == cnt_expected_halo) || (i_load_addr == 11'd0))begin", 'reg_halo[i_load_addr] <= i_load_data[7:0];', "flag_halo_loaded <= (i_load_addr == 11'd1295);"]
+FRAME=_parse_if_node INDEX=16 FRAGMENT=["flag_pw_weight_loaded <= 1'b0;", "flag_pw_bias_loaded <= 1'b0;", "flag_load_fault <= 1'b0;", 'end else begin', 'if(flag_load_accept)begin', "cnt_preload_writes <= cnt_preload_writes + 1'b1;", 'case(i_load_kind)', "3'd0:begin", "if((i_load_addr == cnt_expected_halo) || (i_load_addr == 11'd0))begin"]
+VerilogFormatterError: '> ERR: [Python] control parser strict failure.'
+VerilogFormatterError: "Strict mode [case_normalization_violation]: end. Suggestion: Use '<item>: begin ... end' or '<item>: statement;' style case items."

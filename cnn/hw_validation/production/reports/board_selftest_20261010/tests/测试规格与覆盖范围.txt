@@ -1,0 +1,19 @@
+2026-10-10，自主计算自检测试规格。三个testbench均无对外端口；不伪造端口以通过规格生成器。
+
+tb_board_selftest：10ns周期计算时钟。初始复位10拍；通过CASE选择normal/stalls/wrong/missing/timeout/reset/held_reset。
+normal独立核对三套冻结输出及接受计数；stalls独立RX/TX气泡和长停顿，阻塞期间逐拍检查valid/data保持。
+wrong翻转首个期望数据位；missing删除首套SiLU装表命令；timeout禁止接收。三者必须FAIL，不能出现PASS。
+reset在表装载、普通载荷、运行、导出四处取消；held_reset额外在RX-held及TX-held各取消一次。恢复后从完整表装载重新开始，独立比较器计数重新清零，最终三套1152字节一致。
+全局立即取消后player valid/ready和core reset均为低；套间核复位不清全局三套计数。
+原核窗口须保持1687；总计时必须等于互斥preload/run_elapsed/export之和。超时阈值比较500000、进入FAIL显示500001为当前实现的已知一拍边界，未暗改RTL。
+
+tb_selftest_display：100MHz源域、约71.43MHz测试像素域，故意使用不同比例/相位。
+源端冻结载荷直到确认；目标active只可在VS上升沿变化；pending期间发布终态必须最终可见。
+复位清空并恢复。参考坐标独立按VS/DE推进，核对输出RGB与相同输入像素的DE/VS共同寄存。
+每帧114行×1280有效像素，加行消隐；覆盖TEST点阵、主体状态色、诊断带80/112行和1024列边界、心跳区1152列、消隐黑色；分别画PASS与FAIL，原短帧同时覆盖RUN。
+心跳相位读取设计帧计数；本测试不证明其真实频率，也不证明亚稳态或显示器接受720p时序。
+规格周期图见spec/board_selftest中三个真实RTL接口的已注册WaveDrom产物。
+
+tb_mapped_board_selftest：真实TD gate_netlist.v，50MHz外部时钟、5us初始复位，连接厂商PLL/DSP/ERAM/HDMI原语模型；无force、无替换操作数、无替换RAM或结果。
+必须从真实初始化ROM自主执行，payload为PASS且case=3、compared=1152、core_last=1687；5ms仿真时间内未完成则FAIL，构建脚本另设600s墙钟上限并保存失败。
+该测试不带SDF，不验证电气、实际配置加载或显示器接收；失败时必须区别原语模型/性能限制和数值不一致，不用RTL仿真收据代替。

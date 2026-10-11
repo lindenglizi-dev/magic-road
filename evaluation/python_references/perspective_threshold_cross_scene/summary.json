@@ -1,0 +1,206 @@
+{
+  "status": "cross_scene_perspective_threshold_diagnostic_not_acceptance_evidence",
+  "thresholds": [
+    90,
+    100,
+    110
+  ],
+  "inputs": [
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\python_references\\perspective_threshold_000203_f600_899\\report.json",
+      "sha256": "0277aa9da583049600bc6dabe860902d0ec3b920df81082b274cf498c117a1ec"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\python_references\\perspective_threshold_000200_f600_899\\report.json",
+      "sha256": "e0f3a608f9c23588c5f52465115c1cb410a86306b6bd807fd1d61a59f06573d3"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\python_references\\perspective_threshold_000200_f1600_1899\\report.json",
+      "sha256": "79826f67aa38ae310a4843a5c85c6de06cf3d8d4b9b4cabe0480092ee9a4d0e3"
+    },
+    {
+      "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\python_references\\perspective_threshold_000206_f600_1499\\report.json",
+      "sha256": "5eeb0b0808d81f2993444485316e4cbbc40020d6df5ee1da0eba3b3ab9e119ef"
+    }
+  ],
+  "contract": {
+    "deployed_candidate_chain": {
+      "sample_stride": 5,
+      "learn_frames": 4,
+      "difference_threshold": 20,
+      "min_neighbors": 3,
+      "min_run": 2,
+      "main_min_area": 16
+    },
+    "internal_pool": {
+      "main_area_topk": 4,
+      "small_peak_difference_topk": 4,
+      "maximum_candidates": 8
+    },
+    "small_geometry": {
+      "upper_square_minimum": [
+        4,
+        4
+      ],
+      "lower_perspective_minimum": [
+        6,
+        16
+      ],
+      "perspective_top_margin": 2,
+      "center_y_rule": "perspective when component center_y >= threshold"
+    },
+    "final_arbitration": {
+      "maximum_outputs": 4,
+      "sort_key": "peak_difference desc, area desc, component_label asc",
+      "nms_rule": "reject when inclusive IoU > 0.3; continue for refill"
+    },
+    "coverage_iou_thresholds": [
+      0.1,
+      0.25,
+      0.5
+    ],
+    "ped_truth_center_y_bands": [
+      "lt90",
+      "90_to_lt100",
+      "100_to_lt110",
+      "110_to_lt120",
+      "120_to_lt130",
+      "ge130"
+    ]
+  },
+  "common_hashes": {
+    "annotations_sha256": "e3c32ee80cd7d37d7ee8b1f5fc79a22d05b7e5e6fb2c9f61dbe512b6e711840e",
+    "catalog_sha256": "2c5fc1323e66bdb144dd56e08aeb6b1afe52ec2904e2e72fd439de1496e92ae3",
+    "sweep_script_sha256": "ba47d1880b653c5b5d93f797de46357ed71a854c2b8727f59ee70233f50f1c52",
+    "fixed_budget_dependency_sha256": "ec45a958cf05942dbae4655b0a6d7a4bd1acb7bc70acea0d182a1a7887a39486",
+    "candidate_chain_dependency_sha256": "6ed7652dd51db9eb1a1debede3cfb74f8ca862f261e96fa4557fb30969ab766d"
+  },
+  "summarizer_sha256": "ac2a8f3a0175994ee0637da3be9c329322ed5f19095cd080339c6b2ec77fd460",
+  "outputs": {
+    "window_metrics.csv": "8ddaa86087578b542eec167310254f3b5677de4259f66576cd6fa54a65192040",
+    "aggregate_metrics.csv": "f368be84fff90d1df653aed8b5ee91d66e509ae7fa63eff1a066ecc1d6cbf378"
+  },
+  "aggregate": [
+    {
+      "threshold": 90,
+      "label": "ped",
+      "window_count": 4,
+      "annotation_rows": 11132,
+      "covered_iou_0p1": 7274,
+      "micro_rate_iou_0p1": 0.6534315486884656,
+      "window_macro_rate_iou_0p1": 0.6103776429958656,
+      "covered_iou_0p25": 4386,
+      "micro_rate_iou_0p25": 0.39399928135106,
+      "window_macro_rate_iou_0p25": 0.36087367105706514,
+      "covered_iou_0p5": 851,
+      "micro_rate_iou_0p5": 0.07644628099173553,
+      "window_macro_rate_iou_0p5": 0.13855024153224668,
+      "main_possible": 6615,
+      "main_retained": 4550,
+      "main_retention_rate": 0.6878306878306878,
+      "empty_slots": 0,
+      "nms_rejected": 381
+    },
+    {
+      "threshold": 90,
+      "label": "vehicle",
+      "window_count": 4,
+      "annotation_rows": 4935,
+      "covered_iou_0p1": 2035,
+      "micro_rate_iou_0p1": 0.41236068895643363,
+      "window_macro_rate_iou_0p1": 0.7154151177199504,
+      "covered_iou_0p25": 1244,
+      "micro_rate_iou_0p25": 0.2520770010131712,
+      "window_macro_rate_iou_0p25": 0.5422149938042131,
+      "covered_iou_0p5": 1121,
+      "micro_rate_iou_0p5": 0.2271529888551165,
+      "window_macro_rate_iou_0p5": 0.5322800495662949,
+      "main_possible": 6615,
+      "main_retained": 4550,
+      "main_retention_rate": 0.6878306878306878,
+      "empty_slots": 0,
+      "nms_rejected": 381
+    },
+    {
+      "threshold": 100,
+      "label": "ped",
+      "window_count": 4,
+      "annotation_rows": 11132,
+      "covered_iou_0p1": 7044,
+      "micro_rate_iou_0p1": 0.6327703916636723,
+      "window_macro_rate_iou_0p1": 0.6046924541487231,
+      "covered_iou_0p25": 4219,
+      "micro_rate_iou_0p25": 0.37899748472871003,
+      "window_macro_rate_iou_0p25": 0.39192811052319687,
+      "covered_iou_0p5": 696,
+      "micro_rate_iou_0p5": 0.06252245777937478,
+      "window_macro_rate_iou_0p5": 0.18841834214345382,
+      "main_possible": 6615,
+      "main_retained": 4418,
+      "main_retention_rate": 0.6678760393046107,
+      "empty_slots": 0,
+      "nms_rejected": 153
+    },
+    {
+      "threshold": 100,
+      "label": "vehicle",
+      "window_count": 4,
+      "annotation_rows": 4935,
+      "covered_iou_0p1": 1700,
+      "micro_rate_iou_0p1": 0.3444782168186423,
+      "window_macro_rate_iou_0p1": 0.6946592317224287,
+      "covered_iou_0p25": 1160,
+      "micro_rate_iou_0p25": 0.23505572441742653,
+      "window_macro_rate_iou_0p25": 0.5370105328376704,
+      "covered_iou_0p5": 1044,
+      "micro_rate_iou_0p5": 0.2115501519756839,
+      "window_macro_rate_iou_0p5": 0.5275092936802974,
+      "main_possible": 6615,
+      "main_retained": 4418,
+      "main_retention_rate": 0.6678760393046107,
+      "empty_slots": 0,
+      "nms_rejected": 153
+    },
+    {
+      "threshold": 110,
+      "label": "ped",
+      "window_count": 4,
+      "annotation_rows": 11132,
+      "covered_iou_0p1": 6905,
+      "micro_rate_iou_0p1": 0.6202838663312972,
+      "window_macro_rate_iou_0p1": 0.6012566226280587,
+      "covered_iou_0p25": 4102,
+      "micro_rate_iou_0p25": 0.3684872439813151,
+      "window_macro_rate_iou_0p25": 0.3890360796748678,
+      "covered_iou_0p5": 578,
+      "micro_rate_iou_0p5": 0.05192238591448078,
+      "window_macro_rate_iou_0p5": 0.18550159308274589,
+      "main_possible": 6615,
+      "main_retained": 4359,
+      "main_retention_rate": 0.6589569160997732,
+      "empty_slots": 0,
+      "nms_rejected": 59
+    },
+    {
+      "threshold": 110,
+      "label": "vehicle",
+      "window_count": 4,
+      "annotation_rows": 4935,
+      "covered_iou_0p1": 1517,
+      "micro_rate_iou_0p1": 0.30739614994934145,
+      "window_macro_rate_iou_0p1": 0.6833209417596035,
+      "covered_iou_0p25": 1117,
+      "micro_rate_iou_0p25": 0.22634245187436677,
+      "window_macro_rate_iou_0p25": 0.5343463444857497,
+      "covered_iou_0p5": 1020,
+      "micro_rate_iou_0p5": 0.2066869300911854,
+      "window_macro_rate_iou_0p5": 0.5260223048327137,
+      "main_possible": 6615,
+      "main_retained": 4359,
+      "main_retention_rate": 0.6589569160997732,
+      "empty_slots": 0,
+      "nms_rejected": 59
+    }
+  ],
+  "boundary": "Annotation-frame rows are temporally correlated and uneven across scenes. Use window macro rates beside micro rates. Geometry coverage is not object recall, classification recall, or a false-positive rate."
+}

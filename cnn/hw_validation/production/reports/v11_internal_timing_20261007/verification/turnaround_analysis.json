@@ -1,0 +1,89 @@
+{
+  "status": "MEASURED_READ_ONLY_NO_IMPLEMENTATION",
+  "source_log": "regression_candidate/vsim_runner_turnaround.log",
+  "representative_windows": [
+    {
+      "layer": "DW",
+      "first_accept": 4643,
+      "last_accept": 4645,
+      "result_ack": 4655,
+      "next_first_accept": 4657,
+      "first_to_last": 2,
+      "last_to_ack": 10,
+      "ack_to_next_first": 2
+    },
+    {
+      "layer": "DW",
+      "first_accept": 4657,
+      "last_accept": 4659,
+      "result_ack": 4669,
+      "next_first_accept": 4671,
+      "first_to_last": 2,
+      "last_to_ack": 10,
+      "ack_to_next_first": 2
+    },
+    {
+      "layer": "PW",
+      "first_accept": 8254,
+      "last_accept": 8256,
+      "result_ack": 8266,
+      "next_first_accept": 8268,
+      "first_to_last": 2,
+      "last_to_ack": 10,
+      "ack_to_next_first": 2
+    },
+    {
+      "layer": "PW",
+      "first_accept": 8268,
+      "last_accept": 8270,
+      "result_ack": 8280,
+      "next_first_accept": 8282,
+      "first_to_last": 2,
+      "last_to_ack": 10,
+      "ack_to_next_first": 2
+    }
+  ],
+  "measured_current_job_formula": {
+    "scope": "G=2 only",
+    "cycles": 14,
+    "expression": "2G+10",
+    "state_counts": {
+      "ST_STORAGE": 2,
+      "ST_MAC_SEND": 2,
+      "ST_MAC_WAIT": 10
+    },
+    "note": "state counts are mutually exclusive; postprocess busy counters overlap this MAC window and are not added"
+  },
+  "conditional_headroom": {
+    "consecutive_group_scheduling": {
+      "future_expression": "G+11",
+      "conditional_saved_cycles_per_frame": 9024192,
+      "evidence_limit": "only G=2 is measured; G>2 is an analytical extrapolation"
+    },
+    "next_job_first_group_prefetch": {
+      "measured_current_ack_to_next_first": 2,
+      "best_safe_future_ack_to_next_first": 1,
+      "reason_not_zero": "the frozen MAC ready signal reopens only after the result-ack edge",
+      "conditional_saved_cycles_per_frame": 3801024
+    },
+    "combined": {
+      "conditional_saved_cycles_per_frame": 12825216,
+      "v10_calibrated_frame_cycles_before_v11_tail_adjustment": 63662525,
+      "conditional_remaining_before_v11_tail_adjustment": 50837309,
+      "observed_v11_extra_layer_tail_cycles": 1,
+      "conditionally_extrapolated_active_layers": 61,
+      "conditional_remaining_with_v11_tail_extrapolation": 50837370,
+      "warning": "these are analytical savings, not implemented or measured full-frame performance and not a strict bound"
+    }
+  },
+  "recommended_single_next_experiment": {
+    "change": "prefetch only the next job first storage tuple while the current job waits, without changing the frozen MAC or arithmetic interfaces",
+    "pass_criteria": [
+      "DW and PW ack-to-next-first changes from 2 to exactly 1",
+      "first-to-last remains 2 and last-to-ack remains 10",
+      "result reservation plus queue occupancy remains at most 2",
+      "all numeric, reset, fault, table-reload and backpressure regressions remain bit exact"
+    ],
+    "not_authorized_here": true
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "schema": "road-reset-validation-receipt-v1",
+  "date": "2026-10-07",
+  "top": "road_low_io_reset_shell",
+  "status": "FUNCTIONAL_PASS_STATIC_AND_PHYSICAL_SIGNOFF_FAIL",
+  "source_lock": {
+    "candidate_path": "road_low_io_reset_shell.v",
+    "candidate_sha256": "8bd23e055a25af2691c867bad3f1d7e16b81fd39614748c4e988b1113493538e",
+    "physical_manifest_path": "../physical/prebuild_manifest.json",
+    "physical_manifest_candidate_sha256": "8bd23e055a25af2691c867bad3f1d7e16b81fd39614748c4e988b1113493538e",
+    "match": true,
+    "physical_manifest_note": "The physical prebuild manifest captured an earlier four-case functional log. Only its source SHA receipt is used here; final functional evidence is the frozen 14+6 log set below."
+  },
+  "frozen_dependencies": {
+    "shell_sha256": "c7bd74ccf995f7f7a8527e7c6f8f661183bccd0a3f266922d4c0a026d019f5d5",
+    "chain_sha256": "6ec48c6ddda89ab91e66926c42e012b3d9c45cc93150823ffb50c1eb627f7132"
+  },
+  "reset_contract": {
+    "assertion": "reg_release_meta and reg_release_done clear asynchronously from external active-low i_rstn",
+    "release": "two sampled rising edges; reg_release_meta feeds only reg_release_done",
+    "inner_reset": "shell_rstn is exactly reg_release_done; no raw-reset combinational AND is added",
+    "interface_mask": "flag_interface_open = i_rstn & reg_release_done; external o_rx_ready/o_tx_valid and internal shell_rx_valid/shell_tx_ready are zero-blocked until open",
+    "first_legal_transfer": "third sampled rising edge, the first rising edge after shell_rstn becomes high",
+    "reset_epoch_duty": "external producer and consumer discard an interrupted frame; recovered input starts with a new TABLE_BEGIN",
+    "stale_valid_boundary": "no epoch port exists, so a producer that holds a pre-reset valid across reset is outside the proved contract",
+    "table_recovery": "all 1024 entries must be reloaded after every reset",
+    "normal_operation": "arithmetic, 38-bit interface, fixed multipliers, initiation interval, and immediate cancellation semantics are unchanged; reload is a separate recovery window",
+    "metastability_claim": false
+  },
+  "modelsim": {
+    "tool": "D:/modeltech64_2020.4/win64 ModelSim SE-64 2020.4",
+    "vendor_eram_model": "../../v7_onchip_chain_20261006/inputs/ph1p_logic_eram.v",
+    "behavioral_ram_substitute": false,
+    "global_reset_model": "../../v7_onchip_chain_20261006/inputs/ph1p_phy_gsr.v",
+    "reset_focused": {
+      "marker": "TB_PASS_RESET cases=6 errors=0 release_stages=2 first_consume_edge=3",
+      "compile_errors": 0,
+      "compile_warnings": 0,
+      "run_errors": 0,
+      "run_warnings": 2,
+      "compile_log_sha256": "766b477e4c24e014ed80f4b0739a871e5ed1cd79d5936ec32cc5a3de5a7a7863",
+      "run_log_sha256": "99aec1ddadc1f9d23a98379833aea28591a5adfb52ee6f25779f2ee7bba4eb1e"
+    },
+    "adapted_regression": {
+      "marker": "TB_PASS_LOW_IO cases=14 errors=0 io_bits=38 max_packets=96 max_groups=24 max_terms=192",
+      "compile_errors": 0,
+      "compile_warnings": 0,
+      "run_errors": 0,
+      "run_warnings": 2,
+      "compile_log_sha256": "657705a5665e30c2862d0146e8c12d798cda81f789c80f4193198e99368ff506",
+      "run_log_sha256": "600119905e7b9c018c76345b845cc59914f7b4fd697ad992dc801d50349c5732",
+      "vector_source": "frozen v7 shell inputs, directly referenced by path"
+    },
+    "retained_warnings": "Two PH1P vendor-model INIT_FILE out-of-bounds part-select warnings at ph1p_logic_eram.v(165)",
+    "retained_failures": [
+      "FIRST_ATTEMPT_TOOLCHAIN_FAILURE.md",
+      "modelsim_regression_missing_gsr_failure.log"
+    ]
+  },
+  "reset_cases": [
+    "ordinary asynchronous assertion and two-edge synchronous release",
+    "release 0.1 ns before a rising edge",
+    "release 0.1 ns after a rising edge",
+    "partial table load reset clears table-valid, pending-valid, and index",
+    "full 1024-entry reload after reset",
+    "stalled STATUS reset and recovery without an old transaction"
+  ],
+  "strict_gate": {
+    "delivery_ready": false,
+    "candidate_wrapper_errors": 54,
+    "reset_tb_errors": 148,
+    "retained_frozen_shell_errors": 667,
+    "retained_frozen_chain_errors": 374,
+    "retained_frozen_tb_errors": 219,
+    "report": "STRICT_EIGHT_GATE_REPORT.md"
+  },
+  "physical_snapshot": {
+    "status": "DIAGNOSTIC_COMPLETE_SIGNOFF_FAIL",
+    "receipt": "../physical/physical_validation_receipt.json",
+    "receipt_sha256": "12eb916a4375f3907141fab710af97c7d94e0c4d8f62f15ddc836acf72c4da7d",
+    "device": "PH1P35MDG324-3",
+    "clock_mhz": 100,
+    "resources": {"slices": 4066, "eram": 1, "dsp": 26, "io_bits": 38},
+    "core_cycles": 436,
+    "setup_wns_ns": 0.090,
+    "setup_violated_endpoints": 0,
+    "global_min_wns_ns": -0.950,
+    "global_min_violated_endpoints": 34,
+    "hold_violated_endpoints": 31,
+    "removal_violated_endpoints": 3,
+    "sta_coverage_percent": 100.0,
+    "corners": "Slow and Fast, max and min",
+    "reset_entry_removal": {
+      "physical_reset_registers": 4,
+      "passing": 1,
+      "failing": 3,
+      "stage1_reg_release_meta_slow_m40c_slack_ns": -0.511,
+      "stage2_replica_slow_m40c_slack_ns": -0.426,
+      "stage2_replica_fast_125c_slack_ns": -0.022,
+      "stage2_replica_passing_slack_ns": 0.096
+    },
+    "synchronizer_interstage": {
+      "stage1_physical_registers": 1,
+      "stage1_fanout": 3,
+      "setup_slack_ns": 7.691,
+      "hold_slack_ns": 0.251,
+      "passes": true
+    },
+    "functional_reset_distribution": {
+      "stage2_replica_fanouts": [110, 177, 2255],
+      "setup_slack_ns": 5.664,
+      "hold_slack_ns": 0.251,
+      "recovery_slack_ns": 6.771,
+      "removal_slack_ns": 0.099,
+      "passes": true
+    },
+    "additional_open_findings": {
+      "diagnostic_input_hold_failures": 31,
+      "syn_5025_closed": false,
+      "fresh_check_timing_local_clock_warnings": 1,
+      "fresh_check_timing_orphan_generated_clock_warnings": 1
+    },
+    "new_timing_exceptions": false,
+    "deployment_ready": false,
+    "evidence": [
+      "../physical/prebuild_manifest.json",
+      "../physical/physical_validation_receipt.json",
+      "../physical/route.qor",
+      "../physical/final_timing.rpt",
+      "../physical/reset_sync_interstage.timing",
+      "../physical/external_reset_entry.timing",
+      "../physical/routed_netlist_audit.json"
+    ]
+  },
+  "scope_guards": {
+    "old_sources_modified": false,
+    "training_run": false,
+    "production_bitstream_generated": false,
+    "board_or_flash_programmed": false,
+    "timing_exception_added": false
+  }
+}

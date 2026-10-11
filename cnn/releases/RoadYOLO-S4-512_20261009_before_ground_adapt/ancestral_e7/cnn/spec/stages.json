@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "updated_local_date": "2026-10-02",
+  "scope": "Hardware/template integration stages owned by arch_lead; model/data statuses remain in their own reports",
+  "stage_order": [
+    "video_template",
+    "integer_and_model_reference",
+    "rgb_resize_rom",
+    "ddr_client",
+    "cnn_rtl",
+    "integrated_board_acceptance"
+  ],
+  "stages": {
+    "video_template": {
+      "state": "routed_with_legacy_quality_limitations",
+      "evidence": "../template/verification_receipt.json",
+      "strict_delivery_ready": false,
+      "production_modified": false
+    },
+    "integer_and_model_reference": {
+      "state": "owned_by_coordinator_not_independently_verified_here",
+      "authority": "../contract.json"
+    },
+    "rgb_resize_rom": {
+      "state": "contract_defined_not_hardware_implemented",
+      "blockers": [
+        "Exact RGB lane and initialization-byte golden checks",
+        "ERAM mapping and ROM/activation port schedule"
+      ]
+    },
+    "ddr_client": {
+      "state": "blocked_before_production_integration",
+      "blockers": [
+        "PAXI address unit/capacity/return length/write commit verification",
+        "Independent AR/AW/W acceptance repair in isolated adapter",
+        "Late returns/cancel/epoch ownership tests"
+      ]
+    },
+    "cnn_rtl": {
+      "state": "not_implemented_by_template_stage",
+      "blockers": [
+        "Frozen integer model and intermediate vectors",
+        "Per-layer schedule/DDR/tile budget and actual synthesis"
+      ]
+    },
+    "integrated_board_acceptance": {
+      "state": "not_run",
+      "blockers": [
+        "Complete FPGA CNN implementation",
+        "Board camera/display continuity and memory tests",
+        "Frozen scene-isolated precision/recall/FPS evaluation"
+      ]
+    }
+  }
+}

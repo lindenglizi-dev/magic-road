@@ -1,0 +1,54 @@
+{
+  "clock_hz": 100000000,
+  "measurement": "first accepted MAC beat to twelfth consumed cache response; endpoint cycle difference",
+  "table_preload": {
+    "transfers_per_load": 1024,
+    "included_in_case_latency": false,
+    "reload_required_after_reset": true
+  },
+  "cases": [
+    {
+      "name": "base16",
+      "start_event": {"cycle": 1033, "event": "input_accept", "position": 0},
+      "end_event": {"cycle": 1515, "event": "cache_consume", "channel": 11},
+      "cycles": 482,
+      "cache_backpressure_cycles": 0
+    },
+    {
+      "name": "tail13",
+      "start_event": {"cycle": 2549, "event": "input_accept", "position": 0},
+      "end_event": {"cycle": 3052, "event": "cache_consume", "channel": 11},
+      "cycles": 503,
+      "cache_backpressure_cycles": [3, 20]
+    },
+    {
+      "name": "directed_saturation",
+      "start_event": {"cycle": 4086, "event": "input_accept", "position": 0},
+      "end_event": {"cycle": 4194, "event": "cache_consume", "channel": 2},
+      "cycles": 108,
+      "scope": "one position and three output channels"
+    }
+  ],
+  "stage_checks": {
+    "mac_terminal": 9,
+    "pre_round": 27,
+    "silu_output": 27,
+    "post_round": 27,
+    "cache_read": 27,
+    "atomic_hidden_observations": 18,
+    "reset_stage_cases": 6,
+    "directed_saturation_cases": 1
+  },
+  "reset_targets": [
+    "MAC in-flight after the first beat",
+    "PRE_WAIT",
+    "SILU_WAIT",
+    "POST_WAIT",
+    "between COMMIT_ALPHA and COMMIT_BETA",
+    "between COMMIT_BETA and COMMIT_GAMMA"
+  ],
+  "additional_reset_check": "held cache response under backpressure",
+  "numeric_evidence": "The CSV records actual alpha MAC terminal, pre-round, SiLU, post-round, and consumed cache integers. Numerical pass/fail comes from TB assertions against frozen stage vectors and reference-generated directed golden values, not from the CSV alone.",
+  "trace": "cycle_trace.csv",
+  "simulation_log": "modelsim_chain_run_final.log"
+}

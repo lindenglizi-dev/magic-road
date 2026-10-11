@@ -1,0 +1,73 @@
+{
+  "candidate": "v15_counter_timing_20261008",
+  "rtl_frozen": true,
+  "functional_conclusion": "PASS",
+  "physical_conclusion": "PASS_REPORTED_BY_ROOT_ACTUAL_TD",
+  "change_scope": [
+    "Extract the existing cnt_output clear and increment conditions without changing their procedural ordering",
+    "Give the five-bit cnt_output register one sequential driver while retaining the shared pp_fault/load_fault hold guard"
+  ],
+  "unchanged_contracts": [
+    "ports",
+    "MAC and postprocess kernels",
+    "numeric behavior",
+    "initiation interval",
+    "immediate fault cancellation",
+    "asynchronous reset behavior",
+    "fixed coefficients",
+    "constraints"
+  ],
+  "binding": {
+    "rtl/down2_overlap_tile_runner.v": "0bb56663084965708befaa2f69d282e6e445b075d81d86623e4c1f086d4856a3",
+    "verification/regression_candidate/down2_overlap_tile_runner.v": "0bb56663084965708befaa2f69d282e6e445b075d81d86623e4c1f086d4856a3",
+    "rtl/road_postprocess_stream.v": "a51590f53c62f3a6dc51eaded0c77301b692f0cf2ae95109bd1e73afb29193fb",
+    "verification/regression_candidate/tb_down2_overlap_tile_runner.v": "18088328d24e96c35a2409ba80617b672bec94d07b1ed3321342bb15688f1760"
+  },
+  "independent_root_regression": {
+    "iverilog_g2001_compile_exit": 0,
+    "vvp_exit": 0,
+    "artifact_sha256": "9db81a30a8c90fa0bfe500d3dac8aef8b3ff00b33639e06cfff300e3eade53ec",
+    "log_sha256": "062dab17f55dea49fb21f556b8d617ce120ddb5322ec4c8336b61563aef825a5",
+    "result": "COUNTER_TRANSITION_PASS and TB_PASS_DOWN2_TILE cases=4"
+  },
+  "counter_transition_check": {
+    "known_cases": 16896,
+    "known_domain": "all 16 state encodings, all 32 five-bit output values, all 16 positions, and state-relevant binary controls",
+    "xz_boundaries": 24,
+    "xz_scope": "selected fault, layer, accept, state, position and count boundaries including DRAIN writes=256 with pp_fault/load_fault 1/X/Z",
+    "priority": "known fault hold, clear, increment, hold",
+    "result": "PASS against the v14 procedural hierarchy"
+  },
+  "preserved_regression": {
+    "full_cases": 3,
+    "full_core_cycles_each": 4281,
+    "pw_only_core_cycles": 1822,
+    "dw_tasks": 128,
+    "dw_mac_beats": 384,
+    "dw_post_scalars": 256,
+    "additional": "Original X/Z directional cases, 64-cycle lane0/1/2 backpressure, DW_POST reset, real lane1/lane2 positive and negative overflow cancellation, legal limits, table-valid and random commit backpressure passed"
+  },
+  "actual_td_reported_by_root": {
+    "exit": 0,
+    "internal_setup_ns": 0.072,
+    "internal_hold_ns": 0.023,
+    "internal_recovery_ns": 4.913,
+    "internal_removal_ns": 0.062,
+    "internal_negative_paths": 0,
+    "note": "External setup/hold/removal paths remain outside this internal timing signoff and are reported separately by root."
+  },
+  "retained_failures": {
+    "local_iverilog": "The local .tools compiler terminated with Windows 0xC0000005 after producing an executable VVP; that VVP ran exit 0. The root independent compile exit 0 is authoritative.",
+    "strict_six_source_closure": {
+      "errors": 4002,
+      "compile": "passed",
+      "delivery_ready": false,
+      "report": "gates/closure.json"
+    }
+  },
+  "waveform": {
+    "json5_sha256": "ecbaadf4588cb2e06e2433c4d2790d298cc5d5bb2231ff13450c2e783c234836",
+    "svg_sha256": "8abb4de5eaa66a69363de2e1e5c79d55992fd9ed923785e1f4c0360adeca701b",
+    "render": "PASS"
+  }
+}

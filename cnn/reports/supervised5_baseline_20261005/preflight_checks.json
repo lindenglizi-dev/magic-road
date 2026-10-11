@@ -1,0 +1,22 @@
+{
+  "status": "passed_scoped_CPU_checks_not_GPU_training_evidence",
+  "checks": [
+    {"command": "python -B -m cnn.test_refreeze", "result": "passed assert-based integrity, duplicate and tamper checks"},
+    {"command": "python -B -m unittest cnn.test_refreeze cnn.test_run_supervised5_oct5 cnn.test_run_person_recovery", "exit_code": 0, "unittest_count": 10, "note": "test_refreeze uses main assertions, separately executed; it contributes no unittest cases"}
+  ],
+  "source_sha256": {
+    "cnn/run_road_epoch.py": "0c0f42469a84e02863451edc82d3cca0478a756caa496ca170e5a867d3ab2a26",
+    "cnn/run_supervised5_oct5.py": "0618b396e64c381c578f4122b751c0484d99a5556ff7b36b0d89cb5317530327",
+    "cnn/test_run_supervised5_oct5.py": "79a2461b5a1eee06f4ffc3f8904c7765771ed487ef00535c8975e8be09d9d611"
+  },
+  "failed_check_preserved": {
+    "check": "legacy test_frozen_network_sources",
+    "result": "reported failed by py_reference against active live loss.py",
+    "reason": "old experiment expects loss SHA dc1c2c6423a154bb4eecd579fc7433345197557b1caa8fcb78435c95dcb01adb; independently authorized distillation changes produced live SHA 8bc33d05abd15c00af35627e550d815212387ab6ddc3074f4f023fc9dd09cf79",
+    "resolution": "do not bypass or rewrite the legacy guard; new experiment pins current sources and requires a newly executed GPU AMP resume proof",
+    "scope": "no claim that every legacy gate passed"
+  },
+  "test_fixture_fix": "old recovery test now mocks a missing temporary output instead of assuming real historical output is absent",
+  "GPU_resume_proof": "not yet run; required by the new controller before supervised training",
+  "formal_acceptance": false
+}

@@ -1,0 +1,182 @@
+{
+  "report_kind": "independent_read_only_bounded_GPU_cache_benchmark_review",
+  "date": "2026-10-03",
+  "role": "verify",
+  "scope": {
+    "reviewed_implementation": "cnn/benchmark_cache_gpu.py",
+    "reviewed_tests": "cnn/test_benchmark_cache_gpu.py",
+    "reviewed_result": "cnn/reports/cache_gpu_benchmark_20261003.json",
+    "reviewed_telemetry": "cnn/reports/cache_gpu_benchmark_20261003.telemetry.jsonl",
+    "source_edits": false,
+    "gpu_used_by_reviewer": false,
+    "gpu_benchmark_rerun_by_reviewer": false,
+    "optimizer_or_training_steps_run_by_reviewer": 0,
+    "newtest_or_blind_pixels_read": false,
+    "owned_output_only": "cnn/reports/cache_gpu_benchmark_review_20261003.json"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "preflight_safety_contract": "passed",
+    "bounded_raw_cache_equivalence": "passed",
+    "five_minute_GPU_authorization_respected": true,
+    "paused_checkpoint_unchanged": true,
+    "formal_training_resumed": false,
+    "full_epoch_or_steady_state_speed_claim_supported": false,
+    "automatic_GPU_resume_authorized": false,
+    "summary": "No blocking defect remains. The single authorized run completed four disposable AMP/SGD optimizer groups in an ABBA raw/cache order, two groups per path. All 64-sample input identities, heads, loss components, 195 unscaled gradient tensors, BN/model state, optimizer momentum, scaler state and post-step parameters were bit-exact across every trial. The monitored GPU window was 38.2957 seconds with a 50 C sampled peak and no thermal slowdown; the paused epoch-6 checkpoint remained byte-identical and no training checkpoint was written."
+  },
+  "artifact_snapshots": {
+    "cnn/benchmark_cache_gpu.py": "b78ce9d5b523d07c2457ded6bbcf20f578e919e2bb8de5aa8c51bda41413f9f1",
+    "cnn/test_benchmark_cache_gpu.py": "77fd9750272ebdc224d67aaf08a2c5d2a2fc824a1b4349eab8df8c7c45e3dd1c",
+    "cnn/train.py": "be96d7639de7de75157088ddda9cdd947e8d53c81efd076c7fb1cc6273442d65",
+    "cnn/disk_cache.py": "5e88d944fb0864eb7ab1ac33d9aef63018a7cdf1aa81b6a93a62e5dfc16122b9",
+    "cnn/model.py": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c",
+    "benchmark_result_sha256": "b96540b06f8fe4c9d870349cc6aa8d21846e86383a1e04acef5773dcdce69fdb",
+    "telemetry_sha256": "ba65e58c29495c59f2dad391fef010d86d0dca1920940c22c3ba53c6b157691a",
+    "checkpoint_sha256_before_and_after": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "road_manifest_sha256": "ad353c5bce5b0ecef0433c74515324bbfdb031e92aff964cd56c18ae069d9fe4",
+    "cache_index_sha256": "646db6bcd11ab8ff55b9fb024480ab0b015842f7a9495a890a9b947aa153e170",
+    "checkpoint_training_manifest_sha256": "0bee36fd90cc78fd48cfc5a8d80ace60b66ce72ebe8eafaeb116602561566100"
+  },
+  "preflight_review": {
+    "watchdog": "An external base-Python process opens and retains a Windows handle to the exact benchmark process, signals ready before any CUDA call, applies a 295-second hard deadline, and terminates only that pinned process handle.",
+    "watchdog_failure_mode": "After ready, any telemetry, stream, memory-query or other watchdog exception terminates the pinned benchmark process before attempting a failure receipt.",
+    "soft_stop_seconds": 285,
+    "hard_stop_seconds": 295,
+    "temperature_stop_c": 75,
+    "thermal_monitoring": "Missing or ambiguous UUID/temperature/power/memory/thermal-slowdown telemetry fails closed. Active hardware or software thermal slowdown stops the benchmark. A bound-UUID final sample and explicit elapsed-time check are required before passed publication.",
+    "checkpoint_and_cache_gates": "Exact checkpoint, checkpoint-protocol, checkpoint-training-manifest, road-manifest, cache-index, final cache-report and independent cache-review identities are checked before CUDA.",
+    "exclusive_output": "Existing report or telemetry paths are rejected. The benchmark never opens the paused checkpoint for writing and rehashes it after the disposable run.",
+    "protocol": {
+      "checkpoint_epoch_zero_based": 5,
+      "checkpoint_epoch_display": 6,
+      "checkpoint_trained_steps": 11094,
+      "checkpoint_resume_eligible": true,
+      "checkpoint_interrupted": false,
+      "microbatch": 8,
+      "accum_steps": 8,
+      "effective_batch": 64,
+      "amp": true,
+      "initial_scaler_scale": 4096.0,
+      "protocol_sha256": "1f56ba977034e67f0738f34dcc36d508c68fa062bdf95d519284e9abfe35fc6a"
+    },
+    "gradient_coverage": "Each first/only group requires a gradient for every requires_grad named parameter; no missing-gradient parameter can be silently omitted from equality comparison.",
+    "independent_CPU_test": {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_benchmark_cache_gpu cnn.test_disk_cache -v",
+      "result": "exit 0; 4 tests passed in 0.849 seconds",
+      "coverage": "Telemetry identity/thermal guards, exact tree/input digest helpers, pinned-handle deadline termination, post-ready watchdog-exception termination and cache integrity regression."
+    }
+  },
+  "equivalence_recalculation": {
+    "order": [
+      "raw",
+      "cache",
+      "cache",
+      "raw"
+    ],
+    "optimizer_groups_per_path": 2,
+    "microbatches_per_group": 8,
+    "samples_per_microbatch": 8,
+    "samples_per_group": 64,
+    "same_epoch_and_shuffle": "Mosaic epoch 6, generator seed 48, workers 0; each trial resets the same loader order and consumes the same 64 development samples.",
+    "disposable_optimizer_steps": 4,
+    "persistent_optimizer_updates": 0,
+    "compared_gradient_tensors_each_trial": [
+      195,
+      195,
+      195,
+      195
+    ],
+    "mean_loss_each_trial": [
+      11.46648108959198,
+      11.46648108959198,
+      11.46648108959198,
+      11.46648108959198
+    ],
+    "gradient_norm_each_trial": [
+      7.978122711181641,
+      7.978122711181641,
+      7.978122711181641,
+      7.978122711181641
+    ],
+    "learning_rate_each_trial": [
+      0.009999730650102073,
+      0.009999730650102073,
+      0.009999730650102073,
+      0.009999730650102073
+    ],
+    "maximum_input_head_loss_gradient_BN_optimizer_parameter_difference": 0,
+    "interpretation": "The raw and cache paths produced the same disposable one-step training transition from the same checkpoint, optimizer, scaler and RNG state. This proves the compared cache input path did not change this bounded AMP/SGD transition; it does not prove a multi-step or full-epoch trajectory."
+  },
+  "telemetry_recalculation": {
+    "gpu_uuid_consistent_across_initial_monitor_and_final": true,
+    "watchdog_samples": 35,
+    "watchdog_elapsed_seconds_strictly_increasing": true,
+    "gpu_window_seconds": 38.29571449998184,
+    "under_295_second_hard_deadline": true,
+    "fraction_of_300_second_user_limit": 0.12765238166660613,
+    "initial_temperature_c": 50.0,
+    "final_temperature_c": 48.0,
+    "peak_temperature_c": 50.0,
+    "peak_power_w": 20.24,
+    "peak_device_used_mib": 1886.0,
+    "peak_torch_allocated_bytes_each_trial": 558369280,
+    "peak_torch_reserved_bytes_each_trial": 685768704,
+    "peak_process_RAM_bytes": 3042869248,
+    "thermal_slowdown_observed": false,
+    "telemetry_summary_matches_report": true
+  },
+  "timing_recalculation": {
+    "raw_work_seconds": [
+      15.863451499928487,
+      11.659303600055864
+    ],
+    "cache_work_seconds": [
+      3.985912600037409,
+      3.714874499972211
+    ],
+    "raw_median_seconds": 13.761377549992176,
+    "cache_median_seconds": 3.85039355000481,
+    "bounded_ratio": 3.574018440264368,
+    "timed_work_definition": "Per-group fetch plus synchronized host-to-device transfer, AMP forward/backward, unscale, gradient clipping and SGD step. Diagnostic digest/snapshot/equality work is excluded.",
+    "CPU_manifest_validation_seconds": 405.69094040000346,
+    "CPU_raw_constructor_seconds": 0.003392999991774559,
+    "CPU_cache_constructor_seconds": 42.719389200006844,
+    "total_session_seconds": 487.77581759999157,
+    "boundary": "There are only two observations per path. The first raw trial contains the first CUDA execution, raw/cache trials are not randomized, and workers=0 differs from the planned workers=4 training configuration. The 3.574x ratio is a bounded observation, not a steady-state, epoch, or formal-training speedup."
+  },
+  "checkpoint_and_process_state": {
+    "checkpoint_path": "cnn/runs/coco_full_pretrain300/last.pt",
+    "checkpoint_sha256_recomputed_after_run": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "checkpoint_last_write_time": "2026-10-03T09:05:17.2383167+08:00",
+    "checkpoints_written_by_benchmark": 0,
+    "benchmark_pid_23428_present_at_review": false,
+    "venv_launcher_pid_30008_present_at_review": false
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "topic": "two_point_cold_order_timing",
+      "evidence": "Raw work observations were 15.8635 and 11.6593 seconds; cache observations were 3.9859 and 3.7149 seconds. The first raw compute was also the coldest CUDA execution.",
+      "disposition": "Retain the 3.574x value only as a bounded workers-0 observation. Do not extrapolate it to a full epoch, workers 4, 300 epochs, accuracy, or wall-clock completion."
+    },
+    {
+      "severity": "warning",
+      "topic": "startup_cost_and_full_trainer_difference",
+      "evidence": "Manifest validation took 405.69 seconds and the benchmark's single train-cache constructor took 42.72 seconds before CUDA. The real trainer constructs both train and val cached datasets, while this benchmark constructed only train.",
+      "disposition": "Include full startup hashing, both split constructors, worker RAM/order and end-to-end epoch timing in any future adoption decision. The measured per-group cache benefit does not erase startup cost automatically."
+    },
+    {
+      "severity": "warning",
+      "topic": "bounded_state_trajectory",
+      "evidence": "Every trial resets to the same epoch-6 checkpoint and performs one optimizer group. Exact final states therefore prove one-step equivalence repeated twice per path, not continuity across several consecutive cached steps.",
+      "disposition": "Do not call this a resumed training trajectory. Any later formal continuation still requires explicit user authorization and a reversible cache switch."
+    },
+    {
+      "severity": "info",
+      "topic": "development_dataset_only",
+      "evidence": "The benchmark uses the pinned road train/val development manifest and consumes no newtest or blind image. Its checkpoint was trained on the separately pinned COCO manifest.",
+      "disposition": "This result is input-pipeline equivalence and bounded timing evidence only, not road accuracy or acceptance evidence."
+    }
+  ]
+}

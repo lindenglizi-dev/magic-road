@@ -1,0 +1,349 @@
+{
+  "modules": [
+    {
+      "name": "road_down2_dynamic_adapter",
+      "feature": "runtime_layer",
+      "rtl_path": "rtl/road_down2_dynamic_adapter.v",
+      "description": "Independent down2 runtime coefficient candidate; TEST scales, not deployed QAT.",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "i_table_valid",
+            "description": "i_table_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_addr",
+            "direction": "input",
+            "width": 10,
+            "role": "i_table_addr",
+            "description": "i_table_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_data",
+            "direction": "input",
+            "width": 16,
+            "role": "i_table_data",
+            "description": "i_table_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "o_table_ready",
+            "description": "o_table_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "o_table_loaded",
+            "description": "o_table_loaded",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "o_table_fault",
+            "description": "o_table_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "i_input_valid",
+            "description": "i_input_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_result_data",
+            "direction": "input",
+            "width": 96,
+            "role": "i_result_data",
+            "description": "i_result_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_result_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "i_result_fault",
+            "description": "i_result_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_layer",
+            "direction": "input",
+            "width": 1,
+            "role": "i_layer",
+            "description": "i_layer",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_position",
+            "direction": "input",
+            "width": 4,
+            "role": "i_position",
+            "description": "i_position",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_channel_base",
+            "direction": "input",
+            "width": 5,
+            "role": "i_channel_base",
+            "description": "i_channel_base",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_lane_mask",
+            "direction": "input",
+            "width": 3,
+            "role": "i_lane_mask",
+            "description": "i_lane_mask",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pre_multipliers",
+            "direction": "input",
+            "width": 96,
+            "role": "i_pre_multipliers",
+            "description": "i_pre_multipliers",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pre_shifts",
+            "direction": "input",
+            "width": 18,
+            "role": "i_pre_shifts",
+            "description": "i_pre_shifts",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_post_multiplier",
+            "direction": "input",
+            "width": 32,
+            "role": "i_post_multiplier",
+            "description": "i_post_multiplier",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_post_shift",
+            "direction": "input",
+            "width": 6,
+            "role": "i_post_shift",
+            "description": "i_post_shift",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_input_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "o_input_ready",
+            "description": "o_input_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "i_output_ready",
+            "description": "i_output_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "o_output_valid",
+            "description": "o_output_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "role": "o_output_data",
+            "description": "o_output_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_tag",
+            "direction": "output",
+            "width": 16,
+            "role": "o_output_tag",
+            "description": "o_output_tag",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "o_fault",
+            "description": "o_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_result_queue_count",
+            "direction": "output",
+            "width": 2,
+            "role": "o_result_queue_count",
+            "description": "o_result_queue_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_meta_count",
+            "direction": "output",
+            "width": 4,
+            "role": "o_meta_count",
+            "description": "o_meta_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "o_pre_busy",
+            "description": "o_pre_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "o_silu_busy",
+            "description": "o_silu_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "o_post_busy",
+            "description": "o_post_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pre_accept",
+            "direction": "output",
+            "width": 1,
+            "role": "o_pre_accept",
+            "description": "o_pre_accept",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_silu_accept",
+            "direction": "output",
+            "width": 1,
+            "role": "o_silu_accept",
+            "description": "o_silu_accept",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_post_accept",
+            "direction": "output",
+            "width": 1,
+            "role": "o_post_accept",
+            "description": "o_post_accept",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Cancel all old work; invalidate parameters and reload 1024 SiLU entries. Shell releases after two clock edges."
+      },
+      "behavior": [
+        "Reuse frozen MAC, RNE and SiLU. Kernel interfaces, arithmetic and II are unchanged.",
+        "Load kind6 addresses0..39: positive INT32 pre multipliers; DW0..15 then PW16..39.",
+        "Load kind7 addresses0..39: shifts0..62; 40/41: DW/PW post multiplier; 42/43: DW/PW post shift.",
+        "Sequential writes or address-zero restart only. Both complete banks required before runner start.",
+        "Parameters writable only while idle; accepted postprocess batches capture coefficients with metadata.",
+        "Real 9x9x16 halo feeds DW3x3/s2 then 4x4x16 PW16to24. Export384 INT8 items.",
+        "Shell keeps38 external bits; existing16-bit load descriptor accepts kinds6/7 only in this candidate."
+      ],
+      "constraints": [
+        "No production edits, training, bitgen, board, Flash or additional timing exceptions.",
+        "Diagnostic input/output delays are not a real external-device timing contract."
+      ],
+      "corner_cases": [
+        "No partial parameter publication; negative multiplier and shift63 are rejected.",
+        "Output ownership under backpressure; reset cancels data and invalidates parameter banks."
+      ],
+      "verification_cases": [
+        "Fixed-profile byte equivalence and28 layer scenarios using actual PH1P/common models.",
+        "Runtime nonpower-of-two scales and three tile locations; all intermediate values checked.",
+        "Real narrow-port exports and gate netlist comparison; static and physical failures remain separate."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "load_then_start",
+          "title": "Incomplete load cannot start",
+          "scenario": "load_then_start",
+          "description": "Protocol schematic only; busy duration is compressed, not literal measured latency.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "parameters_complete",
+                "wave": "0...1....."
+              },
+              {
+                "name": "start",
+                "wave": "01..010..."
+              },
+              {
+                "name": "busy",
+                "wave": "0.....1..."
+              },
+              {
+                "name": "output_valid",
+                "wave": "0.......1."
+              },
+              {
+                "name": "output_ready",
+                "wave": "1.......01"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

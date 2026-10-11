@@ -1,0 +1,36 @@
+{
+  "modules": [{
+    "name": "road_round_shift", "feature": "requantization", "rtl_path": "road_round_shift.v",
+    "description": "Nine-stage globally enabled exact signed rounding and int16 saturation primitive, no multiplier.",
+    "interfaces": {"protocol": "custom",
+      "ports": [
+        {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "100 MHz enclosing pipeline clock", "clock_domain": "i_clk"},
+        {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Asynchronous active-low token cancellation", "clock_domain": "i_clk", "active_level": "low"},
+        {"name": "i_advance", "direction": "input", "width": 1, "role": "clock_enable", "description": "Enclosing pipeline enables all stages only if its held output can advance", "clock_domain": "i_clk"},
+        {"name": "i_input_valid", "direction": "input", "width": 1, "role": "input_valid", "description": "Input transfers only with advance high", "clock_domain": "i_clk"},
+        {"name": "i_product", "direction": "input", "width": 64, "role": "signed_product", "description": "Exact signed upstream product excluding INT64_MIN", "clock_domain": "i_clk"},
+        {"name": "i_shift", "direction": "input", "width": 6, "role": "shift", "description": "Right shift zero through sixty-two; sixty-three faults", "clock_domain": "i_clk"},
+        {"name": "i_tag", "direction": "input", "width": 16, "role": "tag", "description": "Opaque payload identity held with product", "clock_domain": "i_clk"},
+        {"name": "o_result_valid", "direction": "output", "width": 1, "role": "output_valid", "description": "Qualifies data, tag and fault", "clock_domain": "i_clk"},
+        {"name": "o_result_data", "direction": "output", "width": 16, "role": "result_payload", "description": "Signed saturated int16; unspecified on fault", "clock_domain": "i_clk"},
+        {"name": "o_result_tag", "direction": "output", "width": 16, "role": "output_tag", "description": "Accepted input identity", "clock_domain": "i_clk"},
+        {"name": "o_fault", "direction": "output", "width": 1, "role": "fault", "description": "Unsupported shift or minimum int64; never publish as normal result", "clock_domain": "i_clk"}
+      ]},
+    "parameters": [],
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Every pipeline register and valid bit clears to zero."},
+    "behavior": ["Nine enabled edges including input acceptance produce output; latency eight enabled rising-edge intervals.", "II is one enabled clock; invalid input inserts a bubble.", "i_advance low freezes valid, fault, tag and all datapath registers; caller must deassert it if output cannot be accepted.", "Round exact absolute quotient/remainder with nearest even, restore sign and saturate to signed int16.", "Unsupported input yields a tagged fault; result data must be ignored.", "Reset cancels all tokens, including stalled output."],
+    "constraints": ["Verilog-2001 only, no multiplier or DSP claim.", "Only one clock domain, common clock enable, no gated clocks.", "This primitive is not an independently elastic ready/valid stage; enclosing pipeline owns readiness.", "INT64_MIN is outside the upstream legal int32 times nonnegative int32 product range."],
+    "corner_cases": ["Shift zero has no fractional increment.", "Negative half ties restore sign after even rounding.", "Positive and negative saturation never wrap.", "Shift sixty-three and INT64_MIN fault.", "Stalls extend elapsed latency by exactly their duration."],
+    "verification_cases": ["Exact Fraction vectors cover all sixty-three legal shifts and positive/negative half ties.", "CPU cross-checks existing integer.requantize.", "Self-checking RTL tests include continuous tokens, bubbles, common-enable stalls, tags, fault and reset cancellation."],
+    "timing_diagrams": [{"id": "enabled_pipeline", "title": "Enabled clocks and a common stall", "scenario": "stream_with_stall", "description": "Two adjacent tokens reach the output after eight enabled intervals; common stall holds them and all payloads.", "wavejson": {"signal": [
+      {"name": "i_clk", "wave": "p.............."},
+      {"name": "i_rstn", "wave": "01............."},
+      {"name": "i_advance", "wave": "1....0.1......."},
+      {"name": "i_input_valid", "wave": "0.1.0.........."},
+      {"name": "i_tag", "wave": "x.==x..........", "data": ["A", "B"]},
+      {"name": "o_result_valid", "wave": "0...........1.0"},
+      {"name": "o_result_tag", "wave": "x...........==x", "data": ["A", "B"]}
+    ]}}]
+  }]
+}

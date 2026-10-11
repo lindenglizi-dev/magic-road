@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-03",
+  "status_at_record": "REPAIRED_PIPELINE_RUNNING_DATA_VERIFICATION_NOT_YET_OPTIMIZING",
+  "latest_verified_progress": {
+    "full_manifest": "published_after_successful_archive_image_and_annotation_validation",
+    "dataset_sha256": "0bee36fd90cc78fd48cfc5a8d80ace60b66ce72ebe8eafaeb116602561566100",
+    "train_images": 118287,
+    "val_images": 5000,
+    "full_data_trainer": "GPU_optimization_confirmed_epoch1_not_complete",
+    "training_snapshot": {"epoch_number": 1, "optimizer_steps_completed": 200, "optimizer_steps_total": 554700, "epoch_samples": 12800, "epoch_seconds": 738.2681471999967, "train_loss": 26.88611851811409, "training_protocol_sha256": "1f56ba977034e67f0738f34dcc36d508c68fa062bdf95d519284e9abfe35fc6a", "accuracy_evidence": false},
+    "startup_IO": "reuse_existing_schema_audit_then_hash_each_image_once; raw_content_must_match_manifest_source_sha256",
+    "startup_regression": "single_hash_smoke passed; same dataset and content SHA256 as raw_pipeline_smoke, same first-epoch train_loss22.86179717381795 and val_loss27.520484924316406",
+    "shared_integer_assets": "../artifacts/shared_tables_v2/manifest.json",
+    "previous_shared_integer_assets_preserved": "../artifacts/shared_tables_v1/manifest.json",
+    "shared_assets_regression": "All 12 binary and hex LUT/golden files byte-identical between v1 and v2; v2 binds current integer.py SHA256 441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+    "shared_LUT_binary_bytes": 4608,
+    "golden_vectors": {"silu": 65536, "sigmoid": 65536, "exp_valid_Q8_domain": 1921},
+    "unit_tests": "24 passed including full-frame resize equivalence, exhaustive accumulator rounding, binary/hex/hash roundtrip and no-overwrite checks; cnn.test_model and cnn.test_training also passed",
+    "bit_exact_resize_optimization": {"old_seconds_per_frame": 0.04222858499997528, "new_seconds_per_frame": 0.019114085000182968, "benchmark_iterations": 20, "benchmark_scope": "isolated preprocessor under concurrent training load, not full training or FPGA throughput", "reference": "independent INT32 einsum full seeded random RGB frame, all 442368 output channel values equal", "rounding": "every possible sum0..6375 compared with generic RNE", "training_rollout": "do not restart; existing workers retain old function, recreated workers use new code from next epoch", "pixels_or_hyperparameters_changed": false},
+    "VID_train_archive_bytes": 8080572990,
+    "VID_train_state": "downloaded; further_CRC_extraction_and_development_pool_audit_owned_by_public_video_data",
+    "independent_latest_review": "pending_report",
+    "whole_trained_integer_model_package": "not_produced"
+  },
+  "development_output_capacity_audit": {
+    "dataset": "../data/visdrone_vid_val/converted/dataset.json",
+    "method": "For each class and split, sum(min(GT_count_in_frame,32))/sum(GT_count_in_frame); upper bound assumes perfect predictions and ignores further NMS/TopK/localization losses.",
+    "train": {
+      "person": {"GT": 35159, "max_per_frame": 69, "frames_above32": 676, "oracle_recall_ceiling": 0.741033590261384},
+      "vehicle": {"GT": 46639, "max_per_frame": 72, "frames_above32": 484, "oracle_recall_ceiling": 0.7611441068633547}
+    },
+    "val": {
+      "person": {"GT": 15153, "max_per_frame": 66, "frames_above32": 123, "oracle_recall_ceiling": 0.8654391869596779},
+      "vehicle": {"GT": 11694, "max_per_frame": 25, "frames_above32": 0, "oracle_recall_ceiling": 1.0}
+    },
+    "meaning": "Development val person has only about 1.54 percentage points of capacity headroom above R85. Dense training remains valid because loss uses dense heads before max32 postprocessing. These are not measured model recall, formal test or accuracy evidence.",
+    "policy": "Keep all GT and fixed top128/max32; report density groups and any failure explicitly. No automatic capacity or acceptance change."
+  },
+  "pipeline_session": 20217,
+  "previous_sessions": {"verification": 13915, "waiting_trainer": 3620, "outcome": "both exited 1; no complete manifest, no full-data optimizer updates"},
+  "root_cause": {
+    "source": "cnn/data/coco/annotations/instances_train2017.json",
+    "annotation_id": 2206849,
+    "image_id": 550395,
+    "category_id": 1,
+    "bbox": [9.98, 188.56, 5.54, 0.0],
+    "area": 0.0,
+    "selected_class_nonpositive_extent_counts": {"train": 1, "val": 0},
+    "repair_policy": "Only finite nonnegative extents with a zero dimension and explicitly zero source area receive full-frame ignore. Preserve the image and other explicit positives. Never invent a replacement box or supervise unknown regions as background. All other invalid extents still fail closed.",
+    "provenance": "Adapter records raw annotation_id,image_id,category_id,bbox,area and policy in per-source degenerate_annotations."
+  },
+  "verification_command": "python -u -B -m cnn.dataset coco-manifest --manifest cnn/data/coco/download_receipt_full2017.json --output cnn/data/coco_full --raw-images",
+  "training_command_after_success": "python -u -B -m cnn.train --dataset cnn/data/coco_full/dataset.json --output cnn/runs/coco_full_pretrain300 --epochs 300 --batch-size 8 --accum-steps 8 --workers 4 --amp --mosaic --checkpoint-kind training",
+  "gate": "Run the trainer only if the manifest command exits zero; independent trainer audit still applies.",
+  "checks": {
+    "unit_tests": "22 passed: cnn.test_dataset cnn.test_integer cnn.test_fetch_coco cnn.test_metrics cnn.test_public_video",
+    "model": "cnn.test_model passed architecture, full-frame ignore protects positives and removes background loss, backward and CUDA accumulation",
+    "integer": "INT32 bias range now checked before accumulation; Fraction-based exact RNE tests cover full-width products, shifts 0/1/31/62 and INT16 saturation"
+  },
+  "production_rtl_modified": false,
+  "accuracy_gate_changed": false,
+  "user_data_needed_now": false,
+  "not_claimed": ["first full-data epoch complete", "300 epochs complete", "P95_R85 passed", "full hardware-equivalent QAT complete", "FPGA integrated"]
+}

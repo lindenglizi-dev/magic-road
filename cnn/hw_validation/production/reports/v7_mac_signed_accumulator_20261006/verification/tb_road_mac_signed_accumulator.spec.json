@@ -1,0 +1,95 @@
+{
+  "module": "tb_road_mac_signed_accumulator",
+  "version": "1.0",
+  "date": "2026-10-06 Asia/Shanghai",
+  "purpose": "Directed assertion simulation for the approved signed-33 cross-beat accumulator change in road_mac_probe.",
+  "scope": {
+    "dut": "candidate/road_mac_probe.v",
+    "reference": "signed33_reference.py",
+    "proof": "../coordinator/range_proof.json",
+    "legal_reduction_limit": {
+      "active_terms": 192,
+      "accepted_beats": 24
+    },
+    "excluded": [
+      "unbounded malformed first/last streams",
+      "formal proof",
+      "TD integration",
+      "training",
+      "Flash",
+      "physical timing closure"
+    ]
+  },
+  "interface_contract": {
+    "ports_unchanged": true,
+    "input_accept": "i_input_valid && o_input_ready",
+    "output_accept": "o_result_valid && i_result_ready",
+    "terminal_latency_cycles": 9,
+    "nonterminal_accept_interval_cycles": 11,
+    "terminal_accept_interval_with_three_stall_cycles": 16,
+    "terminal_accept_interval_formula": "13 + output_stall_cycles"
+  },
+  "arithmetic_contract": {
+    "products": "signed16",
+    "pairs": "signed17",
+    "quads": "signed18",
+    "dots": "signed19",
+    "base_chain": "three packed signed33 lanes",
+    "candidate_chain": "three signed34 lanes",
+    "accumulator": "three packed signed33 lanes",
+    "lane_layout": {
+      "alpha": "[32:0]",
+      "beta": "[65:33]",
+      "gamma": "[98:66]"
+    },
+    "bias": "signed32, sign-extended once when first=1",
+    "overflow": "INT32 range checked only for an accepted last group",
+    "fault_payload": "all three external INT32 lanes are zero when any final lane overflows"
+  },
+  "directed_coverage": [
+    "positive temporary INT32 excursion followed by legal recovery",
+    "negative temporary INT32 excursion followed by legal recovery",
+    "positive and negative final overflow independently in alpha, beta, and gamma",
+    "24-beat 192-term legal result with INT32_MIN and INT32_MAX biases",
+    "INT32_MAX + 192*16384 exact positive proof endpoint and atomic fault",
+    "INT32_MIN + 192*(-16256) exact negative proof endpoint and atomic fault",
+    "tail mask with nonzero extreme values in disabled lanes",
+    "bias used once even when later beats present different extreme bias ports",
+    "input valid and payload held while busy",
+    "output stalls of 3 and 12 cycles",
+    "asynchronous reset cancellation at product, pair, quad, dot, candidate, hold, final, decision, writeback, and output-hold stages",
+    "result-ready asserted before the recovered result-valid, followed by a sampled handshake, one-cycle terminal, normal release, and no repeated or ghost terminal"
+  ],
+  "white_box_checks": {
+    "accept_plus_1": "all 24 product registers and flag_product_valid",
+    "accept_plus_2": "all 12 pair registers and flag_stage_valid[0]",
+    "accept_plus_3": "all 6 quad registers and flag_stage_valid[1]",
+    "accept_plus_4": "all 3 dot registers, full reg_base_dot[98:0], and flag_stage_valid[2]",
+    "accept_plus_5": "all reg_candidate_*[33:0] and flag_stage_valid[3]",
+    "accept_plus_6": "all reg_candidate_*_hold[33:0] and flag_stage_valid[4]",
+    "accept_plus_7": "all reg_candidate_*_final[33:0] and flag_stage_valid[5]",
+    "accept_plus_8": "commit and publish decisions",
+    "accept_plus_9": "full reg_accumulator[98:0] writeback and optional external terminal"
+  },
+  "modes": {
+    "candidate": "Runs all 84 deterministic beats, ten reset cancellation probes, and one pre-ready terminal regression.",
+    "legacy_negative": "With +LEGACY_NEGATIVE, frozen 96-bit core must reject the first non-last beat of each recovery sequence with a fault and all-zero payload."
+  },
+  "machine_readable_trace": {
+    "plusarg": "+TRACE=<path>",
+    "columns": [
+      "cycle",
+      "event",
+      "case",
+      "beat",
+      "fault",
+      "latency_or_stall",
+      "data"
+    ]
+  },
+  "pass_markers": [
+    "VERILOG-GEN-RESULT PASS",
+    "VERILOG-GEN-NEGATIVE PASS"
+  ],
+  "strict_note": "This harness is directed assertion simulation, not a formal proof or release gate by itself."
+}

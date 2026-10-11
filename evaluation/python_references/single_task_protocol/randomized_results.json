@@ -1,0 +1,233 @@
+{
+  "status": "pass",
+  "trials": [
+    {
+      "seed": 1,
+      "cycles": 2000,
+      "counters": {
+        "published_task": 175,
+        "destination_accept": 173,
+        "duplicate_request": 7,
+        "ram_read_done": 172,
+        "algorithm_done": 171,
+        "ack_release": 169,
+        "display_pending_update": 168,
+        "display_swap": 100,
+        "display_pending_overwrite": 61,
+        "publish_busy_frame_drop": 94,
+        "coordinated_reset": 9
+      },
+      "event_count": 1590,
+      "contract": {
+        "status": "executable_protocol_reference_not_RTL",
+        "single_outstanding": true,
+        "mailbox_payload_stability": "source holds transaction/frame/bank/payload until matching synchronized ack",
+        "publish_payload": "frame/object payload is frozen at source EOF publication; SOF payload is capture metadata/default only",
+        "destination_copy_point": "request arrival after request synchronizer",
+        "ack_point": "destination explicit RAM-last-read; ack arrival releases only the source bank while the copied task may remain in HOG/SVM",
+        "busy_destination_mailbox": "one synchronized request remains visible and stable while the old copied task finishes; it is accepted immediately when the executor becomes idle",
+        "algorithm_done": "may occur only after RAM-last-read and creates display CDC update",
+        "same_cycle_priority": [
+          "coordinated reset",
+          "CDC arrivals",
+          "source SOF",
+          "source EOF",
+          "HDMI VSYNC"
+        ],
+        "busy_policy": "a free second bank may capture while one task is outstanding; if matching ack has not arrived by EOF, that whole captured frame is discarded instead of queued",
+        "duplicate_policy": "duplicates whose full identity differs are counted and ignored; finite-width full-tuple wrap cannot distinguish an arbitrarily delayed old ack",
+        "reset": "coordinated reset clears banks, mailboxes, destination task, queued CDC events and display tables",
+        "nominal_identity_widths": {
+          "source_frame_id": 4,
+          "transaction_id": 6,
+          "bank_generation": 32
+        },
+        "identity_width_status": "Python nominal values only; arch_lead must freeze RTL widths from frame rate and maximum stale-message lifetime",
+        "frame_wrap": "frame IDs compare modulo 16; transaction identity remains independent until the complete identity tuple aliases",
+        "bank_generation": "each round-robin bank allocation increments its own generation modulo 4294967296; transaction/frame/bank/generation all participate in ack matching",
+        "wrap_safety_requirement": "the maximum lifetime of any synchronized request/ack must be strictly shorter than the minimum full-identity alias interval; use a level/toggle handshake plus coordinated reset flushing, and prove this bound before RTL",
+        "HDMI": "CDC result writes pending; the latest completed snapshot before the modeled VSYNC boundary event wins; VSYNC atomically replaces active, records both display/source frame IDs plus frame_id_modulo_delta, and active is frozen until another VSYNC; the delta is not latency unless the two counters share a measured epoch/cadence; RTL must freeze the physical VSYNC edge/polarity"
+      }
+    },
+    {
+      "seed": 7,
+      "cycles": 2000,
+      "counters": {
+        "published_task": 185,
+        "destination_accept": 182,
+        "publish_busy_frame_drop": 82,
+        "ram_read_done": 182,
+        "ack_release": 177,
+        "algorithm_done": 179,
+        "display_pending_update": 175,
+        "display_swap": 96,
+        "display_pending_overwrite": 68,
+        "coordinated_reset": 16,
+        "duplicate_request": 7
+      },
+      "event_count": 1641,
+      "contract": {
+        "status": "executable_protocol_reference_not_RTL",
+        "single_outstanding": true,
+        "mailbox_payload_stability": "source holds transaction/frame/bank/payload until matching synchronized ack",
+        "publish_payload": "frame/object payload is frozen at source EOF publication; SOF payload is capture metadata/default only",
+        "destination_copy_point": "request arrival after request synchronizer",
+        "ack_point": "destination explicit RAM-last-read; ack arrival releases only the source bank while the copied task may remain in HOG/SVM",
+        "busy_destination_mailbox": "one synchronized request remains visible and stable while the old copied task finishes; it is accepted immediately when the executor becomes idle",
+        "algorithm_done": "may occur only after RAM-last-read and creates display CDC update",
+        "same_cycle_priority": [
+          "coordinated reset",
+          "CDC arrivals",
+          "source SOF",
+          "source EOF",
+          "HDMI VSYNC"
+        ],
+        "busy_policy": "a free second bank may capture while one task is outstanding; if matching ack has not arrived by EOF, that whole captured frame is discarded instead of queued",
+        "duplicate_policy": "duplicates whose full identity differs are counted and ignored; finite-width full-tuple wrap cannot distinguish an arbitrarily delayed old ack",
+        "reset": "coordinated reset clears banks, mailboxes, destination task, queued CDC events and display tables",
+        "nominal_identity_widths": {
+          "source_frame_id": 4,
+          "transaction_id": 6,
+          "bank_generation": 32
+        },
+        "identity_width_status": "Python nominal values only; arch_lead must freeze RTL widths from frame rate and maximum stale-message lifetime",
+        "frame_wrap": "frame IDs compare modulo 16; transaction identity remains independent until the complete identity tuple aliases",
+        "bank_generation": "each round-robin bank allocation increments its own generation modulo 4294967296; transaction/frame/bank/generation all participate in ack matching",
+        "wrap_safety_requirement": "the maximum lifetime of any synchronized request/ack must be strictly shorter than the minimum full-identity alias interval; use a level/toggle handshake plus coordinated reset flushing, and prove this bound before RTL",
+        "HDMI": "CDC result writes pending; the latest completed snapshot before the modeled VSYNC boundary event wins; VSYNC atomically replaces active, records both display/source frame IDs plus frame_id_modulo_delta, and active is frozen until another VSYNC; the delta is not latency unless the two counters share a measured epoch/cadence; RTL must freeze the physical VSYNC edge/polarity"
+      }
+    },
+    {
+      "seed": 23,
+      "cycles": 2000,
+      "counters": {
+        "published_task": 187,
+        "destination_accept": 181,
+        "ram_read_done": 179,
+        "ack_release": 176,
+        "algorithm_done": 176,
+        "display_pending_update": 174,
+        "display_pending_overwrite": 64,
+        "display_swap": 100,
+        "publish_busy_frame_drop": 77,
+        "coordinated_reset": 16,
+        "duplicate_request": 9
+      },
+      "event_count": 1623,
+      "contract": {
+        "status": "executable_protocol_reference_not_RTL",
+        "single_outstanding": true,
+        "mailbox_payload_stability": "source holds transaction/frame/bank/payload until matching synchronized ack",
+        "publish_payload": "frame/object payload is frozen at source EOF publication; SOF payload is capture metadata/default only",
+        "destination_copy_point": "request arrival after request synchronizer",
+        "ack_point": "destination explicit RAM-last-read; ack arrival releases only the source bank while the copied task may remain in HOG/SVM",
+        "busy_destination_mailbox": "one synchronized request remains visible and stable while the old copied task finishes; it is accepted immediately when the executor becomes idle",
+        "algorithm_done": "may occur only after RAM-last-read and creates display CDC update",
+        "same_cycle_priority": [
+          "coordinated reset",
+          "CDC arrivals",
+          "source SOF",
+          "source EOF",
+          "HDMI VSYNC"
+        ],
+        "busy_policy": "a free second bank may capture while one task is outstanding; if matching ack has not arrived by EOF, that whole captured frame is discarded instead of queued",
+        "duplicate_policy": "duplicates whose full identity differs are counted and ignored; finite-width full-tuple wrap cannot distinguish an arbitrarily delayed old ack",
+        "reset": "coordinated reset clears banks, mailboxes, destination task, queued CDC events and display tables",
+        "nominal_identity_widths": {
+          "source_frame_id": 4,
+          "transaction_id": 6,
+          "bank_generation": 32
+        },
+        "identity_width_status": "Python nominal values only; arch_lead must freeze RTL widths from frame rate and maximum stale-message lifetime",
+        "frame_wrap": "frame IDs compare modulo 16; transaction identity remains independent until the complete identity tuple aliases",
+        "bank_generation": "each round-robin bank allocation increments its own generation modulo 4294967296; transaction/frame/bank/generation all participate in ack matching",
+        "wrap_safety_requirement": "the maximum lifetime of any synchronized request/ack must be strictly shorter than the minimum full-identity alias interval; use a level/toggle handshake plus coordinated reset flushing, and prove this bound before RTL",
+        "HDMI": "CDC result writes pending; the latest completed snapshot before the modeled VSYNC boundary event wins; VSYNC atomically replaces active, records both display/source frame IDs plus frame_id_modulo_delta, and active is frozen until another VSYNC; the delta is not latency unless the two counters share a measured epoch/cadence; RTL must freeze the physical VSYNC edge/polarity"
+      }
+    },
+    {
+      "seed": 101,
+      "cycles": 2000,
+      "counters": {
+        "published_task": 177,
+        "destination_accept": 175,
+        "ram_read_done": 175,
+        "algorithm_done": 174,
+        "ack_release": 172,
+        "display_pending_update": 172,
+        "publish_busy_frame_drop": 75,
+        "display_swap": 101,
+        "display_pending_overwrite": 64,
+        "duplicate_request": 13,
+        "coordinated_reset": 10
+      },
+      "event_count": 1579,
+      "contract": {
+        "status": "executable_protocol_reference_not_RTL",
+        "single_outstanding": true,
+        "mailbox_payload_stability": "source holds transaction/frame/bank/payload until matching synchronized ack",
+        "publish_payload": "frame/object payload is frozen at source EOF publication; SOF payload is capture metadata/default only",
+        "destination_copy_point": "request arrival after request synchronizer",
+        "ack_point": "destination explicit RAM-last-read; ack arrival releases only the source bank while the copied task may remain in HOG/SVM",
+        "busy_destination_mailbox": "one synchronized request remains visible and stable while the old copied task finishes; it is accepted immediately when the executor becomes idle",
+        "algorithm_done": "may occur only after RAM-last-read and creates display CDC update",
+        "same_cycle_priority": [
+          "coordinated reset",
+          "CDC arrivals",
+          "source SOF",
+          "source EOF",
+          "HDMI VSYNC"
+        ],
+        "busy_policy": "a free second bank may capture while one task is outstanding; if matching ack has not arrived by EOF, that whole captured frame is discarded instead of queued",
+        "duplicate_policy": "duplicates whose full identity differs are counted and ignored; finite-width full-tuple wrap cannot distinguish an arbitrarily delayed old ack",
+        "reset": "coordinated reset clears banks, mailboxes, destination task, queued CDC events and display tables",
+        "nominal_identity_widths": {
+          "source_frame_id": 4,
+          "transaction_id": 6,
+          "bank_generation": 32
+        },
+        "identity_width_status": "Python nominal values only; arch_lead must freeze RTL widths from frame rate and maximum stale-message lifetime",
+        "frame_wrap": "frame IDs compare modulo 16; transaction identity remains independent until the complete identity tuple aliases",
+        "bank_generation": "each round-robin bank allocation increments its own generation modulo 4294967296; transaction/frame/bank/generation all participate in ack matching",
+        "wrap_safety_requirement": "the maximum lifetime of any synchronized request/ack must be strictly shorter than the minimum full-identity alias interval; use a level/toggle handshake plus coordinated reset flushing, and prove this bound before RTL",
+        "HDMI": "CDC result writes pending; the latest completed snapshot before the modeled VSYNC boundary event wins; VSYNC atomically replaces active, records both display/source frame IDs plus frame_id_modulo_delta, and active is frozen until another VSYNC; the delta is not latency unless the two counters share a measured epoch/cadence; RTL must freeze the physical VSYNC edge/polarity"
+      }
+    }
+  ],
+  "randomized_test_configuration": {
+    "frame_bits": 4,
+    "transaction_bits": 6,
+    "bank_generation_bits": 8,
+    "purpose": "accelerated wrap/reset stress only"
+  },
+  "contract": {
+    "status": "executable_protocol_reference_not_RTL",
+    "single_outstanding": true,
+    "mailbox_payload_stability": "source holds transaction/frame/bank/payload until matching synchronized ack",
+    "publish_payload": "frame/object payload is frozen at source EOF publication; SOF payload is capture metadata/default only",
+    "destination_copy_point": "request arrival after request synchronizer",
+    "ack_point": "destination explicit RAM-last-read; ack arrival releases only the source bank while the copied task may remain in HOG/SVM",
+    "busy_destination_mailbox": "one synchronized request remains visible and stable while the old copied task finishes; it is accepted immediately when the executor becomes idle",
+    "algorithm_done": "may occur only after RAM-last-read and creates display CDC update",
+    "same_cycle_priority": [
+      "coordinated reset",
+      "CDC arrivals",
+      "source SOF",
+      "source EOF",
+      "HDMI VSYNC"
+    ],
+    "busy_policy": "a free second bank may capture while one task is outstanding; if matching ack has not arrived by EOF, that whole captured frame is discarded instead of queued",
+    "duplicate_policy": "duplicates whose full identity differs are counted and ignored; finite-width full-tuple wrap cannot distinguish an arbitrarily delayed old ack",
+    "reset": "coordinated reset clears banks, mailboxes, destination task, queued CDC events and display tables",
+    "nominal_identity_widths": {
+      "source_frame_id": 32,
+      "transaction_id": 32,
+      "bank_generation": 32
+    },
+    "identity_width_status": "Python nominal values only; arch_lead must freeze RTL widths from frame rate and maximum stale-message lifetime",
+    "frame_wrap": "frame IDs compare modulo 4294967296; transaction identity remains independent until the complete identity tuple aliases",
+    "bank_generation": "each round-robin bank allocation increments its own generation modulo 4294967296; transaction/frame/bank/generation all participate in ack matching",
+    "wrap_safety_requirement": "the maximum lifetime of any synchronized request/ack must be strictly shorter than the minimum full-identity alias interval; use a level/toggle handshake plus coordinated reset flushing, and prove this bound before RTL",
+    "HDMI": "CDC result writes pending; the latest completed snapshot before the modeled VSYNC boundary event wins; VSYNC atomically replaces active, records both display/source frame IDs plus frame_id_modulo_delta, and active is frozen until another VSYNC; the delta is not latency unless the two counters share a measured epoch/cadence; RTL must freeze the physical VSYNC edge/polarity"
+  }
+}

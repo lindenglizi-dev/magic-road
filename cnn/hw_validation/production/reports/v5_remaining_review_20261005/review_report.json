@@ -1,0 +1,104 @@
+{
+  "schema": "RoadYOLO-v5-remaining-review-v1",
+  "date": "2026-10-05",
+  "role": "review",
+  "read_only": true,
+  "candidate_sha256": "5f357b493c7b3f941d9fa954a0ce5ec09091e466b641474360d2f64d0e42c938",
+  "candidate_copy_match": true,
+  "decision": "blocked",
+  "decision_reason": "Strict delivery remains failed, the new-checker half of the four-way comparison is absent, and no candidate-specific physical implementation or STA evidence exists.",
+  "checker_matrix": {
+    "fresh_old_original": {"errors": 174, "issues": 173, "exit": 1},
+    "fresh_old_candidate": {"errors": 242, "issues": 241, "exit": 1},
+    "new_original": "missing",
+    "new_candidate": "missing",
+    "complete": false
+  },
+  "vg145": {
+    "rule": "comb_cone_max_three_sources",
+    "limit": 3,
+    "finding_count": 9,
+    "findings": [
+      {"line": 139, "target": "table_ready_o", "expression": "(cnt_pending == 3'd0) && ((i_table_addr == 10'd0) || ((~table_loaded_o) && (~table_fault_o)))", "count": 4, "status": "confirmed"},
+      {"line": 140, "target": "input_ready_o", "expression": "((~output_valid_o) | i_output_ready) && table_loaded_o && (~i_table_valid)", "count": 4, "status": "confirmed"},
+      {"line": 141, "target": "flag_input_transfer", "expression": "i_input_valid && (((~output_valid_o) | i_output_ready) && table_loaded_o && (~i_table_valid))", "count": 5, "status": "confirmed"},
+      {"line": 143, "target": "flag_table_transfer", "expression": "i_table_valid && ((cnt_pending == 3'd0) && ((i_table_addr == 10'd0) || ((~table_loaded_o) && (~table_fault_o))))", "count": 5, "status": "confirmed"},
+      {"line": 144, "target": "flag_table_restart", "expression": "[expanded flag_table_transfer] && (i_table_addr == 10'd0)", "count": 5, "status": "confirmed"},
+      {"line": 145, "target": "flag_table_write_enable", "expression": "[expanded flag_table_transfer] && ((i_table_addr == 10'd0) || (i_table_addr == cnt_table_expected[9:0]))", "count": 6, "status": "confirmed"},
+      {"line": 146, "target": "wire_table_address", "expression": "[expanded flag_table_transfer] ? i_table_addr : reg_lookup_address[9:0]", "count": 6, "status": "confirmed"},
+      {"line": 154, "target": "o_table_ready", "expression": "expanded output bridge equals table_ready_o", "count": 4, "status": "confirmed"},
+      {"line": 155, "target": "o_input_ready", "expression": "expanded output bridge equals input_ready_o", "count": 4, "status": "confirmed"}
+    ]
+  },
+  "vg146": {
+    "rule": "comb_operation_budget",
+    "limit": 3,
+    "candidate_total_findings": 51,
+    "confirmed_over_limit": 7,
+    "unknown_but_known_lower_bound_over_limit": 8,
+    "unknown_at_or_under_limit": 36,
+    "over_limit_findings": [
+      {"gate_line": 47, "source_lines": "291-299", "target": "cnt_pending$enable", "expression": "case({i_input_valid && (((~output_valid_o) | i_output_ready) && table_loaded_o && ~i_table_valid), output_valid_o && i_output_ready})", "count": 7, "status": "unknown_external_interface_but_lower_bound_over"},
+      {"gate_line": 47, "source_lines": "272-288", "target": "cnt_table_expected$enable", "expression": "if table restart then 1; else if table transfer then mismatch/last/plus-one selection", "count": 14, "status": "confirmed"},
+      {"gate_line": 47, "source_lines": "333-340", "target": "flag_input_valid$D", "expression": "i_input_valid && (((~output_valid_o) | i_output_ready) && table_loaded_o && ~i_table_valid)", "count": 6, "status": "unknown_external_interface_but_lower_bound_over"},
+      {"gate_line": 47, "source_lines": "173-190", "target": "output_data_o$enable", "expression": "pipeline-enable followed by flag_ram_valid/flag_ram_lower/flag_ram_upper/reg_ram_address priority decode", "count": 7, "status": "unknown_external_interface_but_lower_bound_over"},
+      {"gate_line": 47, "source_lines": "213-223", "target": "table_fault_o$enable", "expression": "table_restart || (table_transfer && (i_table_addr != cnt_table_expected[9:0]))", "count": 14, "status": "confirmed"},
+      {"gate_line": 47, "source_lines": "194-210", "target": "table_loaded_o$enable", "expression": "table_restart || (table_transfer && ((i_table_addr != cnt_table_expected[9:0]) || (i_table_addr == TABLE_LAST_ADDR)))", "count": 14, "status": "confirmed"},
+      {"gate_line": 139, "source_lines": "139", "target": "table_ready_o", "expression": "(cnt_pending == 3'd0) && ((i_table_addr == 10'd0) || ((~table_loaded_o) && (~table_fault_o)))", "count": 7, "status": "confirmed"},
+      {"gate_line": 140, "source_lines": "140,150", "target": "input_ready_o", "expression": "((~output_valid_o) | i_output_ready) && table_loaded_o && (~i_table_valid)", "count": 5, "status": "unknown_external_interface_but_lower_bound_over"},
+      {"gate_line": 141, "source_lines": "140-141,150", "target": "flag_input_transfer", "expression": "i_input_valid && (((~output_valid_o) | i_output_ready) && table_loaded_o && (~i_table_valid))", "count": 6, "status": "unknown_external_interface_but_lower_bound_over"},
+      {"gate_line": 143, "source_lines": "139,143", "target": "flag_table_transfer", "expression": "i_table_valid && [expanded table_ready_o]", "count": 8, "status": "confirmed"},
+      {"gate_line": 144, "source_lines": "139,143-144", "target": "flag_table_restart", "expression": "[expanded flag_table_transfer] && (i_table_addr == 10'd0)", "count": 10, "status": "confirmed"},
+      {"gate_line": 145, "source_lines": "139,143,145", "target": "flag_table_write_enable", "expression": "[expanded flag_table_transfer] && ((i_table_addr == 10'd0) || (i_table_addr == cnt_table_expected[9:0]))", "count": 12, "status": "unknown_external_interface_but_lower_bound_over"},
+      {"gate_line": 146, "source_lines": "139,143,146", "target": "wire_table_address", "expression": "[expanded flag_table_transfer] ? i_table_addr : reg_lookup_address[9:0]", "count": 9, "status": "unknown_external_interface_but_lower_bound_over"},
+      {"gate_line": 154, "source_lines": "139,154", "target": "o_table_ready", "expression": "expanded output bridge equals table_ready_o", "count": 7, "status": "confirmed"},
+      {"gate_line": 155, "source_lines": "140,150,155", "target": "o_input_ready", "expression": "expanded output bridge equals input_ready_o", "count": 5, "status": "unknown_external_interface_but_lower_bound_over"}
+    ]
+  },
+  "vg122": [
+    {"line": 283, "expression": "cnt_table_expected <= cnt_table_expected + 11'd1", "lhs": "unsigned[10:0]", "operands": ["unsigned[10:0]", "unsigned[10:0]"], "conclusion": "No expression-wider-than-target truncation; reachable increment is bounded to 1022+1=1023.", "remaining_risk": "Modulo wrap only if the control invariant is violated.", "minimal_verification": "Assert pre-increment <=1022 and compare against a 12-bit testbench reference."},
+    {"line": 296, "expression": "cnt_pending <= cnt_pending + 3'd1", "lhs": "unsigned[2:0]", "operands": ["unsigned[2:0]", "unsigned[2:0]"], "conclusion": "No signed mixing or wider-than-target truncation.", "remaining_risk": "Modulo wrap if increment occurs at 7.", "minimal_verification": "Assert input-only transfer implies cnt_pending != 7 and compare against a 4-bit reference."},
+    {"line": 297, "expression": "cnt_pending <= cnt_pending - 3'd1", "lhs": "unsigned[2:0]", "operands": ["unsigned[2:0]", "unsigned[2:0]"], "conclusion": "No signed mixing or wider-than-target truncation.", "remaining_risk": "Unsigned underflow to 7 if decrement occurs at 0.", "minimal_verification": "Assert output-only transfer implies cnt_pending != 0 and compare against the same 4-bit reference."},
+    {"line": 484, "expression": "reg_lookup_address <= reg_rounded_value + 16'sd512", "lhs": "signed[15:0]", "operands": ["signed[15:0]", "signed[15:0]"], "conclusion": "Types match; reg_rounded_value in [-8192,8192] gives sum [-7680,8704], inside signed16.", "remaining_risk": "Only a future upstream rounding-contract change would invalidate the bound.", "minimal_verification": "Compare with a 17-bit signed reference and assert the stated bounds at INT16 and rounding boundaries."}
+  ],
+  "vg122_policy": {
+    "rule_key": "op_no_arith_overflow",
+    "same_width_is_not_sufficient_for_clearance": true,
+    "status": "blocking_until_reachable_range_and_counter_invariants_are_repeatably_proven",
+    "note": "Same-width semantics only refute a narrower-LHS truncation explanation; they do not by themselves close the overflow-policy gate."
+  },
+  "drive_table_word_timing": {
+    "timescale": "1ns/1ps",
+    "clock_period_ns": 10,
+    "stimulus_edge": "negedge",
+    "ready_check_offset_ns": 1,
+    "next_sampling_edge_offset_ns": 5,
+    "margin_from_ready_check_to_sampling_edge_ns": 4,
+    "valid_deassert_offset_after_sampling_edge_ns": 1,
+    "crosses_sampling_edge": false,
+    "single_handshake_per_call": true,
+    "proof": "Stimulus is applied at a falling edge, ready is checked one nanosecond later, the first eligible rising edge occurs four nanoseconds after that check, and valid is deasserted one nanosecond after that rising edge and nine nanoseconds before the next rising edge.",
+    "applicability_precondition": "For this DUT, table_ready depends only on task-stable address inputs and synchronous register state, and waiting-time ready changes settle after posedge NBA/combinational updates. This proof does not generalize to an asynchronously changing ready signal.",
+    "boundary": "Behavioral simulation scheduling only; not SDF or physical setup/hold evidence."
+  },
+  "reused_not_rerun": {
+    "full_domain": {"inputs": 65536, "latency": 5, "ii": 1, "legal_writes": 3072, "log_sha256": "0635b04b5b07155d19a9f66502688ed1988b22c4ce6e218704ddebaa63422452"},
+    "random_seed42": {"accepted": 4096, "received": 4096, "stall_cycles": 1353, "max_stall": 7, "log_sha256": "64f72cb3dae752c7b458ccd65cfeff78fb41b0d2c92ccde9683ca3e41b6a12a"}
+  },
+  "public_gates": {
+    "compile": "passed",
+    "ast": "failed",
+    "readability": "failed",
+    "comment": "failed",
+    "naming": "failed",
+    "profile": "passed",
+    "testbench": "not_requested",
+    "toolchain": "not_requested"
+  },
+  "physical_admission": {
+    "allowed": false,
+    "static_budget_is_not_sta": true,
+    "td_executed_by_this_review": false,
+    "minimum_next_step": "Close the project adapter positive and negative cases, run the new-checker original and candidate legs with identical inputs, adjudicate every remaining blocker, then seek the required physical-run authorization."
+  }
+}

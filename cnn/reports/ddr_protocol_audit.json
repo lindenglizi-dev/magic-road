@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "role": "arch_lead",
+  "scope": "Phase A read-only production DDR protocol audit; only this report is authored",
+  "status": "documentation_progress_but_dma_and_slot_publication_blocked",
+  "repository": "No Git repository; git status --short --branch failed with not a git repository",
+  "source_prefix": "user_source/hdl_source/",
+  "primary_manual": {
+    "path": "E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/doc/IPUG/IPUG034_PH1P_MIS_IP_Guide.pdf",
+    "version": "IPUG034_1.2, 2024.09",
+    "sha256": "340F0705979E2C8467171EFBF586497BE60ADF71236DC99DC2C1FEE7271A18CA",
+    "method": "pdftotext -layout to stdout; visually inspected physical PDF pages 23-24 (printed pages 19-20) using pdftoppm",
+    "version_limit": "Manual predates generated IP build 2026-03-25, TD 6.2.168116, IP generation version 168007 2025/07/10. Document-to-build behavior needs vendor simulation."
+  },
+  "public_gates": {
+    "compile": "not_run",
+    "ast": "not_run",
+    "readability": "not_run",
+    "comment": "not_run",
+    "naming": "not_run",
+    "profile": "not_run",
+    "testbench": "not_run",
+    "toolchain": "dependency_preflight_blocked_remote_execution; no simulator or synthesis run"
+  },
+  "findings": [
+    {
+      "id": "capacity",
+      "evidence_class": "configuration_proven_geometry_derived_not_board_measured",
+      "configured_bytes": 67108864,
+      "derivation": "One rank, 2 bank bits, 13 row bits, 10 column bits, 16 DQ bits: 2^(2+13+10)*16/8 = 67108864 bytes (64 MiB). PH1P_COMP_DENSITY=512 means Mb per manual configuration section, not MB.",
+      "evidence": ["ph1p35_ddr/ddr2/.params_ddr2.txt:13,28,92-94,109-112", "ph1p35_ddr/ddr2/src/rtl/include/ph1p_mis_define.vh:1-5", "ph1p35_ddr/ddr2/ddr2.v:65-75,98-104", "IPUG034 section 3.2 Density(Mb)"],
+      "limit": "No board identity/physical alias/address walking evidence; cannot mark physical capacity acceptance passed. Tentative arena ends exactly at capacity and must remain end-exclusive."
+    },
+    {
+      "id": "address_unit",
+      "evidence_class": "primary_document_supported_configuration_mapping",
+      "paxi_address_bits": 25,
+      "byte_address_bits": 26,
+      "bytes_per_paxi_unit": 2,
+      "conversion": "paxi_addr = byte_addr >> 1 for this x16/128-bit-user configuration; require byte alignment and burst alignment separately",
+      "evidence": ["IPUG034 printed p18 table 2-17: 128-bit user data maps axi_axaddr={paxi_axaddr,1'b0}", "IPUG034 printed p14 table 2-10: DDR2 ROW_COL_BANK maps row=A[24:12], col={A[11:5],A[2:0]}, bank=A[4:3]", "ph1p35_ddr/ddr2/.params_ddr2.txt:23-27,111-118", "ph1p35_ddr/ddr2/ddr2.v:28-42"],
+      "limit": "Table heading says DQ Bytes * 8 although rows are 64/128/256/512; reconcile against generated 25-bit MC versus 26-bit AXI and explicit SDRAM column mapping. This is stronger than the prior +8 inference but still not board mapping acceptance."
+    },
+    {
+      "id": "length_and_beats",
+      "evidence_class": "interface_proven_document_timing_supported_not_simulated",
+      "paxi_awlen": "absent",
+      "paxi_arlen": "absent",
+      "expected_read_beats_per_accepted_command": 1,
+      "user_beat_bytes": 16,
+      "physical_dram_burst_length": 8,
+      "evidence": ["ph1p35_ddr/ddr2/ddr2.v:28-42", "ph1p35_ddr/ddr2/src/rtl/mc/alc_mc_top_all.enc.sv:29-53", "ph1p35_ddr/ddr2/src/rtl/init/ph1p_ddrphy_dram_init_ddr2.v:31", "IPUG034 printed p19 figure 2-17: one addr and one data transfer with RLAST", "IPUG034 printed p20 figure 2-18: two addresses, two data transfers, RLAST asserted on both"],
+      "limit": "axi_awlen/arlen in generic generated wrapper are inside optional AXI control branch, not this active PAXI interface. Do not reserve 4/8 returns from one PAXI AR; a 4/8-beat software group emits 4/8 addresses."
+    },
+    {
+      "id": "burst_alignment",
+      "evidence_class": "static_derivation_from_document_and_BL8_configuration",
+      "paxi_increment_per_user_beat": 8,
+      "byte_increment_per_user_beat": 16,
+      "conservative_start_alignment_bytes": 16,
+      "group4_payload_bytes": 64,
+      "group8_payload_bytes": 128,
+      "rule": "Require A[2:0]=0 for full BL8 accesses. Consecutive PAXI starts A,A+8,... are distinct linear 16-byte blocks even though ROW_COL_BANK stripes banks. 64/128-byte alignment is an optional DMA grouping restriction, not documented PAXI ARLEN behavior. Never change physical BL8 to BL4 by merely incrementing address by 4.",
+      "evidence": ["IPUG034 printed p14 table 2-10", "ph1p35_ddr/ddr2/src/rtl/init/ph1p_ddrphy_dram_init_ddr2.v:31", "video_in.v:203"],
+      "limit": "Unaligned low address bit behavior, burst wrap, bank/row transitions and final capacity boundary need vendor model or board readback. Physical BL4 is not selected and is outside current configuration."
+    },
+    {
+      "id": "write_channels",
+      "severity": "blocker",
+      "evidence_class": "source_proven_wiring_with_vendor_protocol_constraint",
+      "conclusion": "Real WREADY exists. Upstream reports AWREADY as W-data-ready, and read FIFO pop simplifies to AWREADY regardless of ARREADY. The exact RTL expression (ARREADY || AWREADY) && AWREADY equals AWREADY. Lost acceptance remains a real risk, but arbitrary standard-AXI timing is not the correct vendor contract.",
+      "evidence": ["mc_to_user_interface.v:46-58", "ph1p35_ddr/ph1p35_324_ddr_wrapper.v:69-76,96-103", "IPUG034 printed p19 figures 2-14 through 2-16"],
+      "vendor_constraint": "Manual explicitly limits W data presentation to at most 2 clocks after write address. It illustrates simultaneous and delayed W; does not license W-before-AW or unbounded AW-to-W separation. New adapter must buffer data before AW issue, track actual AW/W acceptance, and satisfy or formally clarify this bounded relationship.",
+      "mask_note": "paxi_wstrb is HIGH-active MASK per manual p13 table 2-9, not ordinary AXI byte-enable semantics. Existing zero mask enables all bytes; partial writes must invert enabled-byte mask."
+    },
+    {
+      "id": "completion_and_slot_ready",
+      "severity": "blocker",
+      "evidence_class": "port_existence_proven_completion_semantics_unknown",
+      "conclusion": "alc_mc_top exposes 2-bit paxi_bresp, paxi_bvalid and paxi_bready. ph1p_ddrmc_top discards BRESP/BVALID and ties BREADY=1; all higher wrappers omit B. The public manual PAXI table/timing omits B and no plaintext writecomplete definition was found. Do not claim the controller lacks B, and do not interpret B as physical completion without a contract.",
+      "evidence": ["ph1p35_ddr/ddr2/src/rtl/mc/alc_mc_top_all.enc.sv:40-43,121-173", "ph1p35_ddr/ddr2/src/rtl/top/ph1p_ddrmc_top.v:339-341", "ph1p35_ddr/ddr2/ddr2.v:28-42", "IPUG034 printed pp13-20", "ph1p35_ddr/ddr2/.params_ddr2.txt:26-27 MC_REORDER=NORMAL"],
+      "required_publication_definition": "READY requires all 442368 payload bytes accepted plus a vendor-proven event guaranteeing subsequent slot reads observe all those writes; no failed response and no cancel/epoch mismatch. Whether B supplies this event is unknown. FIFO empty, last AW/W handshake, last video address update and fixed wait are insufficient.",
+      "missing_evidence": "A build-matched Anlogic PAXI write-response/read-after-write ordering specification or vendor-confirmed simulator trace demonstrating the fence. No known supplied filename defines writecomplete; do not invent one. NORMAL reorder prevents assuming an unrelated sentinel read fences earlier writes."
+    },
+    {
+      "id": "rlast_and_reset",
+      "severity": "blocker_for_new_client",
+      "evidence_class": "source_and_document_proven_boundary_unknown_reset_latency",
+      "conclusion": "RLAST is available through ddr2 but not assigned to O_mc_app_rd_data_end; bridge ignores its input. Present bridge has no owner/epoch/reservation storage. Current top shares S_rst_n between bridge and DDR IP, but future CNN-only cancellation/reset cannot clear accepted ownership while DDR continues.",
+      "evidence": ["ph1p35_ddr/ph1p35_324_ddr_wrapper.v:16,55,103", "mc_to_user_interface.v:31,66-68,73", "design_top_wrapper.v:277,1017-1051", "ph1p35_ddr/ddr2/src/rtl/top/ph1p_ddrmc_top.v:308", "IPUG034 section 2.1.4 reset description"],
+      "reset_rule": "Document says sys_rst_n resets PLL and other modules then reinitializes; it gives no bounded last-response flush guarantee. Preserve outstanding owners across local cancel, discard cancelled returns while retiring reservations, release slot only after last response. A global restart requires coordinated stop/reset/reinitialization and no old response acceptance before new epoch issuance, measured with reset-in-flight cases. No N-cycle drain assumption."
+    }
+  ],
+  "minimum_isolated_repair_boundary": {
+    "production_edits_performed": false,
+    "proposal": "Use isolated copies of mc_to_user_interface and ph1p35_324_ddr_wrapper plus a test-only PAXI endpoint. First prove read acceptance independently, expose RLAST, preserve W data and actual channel acceptance, use correct active-high mask, and keep command/return ownership. Keep video ring and IP configuration unchanged.",
+    "b_exposure_if_vendor_confirms": "An isolated generated-IP copy must propagate B from ph1p_ddrmc_top through ph1p_ddrmc_wrapper_63f4ac254419, ddr2 and application wrapper. This crosses generated source boundaries and is a separate reviewed change; do not patch production generated IP in this audit.",
+    "do_not_freeze_yet": ["write completion / fence", "W-before-AW permission", "unbounded independent AW/W timing", "return order under NORMAL", "physical board capacity acceptance", "reset quiescence latency"]
+  },
+  "simulation_requirements": {
+    "bridge_only": "mc_to_user_interface.v, application wrapper, user_source/ip_source/w155_d512_fifo/w155_d512_fifo.v and sibling soft_fifo_al_f58e8b3e1f3d.v (contains ram_infer_f58e8b3e1f3d), plus a deliberately controllable PAXI endpoint. Generated FIFO uses SHOW_AHEAD_EN=1, OUTREG_EN=NOREG, almost-full=500 for depth512. Such a mock verifies adapter safety only, not vendor ordering/completion.",
+    "actual_ip": "Generated sim/fileset/fileset_mis.f lists exact RTL closure, include dirs and ROM. Substitute <mis_path> with the absolute ph1p35_ddr directory, retain generated defines DDR2_512M/DDR2_X16/DDR2_1066/PH1P35 and correct ddrphy_cfg_rom.txt. Include encrypted alc_mc_top_all.enc.sv and all listed PHY/PLL/init/FIFO RTL.",
+    "available_primitive_root": "E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/sim_release/ph1p",
+    "available_primitive_examples": ["ph1p_phy_pll.v", "ph1p_phy_ddrphy_pad.v", "ph1p_phy_ddrphy_byte.v", "ph1p_phy_ddrphy_bankref.v", "ph1p_logic_eram.v", "ph1p_logic_fifo.v"],
+    "encrypted_model": "alc_mc_top_all.enc.sv contains plaintext interface then IEEE protected implementation; key owners include Cadence, Mentor and Synopsys. Use a compatible licensed simulator/version selected by vendor; iverilog cannot establish real encrypted-core behavior. Xsim support is not established by these keys.",
+    "simulation_define_warning": "Generated wrapper lines 8-12 use PH1P_MIS_SIM to select include-directory lookup. PH1P_DDRPHY_SIM independently selects model logic inside PHY and MC; the supplied fileset does not establish which vendor simulation harness should define it. Obtain the vendor harness/launch script before asserting a complete runnable full-IP command. Do not indiscriminately enable both macros.",
+    "missing_from_generated_sim": "Only sim/fileset/fileset_mis.f exists; no simulation top/testbench or DDR2 physical memory model is supplied in this generated sim directory. Need a 512-Mbit x16 DDR2 behavioral model supporting configured CL7/BL8 and actual pin wiring, plus its timing include/config. Exact vendor memory part/model filename is not identified in checked files; must obtain it from board/vendor rather than guessing ddr2.v (that name already identifies the controller wrapper).",
+    "required_cases": ["AR blocked with AW ready", "AW blocked with AR ready", "WREADY differs from AWREADY under vendor-legal timing", "AW-to-W 0/1/2 clocks and rejection of unsupported timing", "single and continuous reads each exactly one RLAST beat", "high-active byte masks", "4/8 command groups, bank/row crossing, first/last arena addresses", "write/read visibility under NORMAL reorder and confirmed B/fence meaning", "local cancellation and global reset at every accepted/in-flight stage", "reservation+occupancy never exceeds buffer depth; no old-epoch success"]
+  },
+  "checks_run": [
+    "Read project AGENTS.md, MULTI_AGENT_WORKFLOW.md, CURRENT_ARCHITECTURE.md, cnn/spec/integration_contract.md and cnn/contract.json",
+    "Read readable-verilog-generator SKILL.md and dispatcher; selected analyze workflow; Ponytail minimal report-only scope",
+    "python -m scripts.python.toolchain.manage_skill_dependencies check --settings config/defaults.json: exit 1, missing erie-remote-ssh and WaveDrom; self-contained static analysis continued, no installation or remote attempt",
+    "Exact-source rg/Get-Content reads; encrypted-core header inspected without attempting decryption",
+    "pdftotext manual extraction and visual inspection of timing figures 2-14 through 2-18",
+    "Get-FileHash SHA256 source fingerprints; after report creation PowerShell ConvertFrom-Json passed and four source hashes matched",
+    "No HDL compile/simulation/synthesis/board test; no production files changed"
+  ],
+  "source_sha256": {
+    "user_source/hdl_source/mc_to_user_interface.v": "FEB0E79B852CE9AE3319BDD8CB563A3A829498E487F9252F89818482651FF527",
+    "user_source/hdl_source/ph1p35_ddr/ph1p35_324_ddr_wrapper.v": "891E2838AB36107B05BD23F67967F8EF3F9E9564F2FB022EC382F54E233E9E8D",
+    "user_source/hdl_source/ph1p35_ddr/ddr2/ddr2.v": "99910FCD06D61B728C4333F8EB15DD07B61DB32AF197AD3871995283461FE29E",
+    "user_source/hdl_source/ph1p35_ddr/ddr2/src/rtl/mc/alc_mc_top_all.enc.sv": "19B4B773F7DAE211B9B9ADB73C3871D5B494345FBF684CE1B7DAC9CD3CAE512B"
+  }
+}

@@ -1,0 +1,69 @@
+--- frozen_runtime_runner
++++ pw_prefetch_runner
+@@ -176,6 +176,8 @@
+ 	wire flag_commit_accept;
+ 
+ 	wire [4:0]wire_pw_group_base;
++	wire [3:0]wire_pw_prepare_position;
++	wire [2:0]wire_pw_prepare_output;
+ 	wire [1:0]wire_mac_prepare_group;
+ 	wire [1:0]wire_dw_lane;
+ 	wire [4:0]wire_dw_channel_base;
+@@ -219,7 +221,13 @@
+ 	integer spatial_lane;
+ 
+ 	assign wire_pw_group_base = {cnt_output[2:0], 1'b0} + {2'b00, cnt_output[2:0]};
+-	assign wire_mac_prepare_group = (flag_layer_pw && (state_current == ST_MAC_SEND) &&
++	// WAIT keeps current result tags intact while addressing the next PW first group.
++	assign wire_pw_prepare_position = ((state_current == ST_MAC_WAIT) && (cnt_output == 5'd7)) ?
++	                                  cnt_position + 4'd1 : cnt_position;
++	assign wire_pw_prepare_output = (state_current == ST_MAC_WAIT) ?
++	                                cnt_output[2:0] + 3'd1 : cnt_output[2:0];
++	assign wire_mac_prepare_group = (flag_layer_pw && (state_current == ST_MAC_WAIT)) ? 2'd0 :
++	                                (flag_layer_pw && (state_current == ST_MAC_SEND) &&
+ 	                                 (cnt_mac_group == 2'd0)) ? 2'd1 : cnt_mac_group;
+ 	assign wire_dw_lane = ((cnt_output == 5'd0) || (cnt_output == 5'd3) ||
+ 	                       (cnt_output == 5'd6) || (cnt_output == 5'd9) ||
+@@ -372,16 +380,16 @@
+ 			end
+ 		end else begin
+ 			for(lane_index = 0; lane_index < 8; lane_index = lane_index + 1)begin
+-				next_mac_activation[lane_index * 8 +:8] = reg_dw_cache[cnt_position * 16 + wire_mac_prepare_group * 8 + lane_index];
++				next_mac_activation[lane_index * 8 +:8] = reg_dw_cache[wire_pw_prepare_position * 16 + wire_mac_prepare_group * 8 + lane_index];
+ 				next_mac_mask[lane_index] = 1'b1;
+-				output_channel = cnt_output * 3;
++				output_channel = wire_pw_prepare_output * 3;
+ 				next_mac_weight[lane_index * 8 +:8] = reg_pw_weight[output_channel * 16 + wire_mac_prepare_group * 8 + lane_index];
+ 				next_mac_weight[64 + lane_index * 8 +:8] = reg_pw_weight[(output_channel + 1) * 16 + wire_mac_prepare_group * 8 + lane_index];
+ 				next_mac_weight[128 + lane_index * 8 +:8] = reg_pw_weight[(output_channel + 2) * 16 + wire_mac_prepare_group * 8 + lane_index];
+ 			end
+-			next_mac_bias[31:0] = reg_pw_bias[cnt_output * 3];
+-			next_mac_bias[63:32] = reg_pw_bias[cnt_output * 3 + 1];
+-			next_mac_bias[95:64] = reg_pw_bias[cnt_output * 3 + 2];
++			next_mac_bias[31:0] = reg_pw_bias[wire_pw_prepare_output * 3];
++			next_mac_bias[63:32] = reg_pw_bias[wire_pw_prepare_output * 3 + 1];
++			next_mac_bias[95:64] = reg_pw_bias[wire_pw_prepare_output * 3 + 2];
+ 		end
+ 	end
+ 
+@@ -550,11 +558,18 @@
+ 								reg_debug_position_o <= cnt_position;
+ 								reg_debug_channel_o <= wire_result_channel_base;
+ 								reg_debug_value_o <= $signed(mac_result_data[31:0]);
++								// Reuse existing operand registers; never launch before result acceptance.
++								if((cnt_output < 5'd7) || (cnt_position < 4'd15))begin
++									reg_mac_activation <= next_mac_activation;
++									reg_mac_weight <= next_mac_weight;
++									reg_mac_bias <= next_mac_bias;
++									reg_mac_mask <= next_mac_mask;
++								end
+ 								if(cnt_output < 5'd7)begin
+-									state_current <= ST_STORAGE;
++									state_current <= ST_MAC_SEND;
+ 								end else if(cnt_position < 4'd15)begin
+ 									cnt_position <= cnt_position + 1'b1;
+-									state_current <= ST_STORAGE;
++									state_current <= ST_MAC_SEND;
+ 								end else begin
+ 									state_current <= ST_PW_DRAIN;
+ 								end

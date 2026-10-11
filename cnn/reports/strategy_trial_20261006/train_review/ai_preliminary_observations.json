@@ -1,0 +1,47 @@
+{
+  "status": "AI_preliminary_source_pixel_review_not_human_gold",
+  "samples_inspected_full_frame": ["train_001", "train_002", "train_033", "train_034", "train_065", "train_097"],
+  "source_pixel_probes": "probes/receipt.json",
+  "labels_changed": false,
+  "human_signed": false,
+  "step1_pass": false,
+  "findings": [
+    {
+      "sample_id": "train_001",
+      "source_target_id": 26,
+      "source_category": "motor",
+      "source_bbox_xywh": [727, 295, 25, 55],
+      "visual_observation": "At least one riding person is visible in the native source context; motor box encloses rider and two-wheeler.",
+      "metadata_verified": "No source pedestrian/people box or ignore region has any geometric intersection with this source motor box.",
+      "effect": "The frozen person-plus-vehicle rider policy has no separate person supervision here. Class loss for anchors assigned vehicle uses person target zero; the precise contribution to overall low recall is not measured.",
+      "required_correction": "Review and draw separate native-pixel person and vehicle-body boxes in an independent training manifest; or explicitly quarantine unverified frames/regions. Do not infer precise person extents from the vehicle box."
+    },
+    {
+      "sample_id": "train_033",
+      "source_target_id": 10,
+      "source_category": "motor",
+      "visual_observation": "Native enlarged pixels show a parked, unoccupied scooter, not a riding person.",
+      "required_correction": "None established for person labels in this motor box. Do not automatically create person labels for every motorcycle/bicycle annotation."
+    },
+    {
+      "sample_id": "train_001",
+      "source_target_id": 20,
+      "source_category": "motor",
+      "visual_observation": "Enlarged pixels show a parked scooter and a person next to it; box overlap alone would not establish a rider.",
+      "required_correction": "Check the separately labeled adjacent person; no automatic rider label."
+    },
+    {
+      "sample_id": "train_034",
+      "source_target_id": 8,
+      "source_category": "motor",
+      "visual_observation": "A two-wheeler carries riding people; nearby source people boxes exist. Source practice is not uniformly one merged rider label.",
+      "required_correction": "Check each visible riding person's own extent and vehicle-body extent; do not duplicate already present person boxes."
+    }
+  ],
+  "limits": [
+    "Six fixed full-frame samples and four pixel probes are not a completed 128-frame annotation audit or population error estimate.",
+    "This record is AI visual triage, not a human signature or verified complete full-frame ground truth.",
+    "No original training/validation label, threshold, weight, or RTL was changed.",
+    "Data contract correction and complete-ground-scene review still precede teacher cache and new training."
+  ]
+}

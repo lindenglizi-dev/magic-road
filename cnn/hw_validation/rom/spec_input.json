@@ -1,0 +1,165 @@
+{
+  "title": "RoadYOLO deterministic numeric ROM probe",
+  "modules": [
+    {
+      "name": "road_yolo_numeric_rom_group",
+      "rtl_path": "road_yolo_numeric_rom_group.v",
+      "description": "Four 40-bit PH1P_LOGIC_ERAM lanes form one 160-bit by 512-word physical ROM group.",
+      "interfaces": {
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "ROM read clock", "clock_domain": "i_clk"},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Active-low assembly pipeline reset", "clock_domain": "i_clk", "active_level": "low"},
+          {"name": "i_word_addr", "direction": "input", "width": 9, "role": "address", "description": "Common word address for all four lanes", "clock_domain": "i_clk"},
+          {"name": "o_word_data", "direction": "output", "width": 160, "role": "data", "description": "Twenty package bytes in increasing byte order", "clock_domain": "i_clk"}
+        ]
+      },
+      "parameters": [
+        {"name": "C_LANE_ALPHA_FILE", "default": "NONE", "description": "Lowest five bytes per word"},
+        {"name": "C_LANE_BETA_FILE", "default": "NONE", "description": "Bytes five through nine"},
+        {"name": "C_LANE_GAMMA_FILE", "default": "NONE", "description": "Bytes ten through fourteen"},
+        {"name": "C_LANE_DELTA_FILE", "default": "NONE", "description": "Highest five bytes per word"}
+      ],
+      "behavior": [
+        "All four single-port logical ERAM instances read the same address on i_clk.",
+        "Two 80-bit pair registers followed by one 160-bit register limit every data merge to two sources.",
+        "The output order is delta, gamma, beta, alpha so package byte zero is o_word_data[7:0]."
+      ],
+      "constraints": [
+        "Use the documented PH1P_LOGIC_ERAM logical wrapper in SP mode with width 40, depth 512, and IMPLEMENT 20K.",
+        "Do not name PDP20K as the logical MODE; the vendor wrapper performs the internal physical mapping."
+      ],
+      "corner_cases": ["Address zero and address 511 must be readable without aliasing."],
+      "verification_cases": ["Compare all 512 output words against the four lane initialization files."],
+      "clock": {"name": "i_clk", "edge": "posedge"},
+      "reset": {},
+      "timing_diagrams": [
+        {
+          "id": "group_read",
+          "title": "Synchronous physical group read",
+          "scenario": "sequential read",
+          "description": "The primitive samples a common word address and returns the corresponding four-lane word.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p...."},
+            {"name": "i_word_addr", "wave": "x345x", "data": ["A", "A+1", "A+2"]},
+            {"name": "o_word_data", "wave": "xx345", "data": ["D(A)", "D(A+1)", "D(A+2)"]}
+          ]}
+        }
+      ]
+    },
+    {
+      "name": "road_yolo_numeric_rom_probe",
+      "rtl_path": "road_yolo_numeric_rom_probe.v",
+      "description": "Narrow-I/O self-starting CRC32 probe that observes all 143360 bytes in fourteen ROM groups.",
+      "interfaces": {
+        "ports": [
+          {"name": "i_clk", "direction": "input", "width": 1, "role": "clock", "description": "Probe clock", "clock_domain": "i_clk"},
+          {"name": "i_rstn", "direction": "input", "width": 1, "role": "reset", "description": "Asynchronous active-low reset", "clock_domain": "i_clk", "active_level": "low"},
+          {"name": "o_done", "direction": "output", "width": 1, "role": "status", "description": "Latched completion flag", "clock_domain": "i_clk"},
+          {"name": "o_checksum", "direction": "output", "width": 32, "role": "result", "description": "Final reflected IEEE CRC32 of the padded package", "clock_domain": "i_clk"}
+        ]
+      },
+      "behavior": [
+        "The first clock after reset release starts at group zero, word zero, bit zero without a start pin.",
+        "Each selected 160-bit word is captured after the primitive, two-stage group assembly, and four-stage registered group mux latency.",
+        "Each package bit uses one fetch cycle and one reflected IEEE CRC32 update cycle; this keeps the selected bit and feedback logic in separate registered cones.",
+        "After group thirteen word 511 bit 159, o_checksum receives the final XOR value and o_done remains asserted until reset."
+      ],
+      "constraints": [
+        "Instantiate exactly fourteen road_yolo_numeric_rom_group modules and select each group during the runtime scan.",
+        "Only clock, reset, done, and checksum cross the top-level boundary to stay well below the device I/O budget.",
+        "Every address and every bit must influence the externally visible checksum to prevent content trimming.",
+        "The registered group selection tree merges at most two data sources per stage.",
+        "A fifteen-state one-hot controller separates read latency, capture, bit processing, address advance, and completion tasks."
+      ],
+      "corner_cases": [
+        "Reset during scanning restarts from the first byte and clears done.",
+        "The final 2838 zero-padding bytes are included in the checksum.",
+        "Completion is sticky and the checksum is stable until reset."
+      ],
+      "verification_cases": [
+        "Compare every captured 160-bit word, including group and word boundaries, with the padded golden package.",
+        "Check the final checksum against a testbench computation over all 143360 bytes.",
+        "Run long enough to prove all fourteen times 512 words are scanned."
+      ],
+      "clock": {"name": "i_clk", "edge": "posedge"},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false},
+      "timing_diagrams": [
+        {
+          "id": "complete_scan",
+          "title": "Autonomous full-package checksum scan",
+          "scenario": "reset release through completion",
+          "description": "The probe issues reads, folds twenty bytes per word, advances all groups, then latches done and checksum.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p......."},
+            {"name": "i_rstn", "wave": "01......"},
+            {"name": "internal_scan", "wave": "x=.....x", "data": ["14 groups x 512 words x 20 bytes"]},
+            {"name": "o_done", "wave": "0......1"},
+            {"name": "o_checksum", "wave": "x......=" , "data": ["CRC32"]}
+          ]}
+        }
+      ]
+    },
+    {
+      "name": "PH1P_LOGIC_ERAM",
+      "rtl_path": "tb_ph1p_logic_eram_sim.v",
+      "description": "Icarus-only behavioral stand-in for the vendor logical ERAM wrapper.",
+      "interfaces": {
+        "ports": [
+          {"name": "clka", "direction": "input", "width": 1, "role": "clock", "description": "Port-A clock", "clock_domain": "clka"},
+          {"name": "addra", "direction": "input", "width": 9, "role": "address", "description": "Port-A read address", "clock_domain": "clka"},
+          {"name": "doa", "direction": "output", "width": 40, "role": "data", "description": "Port-A synchronous read data", "clock_domain": "clka"}
+        ]
+      },
+      "behavior": ["Load INIT_FILE with readmemh and model the enabled port-A synchronous read used by the probe."],
+      "constraints": ["This file is testbench-only and is not vendor synthesis evidence."],
+      "corner_cases": ["Unused vendor-compatible port-B and ECC signals remain deterministic."],
+      "verification_cases": ["Compile the production RTL under Icarus without the encrypted vendor model."],
+      "clock": {"name": "clka", "edge": "posedge"},
+      "reset": {},
+      "timing_diagrams": [
+        {
+          "id": "stub_read",
+          "title": "Behavioral stub read",
+          "scenario": "enabled port A",
+          "description": "An enabled rising edge updates doa from the selected memory address.",
+          "wavejson": {"signal": [
+            {"name": "clka", "wave": "p..."},
+            {"name": "cea", "wave": "1..."},
+            {"name": "addra", "wave": "x34x", "data": ["A", "B"]},
+            {"name": "doa", "wave": "xx34", "data": ["M(A)", "M(B)"]}
+          ]}
+        }
+      ]
+    },
+    {
+      "name": "tb_road_yolo_numeric_rom_probe",
+      "rtl_path": "tb_road_yolo_numeric_rom_probe.v",
+      "description": "Self-checking full-package Icarus testbench.",
+      "interfaces": {
+        "ports": [
+          {"name": "o_test_done", "direction": "output", "width": 1, "role": "status", "description": "Testbench completion mirror", "clock_domain": "i_clk"}
+        ]
+      },
+      "behavior": ["Load the 7168-word golden image, compare every captured word, and independently calculate the final CRC32."],
+      "constraints": ["Use a watchdog and fail on the first address, data, count, done, or checksum mismatch."],
+      "corner_cases": ["Explicitly record checks at words zero, 511, 512, 7025, 7026, and 7167 to cover group boundaries and the payload-to-padding transition."],
+      "verification_cases": ["Require exactly 7168 full-word comparisons and a matching final checksum."],
+      "clock": {"name": "i_clk", "edge": "posedge"},
+      "reset": {"name": "i_rstn", "active": "low", "synchronous": false},
+      "timing_diagrams": [
+        {
+          "id": "self_check",
+          "title": "Full-package self-check",
+          "scenario": "all words and final CRC",
+          "description": "The testbench observes internal captured words while the public interface remains narrow.",
+          "wavejson": {"signal": [
+            {"name": "i_clk", "wave": "p......"},
+            {"name": "word_compare", "wave": "x=...=x", "data": ["word 0", "word 7167"]},
+            {"name": "o_done", "wave": "0.....1"},
+            {"name": "o_test_done", "wave": "0.....1"}
+          ]}
+        }
+      ]
+    }
+  ]
+}

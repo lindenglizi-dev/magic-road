@@ -1,0 +1,17 @@
+{
+  "status": "algorithm_and_coordinate_reference_not_cycle_accurate_rle_ccl",
+  "mode": "deployed",
+  "input": "1280x720 BGR decoded frame with zero-based frame_index",
+  "gray": "(R>>2)+(G>>1)+(B>>2), uint8",
+  "sampling": "analysis[y,x]=gray[5*y,5*x], yielding deployed 256x144; this deliberately does not use background_model.v's generic default FRAME_HEIGHT=150",
+  "learning": "first frame initializes; next three frames use toward(old,new,shift=2,min_step=1); no candidates during four learning frames",
+  "difference": "foreground when abs(gray-background) >= 20",
+  "threshold": 20,
+  "post_learning_update": "deployed: background_update_enable=1, freeze_foreground=1, toward shift=4 with minimum step one",
+  "cleanup": "zero-padded 3x3 sum >=3 and center pixel must be one",
+  "run_filter": "after cleanup, discard each horizontal run shorter than MIN_RUN_LENGTH=2",
+  "components": "8-connected; area is foreground pixel count; inclusive bbox; top four by descending area then scan label",
+  "coordinate_mapping": "candidate boxes use inclusive analysis coordinates; source_sample_box multiplies each coordinate by five and denotes sampled source locations",
+  "frame_identity": "output frame_index equals the input video frame consumed for that mask; no display/HDMI identity is inferred",
+  "unmodeled_rtl_limits": "MAX_RUN=64, MAX_LABEL=32, overflow/discard behavior, and cycle-level label-union timing are not modeled"
+}

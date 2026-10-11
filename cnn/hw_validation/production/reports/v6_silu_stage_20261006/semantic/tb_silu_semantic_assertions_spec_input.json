@@ -1,0 +1,71 @@
+{
+  "modules": [
+    {
+      "name": "tb_silu_semantic_assertions",
+      "rtl_path": "tb_silu_semantic_assertions.v",
+      "description": "只读绑定冻结 SiLU CEA DUT 的定向语义断言测试台，验证四项 VG122 范围，不修改 DUT。",
+      "parameters": [],
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "role": "test completion",
+            "description": "测试台完成全部定向检查后置位",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "每个上升沿核对 cnt_pending 等于六个真实 valid 级之和，并核对 accepted-consumed 守恒。",
+        "顺序装载 0..1023，核对 cnt_table_expected 不到达 1024；错序地址 2 必须故障且不得写 RAM。",
+        "定向输入覆盖 lookup -7680、0、1024、8704，其中 1024 仅走特殊输出端点。",
+        "输出反压时控制与官方 RAM 输出保持，同拍输入输出保持 pending 不变，复位取消在途事务。"
+      ],
+      "constraints": [
+        "这是仿真专用 testbench，不可综合，不修改冻结 DUT、官方 RAM 模型或生产 RTL。",
+        "ModelSim 必须同时加载官方 PH1P_LOGIC_ERAM 与 PH1P_PHY_GSR 模型。"
+      ],
+      "corner_cases": [
+        "六级流水填满后 pending 必须为 6，编码值 7 不可达。",
+        "中央域 raw=-2047/-2046 映射地址 0，raw=2046/2047 映射特殊端点 1024。",
+        "表写地址只有 10 位 0..1023；lookup 1024 不得解释成合法写地址。",
+        "异步复位取消在途事务并清除已装表状态。"
+      ],
+      "verification_cases": [
+        "Python 穷举全部 INT16 lookup 值并给出完整与中央域范围。",
+        "官方 ModelSim 定向断言仿真出现 TB_PASS_SEMANTIC 且无 ASSERT_FAIL。",
+        "复跑固定 v5 官方模型用例，保留原版单拍停顿预期失败及 CEA 候选通过证据。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "pending_stall_resume",
+          "title": "六级在途填满、停顿与同拍进出",
+          "scenario": "pending-stall-resume",
+          "description": "第六个样本使六级 valid 全满；ready 拉低保持，恢复时输入与输出同拍握手，pending 仍为 6。",
+          "wavejson": {
+            "signal": [
+              {"name": "i_clk", "wave": "p........"},
+              {"name": "i_input_valid", "wave": "1.....01."},
+              {"name": "i_output_ready", "wave": "0......1."},
+              {"name": "o_output_valid", "wave": "0....1..."},
+              {"name": "pipeline_enable", "wave": "1....0.1."},
+              {"name": "cnt_pending", "wave": "2345666..", "data": ["1", "2", "3", "4", "5", "6", "6"]}
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

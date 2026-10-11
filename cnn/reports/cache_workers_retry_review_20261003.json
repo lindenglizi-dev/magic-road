@@ -1,0 +1,326 @@
+{
+  "report_kind": "independent_read_only_cache_workers_retry_review",
+  "date": "2026-10-03",
+  "role": "verify",
+  "scope": {
+    "reviewed_checker": "cnn/check_cache_workers.py",
+    "reviewed_stop_receipt": "cnn/reports/cache_workers_cpu_retry_20261003.json",
+    "reviewed_retry_reports": [
+      "cnn/reports/cache_workers_cpu_retry2_20261003.json",
+      "cnn/reports/cache_workers_cpu_retry3_20261003.json"
+    ],
+    "source_edits": false,
+    "gpu_used_by_reviewer": false,
+    "full_manifest_or_cache_validation_rerun_by_reviewer": false,
+    "worker_process_spawned_by_reviewer": false,
+    "optimizer_or_training_steps_run_by_reviewer": 0,
+    "newtest_or_blind_pixels_read": false,
+    "owned_output_only": "cnn/reports/cache_workers_retry_review_20261003.json"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "overall_execution_status": "partial_CPU_parity_with_workers4_memory_admission_skips",
+    "epoch6_workers0_raw_cache_parity": "passed",
+    "epoch6_workers2_raw_cache_parity": "passed",
+    "epoch6_workers4": "not_started_memory_skip",
+    "epoch7_workers0_and2_raw_cache_parity": "passed",
+    "epoch285_workers0_and2_raw_cache_parity": "passed",
+    "val_workers0_and2_raw_cache_parity": "passed",
+    "all_workers4_cases": "not_started_memory_skip",
+    "full_workers_parity_proved": false,
+    "cache_or_order_defect_found": false,
+    "formal_training_or_GPU_resume_authorized": false,
+    "summary": "The final retry completed full train/val metadata and cache construction and proved exact raw/cache content and order for workers 0 and 2 in all four bounded cases: epoch-6 Mosaic, epoch-7 Mosaic, epoch-285 Mosaic-off and val non-Mosaic. Sixteen trials consumed 448 samples in total; every trial matched its case's raw-workers0 batch digests and keys, and all observed workers exited. Every workers-4 case was skipped before process creation by its unchanged memory admission gate, so the final status is correctly partial rather than passed."
+  },
+  "artifact_snapshots": {
+    "cnn/check_cache_workers.py_retry2": "7e798e0a44aab452a4331a38c26ef296ca4031e56de34eaea534911b99ece5d5",
+    "cnn/check_cache_workers.py_retry3": "cd01df8158dd65d5ede8c93bb89de7a1b211fcf798c8665bbc140820185b5873",
+    "cnn/test_cache_workers.py": "9ae5df88a142fffa417030e41ceaca31633090146a47d0bc93fefe7c509469bb",
+    "cnn/train.py": "be96d7639de7de75157088ddda9cdd947e8d53c81efd076c7fb1cc6273442d65",
+    "cnn/disk_cache.py": "5e88d944fb0864eb7ab1ac33d9aef63018a7cdf1aa81b6a93a62e5dfc16122b9",
+    "checkpoint_sha256": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "road_manifest_sha256": "ad353c5bce5b0ecef0433c74515324bbfdb031e92aff964cd56c18ae069d9fe4",
+    "cache_index_sha256": "646db6bcd11ab8ff55b9fb024480ab0b015842f7a9495a890a9b947aa153e170",
+    "retry_stop_receipt_sha256": "ac2d605ee49fd1f490f406fa2e6dbf5828b37ec8d5b6f8f3b78e18af62f3ec5c",
+    "retry2_report_sha256": "8ed3d529bb040b8d93dcba38f3636a3fd91e635ba77852e4eee6011ccabfecba",
+    "retry3_report_sha256": "f517d28bb50629ca5571992d4bd49337f410c8002658c3cf634a2c7407f125c0"
+  },
+  "retry2_identity_and_startup": {
+    "status": "failed_or_partial",
+    "error": "MemoryError: workers4 admission needs6340110968 bytes; available5302542336",
+    "artifact_receipts_all_checked_before_data_trials": true,
+    "full_manifest_validation_completed": true,
+    "manifest_validation_seconds": 42.35629440000048,
+    "full_metadata_sizes": {
+      "train": 19050,
+      "val": 5151
+    },
+    "constructors_completed": [
+      "train/raw",
+      "train/cache",
+      "val/raw",
+      "val/cache"
+    ],
+    "constructor_seconds": {
+      "train/raw": 0.0023947999579831958,
+      "train/cache": 59.443583599990234,
+      "val/raw": 0.002226600016001612,
+      "val/cache": 55.80942200002028
+    },
+    "initial_available_bytes": 6246338560,
+    "available_after_all_constructors_bytes": 5313654784,
+    "gpu_used": false,
+    "optimizer_updates": 0,
+    "training_resumed": false,
+    "checkpoints_written": 0,
+    "checkpoint_sha256_after": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "total_seconds": 195.64300330000697
+  },
+  "retry2_completed_trial_recalculation": {
+    "baseline": "train/raw epoch6 workers0",
+    "shuffle_seed": 48,
+    "mosaic": true,
+    "consumed_samples_per_trial": 64,
+    "unique_keys_per_trial": 64,
+    "batch_digests_per_trial": 8,
+    "all_completed_batch_digest_arrays_equal": true,
+    "all_completed_key_arrays_equal": true,
+    "completed_trials": [
+      {
+        "path": "raw",
+        "workers": 0,
+        "iterator_and_consumption_seconds": 7.83268200000748,
+        "peak_tree_rss_bytes": 1462444032,
+        "minimum_available_bytes": 5236465664,
+        "observed_child_pids": [],
+        "workers_stopped": true
+      },
+      {
+        "path": "cache",
+        "workers": 0,
+        "iterator_and_consumption_seconds": 0.828554300009273,
+        "peak_tree_rss_bytes": 1444216832,
+        "minimum_available_bytes": 5218799616,
+        "observed_child_pids": [],
+        "workers_stopped": true
+      },
+      {
+        "path": "raw",
+        "workers": 2,
+        "iterator_and_consumption_seconds": 12.901012199989054,
+        "peak_tree_rss_bytes": 3643891712,
+        "minimum_available_bytes": 3467567104,
+        "observed_child_pids": [
+          5204,
+          12296
+        ],
+        "workers_stopped": true
+      },
+      {
+        "path": "cache",
+        "workers": 2,
+        "iterator_and_consumption_seconds": 8.014697399979923,
+        "peak_tree_rss_bytes": 3656171520,
+        "minimum_available_bytes": 3438686208,
+        "observed_child_pids": [
+          5284,
+          31192
+        ],
+        "workers_stopped": true
+      }
+    ],
+    "smallest_reserve_margin_bytes": 217460736,
+    "smallest_reserve_margin_mib": 207.38671875,
+    "interpretation": "For the completed epoch-6 bounded sample, workers 2 preserve the same raw/cache input, target, ignore and key ordering as workers 0. The workers-2 runs came close to the 3 GiB free-memory floor and are not evidence that workers 4 are safe."
+  },
+  "workers4_admission": {
+    "required_bytes": 6340110968,
+    "available_bytes": 5302542336,
+    "shortfall_bytes": 1037568632,
+    "shortfall_mib": 989.502555847168,
+    "worker_process_started": false,
+    "reserve_lowered": false,
+    "disposition": "The checker correctly refused workers 4. Do not lower the 3 GiB reserve or reinterpret the successful workers-2 result as authorization to force workers 4."
+  },
+  "retry2_process_cleanup": {
+    "completed_worker_pids": [
+      5204,
+      12296,
+      5284,
+      31192
+    ],
+    "all_completed_worker_pids_absent_at_review": true,
+    "retry2_parent_pid": 35736,
+    "retry2_parent_absent_at_review": true,
+    "cleanup_mechanism": "The checker uses explicit DataLoader shutdown plus exact owned worker-handle terminate/join fallback. The report marks every completed trial workers_stopped=true."
+  },
+  "retry3_final_result": {
+    "status": "partial_CPU_parity_with_memory_admission_skips",
+    "error": null,
+    "full_manifest_validation_completed": true,
+    "manifest_validation_seconds": 50.73133500001859,
+    "full_metadata_sizes": {
+      "train": 19050,
+      "val": 5151
+    },
+    "constructor_seconds": {
+      "train/raw": 0.0025189999723806977,
+      "train/cache": 57.30987100000493,
+      "val/raw": 0.0019980999641120434,
+      "val/cache": 73.7197817999986
+    },
+    "initial_available_bytes": 6242684928,
+    "available_after_all_constructors_bytes": 5502869504,
+    "completed_trials": 16,
+    "admission_skips": 8,
+    "total_consumed_samples_across_trials": 448,
+    "maximum_compared_difference": 0,
+    "all_completed_case_digest_arrays_equal": true,
+    "all_completed_case_key_arrays_equal": true,
+    "all_completed_trials_workers_stopped": true,
+    "gpu_used": false,
+    "optimizer_updates": 0,
+    "training_resumed": false,
+    "checkpoints_written": 0,
+    "checkpoint_sha256_after": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "total_seconds": 286.1912193999742
+  },
+  "retry3_case_recalculation": [
+    {
+      "split": "train",
+      "epoch": 6,
+      "mosaic": true,
+      "consumed_samples_per_trial": 64,
+      "unique_keys_per_trial": 64,
+      "batch_digests_per_trial": 8,
+      "completed_paths_and_workers": [
+        "raw/0",
+        "cache/0",
+        "raw/2",
+        "cache/2"
+      ],
+      "all_digests_and_keys_equal_to_raw_workers0": true,
+      "workers4_raw_and_cache_skipped_before_start": true
+    },
+    {
+      "split": "train",
+      "epoch": 7,
+      "mosaic": true,
+      "consumed_samples_per_trial": 16,
+      "unique_keys_per_trial": 16,
+      "batch_digests_per_trial": 2,
+      "completed_paths_and_workers": [
+        "raw/0",
+        "cache/0",
+        "raw/2",
+        "cache/2"
+      ],
+      "all_digests_and_keys_equal_to_raw_workers0": true,
+      "workers4_raw_and_cache_skipped_before_start": true
+    },
+    {
+      "split": "train",
+      "epoch": 285,
+      "mosaic": false,
+      "consumed_samples_per_trial": 16,
+      "unique_keys_per_trial": 16,
+      "batch_digests_per_trial": 2,
+      "completed_paths_and_workers": [
+        "raw/0",
+        "cache/0",
+        "raw/2",
+        "cache/2"
+      ],
+      "all_digests_and_keys_equal_to_raw_workers0": true,
+      "workers4_raw_and_cache_skipped_before_start": true
+    },
+    {
+      "split": "val",
+      "epoch": 6,
+      "mosaic": false,
+      "consumed_samples_per_trial": 16,
+      "unique_keys_per_trial": 16,
+      "batch_digests_per_trial": 2,
+      "completed_paths_and_workers": [
+        "raw/0",
+        "cache/0",
+        "raw/2",
+        "cache/2"
+      ],
+      "all_digests_and_keys_equal_to_raw_workers0": true,
+      "workers4_raw_and_cache_skipped_before_start": true
+    }
+  ],
+  "retry3_memory_and_cleanup": {
+    "memory_reserve_bytes": 3221225472,
+    "peak_tree_rss_bytes": 3667042304,
+    "minimum_available_bytes": 3487801344,
+    "minimum_reserve_margin_bytes": 266575872,
+    "minimum_reserve_margin_mib": 254.2265625,
+    "workers4_skip_count": 8,
+    "workers4_minimum_shortfall_bytes": 414703656,
+    "workers4_maximum_shortfall_bytes": 1110843040,
+    "completed_worker_pids": [
+      6448,
+      6816,
+      7088,
+      8012,
+      13688,
+      16144,
+      18332,
+      19648,
+      28948,
+      28964,
+      30512,
+      33964,
+      34396,
+      34968,
+      35604,
+      36976
+    ],
+    "all_completed_worker_pids_absent_at_review": true,
+    "retry3_parent_pid": 39556,
+    "retry3_parent_absent_at_review": true,
+    "interpretation": "Workers 2 completed every bounded case without crossing the 3 GiB reserve, but the smallest observed margin was only 254.2 MiB. Every workers-4 combination was independently rejected before process creation."
+  },
+  "first_retry_stop_receipt": {
+    "status": "stopped_owned_CPU_diagnostic_after_spawn_hang",
+    "completed_evidence": "Full manifest and all four train/val raw/cache constructors completed; train epoch6 workers0 raw/cache each consumed64 and printed exact parity before workers2 startup.",
+    "failed_phase": "train/raw epoch6 workers2 startup_or_cleanup",
+    "cause_attribution": "undetermined",
+    "coordinator_action": "The exact owned core process was identified by command line and creation identity, confirmed child-free, and terminated. The stop receipt is captured stdout evidence, not normal checker output.",
+    "interpretation_after_retry2": "The later successful workers-2 raw/cache run shows that workers 2 are capable of exact parity under an admitted run, but it does not retroactively identify the earlier hang's cause."
+  },
+  "unexecuted_checks": [
+    "train epoch6 workers4 raw/cache",
+    "train epoch7 workers4 raw/cache",
+    "train epoch285 Mosaic-off workers4 raw/cache",
+    "val epoch6 non-Mosaic workers4 raw/cache"
+  ],
+  "findings": [
+    {
+      "severity": "blocking_environment",
+      "topic": "workers4_memory_admission",
+      "evidence": "All eight workers-4 path/case combinations were skipped before start. Depending on split/path, the admission shortfall ranged from 414,703,656 to 1,110,843,040 bytes.",
+      "disposition": "Keep the partial receipt. Retry workers 4 only after sufficient memory is genuinely free; do not weaken the reserve or call a skip a pass."
+    },
+    {
+      "severity": "warning",
+      "topic": "workers2_margin_is_small",
+      "evidence": "Across retry3, the lowest available memory was 3,487,801,344 bytes, only 266,575,872 bytes above the 3 GiB stop line. Peak process-tree RSS was 3,667,042,304 bytes and can double-count shared mappings.",
+      "disposition": "Treat workers 2 as parity evidence for this bounded sample, not as a robust memory recommendation for long training. Continue recording live reserve and exact worker cleanup."
+    },
+    {
+      "severity": "warning",
+      "topic": "bounded_timing_is_not_training_throughput",
+      "evidence": "Workers 2 were slower than workers 0 over this short 64-sample interval for both paths because spawn, prefetch and shutdown are included. Default prefetch may also read more development samples than the 64 consumed.",
+      "disposition": "Do not extrapolate these four timings to a full epoch, persistent workers, GPU overlap or end-to-end training speed."
+    },
+    {
+      "severity": "warning",
+      "topic": "workers4_only_remains_unverified",
+      "evidence": "Retry3 continued after each admission skip and completed workers0/2 parity for epoch7, the epoch285 Mosaic-off transition and non-Mosaic val. Only workers4 remained skipped.",
+      "disposition": "The completed workers0/2 evidence is valid for the bounded samples. Do not extend it to workers4, a full epoch, persistent workers or GPU-overlapped training."
+    }
+  ]
+}

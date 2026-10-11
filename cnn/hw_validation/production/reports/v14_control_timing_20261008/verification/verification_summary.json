@@ -1,0 +1,90 @@
+{
+  "candidate": "v14_control_timing_20261008",
+  "rtl_frozen": true,
+  "functional_conclusion": "PASS",
+  "physical_conclusion": "OWNED_BY_ROOT_AND_NOT_CLAIMED_HERE",
+  "change_scope": [
+    "Remove the capacity_used adder from the can-reserve timing cone with four-state-equivalent combinational logic",
+    "Give reg_halo one isolated sequential writer driven by the unchanged legal halo-load condition"
+  ],
+  "unchanged_contracts": [
+    "ports",
+    "MAC and postprocess kernels",
+    "numeric behavior",
+    "initiation interval",
+    "immediate fault cancellation",
+    "asynchronous reset behavior",
+    "fixed coefficients",
+    "constraints"
+  ],
+  "binding": {
+    "rtl/down2_overlap_tile_runner.v": "f798234b4b5acfdb27fe4ff7b629b5e45f8c9e3b4def8b038101453334a10198",
+    "verification/regression_candidate/down2_overlap_tile_runner.v": "f798234b4b5acfdb27fe4ff7b629b5e45f8c9e3b4def8b038101453334a10198",
+    "rtl/road_postprocess_stream.v": "a51590f53c62f3a6dc51eaded0c77301b692f0cf2ae95109bd1e73afb29193fb",
+    "verification/regression_candidate/tb_down2_overlap_tile_runner.v": "2cbb0d601884e479001fc029f33840c60fac7c853e18ebe0f3f64424903c5ca7"
+  },
+  "independent_root_regression": {
+    "iverilog_g2001_compile_exit": 0,
+    "vvp_exit": 0,
+    "artifact_sha256": "6c94e659d70d4d8049c6b461b6f45aaa59eb959f72571af7c4c995798a99ccee",
+    "log_sha256": "9d4d4cb735035fac2cd21579689ccac947745badd5a379e0daa586414dd3dc60",
+    "result": "TB_PASS_DOWN2_TILE cases=4"
+  },
+  "new_directed_checks": {
+    "can_reserve_four_state": {
+      "combinations": 1024,
+      "mac_valid_accept_paths": 2048,
+      "values": "reserved, each queue bit, fault and ready each enumerate 0/1/X/Z",
+      "result": "PASS against the v13 expression"
+    },
+    "halo_write": {
+      "valid_load": "one write",
+      "invalid_sequence": "fault and no write",
+      "x_address": "fault and no write",
+      "reset": "no write",
+      "result": "PASS"
+    }
+  },
+  "preserved_regression": {
+    "full_cases": 3,
+    "full_core_cycles_each": 4281,
+    "pw_only_core_cycles": 1822,
+    "dw_tasks": 128,
+    "dw_mac_beats": 384,
+    "dw_post_scalars": 256,
+    "dw_tail_scalars": 64,
+    "full_state_cycles": "640+640+2560+384+56+1=4281",
+    "additional": "Original X/Z directional cases, 64-cycle lane0/1/2 backpressure, DW_POST reset, real lane1/lane2 positive and negative overflow cancellation, legal limits, table-valid and random commit backpressure passed"
+  },
+  "retained_failures": {
+    "initial_enhanced_tb": {
+      "log": "verification/regression_candidate/v14_control_timing_initial_tb_expectation_fail.log",
+      "sha256": "7c0a8474f79b40d37c121362d8abf417e842c3718cd870a9cad5a4b464d801d9",
+      "errors": 256,
+      "classification": "TESTBENCH_REFERENCE_ERROR",
+      "explanation": "The test expected 1 && Z to remain Z, but Verilog four-state logical AND produces X. These were not 256 hardware failures. The corrected reference evaluates the original logical expression and passes."
+    },
+    "local_iverilog": "The local .tools compiler again terminated with Windows 0xC0000005 after producing an executable VVP; the root independent compile exit 0 is authoritative.",
+    "strict_final_source_closure": {
+      "errors": 3969,
+      "compile": "passed",
+      "delivery_ready": false,
+      "report": "gates/final_closure.json"
+    },
+    "initial_incomplete_source_closure": {
+      "errors": 2830,
+      "report": "gates/closure.json",
+      "note": "road_postprocess_stream.v was missing from that closure; retained only as an initial diagnostic, not a complete gate result."
+    }
+  },
+  "baseline_check": {
+    "selected_v13_items": 7,
+    "result": "PASS",
+    "scope": "selected runner, postprocess, constraints and physical evidence; not a historical full-tree scan"
+  },
+  "waveform": {
+    "json5_sha256": "10354c2953efd6f23fb49b1f05f9370b23e3494f9cea6bcb7f5bbc1f4f843d77",
+    "svg_sha256": "10ea1a00813af118571cfe6805b42bb73b9ce59672e7ff66fed3d4b65e78e332",
+    "render": "PASS"
+  }
+}

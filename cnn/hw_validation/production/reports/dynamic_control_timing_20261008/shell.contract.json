@@ -1,0 +1,209 @@
+{
+  "modules": [
+    {
+      "name": "road_dynamic_low_io_top",
+      "feature": "dynamic_low_io",
+      "rtl_path": "road_dynamic_low_io_top.v",
+      "description": "38-bit runtime-loaded diagnostic shell for frozen dynamic serial postprocessing.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {
+            "name": "i_clk",
+            "width": 1,
+            "direction": "input",
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "width": 1,
+            "direction": "input",
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rx_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_rx_valid",
+            "description": "i_rx_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rx_data",
+            "width": 16,
+            "direction": "input",
+            "role": "i_rx_data",
+            "description": "i_rx_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rx_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_rx_ready",
+            "description": "o_rx_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_tx_valid",
+            "width": 1,
+            "direction": "output",
+            "role": "o_tx_valid",
+            "description": "o_tx_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_tx_data",
+            "width": 16,
+            "direction": "output",
+            "role": "o_tx_data",
+            "description": "o_tx_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tx_ready",
+            "width": 1,
+            "direction": "input",
+            "role": "i_tx_ready",
+            "description": "i_tx_ready",
+            "clock_domain": "i_clk"
+          }
+        ],
+        "handshake_channels": [
+          {
+            "id": "table",
+            "valid": "i_table_valid",
+            "ready": "o_table_ready",
+            "payload": [
+              "i_table_addr",
+              "i_table_data"
+            ]
+          },
+          {
+            "id": "batch",
+            "valid": "i_input_valid",
+            "ready": "o_input_ready",
+            "payload": [
+              "i_accumulators",
+              "i_pre_multipliers",
+              "i_pre_shifts",
+              "i_post_multiplier",
+              "i_post_shift",
+              "i_activate",
+              "i_lane_mask",
+              "i_tags",
+              "i_input_fault"
+            ]
+          },
+          {
+            "id": "result",
+            "valid": "o_output_valid",
+            "ready": "i_output_ready",
+            "payload": [
+              "o_output_data",
+              "o_output_tag",
+              "o_output_int16"
+            ]
+          }
+        ],
+        "streams": [
+          {
+            "id": "rx",
+            "valid": "i_rx_valid",
+            "ready": "o_rx_ready",
+            "payload": [
+              "i_rx_data"
+            ]
+          },
+          {
+            "id": "tx",
+            "valid": "o_tx_valid",
+            "ready": "i_tx_ready",
+            "payload": [
+              "o_tx_data"
+            ]
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Immediate assertion cancels all work, two rising edges release, reload table addresses 0..1023 before compute."
+      },
+      "behavior": [
+        "A000 followed by 1024 signed16 words loads the table sequentially.",
+        "B000 followed by 19 least-significant-first 16-bit words loads one 304-bit packet; only then submit.",
+        "Packet bits: accumulator95:0 pre191:96 shifts209:192 post241:210 shift247:242 activate248 mask251:249 tags299:252 fault300 padding303:301.",
+        "Each result transmits tag, signed16 data and flags (bit1 INT16, bit0 fault) in three accepted words; all hold under stall.",
+        "C000 transmits input count, output count, table/fault flags. D000 transmits counted SUBMIT/WAIT clocks low/high and flags.",
+        "Cycle counter excludes packet/table preload and TX clocks: diagnostic window, not full core latency or FPS.",
+        "No new MAC, DDR, board protocol or timing exception."
+      ],
+      "constraints": [
+        "100MHz PH1P35MDG324 -3 diagnostic only, automatic pins and zero I/O delays.",
+        "Parameters are runtime data, not constant coefficients. Existing round, SiLU and fault semantics retained.",
+        "Strict failures and external/removal timing failures remain unclosed."
+      ],
+      "corner_cases": [
+        "Partial packet/table reset, running reset, random TX stall, counter wrap after 65535 batches."
+      ],
+      "verification_cases": [
+        "330 batches/604 outputs, partial load and running reset, payload hold, counts."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "narrow_transfer",
+          "title": "Partial packet cannot submit",
+          "scenario": "packet",
+          "description": "Compressed illustrative timeline; variable compute and stall durations, not cycle-exact core latency.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "i_rx_valid",
+                "wave": "01..0....."
+              },
+              {
+                "name": "o_rx_ready",
+                "wave": "1...0....1"
+              },
+              {
+                "name": "phase",
+                "wave": "23..4..5.2",
+                "data": [
+                  "idle",
+                  "19 words",
+                  "submit/compute",
+                  "tag/data/status",
+                  "idle"
+                ]
+              },
+              {
+                "name": "o_tx_valid",
+                "wave": "0......1.0"
+              },
+              {
+                "name": "i_tx_ready",
+                "wave": "0.......10"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

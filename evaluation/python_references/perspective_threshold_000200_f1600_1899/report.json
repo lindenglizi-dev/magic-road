@@ -1,0 +1,146 @@
+{
+  "status": "single_decode_perspective_threshold_final4_diagnostic_not_rtl_or_acceptance_evidence",
+  "clip_id": "VIRAT_S_000200_00_000100_000171",
+  "catalog_split": "val",
+  "scored_frame_interval_inclusive": [
+    1600,
+    1899
+  ],
+  "processed_frames_including_causal_warmup": 1900,
+  "processed_scoring_frames": 300,
+  "perspective_y_thresholds": [
+    90,
+    100,
+    110
+  ],
+  "input_hashes": {
+    "video_sha256": "a8888e14bb2a1d38368a10cfd949916fcf9acc9972d3dacc3cbbc502c8d8a568",
+    "annotations_sha256": "e3c32ee80cd7d37d7ee8b1f5fc79a22d05b7e5e6fb2c9f61dbe512b6e711840e",
+    "catalog_sha256": "2c5fc1323e66bdb144dd56e08aeb6b1afe52ec2904e2e72fd439de1496e92ae3"
+  },
+  "script_hashes": {
+    "sweep_script_sha256": "ba47d1880b653c5b5d93f797de46357ed71a854c2b8727f59ee70233f50f1c52",
+    "fixed_budget_dependency_sha256": "ec45a958cf05942dbae4655b0a6d7a4bd1acb7bc70acea0d182a1a7887a39486",
+    "candidate_chain_dependency_sha256": "6ed7652dd51db9eb1a1debede3cfb74f8ca862f261e96fa4557fb30969ab766d"
+  },
+  "output_hashes": {
+    "annotation_coverage_csv_sha256": "36f09a4d6333b634e2a75e20c1b2a1cdb75d594343f4f5406081ad3900753247",
+    "threshold_metrics_csv_sha256": "13eb0d092219aa424fa90e687a06adbc103e1c996de79e4d7c6a9baefd0d94ef"
+  },
+  "parameters": {
+    "deployed_candidate_chain": {
+      "sample_stride": 5,
+      "learn_frames": 4,
+      "difference_threshold": 20,
+      "min_neighbors": 3,
+      "min_run": 2,
+      "main_min_area": 16
+    },
+    "internal_pool": {
+      "main_area_topk": 4,
+      "small_peak_difference_topk": 4,
+      "maximum_candidates": 8
+    },
+    "small_geometry": {
+      "upper_square_minimum": [
+        4,
+        4
+      ],
+      "lower_perspective_minimum": [
+        6,
+        16
+      ],
+      "perspective_top_margin": 2,
+      "center_y_rule": "perspective when component center_y >= threshold"
+    },
+    "final_arbitration": {
+      "maximum_outputs": 4,
+      "sort_key": "peak_difference desc, area desc, component_label asc",
+      "nms_rule": "reject when inclusive IoU > 0.3; continue for refill"
+    },
+    "coverage_iou_thresholds": [
+      0.1,
+      0.25,
+      0.5
+    ],
+    "ped_truth_center_y_bands": [
+      "lt90",
+      "90_to_lt100",
+      "100_to_lt110",
+      "110_to_lt120",
+      "120_to_lt130",
+      "ge130"
+    ]
+  },
+  "threshold_summaries": [
+    {
+      "perspective_y_threshold": 90,
+      "internal_pool_candidates": 2138,
+      "internal_main_candidates": 968,
+      "internal_small_candidates": 1170,
+      "final_candidates": 1200,
+      "final_main_candidates": 935,
+      "final_small_candidates": 265,
+      "final_empty_slots": 0,
+      "frames_at_final4": 300,
+      "frames_with_any_pair_conflict": 66,
+      "frames_with_nms_rejection": 17,
+      "main_main_pair_conflicts": 0,
+      "main_small_pair_conflicts": 8,
+      "small_small_pair_conflicts": 65,
+      "nms_rejected_candidates": 18,
+      "nms_rejected_main_area_topk": 0,
+      "nms_rejected_small_component_experimental": 18,
+      "main_top4_retention_rate": 0.9659090909090909
+    },
+    {
+      "perspective_y_threshold": 100,
+      "internal_pool_candidates": 2138,
+      "internal_main_candidates": 968,
+      "internal_small_candidates": 1170,
+      "final_candidates": 1200,
+      "final_main_candidates": 935,
+      "final_small_candidates": 265,
+      "final_empty_slots": 0,
+      "frames_at_final4": 300,
+      "frames_with_any_pair_conflict": 66,
+      "frames_with_nms_rejection": 17,
+      "main_main_pair_conflicts": 0,
+      "main_small_pair_conflicts": 8,
+      "small_small_pair_conflicts": 65,
+      "nms_rejected_candidates": 18,
+      "nms_rejected_main_area_topk": 0,
+      "nms_rejected_small_component_experimental": 18,
+      "main_top4_retention_rate": 0.9659090909090909
+    },
+    {
+      "perspective_y_threshold": 110,
+      "internal_pool_candidates": 2138,
+      "internal_main_candidates": 968,
+      "internal_small_candidates": 1170,
+      "final_candidates": 1200,
+      "final_main_candidates": 935,
+      "final_small_candidates": 265,
+      "final_empty_slots": 0,
+      "frames_at_final4": 300,
+      "frames_with_any_pair_conflict": 66,
+      "frames_with_nms_rejection": 17,
+      "main_main_pair_conflicts": 0,
+      "main_small_pair_conflicts": 8,
+      "small_small_pair_conflicts": 65,
+      "nms_rejected_candidates": 18,
+      "nms_rejected_main_area_topk": 0,
+      "nms_rejected_small_component_experimental": 18,
+      "main_top4_retention_rate": 0.9659090909090909
+    }
+  ],
+  "contracts": {
+    "causal_decode": "Decode and update one deployed background model from source frame 0. Only geometry expansion and final arbitration are repeated per threshold.",
+    "common_main_baseline": "main_top4_max_iou uses the same raw area-top4 main boxes for every perspective threshold before final arbitration.",
+    "truth_y": "Pedestrian band uses canonical source-box center divided by stride five; it is a truth-box proxy, not the CCL component center used for expansion.",
+    "nms_diagnostics": "Pair-conflict counts cover every pair in the internal pool. Rejection counts cover the priority scan until four outputs are filled or the pool is exhausted.",
+    "report_payload_sha256": "SHA256 of canonical JSON before adding report_payload_sha256; CSV hashes cover the two tabular output files."
+  },
+  "boundary": "VIRAT annotations are not exhaustive background truth, so candidate counts and NMS conflicts are workload diagnostics rather than false-positive rates. Python 8-connectivity does not model RTL MAX_RUN/MAX_LABEL overflow or label-union timing. No blind, holdout or reserve input is accepted.",
+  "report_payload_sha256": "876d17069a48b99587c2fd17e6a34da31cd16c5066d4c2ba4c1daa1d490767df"
+}

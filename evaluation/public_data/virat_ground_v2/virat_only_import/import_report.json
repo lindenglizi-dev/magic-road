@@ -1,0 +1,53 @@
+{
+  "status": "pilot_import_complete_mapping_qa_pass_with_resolution_limitations",
+  "scope": "isolated official VIRAT Ground 2.0 train/val ROI pilot",
+  "dataset_root": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\road_roi_dataset_virat",
+  "dataset_boundary": "use road_roi_dataset_virat for VIRAT work; road_roi_dataset is a combined legacy pilot and must not be used as a VIRAT-only evaluation set",
+  "test_boundary": "split=test scenes were viewed for coordinate/ROI mapping QA and are development holdout only; pixels are not imported, trained on, or scored, and a strict blind final test requires new unseen scenes",
+  "canonical_catalog_sha256": "2c5fc1323e66bdb144dd56e08aeb6b1afe52ec2904e2e72fd439de1496e92ae3",
+  "post_import_usage_agreement_receipt": {
+    "status": "confirmed_by_user",
+    "confirmation_date": "2026-09-27",
+    "receipt_sha256": "c75784b1964dac7ef19f5c8e79c61a6c850b0f8ba725c7a3b48673553ec95976"
+  },
+  "canonical_annotations_sha256": "e3c32ee80cd7d37d7ee8b1f5fc79a22d05b7e5e6fb2c9f61dbe512b6e711840e",
+  "sampling": {
+    "frame_stride": 30,
+    "max_per_track": 12,
+    "max_per_scene_label": 128,
+    "algorithm": "thin each track by zero-based frame distance, evenly cap per track, then evenly cap per scene/label",
+    "reason": "avoid adjacent frames and long/static tracks overwhelming the small pilot"
+  },
+  "selected_annotation_count": 477,
+  "imported_count": 429,
+  "imported_by_split_scene_label": {
+    "train/virat-ground-000201/ped": 32,
+    "train/virat-ground-000201/vehicle": 73,
+    "train/virat-ground-000206/ped": 128,
+    "train/virat-ground-000206/vehicle": 127,
+    "val/virat-ground-000200/ped": 21,
+    "val/virat-ground-000200/vehicle": 12,
+    "val/virat-ground-000203/ped": 24,
+    "val/virat-ground-000203/vehicle": 12
+  },
+  "skipped_counts": {
+    "development_holdout_mapping_qa_not_imported": 48
+  },
+  "selected_annotations_sha256": "f75dfa45880246379dd7d2d19d6e518ee713a851789a0e0713077d5f16ba8334",
+  "review_status": {
+    "VIRAT_S_000200_00_000100_000171": "spatial_mapping_pass_with_resolution_limitations",
+    "VIRAT_S_000201_02_000590_000623": "spatial_mapping_pass_with_resolution_limitations",
+    "VIRAT_S_000203_03_000736_000785": "spatial_mapping_pass_with_resolution_limitations",
+    "VIRAT_S_000205_00_000065_000149": "spatial_mapping_pass_with_resolution_limitations",
+    "VIRAT_S_000206_07_001501_001600": "spatial_mapping_pass_with_resolution_limitations",
+    "VIRAT_S_000207_02_000498_000530": "spatial_mapping_pass_with_resolution_limitations"
+  },
+  "limitations": [
+    "Spatial mapping contact sheets passed independent visual QA; semantic difficulty and source resolution remain limitations.",
+    "VIRAT usage-agreement acceptance was confirmed by the user on 2026-09-27 and recorded with a hashed local receipt",
+    "reviewed distant pedestrians can be only 2-6 pixels wide in the 256x144 analysis image, which is a model-capability limit",
+    "official boxes test classification input only; CCL candidate quality is a separate experiment",
+    "development holdout split has viewed selection metadata/contact sheets only and is absent from road_roi_dataset; it is not a strict blind test",
+    "binary classifier has no invalid-candidate rejection path"
+  ]
+}

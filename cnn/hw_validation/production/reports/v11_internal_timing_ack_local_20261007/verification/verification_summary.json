@@ -1,0 +1,65 @@
+{
+  "schema": "v11-ack-local-verification-summary-v1",
+  "candidate_rtl": {
+    "down2_overlap_tile_runner.v": "d00580baf3aa7764be39a745288f528b1f367dd67668feb2fd2815503d1dac28",
+    "road_postprocess_stream.v": "a51590f53c62f3a6dc51eaded0c77301b692f0cf2ae95109bd1e73afb29193fb",
+    "regression_copy_hash_match": true
+  },
+  "boolean_proof": {
+    "command": "py -3.13 -B verification/prove_local_ack.py",
+    "known_control_rows": 16384,
+    "mismatches": 0
+  },
+  "modelsim": {
+    "status": "LAUNCH_FAILED_BEFORE_COMPILE",
+    "error": "WinError 623 invalid system DLL relocation",
+    "log": "regression_candidate/guard_vlib.log",
+    "pass_claimed": false
+  },
+  "iverilog_runner": {
+    "status": "PASS",
+    "version": "12.0",
+    "compile_command": "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.exe -g2001 -Wall -s tb_down2_overlap_tile_runner -o ack_local_runner.vvp ph1p_logic_eram_runtime_model.v road_mac_probe.v road_round_shift.v silu_shared_unit.v road_postprocess_stream.v down2_overlap_tile_runner.v tb_down2_overlap_tile_runner.v",
+    "run_command": "E:\\project\\qiansai\\.tools\\iverilog\\bin\\vvp.exe -l iverilog_runner.log .\\ack_local_runner.vvp",
+    "log": "regression_candidate/iverilog_runner.log",
+    "log_sha256": "71a99a483e6e7c90bdd6fb72fb6dedf231bfb68cf5f620e327c673f53a82b891",
+    "cases": 4,
+    "x_or_z_directed_cases": 7,
+    "table_high_accepts": 1280,
+    "no_stall_core_cycles": [5433, 5433],
+    "random_backpressure_core_cycles": 5434,
+    "standalone_pw_core_cycles": 1822,
+    "stage_accepts_per_full_case": 640,
+    "writebacks_per_full_case": 640
+  },
+  "iverilog_postprocess": {
+    "status": "PASS",
+    "compile_command": "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.exe -g2001 -Wall -s tb_road_postprocess_stream -o ack_local_postprocess.vvp ph1p_logic_eram_runtime_model.v road_round_shift.v silu_shared_unit.v road_postprocess_stream.v tb_road_postprocess_stream.v",
+    "run_command": "E:\\project\\qiansai\\.tools\\iverilog\\bin\\vvp.exe -l iverilog_postprocess.log .\\ack_local_postprocess.vvp",
+    "log": "regression_candidate/iverilog_postprocess.log",
+    "log_sha256": "aaa69019bd63defbb8b48cb9c8a7a84c94f797f0a53a5a3a1a37e45871fc79cc",
+    "reset_ages": 25,
+    "fault_cases": 1,
+    "latency_cycles": "24/25"
+  },
+  "strict_gate_matrix": {
+    "command": "py -3.13 -B check_gates.py",
+    "compile": "passed",
+    "ast": "failed",
+    "readability": "failed",
+    "comment": "failed",
+    "naming": "failed",
+    "profile": "failed",
+    "testbench": "not_requested",
+    "toolchain": "not_requested",
+    "summary": "../gates/summary.json",
+    "summary_sha256": "b5120bbf82eccd1390d5b177e024a378b34bb84f71c2aec372192664ad56f47d",
+    "candidate_added_runner_findings": {
+      "VG040": 2,
+      "COMMENT_COMMENT_PLACEMENT": 2,
+      "VG145": 1,
+      "VG147": 1
+    },
+    "note": "The runner total of 1127 errors is not relabeled as a candidate-only style result; only the listed deltas are new. raw_sha256 fields inside gates/summary.json hash runner output, not RTL files."
+  }
+}

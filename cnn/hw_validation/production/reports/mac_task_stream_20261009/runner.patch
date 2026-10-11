@@ -1,0 +1,245 @@
+--- frozen_pw_prefetch_runner
++++ mac_task_stream_runner
+@@ -91,6 +91,11 @@
+ 	reg flag_tile_valid;
+ 	reg flag_export_done_o;
+ 	reg flag_result_reserved;
++	// Match MAC first-to-result credit; never derive result tags from issue counters.
++	reg [8:0]reg_pw_task_meta [0:3];
++	reg [1:0]ptr_pw_meta_read;
++	reg [1:0]ptr_pw_meta_write;
++	reg [2:0]cnt_pw_meta;
+ 	reg [3:0]cnt_position;
+ 	reg [4:0]cnt_output;
+ 	reg [1:0]cnt_mac_group;
+@@ -156,6 +161,10 @@
+ 	wire flag_mac_result_ready_local;
+ 	wire flag_mac_result_accept;
+ 	wire flag_can_reserve;
++	wire flag_pw_first_accept;
++	wire flag_pw_result_accept;
++	wire flag_mac_fault_accept;
++	wire flag_pw_prepare_next;
+ 
+ 	wire pp_input_ready;
+ 	wire pp_output_valid;
+@@ -221,12 +230,14 @@
+ 	integer spatial_lane;
+ 
+ 	assign wire_pw_group_base = {cnt_output[2:0], 1'b0} + {2'b00, cnt_output[2:0]};
+-	// WAIT keeps current result tags intact while addressing the next PW first group.
+-	assign wire_pw_prepare_position = ((state_current == ST_MAC_WAIT) && (cnt_output == 5'd7)) ?
++	// Last handshake advances the issuer; the separate descriptor ring owns result tags.
++	assign flag_pw_prepare_next = flag_layer_pw && (state_current == ST_MAC_SEND) &&
++	                              (cnt_mac_group == 2'd1);
++	assign wire_pw_prepare_position = (flag_pw_prepare_next && (cnt_output == 5'd7)) ?
+ 	                                  cnt_position + 4'd1 : cnt_position;
+-	assign wire_pw_prepare_output = (state_current == ST_MAC_WAIT) ?
++	assign wire_pw_prepare_output = flag_pw_prepare_next ?
+ 	                                cnt_output[2:0] + 3'd1 : cnt_output[2:0];
+-	assign wire_mac_prepare_group = (flag_layer_pw && (state_current == ST_MAC_WAIT)) ? 2'd0 :
++	assign wire_mac_prepare_group = flag_pw_prepare_next ? 2'd0 :
+ 	                                (flag_layer_pw && (state_current == ST_MAC_SEND) &&
+ 	                                 (cnt_mac_group == 2'd0)) ? 2'd1 : cnt_mac_group;
+ 	assign wire_dw_lane = ((cnt_output == 5'd0) || (cnt_output == 5'd3) ||
+@@ -237,7 +248,7 @@
+ 	                       (cnt_output == 5'd13)) ? 2'd1 : 2'd2;
+ 	assign wire_dw_channel_base = cnt_output - {3'd0, wire_dw_lane};
+ 	assign wire_result_lane_mask = flag_layer_pw ? 3'b111 : (3'b001 << wire_dw_lane);
+-	assign wire_result_channel_base = flag_layer_pw ? wire_pw_group_base : wire_dw_channel_base;
++	assign wire_result_channel_base = flag_layer_pw ? reg_pw_task_meta[ptr_pw_meta_read][4:0] : wire_dw_channel_base;
+ 	assign wire_dw_post_count = (cnt_position[1:0] == 2'd0) ? 2'd3 : 2'd1;
+ 	assign wire_dw_post_scalar = (cnt_dw_post_lane == 2'd0) ? $signed(reg_dw_triplet_result[31:0]) :
+ 	                                  (cnt_dw_post_lane == 2'd1) ? $signed(reg_dw_triplet_result[63:32]) :
+@@ -246,25 +257,30 @@
+ 	                             (wire_dw_lane == 2'd0) ? {64'd0, wire_dw_post_scalar} :
+ 	                             (wire_dw_lane == 2'd1) ? {32'd0, wire_dw_post_scalar, 32'd0} :
+ 	                                                        {wire_dw_post_scalar, 64'd0};
+-	assign wire_pp_position = flag_layer_pw ? cnt_position : cnt_position + cnt_dw_post_lane;
+-	assign flag_can_reserve = (flag_result_reserved == 1'b0) ?
+-	                          ((pp_result_queue_count < 2'd2) && (~pp_fault)) :
+-	                          ((~flag_result_reserved) && (~pp_fault));
++	assign wire_pp_position = flag_layer_pw ? reg_pw_task_meta[ptr_pw_meta_read][8:5] : cnt_position + cnt_dw_post_lane;
++	assign flag_can_reserve = flag_layer_pw ? ((cnt_pw_meta < 3'd4) || flag_pw_result_accept) :
++	                          ((~flag_result_reserved) && (pp_result_queue_count < 2'd2) && (~pp_fault));
+ 	assign flag_mac_last_group = flag_layer_pw ? (cnt_mac_group == 2'd1) :
+ 	                                               (cnt_mac_group == 2'd2);
+ 	assign flag_mac_input_valid = (state_current == ST_MAC_SEND) &&
+-	                              ((cnt_mac_group != 2'd0) || flag_can_reserve);
++	                              ((cnt_mac_group != 2'd0) || flag_can_reserve) &&
++	                              (~pp_fault) && (~flag_load_fault) && (~flag_fault_o) &&
++	                              (~(mac_result_valid && mac_fault));
+ 	assign flag_mac_input_accept = flag_mac_input_valid && mac_input_ready;
+-	assign flag_mac_result_ready_local = (state_current == ST_MAC_WAIT) && flag_result_reserved &&
+-	                                     (flag_layer_pw ? ((pp_result_queue_count < 2'd2) &&
+-	                                                       pp_table_loaded && pp_input_ready && (~pp_fault)) : (~pp_fault));
++	assign flag_mac_result_ready_local = flag_layer_pw ?
++	                                     ((cnt_pw_meta != 3'd0) && flag_busy_o && (~pp_fault) &&
++	                                      (mac_fault || (pp_table_loaded && pp_input_ready))) :
++	                                     ((state_current == ST_MAC_WAIT) && flag_result_reserved && (~pp_fault));
+ 	assign flag_mac_result_accept = mac_result_valid && flag_mac_result_ready_local;
++	assign flag_pw_first_accept = flag_layer_pw && flag_mac_input_accept && (cnt_mac_group == 2'd0);
++	assign flag_pw_result_accept = flag_layer_pw && flag_mac_result_accept;
++	assign flag_mac_fault_accept = flag_mac_result_accept && mac_fault;
+ 	assign flag_pp_input_valid = flag_layer_pw ?
+-	                             ((state_current == ST_MAC_WAIT) && flag_result_reserved && mac_result_valid) :
++	                             ((cnt_pw_meta != 3'd0) && flag_busy_o && mac_result_valid && (~mac_fault) && (~pp_fault)) :
+ 	                             ((state_current == ST_DW_POST) && flag_result_reserved &&
+ 	                              (pp_result_queue_count < 2'd2));
+ 	assign flag_pp_input_accept = flag_pp_input_valid && pp_input_ready;
+-	assign flag_commit_accept = pp_output_valid && i_commit_ready && flag_busy_o;
++	assign flag_commit_accept = pp_output_valid && i_commit_ready && flag_busy_o && (~flag_mac_fault_accept);
+ 	assign flag_table_enable = (state_current == ST_IDLE) && (~i_start) && (~i_export_start);
+ 	assign flag_load_accept = i_load_valid && o_load_ready;
+ 	assign flag_output_accept = o_output_valid && i_output_ready;
+@@ -326,7 +342,7 @@
+ 	assign o_scheduler_idle_cycles = cnt_scheduler_idle_cycles;
+ 	assign o_export_cycles = cnt_export_cycles;
+ 	assign o_result_queue_count = pp_result_queue_count;
+-	assign o_result_reserved = flag_result_reserved;
++	assign o_result_reserved = flag_result_reserved || (cnt_pw_meta != 3'd0);
+ 	assign o_meta_count = pp_meta_count;
+ 	assign o_mac_result_count = cnt_mac_results;
+ 	assign o_pre_accept_count = cnt_pre_accepts;
+@@ -402,17 +418,13 @@
+ 					flag_cnt_output_clear = 1'b1;
+ 				end
+ 			end
+-			ST_MAC_WAIT:begin
+-				if(flag_mac_result_accept)begin
+-					if(mac_fault)begin
+-					end else if(flag_layer_pw == 1'b0)begin
+-					end else begin
++			ST_MAC_SEND:begin
++				if(flag_layer_pw && flag_mac_input_accept && flag_mac_last_group)begin
+ 						if(cnt_output < 5'd7)begin
+ 							flag_cnt_output_increment = 1'b1;
+ 						end else if(cnt_position < 4'd15)begin
+ 							flag_cnt_output_clear = 1'b1;
+ 						end
+-					end
+ 				end
+ 			end
+ 			ST_DW_POST:begin
+@@ -438,6 +450,28 @@
+ 				flag_cnt_output_increment = 1'b0;
+ 			end
+ 		endcase
++	end
++
++	// Descriptor and MAC queues reserve/pop on identical events, including fault pop.
++	always@(posedge i_clk or negedge i_rstn)begin
++		if(i_rstn == 1'b0)begin
++			ptr_pw_meta_read <= 2'd0;
++			ptr_pw_meta_write <= 2'd0;
++			cnt_pw_meta <= 3'd0;
++		end else begin
++			if(flag_pw_first_accept)begin
++				reg_pw_task_meta[ptr_pw_meta_write] <= {cnt_position, wire_pw_group_base};
++				ptr_pw_meta_write <= ptr_pw_meta_write + 2'd1;
++			end
++			if(flag_pw_result_accept)begin
++				ptr_pw_meta_read <= ptr_pw_meta_read + 2'd1;
++			end
++			case({flag_pw_first_accept, flag_pw_result_accept})
++				2'b10: cnt_pw_meta <= cnt_pw_meta + 3'd1;
++				2'b01: cnt_pw_meta <= cnt_pw_meta - 3'd1;
++				default: cnt_pw_meta <= cnt_pw_meta;
++			endcase
++		end
+ 	end
+ 
+ 	always@(posedge i_clk or negedge i_rstn)begin
+@@ -471,7 +505,7 @@
+ 			flag_done_o <= 1'b0;
+ 			flag_export_done_o <= 1'b0;
+ 			flag_debug_valid_o <= 1'b0;
+-			if(pp_fault || flag_load_fault)begin
++			if(pp_fault || flag_load_fault || flag_mac_fault_accept)begin
+ 				flag_busy_o <= 1'b0;
+ 				flag_fault_o <= 1'b1;
+ 				flag_tile_valid <= 1'b0;
+@@ -491,6 +525,15 @@
+ 						cnt_dw_writes <= cnt_dw_writes + 1'b1;
+ 					end
+ 				end
++				// Keep the legacy debug arbitration: MAC event wins over simultaneous commit.
++				if(flag_pw_result_accept)begin
++					flag_debug_valid_o <= 1'b1;
++					reg_debug_phase_o <= 2'd0;
++					flag_debug_layer_o <= 1'b1;
++					reg_debug_position_o <= wire_pp_position;
++					reg_debug_channel_o <= wire_result_channel_base;
++					reg_debug_value_o <= $signed(mac_result_data[31:0]);
++				end
+ 				case(state_current)
+ 					ST_IDLE:begin
+ 						if(flag_start_accept)begin
+@@ -518,11 +561,26 @@
+ 					end
+ 					ST_MAC_SEND:begin
+ 						if(flag_mac_input_accept)begin
+-							if(cnt_mac_group == 2'd0)begin
++							if((cnt_mac_group == 2'd0) && (~flag_layer_pw))begin
+ 								flag_result_reserved <= 1'b1;
+ 							end
+ 							if(flag_mac_last_group)begin
+-								state_current <= ST_MAC_WAIT;
++								if(flag_layer_pw)begin
++									cnt_mac_group <= 2'd0;
++									if((cnt_output == 5'd7) && (cnt_position == 4'd15))begin
++										state_current <= ST_PW_DRAIN;
++									end else begin
++										reg_mac_activation <= next_mac_activation;
++										reg_mac_weight <= next_mac_weight;
++										reg_mac_bias <= next_mac_bias;
++										reg_mac_mask <= next_mac_mask;
++										if(cnt_output == 5'd7)begin
++											cnt_position <= cnt_position + 4'd1;
++										end
++									end
++								end else begin
++									state_current <= ST_MAC_WAIT;
++								end
+ 							end else begin
+ 								cnt_mac_group <= cnt_mac_group + 1'b1;
+ 								if(flag_layer_pw)begin
+@@ -550,29 +608,6 @@
+ 								reg_dw_triplet_result <= mac_result_data;
+ 								cnt_dw_post_lane <= 2'd0;
+ 								state_current <= ST_DW_POST;
+-							end else begin
+-								flag_result_reserved <= 1'b0;
+-								flag_debug_valid_o <= 1'b1;
+-								reg_debug_phase_o <= 2'd0;
+-								flag_debug_layer_o <= 1'b1;
+-								reg_debug_position_o <= cnt_position;
+-								reg_debug_channel_o <= wire_result_channel_base;
+-								reg_debug_value_o <= $signed(mac_result_data[31:0]);
+-								// Reuse existing operand registers; never launch before result acceptance.
+-								if((cnt_output < 5'd7) || (cnt_position < 4'd15))begin
+-									reg_mac_activation <= next_mac_activation;
+-									reg_mac_weight <= next_mac_weight;
+-									reg_mac_bias <= next_mac_bias;
+-									reg_mac_mask <= next_mac_mask;
+-								end
+-								if(cnt_output < 5'd7)begin
+-									state_current <= ST_MAC_SEND;
+-								end else if(cnt_position < 4'd15)begin
+-									cnt_position <= cnt_position + 1'b1;
+-									state_current <= ST_MAC_SEND;
+-								end else begin
+-									state_current <= ST_PW_DRAIN;
+-								end
+ 							end
+ 						end
+ 					end
+@@ -612,7 +647,7 @@
+ 						end
+ 					end
+ 					ST_PW_DRAIN:begin
+-						if(cnt_pw_writes == 9'd384)begin
++						if((cnt_pw_writes == 9'd384) && (cnt_pw_meta == 3'd0))begin
+ 							state_current <= ST_DONE;
+ 						end
+ 					end

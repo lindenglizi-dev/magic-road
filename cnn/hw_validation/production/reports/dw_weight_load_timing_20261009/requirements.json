@@ -1,0 +1,24 @@
+{
+  "task_classes": ["modify", "validate"],
+  "baseline": "dw_task_overlap_20261009",
+  "target": "rtl/down2_dynamic_tile_runner.v",
+  "intent": "Cut load order/type/ready decode before replicated DW weight RAM WE",
+  "change": "One registered valid/address/data write boundary; no new queue or external port",
+  "clock": "unchanged 100 MHz",
+  "reset": "unchanged async assertion; pending write canceled immediately; full reload required",
+  "latency": "internal DW RAM write one edge after acceptance; start and compute latency unchanged",
+  "start_proof": "last acceptance E0 -> write commit and start E1 -> ST_STORAGE operand capture E2",
+  "throughput": "one load accepted per edge; arithmetic and group II unchanged",
+  "review": {
+    "source": "baseline_review/review.json",
+    "formatter_parse": "module/ports/processes identified, compile passed; formatting gate remains failed",
+    "ownership": "remove old DW RAM assignment before adding unique new write process",
+    "width": "full11bit order validation precedes narrowing to8bit physical address; legal range0..143",
+    "fault": "malformed request never queues a write; fault and loaded counters keep original edge timing",
+    "collision": "start inhibits load acceptance, prior pending write commits before existing storage capture",
+    "risk": "reset between accept and commit intentionally cancels uncommitted operand; valid cleared, RAM not cleared"
+  },
+  "public_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"],
+  "python_and_script_skill": "readable-python-generator and readable-script-generator unavailable in catalog; no strict readiness claim",
+  "restrictions": ["no production change", "no bitstream", "no constraints change", "no arithmetic change", "no II change"]
+}

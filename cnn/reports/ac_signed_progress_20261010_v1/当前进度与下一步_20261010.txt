@@ -1,0 +1,77 @@
+RoadYOLO A/C路线：当前进度与下一步（2026-10-10）
+
+一、实际处于哪一步
+仍在第1步“来源/标签核查”到第2步“冻结小规模数据”之间。
+已交付代表图、两批审核包，并保存30张已签署图的独立标签汇总。
+128训练/64开发未冻结；新主开发集E7基线未运行；G100未启动。
+这里的“审核汇总”不是可开训数据集，不能把进度写成已完成训练准备。
+
+二、本次实际执行
+1. 合并已审核8图及24图中的22张已签署图；2张未签署草稿排除。
+   复用原校验器；原标签、人工输入、冻结权重未改。
+   保存两份人工输入字节快照、源图/输入哈希、完整动作及签署信息。
+2. 主代理及独立只读复核均通过：签署、框坐标、输入绑定、划分保留与输出计数。
+   family/camera预留无跨集合；不把MIO未知实体机位误称已认证。
+3. 找到并取回MIO官方代码包内真正的gt_train.csv；没有采用your_result_train.csv。
+   只读取该已验证TRAIN成员，不读取测试载荷，不执行下载的官方代码。
+   匹配已有48张原图；保留11类原始类别和原始整数XYXY inclusive坐标。
+   没有自动映射到项目类别、覆盖人工标签、放行未签署图或发布训练集。
+
+三、可核实的数据数量
+目标：训练128（A96/C32），开发64（A48/C16）。
+训练已签署25（A17/C8）：person11框、vehicle111框，9张含person。
+开发已签署5（A1/C4）：person14框、vehicle63框、ignore2框。
+训练缺103（A79/C24）；开发缺59（A47/C12）。
+共32张已分配人工任务，30张签署；未签署：mio_00101068、pets09_s2l1_f000100。
+不新增人工任务；完成这2张也不能填平128/64缺口。
+
+四、MIO官方GT查找结果及作用
+官方页：https://tcd.miovision.com/challenge/dataset.html
+归档：https://tcd.miovision.com/static/dataset/MIO-TCD-Localization-Code.tar
+归档长度26,089,472字节；ETag为"9ae15b42e3f39d297de603cab4d5ee25-4"。
+真值成员：MIO-TCD-Localization-Code/gt_train.csv
+成员偏移14,807,040，长度11,278,610字节。
+官方evaluation代码：每行image_id,class,x1,y1,x2,y2；面积计算宽高有+1。
+示例结果文件有score列，且parser示例随机生成预测，绝不能充当GT。
+
+现有48候选中官方类别计数：
+pedestrian2；car72；pickup_truck16；motorized_vehicle10；articulated_truck4；
+bus4；non-motorized_vehicle3；bicycle2；single_unit_truck2；motorcycle1；work_van1。
+只有1张官方标注含行人，ID00093760；这些计数不等于真实可见目标的人工总数。
+已经签署的15张MIO图：人工person2/vehicle56；同图官方GT没有pedestrian。
+差异尚未逐框判定，不能据此宣称官方漏标或人工误标；不得用官方GT覆盖人工结论。
+官方定义针对foreground/moving objects，不能保证停放车辆全覆盖。
+未找到官方实体机位映射；MIO仍全部保守预留训练侧。
+结论：找回GT有价值，但当前48图不能解决行人不足、开发来源隔离及完整标注门槛。
+
+五、当前指标与训练状态
+本次没有训练或推理，不产生新的Precision、Recall、AP50、AP50:95、训练耗时。
+G_ready=false；dataset_frozen=false；training_eligible=false。
+冻结E7仍为原权重，本次未改。历史指标不能填入尚未建立的新主开发集基线。
+MOT17只保留为已取得的行人补充候选；不是已采纳A/C主数据，不自动新开A/B实验。
+
+六、下一步可执行顺序与所需决定
+当前批准来源及人工32图上限内，不足以发布128/64完整可靠数据。
+需用户确认：允许增加一次A/C带完整标注来源的筛选，最多再核查2个来源，
+人工审核仍不突破32张，不默认把MOT17广场改称A/C，不改变类别及验收口径。
+该决定不是开训授权，也不保证两个新来源一定可用。
+
+获确认后执行：
+1. 核查固定机位A/C来源的完整人车标注、静止车/骑行口径、许可及视频/机位身份。
+   先查官方说明和标注样例；不先下载整套大数据。发现普遍缺标直接排除。
+2. 对合格来源生成8-12张代表原图/512输入对照与来源表，优先含可见行人的A/C通道。
+   候选预览不是新增逐图补框任务；不要求用户补几百框。
+3. 能满足目标才独立导出128/64，检查同源/同机位泄漏、完整标签与哈希。
+   仍不足就报告实际可用量与原因，不凑数、不偷偷缩减开发集或放宽门槛。
+4. 冻结同一开发标签、阈值和后处理后测E7，才有可比较的P/R/AP基线。
+5. 数据门槛通过后按原方案做G100：Mosaic关、lr0.001恒定、8图×累积8、独立实验。
+   先10次真实更新测速；通过既定收益/回归门槛才加200次更新到G300。
+6. 连续视频轨迹/计数/逆行、蒸馏、QAT与RTL仍按原路线后置，不改变正式P95/R85等门槛。
+
+七、证据位置及复查
+本目录 reviewed_partial_labels.json、progress_receipt.json及两个batch快照。
+../mio_train_gt_lookup_20261010_v1/receipt.json、gt_train.csv、selected48_source_labels.json。
+复查：python -B -m cnn.collect_ac_signed check
+复查：python -B -m cnn.fetch_mio_train_gt check
+两项已通过。解释器有D:\Python313\python.exe定位提示，但实际检查退出码0。
+本次按最小改动原则复用校验与JSON工具；未新增训练框架、未修改生产RTL或参数。

@@ -1,0 +1,12 @@
+DIAGNOSTIC FIRST ATTEMPT - RETAINED NEGATIVE LOG
+Command class: Icarus frozen 96-bit legacy core, tb_road_mac_signed_accumulator, +LEGACY_NEGATIVE
+Date: 2026-10-06 Asia/Shanghai
+
+ > ERR: accept interval vector=2 got=13 exp=16
+VERILOG-GEN-NEGATIVE FAIL legacy_early_faults=2 errors=1
+
+Root cause: the first harness revision reused candidate vector index adjacency for a legacy run
+that intentionally skipped vector 1. The arithmetic observation itself was correct: both legacy
+temporary-excursion first beats produced fault=1, data=0 at accept+9. The repaired legacy mode
+does not infer candidate II from skipped vector indices and asserts only the intended accept+9
+early-fault counterexample. This log is not release evidence.

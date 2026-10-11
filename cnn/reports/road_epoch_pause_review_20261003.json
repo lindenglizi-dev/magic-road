@@ -1,0 +1,267 @@
+{
+  "report_kind": "independent_read_only_prelaunch_review_one_complete_road_epoch_pause",
+  "date": "2026-10-03",
+  "role": "verify",
+  "status": "attempt1_stopped_fail_closed_no_complete_epoch_retry_blocked",
+  "scope": {
+    "reviewed_trainer": "cnn/train.py",
+    "reviewed_guarded_runner": "cnn/run_road_epoch.py",
+    "reviewed_cache_rebinder": "cnn/rebind_road_cache.py",
+    "reviewed_cache_receipt": "cnn/reports/cache_road_pause_rebind_20261003.json",
+    "reviewed_detection_evaluator": "cnn/evaluate.py",
+    "source_edits_by_reviewer": false,
+    "gpu_used_by_reviewer": false,
+    "training_launched_by_reviewer": false,
+    "optimizer_steps_run_by_reviewer": 0,
+    "full_blob_or_source_corpus_rehashed_by_reviewer": false,
+    "newtest_or_blind_pixels_read": false,
+    "owned_output_only": "cnn/reports/road_epoch_pause_review_20261003.json"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "retry_blockers": [
+      "Available system RAM must be raised enough for the current runner's post-import 6 GiB admission gate.",
+      "A retry must use fresh output, report, telemetry and failure-receipt paths; the first attempt's exclusive paths now exist and the current fixed runner still names them."
+    ],
+    "complete_epoch_pause_contract": "passed_static_and_CPU_regression_evidence",
+    "cache_rebind_receipt": "passed_and_published",
+    "original_COCO_checkpoint_preserved_prelaunch": true,
+    "watchdog_and_resource_contract": "passed_static_review",
+    "GPU_launch_authorized_by_this_review": false,
+    "formal_training_result_available": false,
+    "summary": "The prelaunch implementation review had zero defects, but the actual first attempt correctly failed closed when sampled available RAM fell below 3 GiB after 250.614 protected seconds. No complete epoch or checkpoint exists, only the start log was persisted, and exact resume is impossible. The original COCO checkpoint remains unchanged and all owned processes exited. A fresh-path retry is not currently authorized or launch-ready: it requires freeing roughly 1.5-2 GiB of nonessential RAM, passing the revised 6 GiB post-import admission gate, and explicit continuation."
+  },
+  "artifact_snapshots": {
+    "cnn/train.py": "adb634b9ae29b89c6dde782bc72e870069c267e1090372ad2466c1a599ee17dc",
+    "attempt1_cnn/run_road_epoch.py": "4bf4459d3097d2b28590faa4e4eb2113eb4826ff73c353e8b68b804e906f16b6",
+    "current_cnn/run_road_epoch.py_after_6GiB_admission_change": "00b5a901b4c10b21a116fe762d1941dc20e7940ec986df37b08761d645fb4338",
+    "cnn/rebind_road_cache.py": "b85b0b2bec5b8c63493613e468479cd054e5e2f56a50172e5c599e98aa7cdc8f",
+    "cnn/benchmark_cache_gpu.py": "c99fed561422471250b996c9d6edf647b82faf0da71cfefd20485e6dc218da45",
+    "cnn/model.py": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c",
+    "cnn/loss.py": "dc1c2c6423a154bb4eecd579fc7433345197557b1caa8fcb78435c95dcb01adb",
+    "cnn/disk_cache.py": "5e88d944fb0864eb7ab1ac33d9aef63018a7cdf1aa81b6a93a62e5dfc16122b9",
+    "cnn/dataset.py": "0f9e07b29e41161afa06f2e0fed7d6e5bbedc84761ab91745bfffb5802d35e64",
+    "cnn/integer.py": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+    "original_COCO_checkpoint_sha256": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "road_manifest_sha256": "ad353c5bce5b0ecef0433c74515324bbfdb031e92aff964cd56c18ae069d9fe4",
+    "old_cache_index_sha256": "646db6bcd11ab8ff55b9fb024480ab0b015842f7a9495a890a9b947aa153e170",
+    "new_cache_index_sha256": "23f8d0331ef95e6bd45f07c3e4f072b6e90982e9639d2dd204a997a4d69df247",
+    "cache_rebind_receipt_sha256": "aa024aec8c21f779e8a248f9f3d6179218d34b210785e6bc6cfe2ce7f100eb13",
+    "cache_rebind_receipt_bytes": 3126
+  },
+  "complete_epoch_pause_review": {
+    "new_control": "--stop-after-epoch is a run-control boundary and is deliberately excluded from training_protocol, so it cannot shorten or otherwise change the 40-epoch schedule identity.",
+    "range_and_resume_guards": "The value must be zero or a valid one-based planned epoch, and on resume must exceed the checkpoint's already completed epoch.",
+    "save_then_pause_order": "For a complete epoch, validation loss is computed, epoch_0000.pt is exclusive-created, last.pt is atomically replaced with a complete checkpoint, the complete epoch event is logged, and only then does the pause branch break.",
+    "resume_identity": "The complete checkpoint includes model and BN state, optimizer/momentum, AMP scaler, RNG state, trained step count, dataset/content identities and the unchanged training protocol. ensure_resume_eligible plus trained_steps == start_epoch * optimizer_steps_per_epoch rejects partial boundaries.",
+    "fixed_first_epoch_contract": {
+      "schedule_epochs": 40,
+      "start_mode": "weights_only_init_from_COCO_epoch6_not_resume",
+      "road_training_rows": 19050,
+      "microbatch": 8,
+      "accum_steps": 8,
+      "effective_batch_target": 64,
+      "optimizer_steps": 298,
+      "tail_optimizer_effective_batch": 42,
+      "mosaic": true,
+      "mosaic_epoch": 0,
+      "workers": 0,
+      "expected_checkpoint_epoch_zero_based": 0,
+      "expected_checkpoint_epoch_number": 1
+    },
+    "CPU_regression_evidence_reported_by_coordinator": "cnn/test_epoch_pause.py used the actual trainer with tiny mocked data/model/loss: save at 1/40, resume exactly to 2/40, tail group, unchanged first epoch hash and duplicate pause rejection passed. cnn.test_training also passed. The reviewer did not rerun these tests."
+  },
+  "guarded_runner_review": {
+    "fixed_invocation": "No launch options are accepted. Dataset, source COCO checkpoint, new cache, output and report paths are fixed constants; every output/failure/telemetry path must be absent.",
+    "source_binding": {
+      "before_CUDA": "train.py, benchmark_cache_gpu.py, model.py and loss.py are compared to fixed expected SHA-256 values.",
+      "after_run": "All four imported source files are rehashed; any change forces failed_or_partial.",
+      "cache_preprocessing_sources": "disk_cache.py, train.py, dataset.py and integer.py are separately bound by exact preprocessing identity in the cache receipt/index and revalidated by DiskCachedDataset construction."
+    },
+    "original_checkpoint_protection": "The COCO checkpoint is passed only as --init-checkpoint, never --resume or an output target. Its SHA-256 is checked before CUDA and after the run; the new experiment uses an exclusive distinct directory.",
+    "watchdog": "A base-Python helper opens and retains a Windows handle to the exact training/runner PID and signals ready before train.train can initialize CUDA work. Deadline, temperature, hardware/software thermal slowdown, telemetry failure, process-memory telemetry failure or RAM threshold breach terminates only that pinned parent handle.",
+    "limits": {
+      "attempt1_preadmission_system_available_RAM_bytes": 4831838208,
+      "current_retry_candidate_preadmission_system_available_RAM_bytes": 6442450944,
+      "runtime_system_available_RAM_stop_bytes": 3221225472,
+      "conservative_temperature_stop_c": 75,
+      "soft_training_loop_stop_seconds": "not separate; the external hard wall is authoritative for this one-epoch runner",
+      "protected_wall_hard_seconds": 1800,
+      "user_GPU_budget_upper_seconds": 1800
+    },
+    "deadline_scope": "The 1800-second clock starts at watchdog ready before train.train, so manifest/cache constructor time after ready, CUDA training, full 5151-image validation loss, checkpoint save and final synchronization all consume the same conservative protected window.",
+    "shutdown_order": "The external watchdog remains active while finally drains asynchronous CUDA work. Only after synchronization does the runner terminate its owned CPU watchdog, then rehash sources and the original checkpoint before publishing the exclusive result report.",
+    "passed_publication_requirements": "Exit code zero, live watchdog through training, final GPU/RAM/thermal check, protected GPU window <1800 seconds, complete checkpoint epoch=0 and trained_steps=298, tail=42, epoch_0000.pt present, epoch_0001.pt absent, and ensure_resume_eligible against the exact 40-epoch protocol.",
+    "CPU_regression_evidence_reported_by_coordinator": "Two cnn.test_run_road_epoch tests plus the four benchmark watchdog tests passed. The reviewer did not rerun them."
+  },
+  "cache_rebind_receipt_review": {
+    "status": "passed_full_development_cache_rebind_CPU_equivalence",
+    "actual_index_SHA_matches_receipt": true,
+    "formal_index_and_receipt_present": true,
+    "pending_index_and_receipt_absent": true,
+    "old_and_new_RGB_paths_same_file": true,
+    "cached_images": 24201,
+    "cache_bytes": 10705747968,
+    "all_raw_RGB_targets_and_keys_exact_count": 24201,
+    "bounded_Mosaic_exact": [
+      {
+        "epoch": 0,
+        "count": 32
+      },
+      {
+        "epoch": 1,
+        "count": 32
+      }
+    ],
+    "maximum_compared_difference": 0,
+    "whole_RGB_sha256": "cb01e0c54596ab66e2418b926eabda2ce5236db41e082786355933f18bef1758",
+    "preprocessing_before_after_JSON_equal": true,
+    "source_files_before_after_equal": true,
+    "migration_source_SHA_in_index_matches_current": true,
+    "CPU_verification_seconds": 1097.821444000001,
+    "GPU_used": false,
+    "training_started": false,
+    "reviewer_verification_boundary": "The reviewer parsed the published receipt, hashed the 12.3 MB index, checked the hard-link identity and current small source files. The reviewer did not rehash the 10.7 GB shared blob or the 24,201 source images; the training constructor will independently validate cache index, raw source hashes and the entire blob before CUDA."
+  },
+  "failed_attempt_history": [
+    {
+      "status": "not_published_not_passed",
+      "evidence": "The first full CPU comparison reached 24,201 exact records but failed with WinError 5 at new-root creation. It produced no formal index or receipt and consumed no GPU authorization."
+    },
+    {
+      "status": "interrupted_before_expensive_comparison_not_published",
+      "evidence": "One obsolete escalated retry was stopped before the expensive comparison and produced no formal artifacts."
+    },
+    {
+      "status": "resolved",
+      "evidence": "The producer moved exclusive directory, hard-link and pending-file write admission before the expensive pass. Only the successful rerun renamed formal index and receipt after all checks passed."
+    }
+  ],
+  "prelaunch_state_before_attempt1": {
+    "checked_at_local": "2026-10-03T16:47:54.6646312+08:00",
+    "output_directory_exists": false,
+    "training_report_exists": false,
+    "training_telemetry_exists": false,
+    "watchdog_failure_receipt_exists": false,
+    "active_project_jobs_exact_argv": [],
+    "producer_process_exited": true,
+    "training_process_started": false,
+    "coordinator_reported_available_RAM_before_trainer_import_GiB": 5.49,
+    "admission_note": "The live runner repeats its own post-import >=4.5 GiB admission check; this prelaunch observation does not bypass that fail-closed gate."
+  },
+  "attempt1_result": {
+    "status": "stopped_by_RAM_protection_no_complete_epoch_checkpoint",
+    "attempt_report": "cnn/reports/road_epoch1_attempt_20261003.json",
+    "attempt_report_sha256": "7cb5167d9b251512c5c190b7a585f5a94d2f35ddf344c4a5901302b270ff6188",
+    "attempted_runner_sha256": "4bf4459d3097d2b28590faa4e4eb2113eb4826ff73c353e8b68b804e906f16b6",
+    "training_protocol_sha256": "bcda54929c3656fc7ab7a385ec84f0af55b1597c13206b91558db95762ecc328",
+    "training_pid": 31844,
+    "watchdog_pid": 3040,
+    "process_exit_verified_by_exact_argv": true,
+    "failure_receipt": "cnn/reports/road_epoch1_20261003.watchdog_failure.json",
+    "failure_receipt_sha256": "72be00c1b74b71b52436eb7b29670b0b4a84a7c649df0133edd7ea5338e14eb2",
+    "failure_reason": "system_available_RAM_below3_GiB",
+    "protected_window_seconds": 250.61374350002734,
+    "protected_window_includes_CPU_startup": true,
+    "telemetry": "cnn/reports/road_epoch1_20261003.telemetry.jsonl",
+    "telemetry_sha256": "c8c0037086f5136637c773bba0facf1b8da12ca2710b1de48d2c802b33eced8b",
+    "telemetry_samples": 221,
+    "telemetry_elapsed_strictly_monotonic": true,
+    "GPU_UUID_count": 1,
+    "initial_available_RAM_bytes": 5482250240,
+    "minimum_available_RAM_bytes": 2843602944,
+    "sampled_process_peak_RAM_bytes": 1682558976,
+    "RAM_drop_not_proved_exclusively_attributable_to_training_process": true,
+    "peak_sampled_temperature_c": 45,
+    "thermal_slowdown_observed": false,
+    "persisted_output_files": [
+      "train_log.jsonl"
+    ],
+    "persisted_log_events": [
+      "start"
+    ],
+    "start_log_trained_steps": 0,
+    "recorded_optimizer_step_events": 0,
+    "optimizer_update_count_not_independently_instrumented_at_termination": true,
+    "complete_epochs": 0,
+    "checkpoint_written": false,
+    "exact_resume_possible": false,
+    "detection_metrics_run": false,
+    "original_COCO_checkpoint_sha256_after": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "interpretation": "The watchdog behaved as designed and protected the host, but this is a failed attempt rather than a training result. Zero persisted step events do not independently prove zero transient optimizer updates before process termination; without a checkpoint none can be retained or resumed."
+  },
+  "current_retry_candidate": {
+    "runner_sha256": "00b5a901b4c10b21a116fe762d1941dc20e7940ec986df37b08761d645fb4338",
+    "only_functional_change_from_attempt1_runner": "Post-import admission RAM was raised from 4.5 GiB to 6 GiB; train.py, cache, model, loss, protocol and runtime 3 GiB watchdog stop remain unchanged.",
+    "coordinator_reported_CPU_regression": "Two runner CPU tests passed after the admission change; reviewer did not rerun them.",
+    "automatic_retry_started": false,
+    "fresh_paths_configured": false,
+    "retry_authorized_by_this_review": false,
+    "required_action": "Free approximately 1.5-2 GiB of nonessential RAM, obtain explicit continuation, configure fresh exclusive paths, then repeat the narrow source/receipt/path/process prelaunch check. Do not reuse or delete the first attempt evidence."
+  },
+  "post_epoch_CPU_detection_plan": {
+    "execute_only_after": "A future fresh-path road epoch report is passed, its last.pt is resume-eligible and all GPU/runner processes have exited",
+    "command_template": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m cnn.evaluate --checkpoint <fresh-successful-road-run>/last.pt --dataset cnn/data/visdrone_vid_train/raw_manifest/dataset.json --output <fresh-exclusive-road-epoch1-val256-report>.json --device cpu --threads 2 --max-images 256",
+    "development_domain_flag": false,
+    "reason": "The new checkpoint is trained on and bound to the same road manifest; --development-domain would weaken the intended dataset-identity gate.",
+    "comparison_baseline": {
+      "path": "cnn/reports/epoch6_visdrone_val256_cpu_20261003.json",
+      "sha256": "db5dc5006d3448c1a987179b96d6e53fe358456cf53ad49c9be8b6cc6ab0449b",
+      "checkpoint": "COCO_epoch6_weights",
+      "image_count": 256,
+      "total_validation_images": 5151,
+      "evaluated_image_content_sha256": "8858a1ac3ad9d5428a6004e005eba2a1f95513b82512ae8928c2b4c21e631473",
+      "CPU_threads": 2,
+      "observed_total_seconds": 22.58316890001879
+    },
+    "fixed_metric_contract": {
+      "score_floor_uint16": 3276,
+      "score_floor_approx": 0.05,
+      "top_k_per_class": 128,
+      "max_boxes_per_class": 32,
+      "NMS_IoU": 0.5,
+      "selection": "floor(i*N/K) evenly spaced over sorted validation image names, independent of labels and predictions"
+    },
+    "required_comparison": "Require the new report's evaluated_image_content_sha256 to equal the baseline value, then report before/after class precision, recall, AP50 and AP50:95 at the fixed diagnostic contract plus P95 operating points where available.",
+    "expected_runtime_approach": "The prior 256-image CPU run took 22.58 seconds at two threads. Treat that only as an order-of-magnitude planning observation; startup and current host contention may differ.",
+    "boundary": "This is a selected-only raw-byte-verified 256/5151 systematic subset diagnostic. It is not full validation, random sampling, a confidence interval, newtest, or formal acceptance. The trainer's full 5151-image validation_loss_stub is not a detection metric and cannot replace this P/R/AP comparison."
+  },
+  "remaining_evidence_after_launch": [
+    "Attempt 1 produced no complete checkpoint or detection metric; the one-complete-epoch objective remains unmet.",
+    "After any explicitly continued fresh-path run, independently verify telemetry monotonicity/extrema, the protected wall, 298 steps, tail 42, complete/resume-eligible checkpoint content, source and original COCO before/after hashes, output exclusivity and process exit.",
+    "Do not call an interrupted or watchdog-stopped partial output a complete epoch, even if some checkpoint files exist.",
+    "Do not start epoch 2 or any additional GPU run without new user authorization."
+  ],
+  "findings": [
+    {
+      "severity": "warning",
+      "topic": "attempt1_RAM_watchdog_stop",
+      "evidence": "Available RAM fell from 5,482,250,240 bytes initially to 2,843,602,944 bytes at the stop sample, below the 3 GiB reserve. The external watchdog terminated the pinned training PID after 250.614 protected seconds. Peak sampled temperature was 45 C with no thermal slowdown.",
+      "disposition": "Keep the failed receipt and start-only log. Do not call the attempt a completed epoch or resume it. Free memory and use the revised 6 GiB admission plus fresh paths only after explicit continuation."
+    },
+    {
+      "severity": "resolved",
+      "topic": "safety_and_training_source_receipt_gap",
+      "evidence": "The first runner revision pinned only train.py. The current revision pins train.py, benchmark_cache_gpu.py, model.py and loss.py before CUDA, records them and rehashes them after the run.",
+      "disposition": "Resolved without expanding the pause control or training protocol."
+    },
+    {
+      "severity": "warning",
+      "topic": "hardlink_is_not_an_independent_immutable_copy",
+      "evidence": "old and new rgb.bin are the same Windows file identity. Deleting one link preserves the other, but writing or truncating through either path would change the shared bytes.",
+      "disposition": "Within this run all producer and reader paths are read-only and the constructor hashes the full blob. Describe the result as storage-preserving hard-link reuse, not protection against arbitrary writes through either path."
+    },
+    {
+      "severity": "warning",
+      "topic": "deadline_includes_CPU_startup_and_full_validation_loss",
+      "evidence": "The 1800-second watchdog begins before train.train, and the complete epoch includes manifest/cache validation and full 5151-image validation loss before checkpoint publication.",
+      "disposition": "A deadline stop is a valid fail-closed outcome, not evidence that the epoch completed. Do not relax the user-approved limit during the run."
+    },
+    {
+      "severity": "info",
+      "topic": "one_epoch_not_acceptance",
+      "evidence": "The checkpoint and trainer mark acceptance_eligible false and validation_loss_stub unaccepted. The planned 256-image CPU detection comparison is also diagnostic only.",
+      "disposition": "Report the completed epoch and bounded before/after metrics honestly; do not claim road acceptance, newtest performance, full training completion or FPGA performance."
+    }
+  ]
+}

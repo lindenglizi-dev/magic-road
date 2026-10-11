@@ -1,0 +1,13 @@
+4'd0: begin dec_word=13'd29; dec_byte=5'd1; dec_items=11'd144; dec_size=3'd1; dec_kind=3'd2; dec_base=11'd0; end // down2.dw.conv.weights
+4'd1: begin dec_word=13'd36; dec_byte=5'd5; dec_items=11'd16; dec_size=3'd4; dec_kind=3'd3; dec_base=11'd0; end // down2.dw.conv.bias
+4'd2: begin dec_word=13'd43; dec_byte=5'd14; dec_items=11'd384; dec_size=3'd1; dec_kind=3'd4; dec_base=11'd0; end // down2.pw.conv.weights
+4'd3: begin dec_word=13'd62; dec_byte=5'd18; dec_items=11'd24; dec_size=3'd4; dec_kind=3'd5; dec_base=11'd0; end // down2.pw.conv.bias
+4'd4: begin dec_word=13'd39; dec_byte=5'd9; dec_items=11'd16; dec_size=3'd4; dec_kind=3'd6; dec_base=11'd0; end // down2.dw.conv.pre_multiplier
+4'd5: begin dec_word=13'd67; dec_byte=5'd14; dec_items=11'd24; dec_size=3'd4; dec_kind=3'd6; dec_base=11'd16; end // down2.pw.conv.pre_multiplier
+4'd6: begin dec_word=13'd42; dec_byte=5'd13; dec_items=11'd16; dec_size=3'd1; dec_kind=3'd7; dec_base=11'd0; end // down2.dw.conv.pre_shift
+4'd7: begin dec_word=13'd72; dec_byte=5'd10; dec_items=11'd24; dec_size=3'd1; dec_kind=3'd7; dec_base=11'd16; end // down2.pw.conv.pre_shift
+4'd8: begin dec_word=13'd43; dec_byte=5'd9; dec_items=11'd1; dec_size=3'd4; dec_kind=3'd7; dec_base=11'd40; end // down2.dw.conv.post_multiplier
+4'd9: begin dec_word=13'd73; dec_byte=5'd14; dec_items=11'd1; dec_size=3'd4; dec_kind=3'd7; dec_base=11'd41; end // down2.pw.conv.post_multiplier
+4'd10: begin dec_word=13'd43; dec_byte=5'd13; dec_items=11'd1; dec_size=3'd1; dec_kind=3'd7; dec_base=11'd42; end // down2.dw.conv.post_shift
+4'd11: begin dec_word=13'd73; dec_byte=5'd18; dec_items=11'd1; dec_size=3'd1; dec_kind=3'd7; dec_base=11'd43; end // down2.pw.conv.post_shift
+4'd12: begin dec_word=13'd6795; dec_byte=5'd14; dec_items=11'd1024; dec_size=3'd2; dec_kind=3'd0; dec_base=11'd0; end // shared.silu

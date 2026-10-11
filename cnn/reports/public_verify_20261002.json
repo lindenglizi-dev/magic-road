@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "role": "independent_public_data_and_training_review",
+  "as_of": "2026-10-02T22:44:00+08:00",
+  "scope": {
+    "reviewed": [
+      "cnn/fetch_coco.py full and subset download boundaries",
+      "cnn/dataset.py receipt-to-training-input binding",
+      "cnn/train.py mosaic, validation isolation, schedule, cache, seed and resume",
+      "cnn/metrics.py and cnn/evaluate.py acceptance wording and thresholds"
+    ],
+    "excluded": [
+      "No COCO archive or image was downloaded",
+      "No long training was started",
+      "No blind or reserve pixel annotation was opened",
+      "No claim that COCO establishes road-domain acceptance"
+    ]
+  },
+  "workspace": {
+    "git_repository": false,
+    "branch": null,
+    "source_sha256": {
+      "cnn/fetch_coco.py": "e54c6b4d78e09e62f2f9eb9f7c08f35054568dd0f89300c6a6469e2e6ea3e778",
+      "cnn/dataset.py": "0a10bbdf05c50338e3b6ce048d4b0535ebff69dd9bc7c2ea801278217f82cc47",
+      "cnn/train.py": "78ee003eb4109c249c472b5a8115a7832d726c19a7c7d51a6fe58748f91b4158",
+      "cnn/test_fetch_coco.py": "be589ce158cc88a492e3e5df5dc2e245d25b0e1de8f9854af9118dbf5befa058",
+      "cnn/test_dataset.py": "6c4daab0d55f5e78003077528b62b106bcb7e6570e77db5111756642e200cef3",
+      "cnn/test_training.py": "68ab260d2d5f8ee6cf390bbeee0cc04fefea48feb2b6fd36447e27a44b44b192",
+      "cnn/metrics.py": "8cddbf6b713668edc4b4104f2054954ec0462e81efa6593d4c1e31866d1d7fb3",
+      "cnn/evaluate.py": "5b79b051ab0300a5587694734086accb51f060efef42b2ed45061657c9514abc"
+    }
+  },
+  "overall_status": "conditional_pass_with_provenance_and_disk_budget_limits",
+  "findings": [
+    {
+      "id": "PV-002",
+      "severity": "high",
+      "classification": "provenance_gap",
+      "status": "open",
+      "locations": [
+        "cnn/fetch_coco.py:43",
+        "cnn/fetch_coco.py:47",
+        "cnn/fetch_coco.py:175"
+      ],
+      "title": "A receipt freezes observed local bytes but does not prove official COCO identity",
+      "evidence": "fetch() accepts any existing non-empty archive destination as reused and records its newly observed SHA-256. Annotation and image members are now checked against that archive, and later dataset receipt binding detects drift, but the first receipt can still bless a pre-existing structurally valid non-official archive.",
+      "required_fix": "If official identity is a hard gate, pin trusted expected sizes and cryptographic hashes, or require a separately authenticated source manifest, and reject mismatches. Otherwise label the receipt as observed-local provenance rather than verified-official identity."
+    },
+    {
+      "id": "PV-003",
+      "severity": "medium",
+      "classification": "proven_operational_gap",
+      "status": "open",
+      "locations": [
+        "cnn/fetch_coco.py:105",
+        "cnn/fetch_coco.py:107",
+        "cnn/fetch_coco.py:167",
+        "cnn/fetch_coco.py:170"
+      ],
+      "title": "Disk budget is a one-time constant rather than a remaining-work check",
+      "evidence": "--full checks only that free space is at least 45 GiB at startup. Image ZIP preflight permits up to 40 GiB uncompressed per archive, but extraction does not compare missing-member bytes plus remaining downloads and archives against current free space. A permitted first archive can therefore consume enough space for a later phase to fail with ENOSPC after partial extraction.",
+      "required_fix": "Before each download and extraction, compute remaining compressed and uncompressed bytes for missing outputs and require a documented safety margin."
+    }
+  ],
+  "verified_controls": [
+    {
+      "control": "download allowlist",
+      "result": "pass",
+      "evidence": "Only the three fixed COCO archive keys and flat numeric train2017/val2017 JPEG keys are accepted."
+    },
+    {
+      "control": "image ZIP path and shape boundary",
+      "result": "pass",
+      "evidence": "All members are preflighted before writes; split, flat 12-digit JPEG name, uniqueness, count, per-member size, and aggregate size are checked."
+    },
+    {
+      "control": "download interruption retry",
+      "result": "pass_after_fix",
+      "evidence": "http.client.HTTPException is now retried, covering IncompleteRead. Content length and resumed start are checked; partial files are retained for safe continuation."
+    },
+    {
+      "control": "no receipt overwrite",
+      "result": "pass_after_fix",
+      "evidence": "The final receipt uses exclusive open('x'). Existing destination content is not overwritten."
+    },
+    {
+      "control": "annotation extraction atomicity and archive consistency",
+      "result": "pass_after_fix",
+      "evidence": "Annotation members are written to exclusive .json.extracting siblings, atomically renamed after the ZIP member reaches CRC completion, and existing final files are checked against archive size and CRC."
+    },
+    {
+      "control": "receipt-to-training-input binding",
+      "result": "pass_after_fix",
+      "evidence": "dataset.py verifies annotation SHA-256, subset image SHA-256, and full archive SHA-256 plus per-image size and CRC before accepting inputs."
+    },
+    {
+      "control": "mosaic targets",
+      "result": "pass",
+      "evidence": "The fixed 2x2 no-crop mosaic applies the same 0.5 scale and quadrant offset to positive boxes and ignore boxes."
+    },
+    {
+      "control": "validation augmentation isolation",
+      "result": "pass",
+      "evidence": "Validation uses a separately constructed FullFrameDataset with mosaic disabled and shuffle disabled."
+    },
+    {
+      "control": "training schedule and phase binding",
+      "result": "pass_after_fix",
+      "evidence": "Learning rate is set per optimizer step for five warmup epochs then cosine decay; mosaic is disabled for the final 15 epochs. Checkpoint v2 binds protocol, dataset manifest, image content, preprocessing contract, phase, teacher-cache hash, effective batch, optimizer, scaler, and RNG state."
+    },
+    {
+      "control": "resume output identity",
+      "result": "pass_after_fix",
+      "evidence": "Non-empty resume output requires a matching last.pt and rejects unknown files or future epoch checkpoint overwrite. Legacy, diagnostic, and interrupted checkpoints cannot be exact-resumed."
+    },
+    {
+      "control": "metric claim boundary",
+      "result": "pass",
+      "evidence": "Validation selects per-class precision-at-least-0.95 thresholds and reports the recall-at-least-0.85 numerical gate, while output remains diagnostic and formal_acceptance is false. COCO is explicitly not road acceptance evidence."
+    }
+  ],
+  "verification_commands": [
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_dataset cnn.test_fetch_coco cnn.test_metrics -v",
+      "result": "pass: 11 tests"
+    },
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m cnn.test_training",
+      "result": "pass: training protocol checks passed"
+    },
+    {
+      "command": "offline mocked IncompleteRead and late unsafe ZIP member fixture",
+      "result": "initially reproduced one-call IncompleteRead escape and partial extraction before late member rejection; both were fixed, then cnn.test_fetch_coco passed"
+    },
+    {
+      "command": "offline forged receipt SHA fixture against build_coco_manifest(raw_images=True)",
+      "result": "pass after fix: rejected with image differs from download receipt"
+    }
+  ],
+  "limitations": [
+    "No live server headers, official archive checksums, archive sizes, or end-to-end full extraction were verified in this review.",
+    "torch deterministic algorithms use warn_only=True, so seed/resume evidence is a code-level protocol and not a cross-hardware bit-exact guarantee.",
+    "Passing synthetic and unit tests is not accuracy evidence and does not satisfy road-domain dataset or acceptance gates."
+  ]
+}

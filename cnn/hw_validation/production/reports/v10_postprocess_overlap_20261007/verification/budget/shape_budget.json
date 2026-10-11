@@ -1,0 +1,2148 @@
+{
+  "status": "DOWN2_MEASURED_FIT_PLUS_CONDITIONAL_GRAPH_EXTRAPOLATION",
+  "source": {
+    "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\graph_artifacts\\graph.json",
+    "sha256": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738",
+    "architecture_sha256": "106ccd0f223b1cefaff8e36408d3968aee3e4a1703d17e27786db58eb8124595",
+    "graph_status": "static_schedule_only_fail_closed"
+  },
+  "assumptions": [
+    "One MAC job produces three outputs except current depthwise scheduling, which uses one selected lane and wastes two physical result lanes.",
+    "Each job accepts ceil(kernel_h*kernel_w*(input_channels/groups)/8) MAC groups.",
+    "The illustrative estimate applies 2 cycles per accepted MAC group plus 12 cycles per single-context job turnover.",
+    "The illustrative estimate is neither a measurement nor a proven lower bound; replace its coefficients with actual runner endpoint measurements.",
+    "The final cadence fit uses the measured no-stall G=2 jobs: 2 ST_STORAGE + 2 ST_MAC_SEND + 10 ST_MAC_WAIT = 14 cycles/job, hence 2*G+10.",
+    "Only the down2 depthwise and pointwise G=2 runner were measured. G>2 layers use a conditional linear extrapolation, not a measured result or hard lower bound.",
+    "Conditional per-layer boundaries reuse measured down2 values: 27 cycles for depthwise and 28 for pointwise/stem. Bypass heads can differ and remain unmeasured.",
+    "SiLU-active is identified by graph int8 output; the six int16_q7_8 head outputs bypass activation.",
+    "DDR, non-convolution operators, decode, NMS, preload, export, and physical timing are excluded."
+  ],
+  "measured_runner_fit": {
+    "log": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\v10_postprocess_overlap_20261007\\verification\\regression_candidate\\vsim_attempt4.log",
+    "log_sha256": "61c35472c2d51a5aacf0dd3ea33108f8c76137f3edf06bdf96100a2e1b4a1ee8",
+    "scope": "down2 4x4 tile, 256 DW jobs plus 128 PW jobs, all G=2",
+    "job_state_cycles": {
+      "ST_STORAGE": 2,
+      "ST_MAC_SEND": 2,
+      "ST_MAC_WAIT": 10,
+      "total": 14
+    },
+    "jobs": 384,
+    "mac_window_cycles": 5376,
+    "dw_endpoint_cycles": 3611,
+    "dw_job_cycles": 3584,
+    "dw_boundary_cycles": 27,
+    "pw_endpoint_cycles": 1820,
+    "pw_job_cycles": 1792,
+    "pw_boundary_cycles": 28,
+    "full_core_cycles": 5431,
+    "mutually_exclusive_identity": "5376 MAC-state cycles + 54 drain-state cycles + 1 start edge = 5431",
+    "overlapping_busy_counters_not_additive": {
+      "pre": 3712,
+      "silu": 2560,
+      "post": 3712,
+      "writeback": 640
+    }
+  },
+  "frame_limit": {
+    "clock_hz": 100000000,
+    "fps": 5,
+    "cycles": 20000000
+  },
+  "conv_layers": 67,
+  "activation_split": {
+    "silu_active_layers": 61,
+    "silu_bypass_layers": 6,
+    "silu_active_output_values": 6833664,
+    "silu_bypass_output_values": 84672
+  },
+  "by_kind": {
+    "stem_regular": {
+      "layers": 1,
+      "output_values": 589824,
+      "mac_jobs": 221184,
+      "mac_input_groups": 884736,
+      "unused_result_lanes": 73728,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 4423680,
+      "fitted_job_cadence_cycles_2G_plus_10": 3981312,
+      "conditional_layer_boundary_cycles": 28
+    },
+    "regular": {
+      "layers": 0,
+      "output_values": 0,
+      "mac_jobs": 0,
+      "mac_input_groups": 0,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 0,
+      "fitted_job_cadence_cycles_2G_plus_10": 0,
+      "conditional_layer_boundary_cycles": 0
+    },
+    "depthwise": {
+      "layers": 23,
+      "output_values": 2193408,
+      "mac_jobs": 2193408,
+      "mac_input_groups": 4386816,
+      "unused_result_lanes": 4386816,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 35094528,
+      "fitted_job_cadence_cycles_2G_plus_10": 30707712,
+      "conditional_layer_boundary_cycles": 621
+    },
+    "pointwise": {
+      "layers": 43,
+      "output_values": 4135104,
+      "mac_jobs": 1386432,
+      "mac_input_groups": 7553664,
+      "unused_result_lanes": 24192,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 31744512,
+      "fitted_job_cadence_cycles_2G_plus_10": 28971648,
+      "conditional_layer_boundary_cycles": 1204
+    }
+  },
+  "illustrative_total_cycles": 71262720,
+  "illustrative_over_20m": 51262720,
+  "fitted_job_cadence_cycles": 63660672,
+  "conditional_layer_boundary_cycles": 1853,
+  "conditional_extrapolated_total_cycles": 63662525,
+  "conditional_extrapolated_over_20m": 43662525,
+  "optimization_examples": [
+    {
+      "name": "wrapper product-shift-tag elastic register",
+      "single_variable": "insert one elastic register at the wrapper product/shift/tag boundary without changing arithmetic values or frozen arithmetic ports",
+      "conditional_savings_cycles": 0,
+      "recommendation": "recommended next isolated experiment for physical closure",
+      "constraint": "Adds one latency cycle; the maximum obligation bound must be re-measured and proved (it may rise from 30 to 31), together with tags, backpressure and all reset ages. It is not implemented or proved here and is not a frame-cycle optimization."
+    },
+    {
+      "name": "runner consecutive group issue",
+      "single_variable": "overlap/prefetch ST_STORAGE so groups after the first issue on consecutive cycles",
+      "conditional_savings_cycles": 9024192,
+      "recommendation": "defer until physical closure",
+      "constraint": "Changes runner scheduling/interface timing and requires separate approval and full re-verification."
+    },
+    {
+      "name": "single-context terminal turnover",
+      "single_variable": "remove one ST_MAC_WAIT-equivalent cycle per job",
+      "conditional_savings_cycles_per_removed_cycle": 3801024,
+      "recommendation": "not selected; arithmetic-core scope",
+      "constraint": "The frozen MAC is already input-II=1; this changes terminal/next-job behavior."
+    },
+    {
+      "name": "three-channel depthwise packing",
+      "single_variable": "use all three result lanes for adjacent DW channels",
+      "recommendation": "not assumed and not free",
+      "constraint": "Would require the shared 8-input path to cover 27 channel-specific activation terms across multiple groups, plus diagonal-weight, scheduling and storage adaptation; it is not free three-lane parallelism."
+    }
+  ],
+  "layers": [
+    {
+      "index": 0,
+      "name": "stem.conv",
+      "kind": "stem_regular",
+      "activated_silu": true,
+      "input_hwc": [
+        288,
+        512,
+        3
+      ],
+      "output_hwc": [
+        144,
+        256,
+        16
+      ],
+      "groups": 1,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 27,
+      "mac_input_groups_per_job": 4,
+      "output_values": 589824,
+      "mac_jobs": 221184,
+      "physical_result_lanes": 663552,
+      "unused_result_lanes": 73728,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 4423680,
+      "fitted_job_cadence_cycles_2G_plus_10": 3981312,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 1,
+      "name": "down2.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        144,
+        256,
+        16
+      ],
+      "output_hwc": [
+        72,
+        128,
+        16
+      ],
+      "groups": 16,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 147456,
+      "mac_jobs": 147456,
+      "physical_result_lanes": 442368,
+      "unused_result_lanes": 294912,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 2359296,
+      "fitted_job_cadence_cycles_2G_plus_10": 2064384,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 2,
+      "name": "down2.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        16
+      ],
+      "output_hwc": [
+        72,
+        128,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 16,
+      "mac_input_groups_per_job": 2,
+      "output_values": 221184,
+      "mac_jobs": 73728,
+      "physical_result_lanes": 221184,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1179648,
+      "fitted_job_cadence_cycles_2G_plus_10": 1032192,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 4,
+      "name": "csp2.blocks.0.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "groups": 12,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 110592,
+      "mac_jobs": 110592,
+      "physical_result_lanes": 331776,
+      "unused_result_lanes": 221184,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1769472,
+      "fitted_job_cadence_cycles_2G_plus_10": 1548288,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 5,
+      "name": "csp2.blocks.0.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 12,
+      "mac_input_groups_per_job": 2,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 589824,
+      "fitted_job_cadence_cycles_2G_plus_10": 516096,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 7,
+      "name": "csp2.blocks.1.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "groups": 12,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 110592,
+      "mac_jobs": 110592,
+      "physical_result_lanes": 331776,
+      "unused_result_lanes": 221184,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1769472,
+      "fitted_job_cadence_cycles_2G_plus_10": 1548288,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 8,
+      "name": "csp2.blocks.1.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 12,
+      "mac_input_groups_per_job": 2,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 589824,
+      "fitted_job_cadence_cycles_2G_plus_10": 516096,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 11,
+      "name": "csp2.out.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        24
+      ],
+      "output_hwc": [
+        72,
+        128,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 221184,
+      "mac_jobs": 73728,
+      "physical_result_lanes": 221184,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1327104,
+      "fitted_job_cadence_cycles_2G_plus_10": 1179648,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 12,
+      "name": "down3.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 24,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 55296,
+      "mac_jobs": 55296,
+      "physical_result_lanes": 165888,
+      "unused_result_lanes": 110592,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 774144,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 13,
+      "name": "down3.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 663552,
+      "fitted_job_cadence_cycles_2G_plus_10": 589824,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 15,
+      "name": "csp3.blocks.0.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 24,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 55296,
+      "mac_jobs": 55296,
+      "physical_result_lanes": 165888,
+      "unused_result_lanes": 110592,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 774144,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 16,
+      "name": "csp3.blocks.0.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 331776,
+      "fitted_job_cadence_cycles_2G_plus_10": 294912,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 18,
+      "name": "csp3.blocks.1.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 24,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 55296,
+      "mac_jobs": 55296,
+      "physical_result_lanes": 165888,
+      "unused_result_lanes": 110592,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 774144,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 19,
+      "name": "csp3.blocks.1.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 331776,
+      "fitted_job_cadence_cycles_2G_plus_10": 294912,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 21,
+      "name": "csp3.blocks.2.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 24,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 55296,
+      "mac_jobs": 55296,
+      "physical_result_lanes": 165888,
+      "unused_result_lanes": 110592,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 774144,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 22,
+      "name": "csp3.blocks.2.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 331776,
+      "fitted_job_cadence_cycles_2G_plus_10": 294912,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 25,
+      "name": "csp3.out.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 811008,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 26,
+      "name": "down4.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 27648,
+      "mac_jobs": 27648,
+      "physical_result_lanes": 82944,
+      "unused_result_lanes": 55296,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 387072,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 27,
+      "name": "down4.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 405504,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 29,
+      "name": "csp4.blocks.0.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 27648,
+      "mac_jobs": 27648,
+      "physical_result_lanes": 82944,
+      "unused_result_lanes": 55296,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 387072,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 30,
+      "name": "csp4.blocks.0.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 27648,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 221184,
+      "fitted_job_cadence_cycles_2G_plus_10": 202752,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 32,
+      "name": "csp4.blocks.1.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 27648,
+      "mac_jobs": 27648,
+      "physical_result_lanes": 82944,
+      "unused_result_lanes": 55296,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 387072,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 33,
+      "name": "csp4.blocks.1.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 27648,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 221184,
+      "fitted_job_cadence_cycles_2G_plus_10": 202752,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 35,
+      "name": "csp4.blocks.2.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 27648,
+      "mac_jobs": 27648,
+      "physical_result_lanes": 82944,
+      "unused_result_lanes": 55296,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 387072,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 36,
+      "name": "csp4.blocks.2.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 27648,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 221184,
+      "fitted_job_cadence_cycles_2G_plus_10": 202752,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 39,
+      "name": "csp4.out.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 96,
+      "mac_input_groups_per_job": 12,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 663552,
+      "fitted_job_cadence_cycles_2G_plus_10": 626688,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 40,
+      "name": "sppf.squeeze.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_hwc": [
+        18,
+        32,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 96,
+      "mac_input_groups_per_job": 12,
+      "output_values": 13824,
+      "mac_jobs": 4608,
+      "physical_result_lanes": 13824,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 165888,
+      "fitted_job_cadence_cycles_2G_plus_10": 156672,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 45,
+      "name": "sppf.out.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 96,
+      "mac_input_groups_per_job": 12,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 663552,
+      "fitted_job_cadence_cycles_2G_plus_10": 626688,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 46,
+      "name": "lateral4.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 96,
+      "mac_input_groups_per_job": 12,
+      "output_values": 27648,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 331776,
+      "fitted_job_cadence_cycles_2G_plus_10": 313344,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 49,
+      "name": "fuse3_td.reduce.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        96
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 96,
+      "mac_input_groups_per_job": 12,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1327104,
+      "fitted_job_cadence_cycles_2G_plus_10": 1253376,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 51,
+      "name": "fuse3_td.block.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 24,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 55296,
+      "mac_jobs": 55296,
+      "physical_result_lanes": 165888,
+      "unused_result_lanes": 110592,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 774144,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 52,
+      "name": "fuse3_td.block.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 331776,
+      "fitted_job_cadence_cycles_2G_plus_10": 294912,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 55,
+      "name": "lateral3.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 405504,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 58,
+      "name": "fuse2_td.reduce.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_hwc": [
+        72,
+        128,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 221184,
+      "mac_jobs": 73728,
+      "physical_result_lanes": 221184,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1769472,
+      "fitted_job_cadence_cycles_2G_plus_10": 1622016,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 60,
+      "name": "fuse2_td.block.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "groups": 12,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 110592,
+      "mac_jobs": 110592,
+      "physical_result_lanes": 331776,
+      "unused_result_lanes": 221184,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1769472,
+      "fitted_job_cadence_cycles_2G_plus_10": 1548288,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 61,
+      "name": "fuse2_td.block.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_hwc": [
+        72,
+        128,
+        12
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 12,
+      "mac_input_groups_per_job": 2,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 589824,
+      "fitted_job_cadence_cycles_2G_plus_10": 516096,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 64,
+      "name": "down3_bu.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 24,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 55296,
+      "mac_jobs": 55296,
+      "physical_result_lanes": 165888,
+      "unused_result_lanes": 110592,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 774144,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 65,
+      "name": "down3_bu.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 663552,
+      "fitted_job_cadence_cycles_2G_plus_10": 589824,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 67,
+      "name": "fuse3_bu.reduce.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        96
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 96,
+      "mac_input_groups_per_job": 12,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1327104,
+      "fitted_job_cadence_cycles_2G_plus_10": 1253376,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 69,
+      "name": "fuse3_bu.block.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 24,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 55296,
+      "mac_jobs": 55296,
+      "physical_result_lanes": 165888,
+      "unused_result_lanes": 110592,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 774144,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 70,
+      "name": "fuse3_bu.block.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_hwc": [
+        36,
+        64,
+        24
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 331776,
+      "fitted_job_cadence_cycles_2G_plus_10": 294912,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 73,
+      "name": "down4_bu.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 27648,
+      "mac_jobs": 27648,
+      "physical_result_lanes": 82944,
+      "unused_result_lanes": 55296,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 387072,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 74,
+      "name": "down4_bu.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 405504,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 76,
+      "name": "fuse4_bu.reduce.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        192
+      ],
+      "output_hwc": [
+        18,
+        32,
+        96
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 192,
+      "mac_input_groups_per_job": 24,
+      "output_values": 55296,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1105920,
+      "fitted_job_cadence_cycles_2G_plus_10": 1069056,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 78,
+      "name": "fuse4_bu.block.dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 27648,
+      "mac_jobs": 27648,
+      "physical_result_lanes": 82944,
+      "unused_result_lanes": 55296,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 387072,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 79,
+      "name": "fuse4_bu.block.pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 27648,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 221184,
+      "fitted_job_cadence_cycles_2G_plus_10": 202752,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 82,
+      "name": "head2.stem.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        24
+      ],
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 24,
+      "mac_input_groups_per_job": 3,
+      "output_values": 442368,
+      "mac_jobs": 147456,
+      "physical_result_lanes": 442368,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 2654208,
+      "fitted_job_cadence_cycles_2G_plus_10": 2359296,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 83,
+      "name": "head2.cls_dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 442368,
+      "mac_jobs": 442368,
+      "physical_result_lanes": 1327104,
+      "unused_result_lanes": 884736,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 7077888,
+      "fitted_job_cadence_cycles_2G_plus_10": 6193152,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 84,
+      "name": "head2.cls_pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 442368,
+      "mac_jobs": 147456,
+      "physical_result_lanes": 442368,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 3538944,
+      "fitted_job_cadence_cycles_2G_plus_10": 3244032,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 85,
+      "name": "head2.cls_out",
+      "kind": "pointwise",
+      "activated_silu": false,
+      "input_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_hwc": [
+        72,
+        128,
+        2
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 18432,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 9216,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 221184,
+      "fitted_job_cadence_cycles_2G_plus_10": 202752,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 86,
+      "name": "head2.reg_dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 442368,
+      "mac_jobs": 442368,
+      "physical_result_lanes": 1327104,
+      "unused_result_lanes": 884736,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 7077888,
+      "fitted_job_cadence_cycles_2G_plus_10": 6193152,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 87,
+      "name": "head2.reg_pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_hwc": [
+        72,
+        128,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 442368,
+      "mac_jobs": 147456,
+      "physical_result_lanes": 442368,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 3538944,
+      "fitted_job_cadence_cycles_2G_plus_10": 3244032,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 88,
+      "name": "head2.reg_out",
+      "kind": "pointwise",
+      "activated_silu": false,
+      "input_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_hwc": [
+        72,
+        128,
+        5
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 46080,
+      "mac_jobs": 18432,
+      "physical_result_lanes": 55296,
+      "unused_result_lanes": 9216,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 405504,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 90,
+      "name": "head3.stem.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 811008,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 91,
+      "name": "head3.cls_dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 110592,
+      "mac_jobs": 110592,
+      "physical_result_lanes": 331776,
+      "unused_result_lanes": 221184,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1769472,
+      "fitted_job_cadence_cycles_2G_plus_10": 1548288,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 92,
+      "name": "head3.cls_pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 811008,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 93,
+      "name": "head3.cls_out",
+      "kind": "pointwise",
+      "activated_silu": false,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        2
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 4608,
+      "mac_jobs": 2304,
+      "physical_result_lanes": 6912,
+      "unused_result_lanes": 2304,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 55296,
+      "fitted_job_cadence_cycles_2G_plus_10": 50688,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 94,
+      "name": "head3.reg_dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 110592,
+      "mac_jobs": 110592,
+      "physical_result_lanes": 331776,
+      "unused_result_lanes": 221184,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 1769472,
+      "fitted_job_cadence_cycles_2G_plus_10": 1548288,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 95,
+      "name": "head3.reg_pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 110592,
+      "mac_jobs": 36864,
+      "physical_result_lanes": 110592,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 884736,
+      "fitted_job_cadence_cycles_2G_plus_10": 811008,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 96,
+      "name": "head3.reg_out",
+      "kind": "pointwise",
+      "activated_silu": false,
+      "input_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_hwc": [
+        36,
+        64,
+        5
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 11520,
+      "mac_jobs": 4608,
+      "physical_result_lanes": 13824,
+      "unused_result_lanes": 2304,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 110592,
+      "fitted_job_cadence_cycles_2G_plus_10": 101376,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 98,
+      "name": "head4.stem.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 96,
+      "mac_input_groups_per_job": 12,
+      "output_values": 27648,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 331776,
+      "fitted_job_cadence_cycles_2G_plus_10": 313344,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 99,
+      "name": "head4.cls_dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 27648,
+      "mac_jobs": 27648,
+      "physical_result_lanes": 82944,
+      "unused_result_lanes": 55296,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 387072,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 100,
+      "name": "head4.cls_pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 27648,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 221184,
+      "fitted_job_cadence_cycles_2G_plus_10": 202752,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 101,
+      "name": "head4.cls_out",
+      "kind": "pointwise",
+      "activated_silu": false,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        2
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 1152,
+      "mac_jobs": 576,
+      "physical_result_lanes": 1728,
+      "unused_result_lanes": 576,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 13824,
+      "fitted_job_cadence_cycles_2G_plus_10": 12672,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 102,
+      "name": "head4.reg_dw.conv",
+      "kind": "depthwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 48,
+      "kernel": [
+        3,
+        3
+      ],
+      "terms_per_output": 9,
+      "mac_input_groups_per_job": 2,
+      "output_values": 27648,
+      "mac_jobs": 27648,
+      "physical_result_lanes": 82944,
+      "unused_result_lanes": 55296,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 442368,
+      "fitted_job_cadence_cycles_2G_plus_10": 387072,
+      "conditional_layer_boundary_cycles": 27
+    },
+    {
+      "index": 103,
+      "name": "head4.reg_pw.conv",
+      "kind": "pointwise",
+      "activated_silu": true,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        48
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 27648,
+      "mac_jobs": 9216,
+      "physical_result_lanes": 27648,
+      "unused_result_lanes": 0,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 221184,
+      "fitted_job_cadence_cycles_2G_plus_10": 202752,
+      "conditional_layer_boundary_cycles": 28
+    },
+    {
+      "index": 104,
+      "name": "head4.reg_out",
+      "kind": "pointwise",
+      "activated_silu": false,
+      "input_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_hwc": [
+        18,
+        32,
+        5
+      ],
+      "groups": 1,
+      "kernel": [
+        1,
+        1
+      ],
+      "terms_per_output": 48,
+      "mac_input_groups_per_job": 6,
+      "output_values": 2880,
+      "mac_jobs": 1152,
+      "physical_result_lanes": 3456,
+      "unused_result_lanes": 576,
+      "illustrative_cycles_2_per_group_plus_12_turnover": 27648,
+      "fitted_job_cadence_cycles_2G_plus_10": 25344,
+      "conditional_layer_boundary_cycles": 28
+    }
+  ]
+}

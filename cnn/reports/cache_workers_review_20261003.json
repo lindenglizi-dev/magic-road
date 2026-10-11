@@ -1,0 +1,118 @@
+{
+  "report_kind": "independent_read_only_cache_workers_CPU_review",
+  "date": "2026-10-03",
+  "role": "verify",
+  "scope": {
+    "reviewed_implementation": "cnn/check_cache_workers.py",
+    "reviewed_tests": "cnn/test_cache_workers.py",
+    "reviewed_execution_report": "cnn/reports/cache_workers_cpu_20261003.json",
+    "source_edits": false,
+    "gpu_used_by_reviewer": false,
+    "full_manifest_or_cache_validation_rerun_by_reviewer": false,
+    "optimizer_or_training_steps_run_by_reviewer": 0,
+    "newtest_or_blind_pixels_read": false,
+    "owned_output_only": "cnn/reports/cache_workers_review_20261003.json"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "execution_status": "blocked_by_current_host_memory_admission",
+    "workers_0_small_fixture": "passed",
+    "workers_2_and_4_full_development": "not_run",
+    "workers_2_and_4_parity_proved": false,
+    "cache_or_order_failure_proved": false,
+    "automatic_GPU_or_training_resume_authorized": false,
+    "summary": "The revised checker fails closed before full-manifest loading or worker creation when available host memory cannot preserve the 3 GiB reserve plus the measured 1.5 GiB startup allowance. At the actual invocation only 3.39 GiB was available versus the 4.5 GiB admission requirement, so the empty-trial failed_or_partial report is correct. This is an environmental execution blocker, not a demonstrated cache, shuffle, ordering or implementation defect. Workers 2/4 remain unverified on the full development datasets."
+  },
+  "artifact_snapshots": {
+    "cnn/check_cache_workers.py": "e33134e6259bfe0fb0ced406a6acef1012cca6eda7e3aa68666500e2bf2b9f69",
+    "cnn/test_cache_workers.py": "9ae5df88a142fffa417030e41ceaca31633090146a47d0bc93fefe7c509469bb",
+    "cnn/train.py": "be96d7639de7de75157088ddda9cdd947e8d53c81efd076c7fb1cc6273442d65",
+    "cnn/disk_cache.py": "5e88d944fb0864eb7ab1ac33d9aef63018a7cdf1aa81b6a93a62e5dfc16122b9",
+    "checkpoint_sha256": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "execution_report_sha256": "2d6b03c2049e1d62a0a5e29af362b9661c4bfb98e9f450342bd6392ece109366",
+    "road_manifest_pinned_sha256": "ad353c5bce5b0ecef0433c74515324bbfdb031e92aff964cd56c18ae069d9fe4",
+    "cache_index_pinned_sha256": "646db6bcd11ab8ff55b9fb024480ab0b015842f7a9495a890a9b947aa153e170"
+  },
+  "static_contract_review": {
+    "device_boundary": "CUDA_VISIBLE_DEVICES is cleared before torch is imported in run; loaders use pin_memory=false. No CUDA, model, loss, optimizer or checkpoint-write path exists in the checker.",
+    "artifact_binding": "A successful admitted run requires exact manifest, cache index, checkpoint, prior GPU benchmark and prior independent GPU-review receipts. DiskCachedDataset additionally checks the current preprocessing identity, every source/row/offset binding, blob size and blob SHA.",
+    "development_only_gate": "Declared rows are checked for train/val-only before load_dataset_manifest; no newtest split is allowed.",
+    "full_dataset_constructors": "An admitted run constructs raw and cache datasets independently for both the complete 19050-row train split and complete 5151-row val split.",
+    "order_and_content": "The workers-0 raw path supplies the baseline. Every later raw/cache worker configuration compares per-batch SHA-256 over pixels, boxes, labels, ignore boxes and keys, so both content and order are covered.",
+    "formal_shuffle_seeds": {
+      "epoch_6": 48,
+      "epoch_7": 49,
+      "epoch_285": 327
+    },
+    "augmentation_scope": "Train epochs 6 and 7 use Mosaic; train epoch 285 explicitly disables Mosaic; val epoch 6 is unshuffled and non-Mosaic.",
+    "prefetch_scope": "The checker intentionally uses the full DataLoader with default prefetch_factor=2 to preserve real worker metadata and startup behavior. Background workers may therefore read additional development samples beyond the 64 or 16 consumed samples; the report explicitly disclaims a strict pixel-read cap.",
+    "memory_protection": "The checker requires 4.5 GiB available before the full-manifest startup, then applies per-worker admission estimates and a 0.25-second live 3 GiB reserve monitor over the diagnostic process tree.",
+    "worker_cleanup": "Bounded iterators explicitly call the private torch shutdown hook, retain the exact iterator worker handles, terminate/join only still-live owned handles in a finally fallback, and reject any surviving owned worker. Monitor errors are surfaced before a later DataLoader timeout can mask the memory cause."
+  },
+  "actual_admission_result": {
+    "status": "failed_or_partial",
+    "error": "MemoryError: full-manifest admission requires4.5 GiB available before loading",
+    "available_bytes_at_admission": 3641507840,
+    "available_gib_at_admission": 3.39141845703125,
+    "system_total_bytes": 16873545728,
+    "memory_reserve_bytes": 3221225472,
+    "startup_allowance_bytes": 1610612736,
+    "full_admission_required_bytes": 4831838208,
+    "admission_shortfall_bytes": 1190330368,
+    "admission_shortfall_gib": 1.10858154296875,
+    "diagnostic_tree_rss_bytes": 455045120,
+    "manifest_validation_started": false,
+    "cache_constructors_started": false,
+    "worker_trials_started": false,
+    "trials": [],
+    "gpu_used": false,
+    "optimizer_updates": 0,
+    "checkpoint_writes": 0,
+    "checkpoint_sha256_after": "51da8c3289ef5ffa24fe9df01567657b8254a9ef982cdef379f12c3437b068d4",
+    "total_seconds": 0.008404699998209253,
+    "interpretation": "The admission gate prevented the known high-memory full-manifest/spawn path before it could reduce available memory below the required reserve. No full-data worker parity or throughput conclusion can be drawn from this report."
+  },
+  "independent_CPU_check": {
+    "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_cache_workers -v",
+    "result": "exit 0; 1 test passed and 1 test skipped in 0.144 seconds",
+    "passed_scope": "Memory threshold behavior, process-tree sampling, workers-0 ordered batch consumption and mismatch rejection.",
+    "skipped_scope": "The real Windows spawn workers-2/4 fixture requires at least 6 GiB available and was deliberately not started under current memory pressure."
+  },
+  "earlier_spawn_attempt": {
+    "result": "A pre-fix tiny-fixture workers-2 attempt ended after the 120-second DataLoader timeout with worker exited unexpectedly.",
+    "cause_attribution": "undetermined",
+    "not_valid_evidence_for": [
+      "cache corruption",
+      "raw/cache order mismatch",
+      "3 GiB reserve violation as the unique cause",
+      "workers-2 or workers-4 parity"
+    ],
+    "cleanup_verified": {
+      "worker_pid_24252_present": false,
+      "worker_pid_14796_present": false,
+      "parent_pid_10488_present": false,
+      "parent_pid_17464_present": false,
+      "blocked_run_pid_32640_present": false
+    }
+  },
+  "findings": [
+    {
+      "severity": "blocking_environment",
+      "topic": "insufficient_available_host_memory",
+      "evidence": "The admitted minimum is 4.5 GiB, while the run observed 3.3914 GiB available. The shortfall was 1.1086 GiB.",
+      "disposition": "Do not lower the 3 GiB live reserve or force workers 2/4. Retry only when the required memory is genuinely available and retain the same pinned artifacts and exact cleanup checks."
+    },
+    {
+      "severity": "warning",
+      "topic": "spawn_failure_is_unattributed",
+      "evidence": "The earlier small spawned-worker attempt reported only the generic DataLoader worker exit after timeout; the revised cause-priority logic was not active for that attempt.",
+      "disposition": "Do not label that event an out-of-memory failure or a cache/order defect. A future admitted run must supply the first attributable monitor or loader failure."
+    },
+    {
+      "severity": "warning",
+      "topic": "bounded_default_prefetch_scope",
+      "evidence": "Even a future successful run consumes only 64 main epoch-6 samples and 16 samples in each smaller check, while default worker prefetch may read additional development samples.",
+      "disposition": "Report measured startup, first-batch, bounded wall time, RSS and ordering only. Do not claim a full epoch, exact 64-image pixel-read boundary, workers-4 training throughput, accuracy or GPU overlap."
+    }
+  ]
+}

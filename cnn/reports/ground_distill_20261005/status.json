@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-05",
+  "status": "preparation_verified_data_contract_blocked",
+  "archive": {
+    "report": "cnn/releases/RoadYOLO-S4-512_20261005_fp32_e7/release.json",
+    "files": 84,
+    "hash_verification": "passed_again_in_cpu_preflight_v2",
+    "scope": "local FP32 epoch7 snapshot; not an off-disk backup"
+  },
+  "distillation": {
+    "cpu_checks": "cnn/reports/ground_distill_20261005/cpu_preflight_v2/report.json",
+    "passed_check_groups": 7,
+    "foreground_policy": "mapped class argmax, score and same-class GT support required; ignore excluded",
+    "cache": "SHA-verified sharded index with at most two resident shards",
+    "real_training_started": false,
+    "gpu_distillation_verified": false
+  },
+  "new_scene_data": {
+    "audit": "cnn/reports/ground_distill_20261005/data_audit/intersection_flow_v4_audit_v2.json",
+    "acquisition_receipt": "cnn/reports/ground_distill_20261005/data_audit/intersection_flow_v4_acquisition_receipt.json",
+    "images": 6928,
+    "boxes": 406758,
+    "training_eligible": false,
+    "blocking_reasons": [
+      "Rider and bicycle share a box without a separate person box in reviewed samples",
+      "Class meanings, annotation completeness and out-of-bounds coordinate policy unresolved",
+      "Adjacent same-scene frames cross published splits; authoritative camera-family mapping absent"
+    ],
+    "raw_count_vehicle_top32_capacity_recall": 0.7011411758824831,
+    "capacity_scope": "Raw annotation count upper bound, not measured detector recall; unsuitable for unchanged R85 acceptance on this full dataset"
+  },
+  "baseline": {
+    "qualitative_probe": "cnn/reports/ground_distill_20261005/ground_images3_qualitative/report.json",
+    "actual_images": 3,
+    "teacher_and_archived_student_inference": "completed_on_CPU",
+    "precision": null,
+    "recall": null,
+    "AP50": null,
+    "quantitative_new_scene_baseline": "blocked_by_data_contract"
+  },
+  "next_decision": "Replace the main ground-scene dataset, or undertake full annotation and camera-family repair; retain this dataset as an explicitly separate pressure test",
+  "network_topology_changed": false,
+  "rtl_changed": false,
+  "formal_acceptance": false
+}

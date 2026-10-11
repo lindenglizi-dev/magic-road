@@ -1,0 +1,55 @@
+{
+  "contract_id": "experiment_roi_contract_v1",
+  "status": "frozen_for_hog324_pilot_only_not_production_not_rtl",
+  "as_of": "2026-09-27",
+  "input_scope": {
+    "review_set": "fill_only_T100_adjudicated",
+    "representative_frame": "middle_frame",
+    "allowed_splits": [
+      "train",
+      "val"
+    ],
+    "approved_gate_allowed_splits": [
+      "val"
+    ],
+    "forbidden_clips": [
+      "000205",
+      "000207",
+      "010106",
+      "010108"
+    ],
+    "training_import_allowed": false,
+    "acceptance_metric_allowed": false
+  },
+  "pixel_pipeline": {
+    "source_color_order": "OpenCV BGR decoded from original VIRAT MP4",
+    "grayscale_equation": "(R >> 2) + (G >> 1) + (B >> 2)",
+    "analysis_sampling": "take every fifth source pixel in x and y to form 256x144",
+    "crop_box": "T100_selected_analysis_box",
+    "crop_coordinates": "inclusive x0,y0,x1,y1",
+    "resize": "fpga_resize_roi deterministic nearest-neighbor to 32x32 uint8",
+    "model_input_from_review_jpg": false
+  },
+  "label_mapping": {
+    "ped_full": "ped",
+    "ped_truncated": "ped",
+    "background_fragment": "invalid",
+    "vehicle": "vehicle",
+    "uncertain": "excluded"
+  },
+  "sealed_inputs": {
+    "fill_only_adjudicated_csv_sha256": "c649171890d482ed7becb2574aa8e44360d6efd667e59a264fb4d0de402cddba",
+    "human_review_receipt_sha256": "eb17a833b2db20fb22d1f2acc5d5e81016839b23e8a314de489a063296a6d1c4",
+    "hog_candidate_report_v2_sha256": "1cd9ff95cc885eabe3707f0fcd2c4c7c3fbe6d6e0121164a706a11bcb395c22c",
+    "hog_candidate_script_sha256": "b73f3b52f88a14fbde5974b156c08a3092521b3cc028752113acc22439ecb616"
+  },
+  "invalidation_conditions": [
+    "perspective threshold changes",
+    "expansion size or margin changes",
+    "NMS rule changes",
+    "representative-frame rule changes",
+    "grayscale, stride-five sampling, crop coordinate, or resize behavior changes"
+  ],
+  "invalidation_action": "issue a new contract id and regenerate every ROI, hash, metric, threshold scan, and failure list",
+  "hardware_gate": "closed"
+}

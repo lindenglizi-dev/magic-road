@@ -1,0 +1,84 @@
+{
+  "status": "passed_cpu_schedule_implementation_only",
+  "date": "2026-10-06",
+  "role": "py_reference",
+  "scope": "step5_label_independent_finetune_schedule",
+  "repository": {
+    "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+    "git_available": false,
+    "branch": null
+  },
+  "implementation": {
+    "cli": "--lr-schedule {warmup_cosine,finetune_constant}",
+    "default": "warmup_cosine",
+    "finetune_contract": {
+      "name": "finetune_sgd_constant_v1",
+      "lr_schedule": "finetune_constant",
+      "base_lr_proposal": 0.001,
+      "warmup_epochs": 0,
+      "cosine_min_lr_ratio": 1.0,
+      "planned_horizon_epochs": 5,
+      "planned_first_pause_epoch": 2
+    },
+    "compatibility": [
+      "Default four-argument scheduled_lr calls retain the original warmup-cosine behavior.",
+      "Default protocol_for output is byte-contract compatible with the frozen epoch-7 protocol.",
+      "Schedule and phase remain inside training_protocol, so cross-schedule and cross-phase resume are rejected.",
+      "--init-checkpoint remains weights-only initialization; epoch, optimizer, scaler and RNG are not imported across phases.",
+      "--stop-after-epoch pauses within the original five-epoch protocol and resume retains the same cursor."
+    ]
+  },
+  "source_hashes": {
+    "cnn/train.py_original": "f1945a4e2a4b47466cc08f51d901b9100338fec2fd9bed71eff9814ca9fca1dd",
+    "cnn/train.py_new": "1d259ae5887de0d079eb8b0e39ad1ea27479c4b7f62431c1051e0c92608ebfa5",
+    "cnn/test_finetune_schedule.py": "87024aefb88a7505ee61166790241841fab574a95b079888f3f7aca5b65de486",
+    "frozen_epoch7_checkpoint": "17c3cd644bd80a5f66e24eb3f510126fbb5db5bbb302e39250d78d339b6e5d42",
+    "frozen_epoch7_training_protocol": "66b17c5fcae093e34f5db15794f017196c361b76402bf71dba6031d44a8ad43e"
+  },
+  "input_snapshots": [
+    "inputs/train.py.original",
+    "inputs/frozen_epoch7_protocol.json"
+  ],
+  "verification": [
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -m cnn.test_finetune_schedule",
+      "result": "PASS",
+      "coverage": [
+        "all optimizer steps across a five-epoch horizon equal 0.001",
+        "frozen epoch-7 default protocol and protocol SHA-256 remain unchanged",
+        "the full legacy 40-epoch learning-rate sequence matches the original formula",
+        "supervised and distill groups receive identical constant learning-rate sequences",
+        "real RoadYOLOS4 model parameters and gradients are exactly equal when distillation weight is zero, while the computed distillation loss is nonzero",
+        "continuous five-epoch tiny CPU training equals a two-epoch pause plus same-group resume through epoch five for model, optimizer, scaler and RNG state",
+        "the resumed run does not restart warmup",
+        "cross-phase and cross-schedule resume are rejected",
+        "invalid schedule and optimizer-step inputs are rejected"
+      ]
+    },
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -m cnn.test_training",
+      "result": "PASS"
+    },
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -m cnn.test_distillation_safety",
+      "result": "PASS"
+    },
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -m cnn.test_segment_resume",
+      "result": "PASS"
+    }
+  ],
+  "diagnostic_history": {
+    "first_new_test_attempt": "failed because an all-zero synthetic image made the supervised loss itself produce non-finite gradients",
+    "resolution": "replaced only the test stimulus with a deterministic non-degenerate image and matching box; the second run passed"
+  },
+  "boundaries": {
+    "gpu_used": false,
+    "real_training_started": false,
+    "production_weights_changed": false,
+    "dataset_or_labels_changed": false,
+    "accuracy_claim": false,
+    "tiny_training_claim": "trainer schedule and resume-state equivalence only; not RoadYOLO accuracy evidence",
+    "real_model_claim": "CPU forward/backward gradient equivalence only; not an accuracy measurement"
+  }
+}

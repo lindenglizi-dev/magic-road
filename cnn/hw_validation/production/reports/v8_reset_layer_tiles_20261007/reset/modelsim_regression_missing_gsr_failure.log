@@ -1,0 +1,18 @@
+ModelSim diagnostic transcript retained from 2026-10-07 16:38:30.
+This was a command-closure error, not an RTL simulation result.
+
+Incorrect command:
+vsim -c -l modelsim_regression_run.log reset_work.tb_road_low_io_reset_shell_regression -do "run -all; quit -f"
+
+Observed failure:
+** Error (suppressible): ../../v7_onchip_chain_20261006/inputs/ph1p_logic_eram.v(165): (vopt-7063) Failed to find 'PH1P_PHY_GSR' in hierarchical name 'PH1P_PHY_GSR.done_gwe'.
+Region: tb_road_low_io_reset_shell_regression.dut.road_low_io_physical_shell_Inst_reset.road_onchip_chain_Inst_shell.silu_shared_unit_Inst_chain.PH1P_LOGIC_ERAM_Inst_silu_table
+Optimization failed
+Errors: 1, Warnings: 0
+
+Corrected command closure:
+vsim -c -l modelsim_regression_run.log reset_work.PH1P_PHY_GSR reset_work.tb_road_low_io_reset_shell_regression -do "run -all; quit -f"
+
+Corrected result is retained in modelsim_regression_run.log:
+TB_PASS_LOW_IO cases=14 errors=0 io_bits=38 max_packets=96 max_groups=24 max_terms=192
+Errors: 0, Warnings: 2

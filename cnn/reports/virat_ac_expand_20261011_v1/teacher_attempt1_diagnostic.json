@@ -1,0 +1,25 @@
+{
+  "status": "unexpected_process_exit_after_6_saved_frames",
+  "exit_code": 1,
+  "exception_text_received": false,
+  "saved_teacher_caches": 6,
+  "memory_observed_after_exit": {
+    "physical_load_percent": 92,
+    "available_physical_bytes": 1270919168,
+    "available_commit_bytes": 1037262848
+  },
+  "diagnosis": "Severe system memory pressure observed; exit cause not conclusively established without OS event evidence",
+  "os_event_log_read": "permission_denied_no_escalation_requested",
+  "single_retry_hypothesis": "Disable CPU oneDNN primitive caching to reduce process memory retention; keep FP32 teacher and preprocessing unchanged",
+  "retry_environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "ONEDNN_PRIMITIVE_CACHE_CAPACITY": "0",
+    "DNNL_PRIMITIVE_CACHE_CAPACITY": "0"
+  },
+  "cache_control_reference": "https://uxlfoundation.github.io/oneDNN/v3.3/dev_guide_primitive_cache.html",
+  "previous_saved_caches_preserved": true,
+  "new_training_started": false,
+  "GPU_used": false,
+  "automatic_further_retry_authorized": false
+}

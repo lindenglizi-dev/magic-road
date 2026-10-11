@@ -1,0 +1,289 @@
+{
+  "status": "fixed_mask_diagnostic_not_deployment",
+  "settings": {
+    "source_sha256": "5bd44aededccb88ac75febb170ae0f916b909277a0b4e8450adc4e33d440ea6b",
+    "gray": "(R>>2)+(G>>1)+(B>>2)",
+    "sampling": {
+      "baseline256": "stride5 point sampling",
+      "ddr640": "uint16 four-gray sum >>2"
+    },
+    "background": "learn4; toward shift2 learning, shift4 update with minstep1; freeze raw foreground",
+    "threshold": "abs difference >=20",
+    "cleanup": "zero-padded3x3 sum>=3; center must be1",
+    "min_run": {
+      "baseline256": 2,
+      "ddr640": 5,
+      "single_factor_control": 1
+    },
+    "min_area": {
+      "baseline256": 16,
+      "ddr640": 100
+    },
+    "top4": "area desc then OpenCV component label",
+    "foreground_label_ids": "1..32 inclusive;0 reserved; frame clear resets allocation; union does not recycle",
+    "run_capacity": 64,
+    "matching": "project maximum-cardinality then maximum-total-IoU; source inclusive IoU>=0.5"
+  },
+  "summary": {
+    "baseline256/current": {
+      "frames": 960,
+      "row_run_peak": 17,
+      "labels": {
+        "p50": 81,
+        "p95": 103,
+        "max": 121
+      },
+      "capacity_failed_frames": 833,
+      "proposal_matches": {
+        "before_area": {
+          "ped": {
+            "matched": 12,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 3,
+            "targets": 11
+          }
+        },
+        "area_all": {
+          "ped": {
+            "matched": 12,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 3,
+            "targets": 11
+          }
+        },
+        "top4": {
+          "ped": {
+            "matched": 11,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 3,
+            "targets": 11
+          }
+        },
+        "capacity_top4": {
+          "ped": {
+            "matched": 1,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 0,
+            "targets": 11
+          }
+        }
+      }
+    },
+    "baseline256/keep_all": {
+      "frames": 960,
+      "row_run_peak": 20,
+      "labels": {
+        "p50": 97,
+        "p95": 119,
+        "max": 130
+      },
+      "capacity_failed_frames": 888,
+      "proposal_matches": {
+        "before_area": {
+          "ped": {
+            "matched": 17,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 5,
+            "targets": 11
+          }
+        },
+        "area_all": {
+          "ped": {
+            "matched": 17,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 5,
+            "targets": 11
+          }
+        },
+        "top4": {
+          "ped": {
+            "matched": 15,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 5,
+            "targets": 11
+          }
+        },
+        "capacity_top4": {
+          "ped": {
+            "matched": 0,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 0,
+            "targets": 11
+          }
+        }
+      }
+    },
+    "ddr640/current": {
+      "frames": 960,
+      "row_run_peak": 16,
+      "labels": {
+        "p50": 108,
+        "p95": 157,
+        "max": 190
+      },
+      "capacity_failed_frames": 843,
+      "proposal_matches": {
+        "before_area": {
+          "ped": {
+            "matched": 5,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 2,
+            "targets": 11
+          }
+        },
+        "area_all": {
+          "ped": {
+            "matched": 5,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 2,
+            "targets": 11
+          }
+        },
+        "top4": {
+          "ped": {
+            "matched": 5,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 2,
+            "targets": 11
+          }
+        },
+        "capacity_top4": {
+          "ped": {
+            "matched": 0,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 0,
+            "targets": 11
+          }
+        }
+      }
+    },
+    "ddr640/keep_all": {
+      "frames": 960,
+      "row_run_peak": 31,
+      "labels": {
+        "p50": 364,
+        "p95": 450,
+        "max": 518
+      },
+      "capacity_failed_frames": 960,
+      "proposal_matches": {
+        "before_area": {
+          "ped": {
+            "matched": 16,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 3,
+            "targets": 11
+          }
+        },
+        "area_all": {
+          "ped": {
+            "matched": 16,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 3,
+            "targets": 11
+          }
+        },
+        "top4": {
+          "ped": {
+            "matched": 14,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 3,
+            "targets": 11
+          }
+        },
+        "capacity_top4": {
+          "ped": {
+            "matched": 0,
+            "targets": 46
+          },
+          "vehicle": {
+            "matched": 0,
+            "targets": 11
+          }
+        }
+      }
+    }
+  },
+  "paired_observations": {
+    "baseline256": {
+      "before_area": {
+        "gained": 8,
+        "lost": 1
+      },
+      "area_all": {
+        "gained": 8,
+        "lost": 1
+      },
+      "top4": {
+        "gained": 8,
+        "lost": 2
+      }
+    },
+    "ddr640": {
+      "before_area": {
+        "gained": 12,
+        "lost": 0
+      },
+      "area_all": {
+        "gained": 12,
+        "lost": 0
+      },
+      "top4": {
+        "gained": 11,
+        "lost": 1
+      }
+    }
+  },
+  "target_denominators": {
+    "ped": 46,
+    "vehicle": 11
+  },
+  "external_partition_checks": 3840,
+  "project_python_partition_checks": 128,
+  "invalid_false_accept_rate": null,
+  "boundaries": [
+    "One development video, native cadence, replay from frame0; stats120..1079. Not 960 independent samples.",
+    "32 confirmed frames, 46 ped and 11 vehicle observations from four correlated tracks; moving-only scope.",
+    "Fixed clean masks compare current min-run versus1; area/top4/background history remain fixed.",
+    "Unmatched candidates are UNKNOWN, not invalid. New candidate semantics, FAR/precision and classification are unavailable.",
+    "Independent RLE union_links differ from project union_requests; top4/matching use project rules.",
+    "3840 external RLE/OpenCV partition checks and128 project Python RLE partition checks do NOT prove production RTL partitions.",
+    "Capacity is unlimited-reference demand, not RTL overflow timing. No deployment capacity is selected from this video.",
+    "No DDR/CDC/display/scheduler, no rollback/recovery experiment, no classifier training and no blind-reserve access."
+  ],
+  "self_check": {
+    "status": "PASS",
+    "project_independent_partition_checks": 23,
+    "gray_mean_and_coordinate_checks": "PASS"
+  }
+}

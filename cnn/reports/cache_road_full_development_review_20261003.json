@@ -1,0 +1,146 @@
+{
+  "report_kind": "independent_read_only_full_road_cpu_cache_review",
+  "date": "2026-10-03",
+  "role": "verify",
+  "scope": {
+    "reviewed_manifest": "cnn/data/visdrone_vid_train/raw_manifest/dataset.json",
+    "reviewed_cache": "cnn/data/cache_road_full_development_20261003",
+    "reviewed_builder_report": "cnn/reports/cache_road_full_development_20261003.json",
+    "reviewed_sources": [
+      "cnn/disk_cache.py",
+      "cnn/test_disk_cache.py",
+      "cnn/train.py"
+    ],
+    "source_edits": false,
+    "gpu_used_by_reviewer": false,
+    "optimizer_or_training_steps_run_by_reviewer": 0,
+    "newtest_or_blind_pixels_read": false,
+    "full_cache_cli_rerun": false,
+    "owned_output_only": "cnn/reports/cache_road_full_development_review_20261003.json"
+  },
+  "verdict": {
+    "blocking_defects": [],
+    "full_development_cache_contract": "passed",
+    "actual_train_validate_only_entrypoint": "passed",
+    "accuracy_acceptance_eligible": false,
+    "training_speed_claim_supported": false,
+    "automatic_gpu_resume_authorized": false,
+    "summary": "No blocking defect was found. The exclusive full-development cache is bound to the exact public road train/val manifest, normalized row/content identities, every raw source SHA, preprocessing source/library identity, a whole-blob SHA and per-record SHA values. The final report records exact comparison of every single-frame centered RGB input, target, ignore region and key, plus bounded Mosaic checks. An actual pinned-cache cnn.train CPU validate-only invocation accepted the cache and created no run output; it did not execute a batch, loss, optimizer or training step."
+  },
+  "source_and_artifact_snapshots": {
+    "manifest_sha256": "ad353c5bce5b0ecef0433c74515324bbfdb031e92aff964cd56c18ae069d9fe4",
+    "manifest_content_sha256": "45458e231d561e45c364e09b2913e90a2182af6dd0d158b71f09bf903e2851ad",
+    "cnn/disk_cache.py": "5e88d944fb0864eb7ab1ac33d9aef63018a7cdf1aa81b6a93a62e5dfc16122b9",
+    "cnn/test_disk_cache.py": "046d7eb3b08e8b0340995e2d263757da9a4cc871de6c22464a600185bc5a1846",
+    "cnn/train.py": "be96d7639de7de75157088ddda9cdd947e8d53c81efd076c7fb1cc6273442d65",
+    "cache_index_sha256": "646db6bcd11ab8ff55b9fb024480ab0b015842f7a9495a890a9b947aa153e170",
+    "cache_rgb_sha256": "cb01e0c54596ab66e2418b926eabda2ce5236db41e082786355933f18bef1758",
+    "builder_report_sha256": "2167327e3f26ea576edda03ea7d53769071e535d85c7f0e097133a7622804eff",
+    "checkpoint_not_written_by_review": true
+  },
+  "manifest_and_index_recalculation": {
+    "manifest_rows": 24201,
+    "cache_entries": 24201,
+    "splits": {
+      "train": 19050,
+      "val": 5151,
+      "newtest": 0
+    },
+    "all_rows_raw_image": true,
+    "positive_boxes": 1064167,
+    "ignore_regions": 105192,
+    "entry_image_names_match": true,
+    "offsets_are_contiguous_and_sequential": true,
+    "last_record_extent_matches_declared_blob_bytes": true,
+    "all_24201_row_fingerprints_match": true,
+    "all_24201_source_hash_bindings_match": true,
+    "dataset_content_sha256_recomputed_equal": true,
+    "record_bytes": 442368,
+    "blob_bytes": 10705747968,
+    "whole_blob_sha256_recomputed_equal": true
+  },
+  "builder_guard_review": {
+    "default_limit": "MAX_PILOT_IMAGES is 128; the normal CLI and build_cache default reject more than 128 rows.",
+    "explicit_full_gate": "Only --full-development selects the full builder, and --dataset-sha256 is mandatory there. Supplying the receipt without the full flag is rejected.",
+    "receipt_timing": "The exact manifest receipt is checked before manifest audit/source decoding and again after load_dataset_manifest. The manifest is also rechecked after cache construction and after verification.",
+    "qa_rejection": "Known cache-QA manifests are rejected before load_dataset_manifest and therefore before source-pixel access.",
+    "newtest_rejection": "Any declared split outside train/val is rejected before load_dataset_manifest; the unit test verifies the loader is not called for a newtest manifest.",
+    "all_rows_required": "Full mode requires the normalized row count to equal every declared development row; a subset is rejected.",
+    "disk_budget": {
+      "payload_bytes": 10705747968,
+      "minimum_reserve_bytes": 21474836480,
+      "minimum_prebuild_free_bytes": 32180684448,
+      "reported_free_bytes_before": 55905366016,
+      "reported_free_bytes_after": 45187072000,
+      "reviewer_final_observed_free_bytes": 45187043328,
+      "reserve_passed": true
+    },
+    "exclusive_publication": "The cache directory and blob are created exclusively. rgb.bin is flushed and fsynced; preprocessing and manifest identities are rechecked; index.pending.json is flushed and fsynced and only then renamed to index.json. Existing or interrupted target directories are not overwritten.",
+    "reader_integrity": "The reader hashes exact index bytes before parsing, checks manifest/content/preprocessing/row/source/offset identities, hashes every current raw source during construction, checks blob size and whole-blob SHA, and checks the selected record SHA on every _load."
+  },
+  "full_equivalence_evidence": {
+    "builder_status": "passed_full_development_cache_CPU_equivalence_not_training_speed",
+    "device": "cpu",
+    "cpu_threads": 2,
+    "train_single_frame_exact": 19050,
+    "val_single_frame_exact": 5151,
+    "compared_fields": "centered RGB input, boxes, labels, ignore_boxes and teacher/sample key",
+    "maximum_compared_difference": 0,
+    "mosaic_epoch_6_evenly_spaced_indices": 32,
+    "mosaic_epoch_7_evenly_spaced_indices": 32,
+    "construction_seconds": 1152.9693064000166,
+    "verification_seconds": 1091.238667800004,
+    "gpu_used": false,
+    "optimizer_updates": 0,
+    "accuracy_measured": false,
+    "training_speed_measured": false
+  },
+  "independent_checks": [
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m unittest cnn.test_disk_cache -v",
+      "result": "exit 0; 1 test passed in 0.770 seconds",
+      "coverage_note": "Includes default limit, explicit full bypass, subset rejection, QA rejection, dataset receipt mismatch, newtest-before-loader rejection, disk-reserve rejection and existing cache corruption/identity cases."
+    },
+    {
+      "kind": "independent_manifest_index_recalculation",
+      "result": "All 24201 image names, contiguous offsets, normalized row fingerprints and source bindings matched; recomputed content hash and final byte extent matched the index."
+    },
+    {
+      "command": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe -B -m cnn.train --dataset cnn/data/visdrone_vid_train/raw_manifest/dataset.json --output cnn/runs/cache_full_validate_review_not_created --device cpu --validate-only --input-cache cnn/data/cache_road_full_development_20261003 --input-cache-index-sha256 646db6bcd11ab8ff55b9fb024480ab0b015842f7a9495a890a9b947aa153e170",
+      "result": "exit 0",
+      "startup_dataset_sha256": "ad353c5bce5b0ecef0433c74515324bbfdb031e92aff964cd56c18ae069d9fe4",
+      "startup_dataset_content_sha256": "45458e231d561e45c364e09b2913e90a2182af6dd0d158b71f09bf903e2851ad",
+      "startup_cache_index_sha256": "646db6bcd11ab8ff55b9fb024480ab0b015842f7a9495a890a9b947aa153e170",
+      "output_path_created": false,
+      "training_started": false,
+      "timing_note": "Wall time was not instrumented independently and is not used as performance evidence; startup includes full manifest/source/cache integrity validation."
+    }
+  ],
+  "findings": [
+    {
+      "severity": "warning",
+      "topic": "final_report_is_the_equivalence_receipt",
+      "evidence": "index.json is safely published after complete cache construction, but before the subsequent all-frame raw-versus-cache equivalence loop finishes.",
+      "disposition": "For full-development adoption, require both the pinned index SHA and the final passed builder report. Do not interpret index existence alone as proof that all-frame equivalence completed."
+    },
+    {
+      "severity": "warning",
+      "topic": "bounded_mosaic_evidence",
+      "evidence": "Every single-frame train/val item was compared, but Mosaic comparison covers only 32 evenly spaced train indices at each of epochs 6 and 7.",
+      "disposition": "Do not claim exhaustive Mosaic, worker-shuffle or full-epoch equivalence from this report."
+    },
+    {
+      "severity": "warning",
+      "topic": "validate_only_and_performance_boundary",
+      "evidence": "The actual trainer invocation validates startup identities only. Build and verification times are cache preparation/QA times, not training throughput.",
+      "disposition": "No claim is supported for batches, loss, gradients, optimizer/scheduler, effective batch 64, DataLoader worker memory/order, GPU AMP, epoch timing, accuracy or FPGA behavior. Keep cached training opt-in and require separately observed target-run startup, memory and end-to-end timing before adoption."
+    },
+    {
+      "severity": "info",
+      "topic": "development_only_scope",
+      "evidence": "The cache contains only the 19050 train and 5151 val rows from the pinned VisDrone development manifest and no newtest row.",
+      "disposition": "This is public development preprocessing evidence only. It does not inspect or make any claim about blind/newtest data and does not itself authorize GPU resume."
+    }
+  ],
+  "final_process_state": "The dedicated validate-only process exited. The requested output path did not exist after exit; no reviewer-started training process remained."
+}

@@ -1,0 +1,331 @@
+{
+  "modules": [
+    {
+      "name": "road_dynamic_postprocess",
+      "feature": "dynamic_postprocess",
+      "rtl_path": "rtl/road_dynamic_postprocess.v",
+      "description": "Diagnostic single-batch three-lane dynamic quantization and optional SiLU with atomic cached publication.",
+      "interfaces": {
+        "protocol": "ready_valid",
+        "ports": [
+          {
+            "name": "i_clk",
+            "width": 1,
+            "direction": "input",
+            "role": "i_clk",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "width": 1,
+            "direction": "input",
+            "role": "i_rstn",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_table_valid",
+            "description": "i_table_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_addr",
+            "width": 10,
+            "direction": "input",
+            "role": "i_table_addr",
+            "description": "i_table_addr",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_data",
+            "width": 16,
+            "direction": "input",
+            "role": "i_table_data",
+            "description": "i_table_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_ready",
+            "description": "o_table_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_loaded",
+            "width": 1,
+            "direction": "output",
+            "role": "o_table_loaded",
+            "description": "o_table_loaded",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_valid",
+            "width": 1,
+            "direction": "input",
+            "role": "i_input_valid",
+            "description": "i_input_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_accumulators",
+            "width": 96,
+            "direction": "input",
+            "role": "i_accumulators",
+            "description": "i_accumulators",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pre_multipliers",
+            "width": 96,
+            "direction": "input",
+            "role": "i_pre_multipliers",
+            "description": "i_pre_multipliers",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pre_shifts",
+            "width": 18,
+            "direction": "input",
+            "role": "i_pre_shifts",
+            "description": "i_pre_shifts",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_post_multiplier",
+            "width": 32,
+            "direction": "input",
+            "role": "i_post_multiplier",
+            "description": "i_post_multiplier",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_post_shift",
+            "width": 6,
+            "direction": "input",
+            "role": "i_post_shift",
+            "description": "i_post_shift",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_activate",
+            "width": 1,
+            "direction": "input",
+            "role": "i_activate",
+            "description": "i_activate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_lane_mask",
+            "width": 3,
+            "direction": "input",
+            "role": "i_lane_mask",
+            "description": "i_lane_mask",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tags",
+            "width": 48,
+            "direction": "input",
+            "role": "i_tags",
+            "description": "i_tags",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_fault",
+            "width": 1,
+            "direction": "input",
+            "role": "i_input_fault",
+            "description": "i_input_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_input_ready",
+            "width": 1,
+            "direction": "output",
+            "role": "o_input_ready",
+            "description": "o_input_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "width": 1,
+            "direction": "input",
+            "role": "i_output_ready",
+            "description": "i_output_ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "width": 1,
+            "direction": "output",
+            "role": "o_output_valid",
+            "description": "o_output_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "width": 16,
+            "direction": "output",
+            "role": "o_output_data",
+            "description": "o_output_data",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_tag",
+            "width": 16,
+            "direction": "output",
+            "role": "o_output_tag",
+            "description": "o_output_tag",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_int16",
+            "width": 1,
+            "direction": "output",
+            "role": "o_output_int16",
+            "description": "o_output_int16",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "width": 1,
+            "direction": "output",
+            "role": "o_fault",
+            "description": "o_fault",
+            "clock_domain": "i_clk"
+          }
+        ],
+        "handshake_channels": [
+          {
+            "id": "table",
+            "valid": "i_table_valid",
+            "ready": "o_table_ready",
+            "payload": [
+              "i_table_addr",
+              "i_table_data"
+            ]
+          },
+          {
+            "id": "batch",
+            "valid": "i_input_valid",
+            "ready": "o_input_ready",
+            "payload": [
+              "i_accumulators",
+              "i_pre_multipliers",
+              "i_pre_shifts",
+              "i_post_multiplier",
+              "i_post_shift",
+              "i_activate",
+              "i_lane_mask",
+              "i_tags",
+              "i_input_fault"
+            ]
+          },
+          {
+            "id": "result",
+            "valid": "o_output_valid",
+            "ready": "i_output_ready",
+            "payload": [
+              "o_output_data",
+              "o_output_tag",
+              "o_output_int16"
+            ]
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Cancel batch and all child valid immediately; clear fatal and require all 1024 table entries again. Caller synchronizes release."
+      },
+      "behavior": [
+        "A batch transfers only on valid and ready; capture all three coefficients, shifts, accumulators and opaque tags together.",
+        "Input ready remains zero until sequential table addresses 0..1023 have transferred.",
+        "Process active lanes in ascending order with one shared quantizer: pre quantization, optional SiLU, optional post quantization.",
+        "Activated output is signed INT8 represented by sign extension into INT16; prediction output retains signed INT16 and bypasses SiLU and post quantization.",
+        "Cache all active results before publishing the first; sticky fault suppresses the complete batch until reset.",
+        "Output payload and valid hold under backpressure. Variable batch latency; no frame-throughput claim.",
+        "Capture pre operands and tag in the existing SELECT edge; prepare post operands in the existing accepted SiLU-return edge. No added state, edge, II or external port change."
+      ],
+      "constraints": [
+        "Diagnostic functional baseline, not a throughput replacement for frozen v19.",
+        "Only active lanes require legal pre multipliers and shift0..62; post parameter legality applies only to activated batches.",
+        "No ROM parameter loader, DDR, model weights, bitstream or real board validation in this module."
+      ],
+      "corner_cases": [
+        "Zero mask faults; any input MAC fault prevents publication; bad last-lane parameter faults before any scalar starts.",
+        "Reset in all eight active states; partial table reset; table sequence fault; output stall and poison live input ports after acceptance."
+      ],
+      "verification_cases": [
+        "330 batches and 604 outputs compared against existing cnn/integer.py.",
+        "Eight active-state resets, partial table load, six atomic batch faults, clean recovery output and wrong table address.",
+        "Compare all 330 individual batch cycle windows and 604 output triples to frozen serial baseline."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "atomic_batch",
+          "title": "Batch capture and held scalar publication",
+          "scenario": "atomic-batch",
+          "description": "Illustrative compressed timeline, compute interval is not one clock and no fixed batch latency is implied.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..........."
+              },
+              {
+                "name": "i_input_valid",
+                "wave": "010........."
+              },
+              {
+                "name": "o_input_ready",
+                "wave": "110........1"
+              },
+              {
+                "name": "phase",
+                "wave": "23...4...5.2",
+                "data": [
+                  "idle",
+                  "compute all lanes",
+                  "held alpha",
+                  "emit beta/gamma",
+                  "idle"
+                ]
+              },
+              {
+                "name": "o_output_valid",
+                "wave": "0....1....0."
+              },
+              {
+                "name": "i_output_ready",
+                "wave": "0.......1..."
+              },
+              {
+                "name": "o_output_tag",
+                "wave": "x....3...45x",
+                "data": [
+                  "alpha",
+                  "beta",
+                  "gamma"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

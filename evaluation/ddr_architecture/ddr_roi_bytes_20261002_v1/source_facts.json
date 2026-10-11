@@ -1,0 +1,71 @@
+[
+  {
+    "status": "proven",
+    "fact": "user interface is 25-bit address and 128-bit data",
+    "evidence": [
+      "user_source/hdl_source/mc_to_user_interface.v:13-17"
+    ]
+  },
+  {
+    "status": "proven",
+    "fact": "read valid/data pass through without a user return-ready signal",
+    "evidence": [
+      "user_source/hdl_source/mc_to_user_interface.v:31-33",
+      "user_source/hdl_source/mc_to_user_interface.v:66-68"
+    ]
+  },
+  {
+    "status": "proven",
+    "fact": "active wrapper uses PAXI and permanently asserts paxi_rready",
+    "evidence": [
+      "user_source/hdl_source/ph1p35_ddr/ph1p35_324_ddr_wrapper.v:51-58",
+      "user_source/hdl_source/ph1p35_ddr/ph1p35_324_ddr_wrapper.v:69-74"
+    ]
+  },
+  {
+    "status": "proven",
+    "fact": "PAXI exposes no arlen/arsize/arburst; those fields occur only in the conditional full-AXI interface",
+    "evidence": [
+      "user_source/hdl_source/ph1p35_ddr/ddr2/ph1p_ddrmc_wrapper_63f4ac254419.v:88-126",
+      "user_source/hdl_source/ph1p35_ddr/ddr2/ph1p_ddrmc_wrapper_63f4ac254419.v:127-146"
+    ]
+  },
+  {
+    "status": "proven",
+    "fact": "generated controller is 128-bit, DDR2 is x16, and physical initialization selects BL8",
+    "evidence": [
+      "user_source/hdl_source/ph1p35_ddr/ddr2/ddr2.v:93-102",
+      "user_source/hdl_source/ph1p35_ddr/ddr2/Design.xml:44-46",
+      "user_source/hdl_source/ph1p35_ddr/ddr2/Design.xml:69-75",
+      "user_source/hdl_source/ph1p35_ddr/ddr2/src/rtl/init/ph1p_ddrphy_dram_init_ddr2.v:31"
+    ]
+  },
+  {
+    "status": "candidate",
+    "fact": "existing video logic advances address by 8 per 128-bit transfer; with x16 this supports 16-bit-word addressing and byte_addr>>1 adaptation",
+    "evidence": [
+      "user_source/hdl_source/video_in.v:202-203",
+      "user_source/hdl_source/video_out.v:127-128",
+      "user_source/hdl_source/ph1p35_ddr/ph1p35_324_ddr_wrapper.v:69"
+    ]
+  },
+  {
+    "status": "proven",
+    "fact": "RGB888 is tightly packed and the lowest byte address of a beat maps to bits 127:120",
+    "evidence": [
+      "user_source/hdl_source/isp/awb/awb.v:478-482",
+      "user_source/hdl_source/data_96bit_to_128bit.v:48-61",
+      "user_source/hdl_source/video_out.v:174-193"
+    ]
+  },
+  {
+    "status": "unresolved",
+    "fact": "one accepted user read producing exactly one attributable 128-bit return is not frozen at the board boundary; paxi_rlast is not propagated to the user bridge and O_mc_app_rd_data_end has no assignment",
+    "evidence": [
+      "user_source/hdl_source/ph1p35_ddr/ph1p35_324_ddr_wrapper.v:15-17",
+      "user_source/hdl_source/ph1p35_ddr/ph1p35_324_ddr_wrapper.v:72-75",
+      "user_source/hdl_source/ph1p35_ddr/ph1p35_324_ddr_wrapper.v:96-102",
+      "user_source/hdl_source/mc_to_user_interface.v:31-33"
+    ]
+  }
+]

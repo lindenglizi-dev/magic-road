@@ -1,0 +1,138 @@
+{
+  "modules": [
+    {
+      "name": "road_board_selftest_player",
+      "feature": "board_selftest",
+      "rtl_path": "rtl/road_board_selftest_player.v",
+      "description": "独立首板计算自检，不是完整CNN或识别验收。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "计算100MHz",
+            "description": "计算100MHz"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "源域已同步释放复位",
+            "description": "源域已同步释放复位"
+          },
+          {
+            "name": "i_rx_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "原壳命令接收许可",
+            "description": "原壳命令接收许可"
+          },
+          {
+            "name": "i_tx_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "原壳响应有效",
+            "description": "原壳响应有效"
+          },
+          {
+            "name": "i_tx_data",
+            "direction": "input",
+            "width": 16,
+            "role": "原壳响应字",
+            "description": "原壳响应字"
+          },
+          {
+            "name": "o_rx_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "发送有效保持至ready",
+            "description": "发送有效保持至ready"
+          },
+          {
+            "name": "o_rx_data",
+            "direction": "output",
+            "width": 16,
+            "role": "锁存的命令或负载字",
+            "description": "锁存的命令或负载字"
+          },
+          {
+            "name": "o_tx_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "仅比较/状态阶段开放",
+            "description": "仅比较/状态阶段开放"
+          },
+          {
+            "name": "o_core_rstn",
+            "direction": "output",
+            "width": 1,
+            "role": "套间断言8拍释放后等8拍",
+            "description": "套间断言8拍释放后等8拍"
+          },
+          {
+            "name": "o_payload",
+            "direction": "output",
+            "width": 256,
+            "role": "诊断包，只经冻结快照跨域",
+            "description": "诊断包，只经冻结快照跨域"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "100MHz计算；75MHz像素；375MHz串行，官方PLL相关时钟"
+      },
+      "reset": {
+        "assertion": "异步立即取消",
+        "release": "每域两拍；计算壳原协议保留"
+      },
+      "behavior": [
+        "固定28774条19位脚本指令，32768词ROM；无板外脚本接口。地址等待一拍，下一拍锁存ROM，随后解码，握手后才推进PC。",
+        "每套复位原壳并重装1024表项；1948项装载、允许提交、启动、31字轮询、384索引/字节对及C000。三套1152项才能PASS。",
+        "状态首字检查table_loaded和三类fault，done且非busy后才检1687核心周期并导出。错误/500000周期超时优先FAIL并保存首错。",
+        "payload从高到低：status2/state5/cases2/compared11/core32/preload32/export32/total32/first_pc15/expected16/actual16/error4/sent32/run_elapsed25。",
+        "total=preload+run_elapsed+export，三者互斥；run_elapsed含启动命令握手后至完整完成状态响应，非纯核心周期。"
+      ],
+      "constraints": [
+        "PH1P35MDG324/-3，不增加时序例外。真实资源/时序待当前顶层验证。"
+      ],
+      "corner_cases": [
+        "发送反压、缺表、错字、超时、全局复位、套间局部复位、快照忙时终态。"
+      ],
+      "verification_cases": [
+        "tb_board_selftest正常/停顿/错误/缺表/超时/复位；tb_selftest_display。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "send_backpressure",
+          "title": "road_board_selftest_player接口周期",
+          "scenario": "send_backpressure",
+          "description": "有效后等待ready期间字和PC保持；消费边沿后回到地址等待/读ROM/解码，不能把脚本装载II当成核II。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......"
+              },
+              {
+                "name": "o_rx_valid",
+                "wave": "01..0.."
+              },
+              {
+                "name": "i_rx_ready",
+                "wave": "0..10.."
+              },
+              {
+                "name": "o_rx_data",
+                "wave": "x=..x..",
+                "data": [
+                  "locked word"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

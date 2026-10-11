@@ -1,0 +1,59 @@
+--- installed/spec_document.py
++++ project/spec_document.py
+@@ -460,14 +460,19 @@
+     # RTL 路径是源交叉核验和产物布局的第二连接键。
+     str_rtl_path = _safe_rtl_path(module_value.get("rtl_path"), "{}.rtl_path".format(str_prefix))  # 统一后的 RTL 路径用于源文件交叉核验
+ 
+-    # 接口必须含非空 ports，空模块没有严谨的信号规范。
++    # 只有显式声明的测试台可使用零端口规格，生产设计仍要求完整端口。
++    str_module_role = module_value.get("module_role", "design")
++    if not isinstance(str_module_role, str) or str_module_role not in {"design", "testbench"}:
++        raise SpecDocumentError("> ERR: [Python] {}.module_role must be design or testbench.".format(str_prefix))
++
++    # 空列表与接口缺失不同，不能通过角色声明绕过接口类型检查。
+     interfaces_value = module_value.get("interfaces")  # 接口原始对象
+ 
+     # 端口列表状态在归一化前单独计算，便于 fail-closed。
+     bool_ports_ok = (  # interfaces.ports 是否为非空列表
+         isinstance(interfaces_value, Mapping)  # 确认接口字段是可读取的映射对象
+         and isinstance(interfaces_value.get("ports"), list)  # 确认 ports 使用有序列表表达端口
+-        and bool(interfaces_value["ports"])  # 确认接口至少声明一个可审查端口
++        and (bool(interfaces_value["ports"]) or str_module_role == "testbench")
+     )  # 端口列表判定
+ 
+     # 缺少接口端口时提前阻断 Markdown 生成。
+@@ -830,6 +835,12 @@
+     # 汇总来自多个 RTL 文件的模块接口事实。
+     dict_interfaces: dict[str, set[str]] = {}  # 汇总后的 RTL 接口
+ 
++    # 零端口测试台使用既有 formatter AST 核验，禁止添加第二个解析器。
++    bool_zero_port_testbench = any(
++        item.get("module_role") == "testbench" and item.get("interfaces", {}).get("ports") == []
++        for item in list_modules if isinstance(item, Mapping)
++    )
++
+     # 逐文件读取并合并 module/port 事实。
+     for path_source in list_paths:
+ 
+@@ -840,7 +851,20 @@
+             return ["> ERR: [Python] Verilog source does not exist: {}".format(path_source)]
+ 
+         # 读取结果合并到跨文件接口索引，重复 module 由后续集合检查发现。
+-        dict_interfaces.update(extract_verilog_interfaces(path_source.read_text(encoding="utf-8")))
++        str_source = path_source.read_text(encoding="utf-8")
++        if bool_zero_port_testbench:
++            from scripts.python.quality.formatter_ast import build_ast_report_for_text
++            dict_ast = build_ast_report_for_text(str_source, source_path=path_source)
++            if dict_ast["summary"]["parse_errors"] or not dict_ast["modules"]:
++                return ["> ERR: [Python] formatter AST source cross-check failed: {}: {}".format(
++                    path_source, dict_ast["diagnostics"])]
++            for dict_source_module in dict_ast["modules"]:
++                str_source_name = dict_source_module["name"]
++                if str_source_name in dict_interfaces:
++                    return ["> ERR: [Python] duplicate RTL module {}.".format(str_source_name)]
++                dict_interfaces[str_source_name] = {port["name"] for port in dict_source_module["ports"]}
++        else:
++            dict_interfaces.update(extract_verilog_interfaces(str_source))
+ 
+     # 规格声明名称是额外 RTL module 检查的基线。
+     set_expected_names = {str(item.get("name")) for item in list_modules if isinstance(item, Mapping)}  # 规格模块名称

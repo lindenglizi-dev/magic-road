@@ -1,0 +1,50 @@
+{
+  "scope": "H2 signed INT8 8-input by 3-output arithmetic probe only",
+  "delivery_ready": true,
+  "reason": "Round-two attempt three passed the strict static gate with 0 errors and 0 strict warnings; the independent local Icarus numeric test also passed all 1031 vectors.",
+  "repair_round": 2,
+  "strict_gate_attempts_used_this_round": 3,
+  "strict_gate_report": "gate_round_two_attempt_three.json",
+  "eight_gate_status": {
+    "compile": "passed",
+    "ast": "passed",
+    "readability": "passed",
+    "comment": "passed",
+    "naming": "passed",
+    "profile": "passed",
+    "testbench": "not_requested by strict gate; independently passed with real DUT under local Icarus",
+    "toolchain": "not_requested by strict gate; local iverilog and vvp executed successfully"
+  },
+  "numeric_evidence": {
+    "python_unittests": "7 passed",
+    "seed": 42,
+    "random_vectors": 1024,
+    "directed_vectors": 7,
+    "total_vectors": 1031,
+    "iverilog_result": "VERILOG-GEN-RESULT PASS cases=1031 errors=0 reset=1",
+    "checked_banks_per_vector": "24 products, 12 pair sums, 6 quad sums, 3 dot sums",
+    "terminal_checks": "INT32 result or overflow fault with zero payload, three-cycle output stall, asynchronous reset cancellation, exact acceptance intervals"
+  },
+  "measured_protocol": {
+    "accept_to_terminal_valid_cycles": 9,
+    "continuation_accept_interval_cycles": 11,
+    "terminal_accept_interval_cycles_when_ready": "13 derived from the verified 16-cycle interval with the testbench's three-cycle output stall removed",
+
+    "verified_terminal_accept_interval_with_three_stall_cycles": 16,
+    "terminal_stall_effect": "Each output stall cycle extends the next acceptance interval one-for-one.",
+    "throughput_boundary": "Single transaction in flight; this is not a 24-MAC-per-cycle or full-layer throughput result."
+  },
+  "artifact_sha256": {
+    "mac_reference.py": "3f3b65a70c5eaaebf000191ff2598bdc873810effd8507d4abfe46b06fa4a311",
+    "road_mac_probe.v": "5df97da6910c5673f35807207cc06260fc6ed6edc7d9313aa2fac9ec7b3016be",
+    "tb_road_mac_probe.v": "b26d51f2a58d21daa7f5f89d8bb6b576d264541c6cf2f22ed67d516639340382",
+    "mac_vectors.txt": "7d170353a69a7303d982443a53315515b3c3aab7a167fa2d912b7de2d5741792"
+  },
+  "not_verified": [
+    "QAT or requantization RTL",
+    "SiLU RTL",
+    "full convolution layer scheduling",
+    "full-model throughput or 5 FPS",
+    "vendor synthesis, timing, programming, or board behavior"
+  ]
+}
