@@ -1,0 +1,25 @@
+{
+  "contract_id": "hog324_train_augmentation_pilot_v1",
+  "registered_on": "2026-10-11",
+  "task_line": "HOG-SVM independent of CNN",
+  "training": "360 official annotated train ROIs from virat-ground-000201 and virat-ground-000206 only",
+  "evaluations": ["69 official validation ROIs", "57 user-confirmed moving-target observations on local2415171, GT analysis ROI B", "14 matched candidate ROIs C on the same local2415171 observations"],
+  "feature_contract": "existing 32x32 uint8 grayscale OpenCV HOG324; unchanged descriptor and inference preprocessing",
+  "fits": ["control_original", "horizontal_mirror", "mirror_translate2"],
+  "augmentations": {
+    "control_original": [[false, 0, 0]],
+    "horizontal_mirror": [[false, 0, 0], [true, 0, 0]],
+    "mirror_translate2": [[false, 0, 0], [false, -2, 0], [false, 2, 0], [false, 0, -2], [false, 0, 2], [true, 0, 0], [true, -2, 0], [true, 2, 0], [true, 0, -2], [true, 0, 2]]
+  },
+  "translation": "integer nearest-neighbor in already normalized 32x32 ROI with BORDER_REPLICATE; not expansion into unseen source pixels",
+  "fit_parameters": {"C": 1.0, "class_weight": "balanced", "random_state": 20260927, "max_iter": 30000, "tol": 0.0001, "dual": "auto"},
+  "augmentation_weight": "each original training ROI has total sample_weight 1, including its unchanged copy",
+  "scaler": "fit on each training variant only; fold into weights/bias at inference",
+  "threshold": "score >= 0 vehicle else ped; no tuning or rejection threshold search",
+  "pilot_gate": "At each official val scene, local GT and local matched-candidate evaluation: vehicle correct counts and ped correct counts must not decrease vs frozen baseline; ped correct count must increase in at least one evaluation. Quantized models must also meet the existing <=1% mismatch and <=1 percentage-point per-class recall-loss conditions and the margin error condition.",
+  "stop": "report all three fits once; no further sweep. Passing is only a diagnostic route decision, not model acceptance or deployment permission.",
+  "unchanged": ["candidate pipeline", "existing model weights", "validation images", "production RTL", "CNN workstream"],
+  "forbidden": ["test/blind access", "validation-to-train import", "AI prelabels as truth", "background-negative inference from annotation absence"],
+  "acceptance_targets_frozen": false,
+  "formal_acceptance_allowed": false
+}

@@ -1,0 +1,1168 @@
+{
+  "artifacts": {
+    "augmentation_manifest": "augmentation_manifest.csv",
+    "failures": "failures.csv",
+    "grouped_metrics": "metrics.json",
+    "model_parameters_and_quantized_weights": "model_parameters.json",
+    "predictions": "predictions.csv",
+    "quantization_ranges_and_trace_index": "quantization.json",
+    "quantization_traces": [
+      "quantization_trace_control_original.npz",
+      "quantization_trace_horizontal_mirror.npz",
+      "quantization_trace_mirror_translate2.npz"
+    ]
+  },
+  "control_original_reproduction": {
+    "assertion": "PASS",
+    "by_dataset": {
+      "local_gt_B": {
+        "float_prediction_mismatch": 0,
+        "max_abs_float_score_delta": 1.8118839761882555e-13,
+        "max_abs_quantized_normalized_score_delta": 1.7408297026122455e-13,
+        "quantized_prediction_mismatch": 0,
+        "sample_count": 57
+      },
+      "local_matched_C": {
+        "float_prediction_mismatch": 0,
+        "max_abs_float_score_delta": 1.8474111129762605e-13,
+        "max_abs_quantized_normalized_score_delta": 1.8118839761882555e-13,
+        "quantized_prediction_mismatch": 0,
+        "sample_count": 14
+      },
+      "official_train": {
+        "float_prediction_mismatch": 0,
+        "max_abs_float_score_delta": 1.8074430840897548e-13,
+        "max_abs_quantized_normalized_score_delta": 1.8030021919912542e-13,
+        "quantized_prediction_mismatch": 0,
+        "sample_count": 360
+      },
+      "official_val": {
+        "float_prediction_mismatch": 0,
+        "max_abs_float_score_delta": 1.5587531265737198e-13,
+        "max_abs_quantized_normalized_score_delta": 1.4788170688007085e-13,
+        "quantized_prediction_mismatch": 0,
+        "sample_count": 69
+      }
+    },
+    "float_tolerance": 1e-09,
+    "parameter_deltas": {
+      "abs_folded_bias_delta": 6.350475700855895e-14,
+      "abs_quantized_bias_integer_delta": 0,
+      "max_abs_folded_weight_delta": 1.2168044349891716e-13,
+      "max_abs_quantized_weight_integer_delta": 0
+    }
+  },
+  "data_isolation": {
+    "augmented_cross_class_pixel_conflicts": [],
+    "augmented_train_evaluation_roi_pixel_overlap": {
+      "control_original": [],
+      "horizontal_mirror": [],
+      "mirror_translate2": []
+    },
+    "passed": true,
+    "train_evaluation_roi_pixel_sha256_overlap": [],
+    "train_evaluation_scene_id_overlap": [],
+    "train_evaluation_source_family_overlap": [],
+    "train_evaluation_source_sha256_overlap": []
+  },
+  "experiment": {
+    "contract_id": "hog324_train_augmentation_pilot_v1",
+    "extra_variants_or_parameter_sweep": false,
+    "fits_run_once": [
+      "control_original",
+      "horizontal_mirror",
+      "mirror_translate2"
+    ],
+    "path": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\evaluation\\hog_svm_parallel_20261011\\experiment.json",
+    "sha256": "4dffbfee4f550702f622e623daa66a9c4ec28a3062328438a42461c4c29e6963"
+  },
+  "fit_reports": {
+    "control_original": {
+      "augmentation": {
+        "class_total_sample_weight": {
+          "ped": 160.0,
+          "vehicle": 200.0
+        },
+        "duplicate_policy": "retain every preregistered (root,augmentation) row; equal weights still sum to one per original; duplicate pixels are explicitly marked",
+        "fit_row_count": 360,
+        "original_count": 360,
+        "per_original_total_sample_weight_max": 1.0,
+        "per_original_total_sample_weight_min": 1.0,
+        "registered_transforms_per_original": 1,
+        "same_original_duplicate_pixel_rows_retained": 0,
+        "unique_root_augmentation_keys": 360
+      },
+      "fit_parameters": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "classes": [
+          0,
+          1
+        ],
+        "dual": "auto",
+        "max_iter": 30000,
+        "n_iter": 15,
+        "random_state": 20260927,
+        "tol": 0.0001
+      },
+      "frozen_baseline_prediction_comparison": {
+        "local_gt_B": {
+          "float_prediction_mismatch": 0,
+          "quantized_prediction_mismatch": 0,
+          "sample_count": 57
+        },
+        "local_matched_C": {
+          "float_prediction_mismatch": 0,
+          "quantized_prediction_mismatch": 0,
+          "sample_count": 14
+        },
+        "official_train": {
+          "float_prediction_mismatch": 0,
+          "quantized_prediction_mismatch": 0,
+          "sample_count": 360
+        },
+        "official_val": {
+          "float_prediction_mismatch": 0,
+          "quantized_prediction_mismatch": 0,
+          "sample_count": 69
+        }
+      },
+      "pilot_gate": {
+        "comparisons": [
+          {
+            "baseline_float_correct": 16,
+            "baseline_quantized_correct": 16,
+            "denominator": 21,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000200|ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.7619047619047619,
+            "new_float_available_predictions": 21,
+            "new_float_correct": 16,
+            "new_quantized_accuracy_or_recall": 0.7619047619047619,
+            "new_quantized_available_predictions": 21,
+            "new_quantized_correct": 16,
+            "paired_float": {
+              "same_correct": 16,
+              "same_wrong": 5
+            },
+            "paired_quantized": {
+              "same_correct": 16,
+              "same_wrong": 5
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 12,
+            "baseline_quantized_correct": 12,
+            "denominator": 12,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000200|vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 12,
+            "new_float_correct": 12,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 12,
+            "new_quantized_correct": 12,
+            "paired_float": {
+              "same_correct": 12
+            },
+            "paired_quantized": {
+              "same_correct": 12
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 24,
+            "baseline_quantized_correct": 24,
+            "denominator": 24,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000203|ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 24,
+            "new_float_correct": 24,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 24,
+            "new_quantized_correct": 24,
+            "paired_float": {
+              "same_correct": 24
+            },
+            "paired_quantized": {
+              "same_correct": 24
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 12,
+            "baseline_quantized_correct": 12,
+            "denominator": 12,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000203|vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 12,
+            "new_float_correct": 12,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 12,
+            "new_quantized_correct": 12,
+            "paired_float": {
+              "same_correct": 12
+            },
+            "paired_quantized": {
+              "same_correct": 12
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 13,
+            "baseline_quantized_correct": 13,
+            "denominator": 46,
+            "group_type": "truth",
+            "group_value": "ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.2826086956521739,
+            "new_float_available_predictions": 46,
+            "new_float_correct": 13,
+            "new_quantized_accuracy_or_recall": 0.2826086956521739,
+            "new_quantized_available_predictions": 46,
+            "new_quantized_correct": 13,
+            "paired_float": {
+              "same_correct": 13,
+              "same_wrong": 33
+            },
+            "paired_quantized": {
+              "same_correct": 13,
+              "same_wrong": 33
+            },
+            "scope": "local_gt_B"
+          },
+          {
+            "baseline_float_correct": 10,
+            "baseline_quantized_correct": 10,
+            "denominator": 11,
+            "group_type": "truth",
+            "group_value": "vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.9090909090909091,
+            "new_float_available_predictions": 11,
+            "new_float_correct": 10,
+            "new_quantized_accuracy_or_recall": 0.9090909090909091,
+            "new_quantized_available_predictions": 11,
+            "new_quantized_correct": 10,
+            "paired_float": {
+              "same_correct": 10,
+              "same_wrong": 1
+            },
+            "paired_quantized": {
+              "same_correct": 10,
+              "same_wrong": 1
+            },
+            "scope": "local_gt_B"
+          },
+          {
+            "baseline_float_correct": 7,
+            "baseline_quantized_correct": 7,
+            "denominator": 11,
+            "group_type": "truth",
+            "group_value": "ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.6363636363636364,
+            "new_float_available_predictions": 11,
+            "new_float_correct": 7,
+            "new_quantized_accuracy_or_recall": 0.6363636363636364,
+            "new_quantized_available_predictions": 11,
+            "new_quantized_correct": 7,
+            "paired_float": {
+              "same_correct": 7,
+              "same_wrong": 4
+            },
+            "paired_quantized": {
+              "same_correct": 7,
+              "same_wrong": 4
+            },
+            "scope": "local_matched_C"
+          },
+          {
+            "baseline_float_correct": 2,
+            "baseline_quantized_correct": 2,
+            "denominator": 3,
+            "group_type": "truth",
+            "group_value": "vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.6666666666666666,
+            "new_float_available_predictions": 3,
+            "new_float_correct": 2,
+            "new_quantized_accuracy_or_recall": 0.6666666666666666,
+            "new_quantized_available_predictions": 3,
+            "new_quantized_correct": 2,
+            "paired_float": {
+              "same_correct": 2,
+              "same_wrong": 1
+            },
+            "paired_quantized": {
+              "same_correct": 2,
+              "same_wrong": 1
+            },
+            "scope": "local_matched_C"
+          }
+        ],
+        "float_ped_improved_somewhere": false,
+        "float_per_scope_class_nondecrease": true,
+        "passed": false,
+        "quantization_by_evaluation_scope": {
+          "local_gt_B": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.0014398960567874042,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 1.3564415870991833e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.2826086956521739,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.2826086956521739,
+                "support": 46
+              },
+              "vehicle": {
+                "float_recall": 0.9090909090909091,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.9090909090909091,
+                "support": 11
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 57,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.001439909621203275,
+            "sign_flip_margin_violation_sample_keys": []
+          },
+          "local_matched_C": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.0012207398217860543,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 1.3564415870991833e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.6363636363636364,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.6363636363636364,
+                "support": 11
+              },
+              "vehicle": {
+                "float_recall": 0.6666666666666666,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.6666666666666666,
+                "support": 3
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 14,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.0012207533862019252,
+            "sign_flip_margin_violation_sample_keys": []
+          },
+          "official_val": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.001541796399055051,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 1.3564415870991833e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.8888888888888888,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.8888888888888888,
+                "support": 45
+              },
+              "vehicle": {
+                "float_recall": 1.0,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 1.0,
+                "support": 24
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 69,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.0015418099634709219,
+            "sign_flip_margin_violation_sample_keys": []
+          }
+        },
+        "quantization_conditions_passed_all_three_scopes": true,
+        "quantized_ped_improved_somewhere": false,
+        "quantized_per_scope_class_nondecrease": true
+      }
+    },
+    "horizontal_mirror": {
+      "augmentation": {
+        "class_total_sample_weight": {
+          "ped": 160.0,
+          "vehicle": 200.0
+        },
+        "duplicate_policy": "retain every preregistered (root,augmentation) row; equal weights still sum to one per original; duplicate pixels are explicitly marked",
+        "fit_row_count": 720,
+        "original_count": 360,
+        "per_original_total_sample_weight_max": 1.0,
+        "per_original_total_sample_weight_min": 1.0,
+        "registered_transforms_per_original": 2,
+        "same_original_duplicate_pixel_rows_retained": 0,
+        "unique_root_augmentation_keys": 720
+      },
+      "fit_parameters": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "classes": [
+          0,
+          1
+        ],
+        "dual": "auto",
+        "max_iter": 30000,
+        "n_iter": 19,
+        "random_state": 20260927,
+        "tol": 0.0001
+      },
+      "frozen_baseline_prediction_comparison": {
+        "local_gt_B": {
+          "float_prediction_mismatch": 5,
+          "quantized_prediction_mismatch": 5,
+          "sample_count": 57
+        },
+        "local_matched_C": {
+          "float_prediction_mismatch": 2,
+          "quantized_prediction_mismatch": 2,
+          "sample_count": 14
+        },
+        "official_train": {
+          "float_prediction_mismatch": 0,
+          "quantized_prediction_mismatch": 0,
+          "sample_count": 360
+        },
+        "official_val": {
+          "float_prediction_mismatch": 4,
+          "quantized_prediction_mismatch": 4,
+          "sample_count": 69
+        }
+      },
+      "pilot_gate": {
+        "comparisons": [
+          {
+            "baseline_float_correct": 16,
+            "baseline_quantized_correct": 16,
+            "denominator": 21,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000200|ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.7142857142857143,
+            "new_float_available_predictions": 21,
+            "new_float_correct": 15,
+            "new_quantized_accuracy_or_recall": 0.7142857142857143,
+            "new_quantized_available_predictions": 21,
+            "new_quantized_correct": 15,
+            "paired_float": {
+              "gained": 1,
+              "lost": 2,
+              "same_correct": 14,
+              "same_wrong": 4
+            },
+            "paired_quantized": {
+              "gained": 1,
+              "lost": 2,
+              "same_correct": 14,
+              "same_wrong": 4
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 12,
+            "baseline_quantized_correct": 12,
+            "denominator": 12,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000200|vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 12,
+            "new_float_correct": 12,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 12,
+            "new_quantized_correct": 12,
+            "paired_float": {
+              "same_correct": 12
+            },
+            "paired_quantized": {
+              "same_correct": 12
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 24,
+            "baseline_quantized_correct": 24,
+            "denominator": 24,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000203|ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.9583333333333334,
+            "new_float_available_predictions": 24,
+            "new_float_correct": 23,
+            "new_quantized_accuracy_or_recall": 0.9583333333333334,
+            "new_quantized_available_predictions": 24,
+            "new_quantized_correct": 23,
+            "paired_float": {
+              "lost": 1,
+              "same_correct": 23
+            },
+            "paired_quantized": {
+              "lost": 1,
+              "same_correct": 23
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 12,
+            "baseline_quantized_correct": 12,
+            "denominator": 12,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000203|vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 12,
+            "new_float_correct": 12,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 12,
+            "new_quantized_correct": 12,
+            "paired_float": {
+              "same_correct": 12
+            },
+            "paired_quantized": {
+              "same_correct": 12
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 13,
+            "baseline_quantized_correct": 13,
+            "denominator": 46,
+            "group_type": "truth",
+            "group_value": "ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.2391304347826087,
+            "new_float_available_predictions": 46,
+            "new_float_correct": 11,
+            "new_quantized_accuracy_or_recall": 0.2391304347826087,
+            "new_quantized_available_predictions": 46,
+            "new_quantized_correct": 11,
+            "paired_float": {
+              "gained": 1,
+              "lost": 3,
+              "same_correct": 10,
+              "same_wrong": 32
+            },
+            "paired_quantized": {
+              "gained": 1,
+              "lost": 3,
+              "same_correct": 10,
+              "same_wrong": 32
+            },
+            "scope": "local_gt_B"
+          },
+          {
+            "baseline_float_correct": 10,
+            "baseline_quantized_correct": 10,
+            "denominator": 11,
+            "group_type": "truth",
+            "group_value": "vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 11,
+            "new_float_correct": 11,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 11,
+            "new_quantized_correct": 11,
+            "paired_float": {
+              "gained": 1,
+              "same_correct": 10
+            },
+            "paired_quantized": {
+              "gained": 1,
+              "same_correct": 10
+            },
+            "scope": "local_gt_B"
+          },
+          {
+            "baseline_float_correct": 7,
+            "baseline_quantized_correct": 7,
+            "denominator": 11,
+            "group_type": "truth",
+            "group_value": "ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.5454545454545454,
+            "new_float_available_predictions": 11,
+            "new_float_correct": 6,
+            "new_quantized_accuracy_or_recall": 0.5454545454545454,
+            "new_quantized_available_predictions": 11,
+            "new_quantized_correct": 6,
+            "paired_float": {
+              "lost": 1,
+              "same_correct": 6,
+              "same_wrong": 4
+            },
+            "paired_quantized": {
+              "lost": 1,
+              "same_correct": 6,
+              "same_wrong": 4
+            },
+            "scope": "local_matched_C"
+          },
+          {
+            "baseline_float_correct": 2,
+            "baseline_quantized_correct": 2,
+            "denominator": 3,
+            "group_type": "truth",
+            "group_value": "vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 3,
+            "new_float_correct": 3,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 3,
+            "new_quantized_correct": 3,
+            "paired_float": {
+              "gained": 1,
+              "same_correct": 2
+            },
+            "paired_quantized": {
+              "gained": 1,
+              "same_correct": 2
+            },
+            "scope": "local_matched_C"
+          }
+        ],
+        "float_ped_improved_somewhere": false,
+        "float_per_scope_class_nondecrease": false,
+        "passed": false,
+        "quantization_by_evaluation_scope": {
+          "local_gt_B": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.0022872025781603966,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 1.970965483174663e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.2391304347826087,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.2391304347826087,
+                "support": 46
+              },
+              "vehicle": {
+                "float_recall": 1.0,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 1.0,
+                "support": 11
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 57,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.0022872222878152285,
+            "sign_flip_margin_violation_sample_keys": []
+          },
+          "local_matched_C": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.001742800084600149,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 1.970965483174663e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.5454545454545454,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.5454545454545454,
+                "support": 11
+              },
+              "vehicle": {
+                "float_recall": 1.0,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 1.0,
+                "support": 3
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 14,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.0017428197942549808,
+            "sign_flip_margin_violation_sample_keys": []
+          },
+          "official_val": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.002360904197748148,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 1.970965483174663e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.8444444444444444,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.8444444444444444,
+                "support": 45
+              },
+              "vehicle": {
+                "float_recall": 1.0,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 1.0,
+                "support": 24
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 69,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.00236092390740298,
+            "sign_flip_margin_violation_sample_keys": []
+          }
+        },
+        "quantization_conditions_passed_all_three_scopes": true,
+        "quantized_ped_improved_somewhere": false,
+        "quantized_per_scope_class_nondecrease": false
+      }
+    },
+    "mirror_translate2": {
+      "augmentation": {
+        "class_total_sample_weight": {
+          "ped": 159.9999999999952,
+          "vehicle": 199.99999999999292
+        },
+        "duplicate_policy": "retain every preregistered (root,augmentation) row; equal weights still sum to one per original; duplicate pixels are explicitly marked",
+        "fit_row_count": 3600,
+        "original_count": 360,
+        "per_original_total_sample_weight_max": 0.9999999999999999,
+        "per_original_total_sample_weight_min": 0.9999999999999999,
+        "registered_transforms_per_original": 10,
+        "same_original_duplicate_pixel_rows_retained": 0,
+        "unique_root_augmentation_keys": 3600
+      },
+      "fit_parameters": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "classes": [
+          0,
+          1
+        ],
+        "dual": "auto",
+        "max_iter": 30000,
+        "n_iter": 14,
+        "random_state": 20260927,
+        "tol": 0.0001
+      },
+      "frozen_baseline_prediction_comparison": {
+        "local_gt_B": {
+          "float_prediction_mismatch": 7,
+          "quantized_prediction_mismatch": 7,
+          "sample_count": 57
+        },
+        "local_matched_C": {
+          "float_prediction_mismatch": 4,
+          "quantized_prediction_mismatch": 4,
+          "sample_count": 14
+        },
+        "official_train": {
+          "float_prediction_mismatch": 0,
+          "quantized_prediction_mismatch": 0,
+          "sample_count": 360
+        },
+        "official_val": {
+          "float_prediction_mismatch": 5,
+          "quantized_prediction_mismatch": 5,
+          "sample_count": 69
+        }
+      },
+      "pilot_gate": {
+        "comparisons": [
+          {
+            "baseline_float_correct": 16,
+            "baseline_quantized_correct": 16,
+            "denominator": 21,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000200|ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.8095238095238095,
+            "new_float_available_predictions": 21,
+            "new_float_correct": 17,
+            "new_quantized_accuracy_or_recall": 0.8095238095238095,
+            "new_quantized_available_predictions": 21,
+            "new_quantized_correct": 17,
+            "paired_float": {
+              "gained": 2,
+              "lost": 1,
+              "same_correct": 15,
+              "same_wrong": 3
+            },
+            "paired_quantized": {
+              "gained": 2,
+              "lost": 1,
+              "same_correct": 15,
+              "same_wrong": 3
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 12,
+            "baseline_quantized_correct": 12,
+            "denominator": 12,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000200|vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 12,
+            "new_float_correct": 12,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 12,
+            "new_quantized_correct": 12,
+            "paired_float": {
+              "same_correct": 12
+            },
+            "paired_quantized": {
+              "same_correct": 12
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 24,
+            "baseline_quantized_correct": 24,
+            "denominator": 24,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000203|ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.9166666666666666,
+            "new_float_available_predictions": 24,
+            "new_float_correct": 22,
+            "new_quantized_accuracy_or_recall": 0.9166666666666666,
+            "new_quantized_available_predictions": 24,
+            "new_quantized_correct": 22,
+            "paired_float": {
+              "lost": 2,
+              "same_correct": 22
+            },
+            "paired_quantized": {
+              "lost": 2,
+              "same_correct": 22
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 12,
+            "baseline_quantized_correct": 12,
+            "denominator": 12,
+            "group_type": "scene_class",
+            "group_value": "virat-ground-000203|vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 12,
+            "new_float_correct": 12,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 12,
+            "new_quantized_correct": 12,
+            "paired_float": {
+              "same_correct": 12
+            },
+            "paired_quantized": {
+              "same_correct": 12
+            },
+            "scope": "official_val"
+          },
+          {
+            "baseline_float_correct": 13,
+            "baseline_quantized_correct": 13,
+            "denominator": 46,
+            "group_type": "truth",
+            "group_value": "ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.1956521739130435,
+            "new_float_available_predictions": 46,
+            "new_float_correct": 9,
+            "new_quantized_accuracy_or_recall": 0.1956521739130435,
+            "new_quantized_available_predictions": 46,
+            "new_quantized_correct": 9,
+            "paired_float": {
+              "gained": 1,
+              "lost": 5,
+              "same_correct": 8,
+              "same_wrong": 32
+            },
+            "paired_quantized": {
+              "gained": 1,
+              "lost": 5,
+              "same_correct": 8,
+              "same_wrong": 32
+            },
+            "scope": "local_gt_B"
+          },
+          {
+            "baseline_float_correct": 10,
+            "baseline_quantized_correct": 10,
+            "denominator": 11,
+            "group_type": "truth",
+            "group_value": "vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 1.0,
+            "new_float_available_predictions": 11,
+            "new_float_correct": 11,
+            "new_quantized_accuracy_or_recall": 1.0,
+            "new_quantized_available_predictions": 11,
+            "new_quantized_correct": 11,
+            "paired_float": {
+              "gained": 1,
+              "same_correct": 10
+            },
+            "paired_quantized": {
+              "gained": 1,
+              "same_correct": 10
+            },
+            "scope": "local_gt_B"
+          },
+          {
+            "baseline_float_correct": 7,
+            "baseline_quantized_correct": 7,
+            "denominator": 11,
+            "group_type": "truth",
+            "group_value": "ped",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.45454545454545453,
+            "new_float_available_predictions": 11,
+            "new_float_correct": 5,
+            "new_quantized_accuracy_or_recall": 0.45454545454545453,
+            "new_quantized_available_predictions": 11,
+            "new_quantized_correct": 5,
+            "paired_float": {
+              "lost": 2,
+              "same_correct": 5,
+              "same_wrong": 4
+            },
+            "paired_quantized": {
+              "lost": 2,
+              "same_correct": 5,
+              "same_wrong": 4
+            },
+            "scope": "local_matched_C"
+          },
+          {
+            "baseline_float_correct": 2,
+            "baseline_quantized_correct": 2,
+            "denominator": 3,
+            "group_type": "truth",
+            "group_value": "vehicle",
+            "invalid_FAR": null,
+            "metric": "valid_ROI_classification_accuracy",
+            "new_float_accuracy_or_recall": 0.6666666666666666,
+            "new_float_available_predictions": 3,
+            "new_float_correct": 2,
+            "new_quantized_accuracy_or_recall": 0.6666666666666666,
+            "new_quantized_available_predictions": 3,
+            "new_quantized_correct": 2,
+            "paired_float": {
+              "gained": 1,
+              "lost": 1,
+              "same_correct": 1
+            },
+            "paired_quantized": {
+              "gained": 1,
+              "lost": 1,
+              "same_correct": 1
+            },
+            "scope": "local_matched_C"
+          }
+        ],
+        "float_ped_improved_somewhere": true,
+        "float_per_scope_class_nondecrease": false,
+        "passed": false,
+        "quantization_by_evaluation_scope": {
+          "local_gt_B": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.0030509901970354747,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 2.585285707301867e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.1956521739130435,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.1956521739130435,
+                "support": 46
+              },
+              "vehicle": {
+                "float_recall": 1.0,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 1.0,
+                "support": 11
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 57,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.0030510160498925477,
+            "sign_flip_margin_violation_sample_keys": []
+          },
+          "local_matched_C": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.0027621163892580514,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 2.585285707301867e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.45454545454545453,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.45454545454545453,
+                "support": 11
+              },
+              "vehicle": {
+                "float_recall": 0.6666666666666666,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.6666666666666666,
+                "support": 3
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 14,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.0027621422421151244,
+            "sign_flip_margin_violation_sample_keys": []
+          },
+          "official_val": {
+            "each_margin_exceeds_own_error_diagnostic": true,
+            "float_quantized_label_mismatch": 0,
+            "max_observed_abs_normalized_score_error": 0.004356444414086003,
+            "mismatch_rate": 0.0,
+            "mismatch_rate_le_1_percent": true,
+            "normalized_score_lsb": 2.585285707301867e-08,
+            "per_class_recall": {
+              "ped": {
+                "float_recall": 0.8666666666666667,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 0.8666666666666667,
+                "support": 45
+              },
+              "vehicle": {
+                "float_recall": 1.0,
+                "loss_percentage_points": 0.0,
+                "quantized_recall": 1.0,
+                "support": 24
+              }
+            },
+            "per_class_recall_loss_le_1_percentage_point": true,
+            "sample_count": 69,
+            "sign_flip_margin_condition_passed": true,
+            "sign_flip_margin_limit_max_error_plus_lsb": 0.004356470266943076,
+            "sign_flip_margin_violation_sample_keys": []
+          }
+        },
+        "quantization_conditions_passed_all_three_scopes": true,
+        "quantized_ped_improved_somewhere": true,
+        "quantized_per_scope_class_nondecrease": false
+      }
+    }
+  },
+  "implementation": {
+    "numpy": "2.4.6",
+    "opencv": "4.13.0",
+    "python": "3.13.12",
+    "reused_functions": [
+      "opencv_hog_diagnostic.read_manifest/load_roi/make_hog(9)",
+      "opencv_hog_candidate_diagnostic.load_models/model_score/quantization_contract/quantized_score",
+      "local_fourgrid_diagnostic.validated_package/validate_confirmation_chain/roi_pair",
+      "local_paired_diagnostic.validate_annotations"
+    ],
+    "reused_source_sha256": {
+      "external_reference_exploration/opencv_hog_candidate_diagnostic.py": "b73f3b52f88a14fbde5974b156c08a3092521b3cc028752113acc22439ecb616",
+      "external_reference_exploration/opencv_hog_diagnostic.py": "0baf138faf66aea78dcc979d1a262b9c743684ba262b62b8619db988ba4ff658",
+      "tools/local_fourgrid_diagnostic.py": "4d544f5e4be15ef0eeef2b9edf3a42a2934e6771c1906227d5b84445d28ca2f9",
+      "tools/local_paired_diagnostic.py": "9b1cfb9808f1717ba024f6ad1a537cc07a0c483cb52f2f087fc5a5d62bb2d17a",
+      "tools/roi_dataset_tool.py": "721fb79539d3f7cd5b987b64ba087d4852b29fdf8c40d97811793ccb076d811d"
+    },
+    "scikit_learn": "1.9.0",
+    "script": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tools\\hog_svm_augmentation_diagnostic.py",
+    "script_sha256": "5b543a243198cb536a1880ca7a89c54676cc16cc5222cefce2842149ccb2db22"
+  },
+  "inputs": {
+    "baseline": {
+      "artifact_hashes": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\external_reference_exploration\\results\\opencv_hog_diagnostic\\artifact_hashes.json",
+      "artifact_hashes_sha256": "edfe0b953bee93e51735c170aa6915661b3638e4684959145faa9b27e2220636",
+      "model_parameters": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\external_reference_exploration\\results\\opencv_hog_diagnostic\\model_parameters.json",
+      "model_parameters_sha256": "9b6a96aeae291d60628c7352616fade1b03cb280a8ed6c8384b6acd03c13a99a",
+      "model_report": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\external_reference_exploration\\results\\opencv_hog_diagnostic\\report.json",
+      "model_report_sha256": "3208076cbc21b7b9717e86dce6d0a2b448daf336a6c29dc7d07a8f1aef3fd915"
+    },
+    "baseline_parameter_sha256_expected": "9b6a96aeae291d60628c7352616fade1b03cb280a8ed6c8384b6acd03c13a99a",
+    "local": {
+      "annotation_sha256": "6f0476e8eb459283982aa36167b28dd6ba6080e72d84f790946896510af126dd",
+      "confirmation_receipt_sha256": "b37b8b1b0fe97a80541bda455d73c87c9d4e354e4d53c4c7e37506e28aee611a",
+      "fourgrid_receipt_sha256": "7513425a415679968e6f80713efb8f6ff2ce2e6648f6dd5e4adbbe8416b1be84",
+      "fourgrid_rows_sha256": "fc3d0642dfcfb88d30be3632c213d9551225d2a42d01551ebd2d417f3332803d",
+      "inputs": "target32_v2 PNG only; no grid/JPG/source-video crop",
+      "package_receipt_sha256": "a70010237a6eb9f0310ee3c439d4408ea82d0082b9a6f767fb2ff98c1d6c2cdc"
+    },
+    "official": {
+      "manifest_sha256": "ef4bd105844a11720ea07d504a6137132cce81ad62a77aba06f9d47b19ff666d",
+      "train_count": 360,
+      "val_count": 69
+    },
+    "pinned_input_hashes": {
+      "baseline_model_parameters": "9b6a96aeae291d60628c7352616fade1b03cb280a8ed6c8384b6acd03c13a99a",
+      "experiment": "4dffbfee4f550702f622e623daa66a9c4ec28a3062328438a42461c4c29e6963",
+      "fourgrid_receipt": "7513425a415679968e6f80713efb8f6ff2ce2e6648f6dd5e4adbbe8416b1be84",
+      "fourgrid_rows": "fc3d0642dfcfb88d30be3632c213d9551225d2a42d01551ebd2d417f3332803d"
+    }
+  },
+  "limitations": [
+    "OpenCV HOG internals remain floating point and are not integer-HOG or RTL equivalence evidence.",
+    "No invalid candidates are present, so FAR and rejection performance are unmeasured.",
+    "This pilot does not read test/blind/holdout data and does not authorize model freeze or deployment."
+  ],
+  "scope": {
+    "evaluation": "69 official val + local B57 GT + matched C14; local end-to-end denominator remains 57",
+    "local_correlation": "57 observations are four correlated tracks, not 57 independent targets",
+    "local_tracks": {
+      "p01": 16,
+      "p02": 30,
+      "v01": 3,
+      "v02": 8
+    },
+    "metric_definition": "accuracy/recall over valid ped/vehicle ROI; no invalid samples, so invalid FAR is null",
+    "model_freeze_or_deployment_permission": false,
+    "pilot_only": true,
+    "training": "360 official annotated train ROIs only"
+  },
+  "status": "completed_three_preregistered_fits_pilot_only_not_frozen_not_rtl"
+}
