@@ -1,0 +1,1752 @@
+Created by          : Tang Dynasty v6.2.168116
+                    : Copyright (c) 2012-2025 Anlogic Inc.
+Generated           : Sun Oct 11 13:34:46 2026
+
+Top Model           : road_frontend_shared_core
+Device              : PH1P35MDG324
+Speed               : 3
+STA coverage        : 100.00%
+Constraint File     : E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/frontend_shared_core_20261011/physical_attempt2/frontend.sdc;
+Confidence          : Routed
+Check Corner        : Both (Slow and Fast)
+CRPR Enabled        : Yes
+Report Scheme       : 10 end point(s) per path group, 1 path(s) per end point
+
+
+Check Status
+-------------
+
+Corner   | Max      Min     
+------------------------------------
+Slow     | yes      yes     
+Fast     | yes      yes     
+
+
+Timing Status
+--------------------
+	SWNS: -2.327ns, STNS: -71.057ns
+	HWNS: -1.969ns, HTNS: -1900.096ns
+	Period Check WNS: 7.200ns
+
+
+Clock Summary
+--------------------
+
+       Clock-Id:       C-Freq       Fanout   Clock-Name
+--------------------------------------------------------------------------------
+           clk0:      100.000         7473   frontend_clk
+--------------------------------------------------------------------------------
+
+       Name            Type         Rise(ns)   Fall(ns)          C-Period(ns)     C-Freq(MHz)          R-Period(ns)     R-Freq(MHz)         SWNS(ns)   STNS(ns)         HWNS(ns)   HTNS(ns)         Skew(ns)           Fanout        Max-Level        CC-From    CC-To
+       clk0   Inferred GCLK            0.000      5.000                10.000         100.000                12.327          81.123           -2.327    -71.057           -1.969  -1900.096            0.225             7473                9             no       no
+
+Notes
+----------
+C-Period  :  constraint period
+C-Freq    :  constraint freq
+R-Period  :  report min period
+R-Freq    :  report fmax
+CC-From   :  has path(s) from cross-domain clock
+CC-To     :  has path(s) to cross-domain clock
+
+
+*   Clock R-Period data only takes intra-clock timing. SWNS/STNS/HWNS/HTNS take both intra-clock and inter-clock timing.
+*   If there is mismatch between R-Period and SWNS, check inter-clock timing of this clock as capture clock.
+*   SWNS/STNS/HWNS/HTNS of timing exception (SMCP/SMD) only counted in global Timing Status, not counted in Clock Summary.
+
+Intra clock domain timing
+--------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Path Group     :     frontend_clk -> frontend_clk
+Type           :     Self
+From Clock     :     frontend_clk
+To Clock       :     frontend_clk
+Min Period     :     12.327ns
+Fmax           :     81.123MHz
+
+Statistics:
+Max            : SWNS     -2.327ns, STNS    -71.057ns,       129 Viol Endpoints,     18161 Total Endpoints,    489474 Paths Analyzed
+Min            : HWNS     -1.969ns, HTNS  -1900.096ns,      3484 Viol Endpoints,     18161 Total Endpoints,    489474 Paths Analyzed
+----------------------------------------------------------------------------------------------------
+
+Max Paths
+----------------------------------------------------------------------------------------------------
+Slack               : -2.327ns
+Begin Point         : u_pp/reg_meta_count_reg[3]_syn_11.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_table_ready (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 9.280ns (cell 4.603ns (49%), net 4.677ns (51%))
+Clock Skew          : 2.997ns
+Logic Level         : 7 ( PAD=2  LUT4=2  LUT5=1  LUT3=1  LUT2=1 )
+Max Fanout          : 6
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_pp/reg_meta_count_reg[3]_syn_11.clk
+launch edge                             0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+clk2q               x004y021z6          0.126    f     3.123          pin: u_pp/reg_meta_count_reg[3]_syn_11.oqa
+net (fo=3)                              0.402          3.525          net: u_pp/o_meta_count[3],  ../../board_selftest_20261010/core/road_dynamic_postprocess.v(32)
+                                                                      pin: u_pp/reg_ingress_count_reg[0]_syn_178.ie
+LUT4                x004y021z3          0.189    r     3.714       1  pin: u_pp/reg_ingress_count_reg[0]_syn_178.ofb
+net (fo=4)                              0.192          3.906          net: u_pp/reg_ingress_count_reg[0]_syn_15,  ../../board_selftest_20261010/core/road_dynamic_postprocess.v(221)
+                                                                      pin: u_pp/reg_ingress_count_reg[0]_syn_179.ia
+LUT5                x004y022z0          0.399    f     4.305       2  pin: u_pp/reg_ingress_count_reg[0]_syn_179.ofb
+net (fo=1)                              0.700          5.005          net: u_pp/flag_empty,  ../../board_selftest_20261010/core/road_dynamic_postprocess.v(107)
+                                                                      pin: u_pp/reg_ingress_count_reg[0]_syn_201.id
+LUT3                x014y028z0          0.266    r     5.271       3  pin: u_pp/reg_ingress_count_reg[0]_syn_201.ofb
+net (fo=2)                              0.190          5.461          net: u_pp/reg_ingress_count_reg[0]_syn_50,  ../../board_selftest_20261010/core/road_dynamic_postprocess.v(221)
+                                                                      pin: u_pp/u_silu/table_fault_o_reg_syn_31.id
+LUT4                x015y027z0          0.266    r     5.727       4  pin: u_pp/u_silu/table_fault_o_reg_syn_31.ofb
+net (fo=6)                              2.062          7.789          net: flag_table_enable_n1,  NOFILE(0)
+                                                                      pin: o_table_ready_syn_22.ie
+LUT2                x030y066z0          0.189    r     7.978       5  pin: o_table_ready_syn_22.ofb
+net (fo=1)                              1.131          9.109          net: o_table_ready_dup_1,  ../rtl/road_frontend_shared_core.v(14)
+                                                                      pin: o_table_ready_syn_2.doq[0]
+PAD                 x043y076            0.648    r     9.757       6  pin: o_table_ready_syn_2.sg09_do
+PAD                 x043y076            2.520    r    12.277       7  pin: o_table_ready_syn_2.opad
+net (fo=1)                              0.000         12.277          net: o_table_ready,  ../rtl/road_frontend_shared_core.v(14)
+                                                                      pin: o_table_ready
+--------------------------------------------------------------------  ---------------
+Arrival                                               12.277               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -2.327               
+
+Slack               : -2.276ns
+Begin Point         : u_stem/cnt_export_reg[2]_syn_2.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[2] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 9.249ns (cell 4.431ns (47%), net 4.818ns (53%))
+Clock Skew          : 2.977ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 38
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.633          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_stem/cnt_export_reg[2]_syn_2.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x012y037z5          0.126    f     3.103          pin: u_stem/cnt_export_reg[2]_syn_2.oqa
+net (fo=38)                             0.617          3.720          net: u_stem/o_output_index[2],  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(50)
+                                                                      pin: u_stem/ramread1_syn_221.ib
+DRAM                x009y036z2          0.427    f     4.147       1  pin: u_stem/ramread1_syn_221.ofb
+net (fo=1)                              0.881          5.028          net: u_stem/ramread1_syn_49,  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(128)
+                                                                      pin: o_output_data[2]_syn_7.ib
+LUT6                x010y036z4          0.427    f     5.455       2  pin: o_output_data[2]_syn_7.ofb
+net (fo=1)                              0.405          5.860          net: o_output_data[2]_syn_4,  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[2]_syn_6.ic
+LUT3                x014y036z5          0.283    r     6.143       3  pin: o_output_data[2]_syn_6.ofb
+net (fo=1)                              2.915          9.058          net: o_output_data[2]_dup_1,  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[2]_syn_2.doq[0]
+PAD                 x043y064            0.648    r     9.706       4  pin: o_output_data[2]_syn_2.sg09_do
+PAD                 x043y064            2.520    r    12.226       5  pin: o_output_data[2]_syn_2.opad
+net (fo=1)                              0.000         12.226          net: o_output_data[2],  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[2]
+--------------------------------------------------------------------  ---------------
+Arrival                                               12.226               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -2.276               
+
+Slack               : -2.207ns
+Begin Point         : u_pp/reg_meta_count_reg[3]_syn_11.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_select_ready (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 9.160ns (cell 4.680ns (51%), net 4.480ns (49%))
+Clock Skew          : 2.997ns
+Logic Level         : 7 ( PAD=2  LUT4=2  LUT5=1  LUT3=1  LUT2=1 )
+Max Fanout          : 6
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_pp/reg_meta_count_reg[3]_syn_11.clk
+launch edge                             0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+clk2q               x004y021z6          0.126    f     3.123          pin: u_pp/reg_meta_count_reg[3]_syn_11.oqa
+net (fo=3)                              0.402          3.525          net: u_pp/o_meta_count[3],  ../../board_selftest_20261010/core/road_dynamic_postprocess.v(32)
+                                                                      pin: u_pp/reg_ingress_count_reg[0]_syn_178.ie
+LUT4                x004y021z3          0.189    r     3.714       1  pin: u_pp/reg_ingress_count_reg[0]_syn_178.ofb
+net (fo=4)                              0.192          3.906          net: u_pp/reg_ingress_count_reg[0]_syn_15,  ../../board_selftest_20261010/core/road_dynamic_postprocess.v(221)
+                                                                      pin: u_pp/reg_ingress_count_reg[0]_syn_179.ia
+LUT5                x004y022z0          0.399    f     4.305       2  pin: u_pp/reg_ingress_count_reg[0]_syn_179.ofb
+net (fo=1)                              0.700          5.005          net: u_pp/flag_empty,  ../../board_selftest_20261010/core/road_dynamic_postprocess.v(107)
+                                                                      pin: u_pp/reg_ingress_count_reg[0]_syn_201.id
+LUT3                x014y028z0          0.266    r     5.271       3  pin: u_pp/reg_ingress_count_reg[0]_syn_201.ofb
+net (fo=2)                              0.190          5.461          net: u_pp/reg_ingress_count_reg[0]_syn_50,  ../../board_selftest_20261010/core/road_dynamic_postprocess.v(221)
+                                                                      pin: u_pp/u_silu/table_fault_o_reg_syn_31.id
+LUT4                x015y027z0          0.266    r     5.727       4  pin: u_pp/u_silu/table_fault_o_reg_syn_31.ofb
+net (fo=6)                              0.890          6.617          net: flag_table_enable_n1,  NOFILE(0)
+                                                                      pin: o_table_ready_syn_4.id
+LUT2                x029y033z2          0.266    f     6.883       5  pin: o_table_ready_syn_4.ofa
+net (fo=1)                              2.106          8.989          net: o_select_ready_dup_1,  ../rtl/road_frontend_shared_core.v(9)
+                                                                      pin: o_select_ready_syn_2.doq[0]
+PAD                 x043y073            0.648    r     9.637       6  pin: o_select_ready_syn_2.sg09_do
+PAD                 x043y073            2.520    r    12.157       7  pin: o_select_ready_syn_2.opad
+net (fo=1)                              0.000         12.157          net: o_select_ready,  ../rtl/road_frontend_shared_core.v(9)
+                                                                      pin: o_select_ready
+--------------------------------------------------------------------  ---------------
+Arrival                                               12.157               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -2.207               
+
+Slack               : -2.128ns
+Begin Point         : u_down2/cnt_export_reg[0]_syn_5.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[1] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 9.084ns (cell 4.397ns (48%), net 4.687ns (52%))
+Clock Skew          : 2.994ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 23
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.650          2.994          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/cnt_export_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.994               
+--------------------------------------------------------------------  ---------------
+clk2q               x010y033z7          0.137    r     3.131          pin: u_down2/cnt_export_reg[0]_syn_5.oqb
+net (fo=23)                             0.796          3.927          net: u_down2/o_output_index[1]_dup_9,  ../rtl/road_down2_tile_scheduler.v(24)
+                                                                      pin: u_down2/ramread48_syn_272.ia
+DRAM                x011y033z1          0.408    f     4.335       1  pin: u_down2/ramread48_syn_272.ofb
+net (fo=1)                              0.849          5.184          net: u_down2/ramread48_syn_68,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_130.ic
+LUT6                x010y032z7          0.265    r     5.449       2  pin: u_down2/ramread48_syn_130.relut6
+net (fo=1)                              0.000          5.449          net: u_down2/ramread48_syn_132[1],  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_104.muxi[1]
+F7MUX               x010y032            0.075    r     5.524          pin: u_down2/ramread48_syn_104.muxo
+net (fo=1)                              0.000          5.524          net: u_down2/ramread48_syn_134,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_129.f78i
+                    x010y032z6          0.078    f     5.602          pin: u_down2/ramread48_syn_129.ofa
+net (fo=1)                              0.506          6.108          net: d_output_data[1],  ../rtl/road_frontend_shared_core.v(42)
+                                                                      pin: o_output_data[0]_syn_7.id
+LUT3                x010y037z3          0.266    f     6.374       3  pin: o_output_data[0]_syn_7.ofa
+net (fo=1)                              2.536          8.910          net: o_output_data[1]_dup_1,  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[1]_syn_2.doq[0]
+PAD                 x043y064            0.648    r     9.558       4  pin: o_output_data[1]_syn_2.sg09_do
+PAD                 x043y064            2.520    r    12.078       5  pin: o_output_data[1]_syn_2.opad
+net (fo=1)                              0.000         12.078          net: o_output_data[1],  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[1]
+--------------------------------------------------------------------  ---------------
+Arrival                                               12.078               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -2.128               
+
+Slack               : -2.090ns
+Begin Point         : u_down2/cnt_export_reg[2]_syn_5.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[0] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 9.063ns (cell 4.291ns (47%), net 4.772ns (53%))
+Clock Skew          : 2.977ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 69
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.633          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/cnt_export_reg[2]_syn_5.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x012y034z4          0.126    f     3.103          pin: u_down2/cnt_export_reg[2]_syn_5.oqa
+net (fo=69)                             0.971          4.074          net: u_down2/o_output_index[2],  ../rtl/road_down2_tile_scheduler.v(24)
+                                                                      pin: u_down2/ramread48_syn_231.ib
+DRAM                x009y030z0          0.427    f     4.501       1  pin: u_down2/ramread48_syn_231.ofb
+net (fo=1)                              0.675          5.176          net: u_down2/ramread48_syn_51,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_123.imf
+LUT6                x010y032z2          0.146    r     5.322       2  pin: u_down2/ramread48_syn_123.relut6
+net (fo=1)                              0.000          5.322          net: u_down2/ramread48_syn_126[0],  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_101.muxi[0]
+F7MUX               x010y032            0.075    r     5.397          pin: u_down2/ramread48_syn_101.muxo
+net (fo=1)                              0.000          5.397          net: u_down2/ramread48_syn_128,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_123.f78i
+                    x010y032z2          0.078    f     5.475          pin: u_down2/ramread48_syn_123.ofa
+net (fo=1)                              0.510          5.985          net: d_output_data[0],  ../rtl/road_frontend_shared_core.v(42)
+                                                                      pin: o_output_data[0]_syn_7.imb
+LUT3                x010y037z3          0.271    r     6.256       3  pin: o_output_data[0]_syn_7.ofb
+net (fo=1)                              2.616          8.872          net: o_output_data[0]_dup_1,  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[0]_syn_2.doq[0]
+PAD                 x043y064            0.648    r     9.520       4  pin: o_output_data[0]_syn_2.sg09_do
+PAD                 x043y064            2.520    r    12.040       5  pin: o_output_data[0]_syn_2.opad
+net (fo=1)                              0.000         12.040          net: o_output_data[0],  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[0]
+--------------------------------------------------------------------  ---------------
+Arrival                                               12.040               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -2.090               
+
+Slack               : -2.003ns
+Begin Point         : u_down2/cnt_export_reg[0]_syn_5.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[3] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 8.959ns (cell 4.397ns (49%), net 4.562ns (51%))
+Clock Skew          : 2.994ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 23
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.650          2.994          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/cnt_export_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.994               
+--------------------------------------------------------------------  ---------------
+clk2q               x010y033z7          0.137    r     3.131          pin: u_down2/cnt_export_reg[0]_syn_5.oqb
+net (fo=23)                             0.796          3.927          net: u_down2/o_output_index[1]_dup_9,  ../rtl/road_down2_tile_scheduler.v(24)
+                                                                      pin: u_down2/ramread48_syn_274.ia
+DRAM                x011y033z3          0.408    f     4.335       1  pin: u_down2/ramread48_syn_274.ofb
+net (fo=1)                              0.750          5.085          net: u_down2/ramread48_syn_70,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_142.ic
+LUT6                x010y033z3          0.265    r     5.350       2  pin: u_down2/ramread48_syn_142.relut6
+net (fo=1)                              0.000          5.350          net: u_down2/ramread48_syn_144[1],  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_110.muxi[1]
+F7MUX               x010y033            0.075    r     5.425          pin: u_down2/ramread48_syn_110.muxo
+net (fo=1)                              0.000          5.425          net: u_down2/ramread48_syn_146,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_141.f78i
+                    x010y033z2          0.078    f     5.503          pin: u_down2/ramread48_syn_141.ofa
+net (fo=1)                              0.512          6.015          net: d_output_data[3],  ../rtl/road_frontend_shared_core.v(42)
+                                                                      pin: o_output_data[4]_syn_7.id
+LUT3                x012y036z6          0.266    f     6.281       3  pin: o_output_data[4]_syn_7.ofa
+net (fo=1)                              2.504          8.785          net: o_output_data[3]_dup_1,  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[3]_syn_2.doq[0]
+PAD                 x043y061            0.648    r     9.433       4  pin: o_output_data[3]_syn_2.sg09_do
+PAD                 x043y061            2.520    r    11.953       5  pin: o_output_data[3]_syn_2.opad
+net (fo=1)                              0.000         11.953          net: o_output_data[3],  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[3]
+--------------------------------------------------------------------  ---------------
+Arrival                                               11.953               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -2.003               
+
+Slack               : -1.787ns
+Begin Point         : u_down2/cnt_export_reg[0]_syn_5.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[7] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 8.743ns (cell 4.283ns (48%), net 4.460ns (52%))
+Clock Skew          : 2.994ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 23
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.650          2.994          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/cnt_export_reg[0]_syn_5.clk
+launch edge                             0.000    r     2.994               
+--------------------------------------------------------------------  ---------------
+clk2q               x010y033z7          0.137    r     3.131          pin: u_down2/cnt_export_reg[0]_syn_5.oqb
+net (fo=23)                             1.018          4.149          net: u_down2/o_output_index[1]_dup_9,  ../rtl/road_down2_tile_scheduler.v(24)
+                                                                      pin: u_down2/ramread48_syn_238.ia
+DRAM                x009y030z7          0.408    f     4.557       1  pin: u_down2/ramread48_syn_238.ofb
+net (fo=1)                              0.578          5.135          net: u_down2/ramread48_syn_58,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_165.imf
+LUT6                x011y034z4          0.146    r     5.281       2  pin: u_down2/ramread48_syn_165.relut6
+net (fo=1)                              0.000          5.281          net: u_down2/ramread48_syn_168[0],  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_122.muxi[0]
+F7MUX               x011y034            0.075    r     5.356          pin: u_down2/ramread48_syn_122.muxo
+net (fo=1)                              0.000          5.356          net: u_down2/ramread48_syn_170,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_165.f78i
+                    x011y034z4          0.078    f     5.434          pin: u_down2/ramread48_syn_165.ofa
+net (fo=1)                              0.424          5.858          net: d_output_data[7],  ../rtl/road_frontend_shared_core.v(42)
+                                                                      pin: o_output_index[5]_syn_4.imb
+LUT3                x010y037z1          0.271    r     6.129       3  pin: o_output_index[5]_syn_4.ofb
+net (fo=1)                              2.440          8.569          net: o_output_data[7]_dup_1,  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[7]_syn_2.doq[0]
+PAD                 x043y053            0.648    r     9.217       4  pin: o_output_data[7]_syn_2.sg09_do
+PAD                 x043y053            2.520    r    11.737       5  pin: o_output_data[7]_syn_2.opad
+net (fo=1)                              0.000         11.737          net: o_output_data[7],  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[7]
+--------------------------------------------------------------------  ---------------
+Arrival                                               11.737               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.787               
+
+Slack               : -1.750ns
+Begin Point         : u_down2/cnt_export_reg[0]_syn_6.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[5] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 8.706ns (cell 4.320ns (49%), net 4.386ns (51%))
+Clock Skew          : 2.994ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 29
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.650          2.994          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/cnt_export_reg[0]_syn_6.clk
+launch edge                             0.000    r     2.994               
+--------------------------------------------------------------------  ---------------
+clk2q               x010y034z1          0.137    r     3.131          pin: u_down2/cnt_export_reg[0]_syn_6.oqb
+net (fo=29)                             1.371          4.502          net: u_down2/o_output_index[1]_dup_8,  ../rtl/road_down2_tile_scheduler.v(24)
+                                                                      pin: u_down2/ramread48_syn_216.ia
+DRAM                x011y032z5          0.408    f     4.910       1  pin: u_down2/ramread48_syn_216.ofb
+net (fo=1)                              0.370          5.280          net: u_down2/ramread48_syn_48,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_153.ic
+LUT6                x010y032z4          0.265    r     5.545       2  pin: u_down2/ramread48_syn_153.relut6
+net (fo=1)                              0.000          5.545          net: u_down2/ramread48_syn_156[0],  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_116.muxi[0]
+F7MUX               x010y032            0.075    r     5.620          pin: u_down2/ramread48_syn_116.muxo
+net (fo=1)                              0.000          5.620          net: u_down2/ramread48_syn_158,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_153.f78i
+                    x010y032z4          0.078    f     5.698          pin: u_down2/ramread48_syn_153.ofa
+net (fo=1)                              0.488          6.186          net: d_output_data[5],  ../rtl/road_frontend_shared_core.v(42)
+                                                                      pin: o_output_data[5]_syn_7.ie
+LUT3                x014y036z1          0.189    r     6.375       3  pin: o_output_data[5]_syn_7.ofb
+net (fo=1)                              2.157          8.532          net: o_output_data[5]_dup_1,  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[5]_syn_2.doq[0]
+PAD                 x043y056            0.648    r     9.180       4  pin: o_output_data[5]_syn_2.sg09_do
+PAD                 x043y056            2.520    r    11.700       5  pin: o_output_data[5]_syn_2.opad
+net (fo=1)                              0.000         11.700          net: o_output_data[5],  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[5]
+--------------------------------------------------------------------  ---------------
+Arrival                                               11.700               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.750               
+
+Slack               : -1.725ns
+Begin Point         : u_down2/cnt_export_reg[1]_syn_5.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[4] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 8.681ns (cell 4.391ns (50%), net 4.290ns (50%))
+Clock Skew          : 2.994ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 12
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.650          2.994          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/cnt_export_reg[1]_syn_5.clk
+launch edge                             0.000    r     2.994               
+--------------------------------------------------------------------  ---------------
+clk2q               x010y034z0          0.126    f     3.120          pin: u_down2/cnt_export_reg[1]_syn_5.oqa
+net (fo=12)                             1.295          4.415          net: u_down2/o_output_index[1]_dup_7,  ../rtl/road_down2_tile_scheduler.v(24)
+                                                                      pin: u_down2/ramread48_syn_275.ia
+DRAM                x011y033z4          0.408    f     4.823       1  pin: u_down2/ramread48_syn_275.ofb
+net (fo=1)                              0.399          5.222          net: u_down2/ramread48_syn_71,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_148.ic
+LUT6                x011y034z1          0.265    r     5.487       2  pin: u_down2/ramread48_syn_148.relut6
+net (fo=1)                              0.000          5.487          net: u_down2/ramread48_syn_150[1],  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_113.muxi[1]
+F7MUX               x011y034            0.075    r     5.562          pin: u_down2/ramread48_syn_113.muxo
+net (fo=1)                              0.000          5.562          net: u_down2/ramread48_syn_152,  ../rtl/road_down2_tile_scheduler.v(434)
+                                                                      pin: u_down2/ramread48_syn_147.f78i
+                    x011y034z0          0.078    f     5.640          pin: u_down2/ramread48_syn_147.ofa
+net (fo=1)                              0.295          5.935          net: d_output_data[4],  ../rtl/road_frontend_shared_core.v(42)
+                                                                      pin: o_output_data[4]_syn_7.imb
+LUT3                x012y036z6          0.271    r     6.206       3  pin: o_output_data[4]_syn_7.ofb
+net (fo=1)                              2.301          8.507          net: o_output_data[4]_dup_1,  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[4]_syn_2.doq[0]
+PAD                 x043y061            0.648    r     9.155       4  pin: o_output_data[4]_syn_2.sg09_do
+PAD                 x043y061            2.520    r    11.675       5  pin: o_output_data[4]_syn_2.opad
+net (fo=1)                              0.000         11.675          net: o_output_data[4],  ../rtl/road_frontend_shared_core.v(31)
+                                                                      pin: o_output_data[4]
+--------------------------------------------------------------------  ---------------
+Arrival                                               11.675               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.725               
+
+Slack               : -1.617ns
+Begin Point         : u_stem/cnt_channel_reg[3]_syn_21.clk (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_stem/reg_mac_weight_reg[103]_syn_2.imf (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { frontend_clk rising@10.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 11.358ns (cell 3.728ns (32%), net 7.630ns (68%))
+Clock Skew          : 0.120ns
+Logic Level         : 6 ( LUT6=1  LUT4=1  LUT3=1  LUT2=1  DSPMULT=1  DRAM=1 )
+Max Fanout          : 42
+Clock Uncertainty   : 0.075ns (sdc uncertainty: 0.000ns, default uncertainty: 0.075ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_stem/cnt_channel_reg[3]_syn_21.clk
+launch edge                             0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+clk2q               x018y020z3          0.126    f     3.102          pin: u_stem/cnt_channel_reg[3]_syn_21.oqa
+net (fo=15)                             0.458          3.560          net: u_stem/o_pp_tags[3]_dup_27,  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(38)
+                                                                      pin: u_stem/cnt_channel_reg[0]_syn_21.ia
+LUT4                x017y018z4          0.399    f     3.959       1  pin: u_stem/cnt_channel_reg[0]_syn_21.ofb
+net (fo=42)                             2.389          6.348          net: u_stem/o_pp_tags[19],  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(38)
+                                                                      pin: u_stem/mult3_syn_57.xa[3]
+DSPSIOU             x027y048            0.515    r     6.863          pin: u_stem/mult3_syn_57.mult_x[3]
+net (fo=1)                              0.000          6.863          net: u_stem/mult3_syn_59[3],  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(163)
+                                                                      pin: u_stem/mult3_syn_58.x[3]
+DSPMULT             x027y048            0.879    r     7.742       2  pin: u_stem/mult3_syn_58.p[3]
+net (fo=1)                              0.000          7.742          net: u_stem/mult3_syn_105[3],  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(163)
+                                                                      pin: u_stem/mult3_syn_57.mult_p[3]
+DSPSIOU             x027y048            0.604    f     8.346          pin: u_stem/mult3_syn_57.p[3]
+net (fo=35)                             2.649         10.995          net: u_stem/mult3_syn_3[3],  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(163)
+                                                                      pin: u_stem/next_weight_b18[1]_syn_8.ic
+LUT3                x029y065z4          0.283    r    11.278       3  pin: u_stem/next_weight_b18[1]_syn_8.ofb
+net (fo=32)                             0.604         11.882          net: u_stem/next_weight_b18[1]_dup_5,  NOFILE(0)
+                                                                      pin: u_stem/ramread11_syn_4891.ic
+DRAM                x029y071z7          0.287    r    12.169       4  pin: u_stem/ramread11_syn_4891.ofb
+net (fo=1)                              0.977         13.146          net: u_stem/ramread11_syn_553,  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(163)
+                                                                      pin: u_stem/ramread11_syn_3410.ic
+LUT6                x030y071z0          0.265    r    13.411       5  pin: u_stem/ramread11_syn_3410.relut6
+net (fo=1)                              0.000         13.411          net: u_stem/ramread11_syn_3413[0],  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(163)
+                                                                      pin: u_stem/ramread11_syn_1911.muxi[0]
+F7MUX               x030y071            0.075    r    13.486          pin: u_stem/ramread11_syn_1911.muxo
+net (fo=1)                              0.000         13.486          net: u_stem/ramread11_syn_3415,  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(163)
+                                                                      pin: u_stem/ramread11_syn_3410.f78i
+                    x030y071z0          0.078    f    13.564          pin: u_stem/ramread11_syn_3410.ofa
+net (fo=1)                              0.553         14.117          net: u_stem/next_weight_b14[7],  NOFILE(0)
+                                                                      pin: u_stem/reg_mac_weight_reg[103]_syn_2.imf
+LUT2 (reg)          x032y065z0          0.217    f    14.334       6  net: u_stem/o_mac_weight[103],  ../../stem_down2_handoff_20261011/rtl/road_stem_tile_scheduler.v(24)
+--------------------------------------------------------------------  ---------------
+Arrival                                               14.334               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.556          0.556          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.448          1.004          pin: i_clk_syn_2.di
+net (fo=1)                              0.675          1.679          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.014          1.693          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.339          2.032          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_r_bk1.clkin
+SCLK                x023y059z12         0.068          2.100          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_r_bk1.clkout
+net (fo=395)                            0.552          2.652          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_stem/reg_mac_weight_reg[103]_syn_2.clk
+capture edge                           10.000    r    12.652               
+--------------------------------------------------------------------  ---------------
+setup                                  -0.064         12.588               
+clock uncertainty                      -0.075         12.513               
+clock pessimism                         0.204         12.717               
+--------------------------------------------------------------------  ---------------
+Required                                              12.717               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.617               
+
+
+Period Check
+----------------------------------------------------------------------------------------------------
+    Type       Setting(ns)      Required(ns)         Slack(ns)   Point
+--------------------------------------------------------------------------------
+    DRAM            10.000             2.800             7.200   u_down2/ramread45_syn_96.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_182.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread52_syn_53.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread52_syn_73.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread45_syn_136.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread12_syn_48.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread55_syn_48.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5192.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread12_syn_109.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread5_syn_168.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread19_syn_28.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread21_syn_69.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread12_syn_149.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_279.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread1_syn_227.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread3_syn_155.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread4_syn_154.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7192.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1468.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread36_syn_96.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread33_syn_96.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread0_syn_53.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread0_syn_73.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread33_syn_56.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread36_syn_136.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread33_syn_136.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread36_syn_56.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread12_syn_28.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread45_syn_36.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread45_syn_76.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread45_syn_116.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread48_syn_179.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread48_syn_199.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread48_syn_219.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread48_syn_239.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread48_syn_259.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread48_syn_279.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread48_syn_299.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_42.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_62.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_82.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_122.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_142.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_162.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_202.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_222.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_242.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread55_syn_28.wclk
+    DRAM            10.000             2.800             7.200   u_mac/ramread0_syn_162.wclk
+    DRAM            10.000             2.800             7.200   u_mac/ramread0_syn_182.wclk
+    DRAM            10.000             2.800             7.200   u_mac/ramread0_syn_202.wclk
+    DRAM            10.000             2.800             7.200   u_mac/ramread0_syn_222.wclk
+    DRAM            10.000             2.800             7.200   u_mac/ramread0_syn_242.wclk
+    DRAM            10.000             2.800             7.200   u_mac/ramread0_syn_262.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread12_syn_69.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread12_syn_89.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_39.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_59.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_79.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_99.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_119.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_139.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_159.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_179.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_199.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_219.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_239.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread15_syn_259.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread21_syn_29.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread21_syn_49.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread1_syn_167.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread1_syn_187.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread1_syn_207.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1408.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1428.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1448.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4732.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4752.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4772.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4792.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4812.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4832.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4852.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5212.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5232.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5252.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5272.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5292.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5312.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7052.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7072.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7092.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7112.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7132.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7152.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7172.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread33_syn_36.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread33_syn_76.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread33_syn_116.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread36_syn_36.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread36_syn_76.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread36_syn_116.wclk
+    DRAM            10.000             2.800             7.200   u_pp/ramread12_syn_129.wclk
+    DRAM            10.000             2.800             7.200   u_mac/ramread0_syn_282.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread0_syn_33.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread45_syn_56.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread48_syn_319.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_102.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread49_syn_262.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread52_syn_33.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2457.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_930.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2377.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6212.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1597.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1617.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1637.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1677.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1697.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1717.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1757.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1777.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1797.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1837.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1857.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1877.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1917.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1937.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1957.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1997.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2017.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2037.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2077.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2097.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2117.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2157.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2177.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2197.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2237.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2257.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2277.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2317.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2337.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2357.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2397.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2417.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2437.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_630.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_650.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_670.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_690.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_710.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_730.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_750.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_790.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_810.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_830.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_850.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_870.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_890.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_910.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_950.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_970.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_990.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_1010.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_1030.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_1050.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_1070.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4272.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4292.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4312.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4332.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4352.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4372.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4392.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4572.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4592.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4612.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4632.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4652.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4672.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4692.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5032.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5052.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5072.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5092.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5112.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5132.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5152.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5652.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5672.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5692.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5712.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5732.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5752.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5772.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5972.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6112.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6132.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6152.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6172.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6192.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5172.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4712.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4252.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6232.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6732.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6752.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6772.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6792.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6812.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6832.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6852.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6872.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2137.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2057.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_1090.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1977.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1897.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread14_syn_770.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2297.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_2217.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1657.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1737.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread1_syn_1817.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9232.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10192.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1788.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9472.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1708.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9412.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9272.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9252.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9032.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9192.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1548.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9212.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9072.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10112.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9112.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9352.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10392.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9372.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10412.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10432.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10452.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10472.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10492.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10512.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10532.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9652.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10552.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10572.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10592.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10612.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10632.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10652.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10672.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10692.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10712.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10732.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10752.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10772.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10792.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10812.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10832.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10852.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10872.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10892.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10912.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10932.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10952.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10992.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_11032.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_11052.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_11072.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_11092.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_11112.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10132.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10312.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10092.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9172.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9092.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9292.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10292.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10152.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9152.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10232.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9632.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9452.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9612.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9572.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9552.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9592.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9512.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10212.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10252.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10372.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9132.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10172.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10272.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9532.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9492.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread13_syn_222.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread13_syn_242.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread13_syn_262.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1168.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1188.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1208.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1248.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1268.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1288.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1328.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1348.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1368.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1488.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1508.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1528.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1568.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1588.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1608.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1648.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1668.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1688.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1728.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1748.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1768.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5552.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5572.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6412.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6432.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6452.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6472.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6492.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6512.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6532.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1628.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9672.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9692.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9712.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9732.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10052.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10032.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10012.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9992.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9972.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9952.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9932.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9892.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9872.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9852.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9832.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9812.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9012.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6552.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8972.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9312.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8792.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8812.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8832.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8852.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8872.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10352.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10072.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10332.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9332.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9392.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9052.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9432.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1228.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread13_syn_282.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8992.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1308.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread10_syn_1388.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9792.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6932.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5472.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7032.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_10972.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_11012.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_3952.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_3972.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_3992.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4012.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4032.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4052.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4072.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4112.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4132.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4152.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4172.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4192.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4212.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4232.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4412.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4432.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4452.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4472.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4492.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4512.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4532.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4872.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4892.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4912.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4932.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4952.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4972.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4992.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5332.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5352.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5372.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5392.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5412.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5432.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5452.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5492.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5512.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5532.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5592.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5612.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5792.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5812.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5832.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5852.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5872.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5892.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5912.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5952.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5992.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6012.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6032.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6052.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6072.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5012.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4552.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_4092.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6252.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6272.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6292.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6312.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6332.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6352.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6372.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6572.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6592.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6612.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6632.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6652.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6672.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6692.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6892.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6912.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6952.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6972.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6992.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_7012.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8752.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9752.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9772.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_9912.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6712.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6392.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_6092.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5932.wclk
+    DRAM            10.000             2.800             7.200   u_stem/ramread11_syn_5632.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8772.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8892.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8912.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8932.wclk
+    DRAM            10.000             2.800             7.200   u_down2/ramread0_syn_8952.wclk
+
+Min Paths
+----------------------------------------------------------------------------------------------------
+Slack               : -1.969ns
+Begin Point         : i_rstn (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_down2/reg_dw_triplet_result_reg[29]_syn_2.asr (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.028ns (cell 0.745ns (72%), net 0.283ns (28%))
+Clock Skew          : 2.997ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3148
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=3148)                           0.283          1.028          net: i_rstn_dup_1,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[29]_syn_2.asr
+reg                 x006y001z1          0.000    f     1.028               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.028               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[29]_syn_2.clk
+capture edge                            0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.997               
+clock uncertainty                       0.000          2.997               
+clock pessimism                         0.000          2.997               
+--------------------------------------------------------------------  ---------------
+Required                                               2.997               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.969               
+
+Slack               : -1.969ns
+Begin Point         : i_rstn (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_down2/reg_dw_triplet_result_reg[19]_syn_2.asr (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.028ns (cell 0.745ns (72%), net 0.283ns (28%))
+Clock Skew          : 2.997ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3148
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=3148)                           0.283          1.028          net: i_rstn_dup_1,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[19]_syn_2.asr
+reg                 x006y001z4          0.000    f     1.028               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.028               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[19]_syn_2.clk
+capture edge                            0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.997               
+clock uncertainty                       0.000          2.997               
+clock pessimism                         0.000          2.997               
+--------------------------------------------------------------------  ---------------
+Required                                               2.997               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.969               
+
+Slack               : -1.969ns
+Begin Point         : i_rstn (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_down2/reg_dw_triplet_result_reg[61]_syn_2.asr (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.028ns (cell 0.745ns (72%), net 0.283ns (28%))
+Clock Skew          : 2.997ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3148
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=3148)                           0.283          1.028          net: i_rstn_dup_1,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[61]_syn_2.asr
+reg                 x006y001z7          0.000    f     1.028               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.028               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[61]_syn_2.clk
+capture edge                            0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.997               
+clock uncertainty                       0.000          2.997               
+clock pessimism                         0.000          2.997               
+--------------------------------------------------------------------  ---------------
+Required                                               2.997               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.969               
+
+Slack               : -1.846ns
+Begin Point         : i_rstn (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_down2/reg_dw_triplet_result_reg[42]_syn_2.asr (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.151ns (cell 0.745ns (64%), net 0.406ns (36%))
+Clock Skew          : 2.997ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3148
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=3148)                           0.406          1.151          net: i_rstn_dup_1,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[42]_syn_2.asr
+reg                 x006y002z7          0.000    f     1.151               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.151               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[42]_syn_2.clk
+capture edge                            0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.997               
+clock uncertainty                       0.000          2.997               
+clock pessimism                         0.000          2.997               
+--------------------------------------------------------------------  ---------------
+Required                                               2.997               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.846               
+
+Slack               : -1.846ns
+Begin Point         : i_rstn (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_down2/reg_dw_triplet_result_reg[40]_syn_2.asr (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.151ns (cell 0.745ns (64%), net 0.406ns (36%))
+Clock Skew          : 2.997ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3148
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=3148)                           0.406          1.151          net: i_rstn_dup_1,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[40]_syn_2.asr
+reg                 x006y002z6          0.000    f     1.151               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.151               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[40]_syn_2.clk
+capture edge                            0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.997               
+clock uncertainty                       0.000          2.997               
+clock pessimism                         0.000          2.997               
+--------------------------------------------------------------------  ---------------
+Required                                               2.997               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.846               
+
+Slack               : -1.846ns
+Begin Point         : i_rstn (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_down2/reg_dw_triplet_result_reg[83]_syn_2.asr (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.151ns (cell 0.745ns (64%), net 0.406ns (36%))
+Clock Skew          : 2.997ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3148
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=3148)                           0.406          1.151          net: i_rstn_dup_1,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[83]_syn_2.asr
+reg                 x006y002z0          0.000    f     1.151               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.151               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[83]_syn_2.clk
+capture edge                            0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.997               
+clock uncertainty                       0.000          2.997               
+clock pessimism                         0.000          2.997               
+--------------------------------------------------------------------  ---------------
+Required                                               2.997               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.846               
+
+Slack               : -1.846ns
+Begin Point         : i_rstn (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_down2/reg_dw_triplet_result_reg[32]_syn_2.asr (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.151ns (cell 0.745ns (64%), net 0.406ns (36%))
+Clock Skew          : 2.997ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3148
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=3148)                           0.406          1.151          net: i_rstn_dup_1,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[32]_syn_2.asr
+reg                 x006y002z5          0.000    f     1.151               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.151               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[32]_syn_2.clk
+capture edge                            0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.997               
+clock uncertainty                       0.000          2.997               
+clock pessimism                         0.000          2.997               
+--------------------------------------------------------------------  ---------------
+Required                                               2.997               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.846               
+
+Slack               : -1.846ns
+Begin Point         : i_rstn (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_down2/reg_dw_triplet_result_reg[41]_syn_2.asr (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.151ns (cell 0.745ns (64%), net 0.406ns (36%))
+Clock Skew          : 2.997ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 3148
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=3148)                           0.406          1.151          net: i_rstn_dup_1,  ../rtl/road_frontend_shared_core.v(6)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[41]_syn_2.asr
+reg                 x006y002z4          0.000    f     1.151               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.151               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.653          2.997          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_down2/reg_dw_triplet_result_reg[41]_syn_2.clk
+capture edge                            0.000    r     2.997               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.997               
+clock uncertainty                       0.000          2.997               
+clock pessimism                         0.000          2.997               
+--------------------------------------------------------------------  ---------------
+Required                                               2.997               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.846               
+
+Slack               : -1.821ns
+Begin Point         : i_table_data[11] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_pp/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[9] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.573ns (cell 0.745ns (47%), net 0.828ns (53%))
+Clock Skew          : 3.067ns
+Logic Level         : 3 ( HDIO=2  ERAM=1 )
+Max Fanout          : 1
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_table_data[11]
+net (fo=1)                              0.000          0.000          net: i_table_data[11],  ../rtl/road_frontend_shared_core.v(13)
+                                                                      pin: i_table_data[11]_syn_2.ipad
+HDIO                x023y000            0.745    r     0.745       1  pin: i_table_data[11]_syn_2.sg09_di
+HDIO                x023y000            0.000    f     0.745       2  pin: i_table_data[11]_syn_2.di
+net (fo=1)                              0.828          1.573          net: i_table_data[11]_dup_1,  ../rtl/road_frontend_shared_core.v(13)
+                                                                      pin: u_pp/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[9]
+ERAM (reg)          x007y012            0.000    f     1.573       3       
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.573               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.723          3.067          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_pp/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     3.067               
+--------------------------------------------------------------------  ---------------
+hold                                    0.327          3.394               
+clock uncertainty                       0.000          3.394               
+clock pessimism                         0.000          3.394               
+--------------------------------------------------------------------  ---------------
+Required                                               3.394               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.821               
+
+Slack               : -1.810ns
+Begin Point         : i_table_data[8] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_pp/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[7] (rising edge triggered by clock frontend_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { frontend_clk rising@0.000ns - frontend_clk rising@0.000ns }
+Data Path Delay     : 1.584ns (cell 0.745ns (47%), net 0.839ns (53%))
+Clock Skew          : 3.067ns
+Logic Level         : 3 ( HDIO=2  ERAM=1 )
+Max Fanout          : 1
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_table_data[8]
+net (fo=1)                              0.000          0.000          net: i_table_data[8],  ../rtl/road_frontend_shared_core.v(13)
+                                                                      pin: i_table_data[8]_syn_2.ipad
+HDIO                x024y000            0.745    r     0.745       1  pin: i_table_data[8]_syn_2.sg09_di
+HDIO                x024y000            0.000    f     0.745       2  pin: i_table_data[8]_syn_2.di
+net (fo=1)                              0.839          1.584          net: i_table_data[8]_dup_1,  ../rtl/road_frontend_shared_core.v(13)
+                                                                      pin: u_pp/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.dia[7]
+ERAM (reg)          x007y012            0.000    f     1.584       3       
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.584               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_frontend_shared_core.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=1533)                           0.723          3.067          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_pp/u_silu/PH1P_LOGIC_ERAM_Inst_silu_table_syn_1.clka
+capture edge                            0.000    r     3.067               
+--------------------------------------------------------------------  ---------------
+hold                                    0.327          3.394               
+clock uncertainty                       0.000          3.394               
+clock pessimism                         0.000          3.394               
+--------------------------------------------------------------------  ---------------
+Required                                               3.394               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.810               
+
+
+Inter clock domain timing
+--------------------------------------------------
+
+IP timing
+--------------------------------------------------

@@ -1,0 +1,719 @@
+{
+  "modules": [
+    {
+      "name": "road_down2_tile_scheduler",
+      "feature": "shared_frontend",
+      "rtl_path": "road_down2_tile_scheduler.v",
+      "description": "冻结Stem/down2调度对唯一MAC及动态后处理的互斥共享，不含DDR和整帧存储。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_clk",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_rstn",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_table_loaded",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_table_loaded",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_load_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_load_valid",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_load_kind",
+            "direction": "input",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "i_load_kind",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_load_addr",
+            "direction": "input",
+            "width": 11,
+            "clock_domain": "i_clk",
+            "role": "i_load_addr",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_load_data",
+            "direction": "input",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "i_load_data",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_load_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_load_ready",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_start",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pw_only",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pw_only",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_commit_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_commit_ready",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_busy",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_done",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_fault",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_export_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_export_start",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_output_ready",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_output_valid",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_output_data",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_output_index",
+            "direction": "output",
+            "width": 9,
+            "clock_domain": "i_clk",
+            "role": "o_output_index",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_export_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_export_done",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_debug_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_debug_valid",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_debug_phase",
+            "direction": "output",
+            "width": 2,
+            "clock_domain": "i_clk",
+            "role": "o_debug_phase",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_debug_layer",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_debug_layer",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_debug_position",
+            "direction": "output",
+            "width": 4,
+            "clock_domain": "i_clk",
+            "role": "o_debug_position",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_debug_channel",
+            "direction": "output",
+            "width": 5,
+            "clock_domain": "i_clk",
+            "role": "o_debug_channel",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_debug_value",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_debug_value",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_preload_writes",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_preload_writes",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_core_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_core_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_mac_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pre_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_pre_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_silu_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_silu_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_post_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_post_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_writeback_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_writeback_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_storage_wait_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_storage_wait_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_scheduler_idle_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_scheduler_idle_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_export_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_export_cycles",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_result_queue_count",
+            "direction": "output",
+            "width": 2,
+            "clock_domain": "i_clk",
+            "role": "o_result_queue_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_result_reserved",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_result_reserved",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_meta_count",
+            "direction": "output",
+            "width": 4,
+            "clock_domain": "i_clk",
+            "role": "o_meta_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_result_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_mac_result_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pre_accept_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_pre_accept_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_silu_accept_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_silu_accept_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_post_accept_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_post_accept_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_writeback_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_writeback_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_mac_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_ready",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_mac_result_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_result_valid",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_mac_result",
+            "direction": "input",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "i_mac_result",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_mac_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_fault",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_valid",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_first",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_first",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_last",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_last",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_mask",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_mac_mask",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_activation",
+            "direction": "output",
+            "width": 64,
+            "clock_domain": "i_clk",
+            "role": "o_mac_activation",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_weight",
+            "direction": "output",
+            "width": 192,
+            "clock_domain": "i_clk",
+            "role": "o_mac_weight",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_bias",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_mac_bias",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_mac_result_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_result_ready",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_ready",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_valid",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_data",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_pp_data",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_tag",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_pp_tag",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_int16",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_int16",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_fault",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_result_queue_count",
+            "direction": "input",
+            "width": 2,
+            "clock_domain": "i_clk",
+            "role": "i_pp_result_queue_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_meta_count",
+            "direction": "input",
+            "width": 4,
+            "clock_domain": "i_clk",
+            "role": "i_pp_meta_count",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_pre_busy",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_pre_busy",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_silu_busy",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_silu_busy",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_post_busy",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_post_busy",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_pre_accept",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_pre_accept",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_silu_accept",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_silu_accept",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "i_pp_post_accept",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_post_accept",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_valid",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_acc",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_pp_acc",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_multipliers",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_pp_multipliers",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_shifts",
+            "direction": "output",
+            "width": 18,
+            "clock_domain": "i_clk",
+            "role": "o_pp_shifts",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_post_multiplier",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_pp_post_multiplier",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_post_shift",
+            "direction": "output",
+            "width": 6,
+            "clock_domain": "i_clk",
+            "role": "o_pp_post_shift",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_mask",
+            "direction": "output",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "o_pp_mask",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_tags",
+            "direction": "output",
+            "width": 48,
+            "clock_domain": "i_clk",
+            "role": "o_pp_tags",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_input_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_input_fault",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          },
+          {
+            "name": "o_pp_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_ready",
+            "description": "单时钟固定前端接口；有效负载保持到ready，完整表和参数后才能计算；复位立即取消。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "立即取消在途及所有loaded状态；调用者同步释放；重新装满1024项表与参数。"
+      },
+      "behavior": [
+        "Stem4×4×16，down2 DW4×4×16再PW4×4×24，原数值、算术核和II不变。",
+        "共享顶层owner只在两个调度器空闲、算术排空且结果导出完成时切换；未导出结果禁止覆盖。",
+        "表只装一次后可切换算子；复位后不允许继续使用旧表。",
+        "顺序装载由各调度器按既有kind编码验证，数据必须保持直至ready；故障只可复位恢复。"
+      ],
+      "constraints": [
+        "独立功能候选，TEST_ONLY动态系数；没有部署QAT或真实DDR完成语义。",
+        "不声称全网5FPS或生产时序通过；本次不增加任务重叠。"
+      ],
+      "corner_cases": [
+        "部分表和halo、尾lane、未导出交接、背压、复位取消、非法装载。"
+      ],
+      "verification_cases": [
+        "同冻结2304Stem及576down2全量阶段/缓存读口比较；单算术链共享。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "handoff",
+          "title": "排空后切换",
+          "scenario": "handoff",
+          "description": "压缩示意；busy和未导出均阻止切换，导出完成后的空闲拍允许握手。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "busy",
+                "wave": "1.0....."
+              },
+              {
+                "name": "unexported",
+                "wave": "0.1..0.."
+              },
+              {
+                "name": "select_valid",
+                "wave": "0.....10"
+              },
+              {
+                "name": "select_ready",
+                "wave": "0.....1."
+              },
+              {
+                "name": "owner_down2",
+                "wave": "0......1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
