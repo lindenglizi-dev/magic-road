@@ -294,4 +294,9 @@ def main() -> None:
     result = run_video(args.video, args.output, args.frames, args.threshold, args.mode,
                        args.start_frame)
     print(json.dumps({key: result[key] for key in (
-        "processed_frames", "learning_frames", "candidate_frames", "candidate_count
+        "processed_frames", "learning_frames", "candidate_frames", "candidate_count")},
+        ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

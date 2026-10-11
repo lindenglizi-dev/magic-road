@@ -99,4 +99,8 @@ report = {
     'run_filter_default2':timings(old_chain.filter_short_runs, candidate_chain_reference.filter_short_runs, masks),
     'model_receipt':model_receipt, 'data_hashes':sources,
     'source_hashes':{f:digest(ROOT/f) for f in changed},
-    'before_hashes':
+    'before_hashes':{p.name:digest(p) for p in sorted((OUT/'before').glob('*.py'))},
+    'scope':'CPU function timings only; no FPGA speed, end-to-end FPS, accuracy improvement or new RTL equivalence claim',
+}
+(OUT/'benchmark.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+print(json.dumps({k:v for k,v in report.items() if k not in ['data_hashes','model_receipt','source_hashes','before_hashes']}, ensure_ascii=False, indent=2))

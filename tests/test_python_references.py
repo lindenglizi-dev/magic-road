@@ -486,4 +486,9 @@ class SingleTaskProtocolTests(unittest.TestCase):
     def test_randomized_invariants(self):
         for seed in (1, 7, 23):
             result = randomized_trial(seed, 500)
-            self.assertGreater(result[
+            self.assertGreater(result["event_count"], 0)
+            self.assertGreater(result["counters"].get("published_task", 0), 0)
+
+
+if __name__ == "__main__":
+    unittest.main()
