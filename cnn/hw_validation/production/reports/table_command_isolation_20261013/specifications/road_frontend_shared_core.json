@@ -1,0 +1,320 @@
+{
+  "modules": [
+    {
+      "name": "road_frontend_shared_core",
+      "feature": "table_command_isolation",
+      "rtl_path": "road_frontend_shared_core.v",
+      "description": "共享前端以单项暂存隔离装表准入和后处理推进；其余调度与数值链冻结。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_clk",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_rstn",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_select_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_select_valid",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_select_down2",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_select_down2",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_select_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_select_ready",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_selected_down2",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_selected_down2",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_table_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_table_valid",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_table_addr",
+            "direction": "input",
+            "width": 10,
+            "clock_domain": "i_clk",
+            "role": "i_table_addr",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_table_data",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_table_data",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_table_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_table_ready",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_table_loaded",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_table_loaded",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_table_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_table_fault",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_load_valid",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_kind",
+            "direction": "input",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "i_load_kind",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_addr",
+            "direction": "input",
+            "width": 11,
+            "clock_domain": "i_clk",
+            "role": "i_load_addr",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_data",
+            "direction": "input",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "i_load_data",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_load_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_load_ready",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_start",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_commit_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_commit_ready",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_busy",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_done",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_fault",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_core_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_core_cycles",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_export_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_export_start",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_output_ready",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_output_valid",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_output_data",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_index",
+            "direction": "output",
+            "width": 9,
+            "clock_domain": "i_clk",
+            "role": "o_output_index",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_export_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_export_done",
+            "description": "沿用冻结142位顶层接口；valid保持到ready，复位立即取消。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "立即取消暂存命令和旧事务；同步释放后重新装满1024项表。"
+      },
+      "behavior": [
+        "外部table valid&&ready表示wrapper已保管地址和数据；后续时钟才向PP实际提交。",
+        "暂存valid、地址和数据在PP未接收时保持；运行期未接受的table_valid不阻断旧事务排空。",
+        "允许同拍提交前项并接收后项；末项提交时拒绝不能执行的非零后继项。",
+        "完整装表后仅地址0可开始重装；o_table_loaded只反映PP真实状态。",
+        "装表命令待提交期间禁止start、load、export和select；数值、II和调度器接口不变。"
+      ],
+      "constraints": [
+        "仅修复共享wrapper，不改Stem/down2、算术核、约束、生产工程或位流流程。",
+        "动态系数仍为TEST_ONLY；不代表部署QAT、DDR闭环或整网性能。"
+      ],
+      "corner_cases": [
+        "连续1024项、push/pop同拍、PP反压、输入气泡、运行中提前装表、",
+        "末项后继、已加载后非法非零、待处理时命令封锁、复位取消。"
+      ],
+      "verification_cases": [
+        "Python逐拍协议参考；专用装表TB；冻结control/normal/stalls；Stem地址TB。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "table_buffer",
+          "title": "装表命令暂存与提交",
+          "scenario": "table_buffer",
+          "description": "接收发生于T0，T1起向PP提交；反压时暂存负载保持。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "in_valid",
+                "wave": "01.0...."
+              },
+              {
+                "name": "in_ready",
+                "wave": "01.0...."
+              },
+              {
+                "name": "pending",
+                "wave": "0.1...0."
+              },
+              {
+                "name": "pp_ready",
+                "wave": "0...1..."
+              },
+              {
+                "name": "pp_valid",
+                "wave": "0.1...0."
+              },
+              {
+                "name": "address",
+                "wave": "x.=...x",
+                "data": [
+                  "held command"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
