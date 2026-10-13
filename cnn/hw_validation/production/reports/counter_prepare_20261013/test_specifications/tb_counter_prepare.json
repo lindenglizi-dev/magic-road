@@ -1,0 +1,239 @@
+{
+  "modules": [
+    {
+      "name": "counter_prepared_check",
+      "feature": "counter_verification",
+      "rtl_path": "tb_counter_prepare.v",
+      "description": "独立验证观察器或测试平台；不参与综合及生产数据路径。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "clk",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "rstn",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "state",
+            "direction": "input",
+            "width": 4,
+            "clock_domain": "clk",
+            "role": "state",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "layer_pw",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "layer_pw",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "position",
+            "direction": "input",
+            "width": 4,
+            "clock_domain": "clk",
+            "role": "position",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "count",
+            "direction": "input",
+            "width": 5,
+            "clock_domain": "clk",
+            "role": "count",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "prepared",
+            "direction": "input",
+            "width": 5,
+            "clock_domain": "clk",
+            "role": "prepared",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "accept",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "accept",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "last_group",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "last_group",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "start_accept",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "start_accept",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "dw_writes",
+            "direction": "input",
+            "width": 9,
+            "clock_domain": "clk",
+            "role": "dw_writes",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "pp_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "pp_fault",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          },
+          {
+            "name": "load_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "load_fault",
+            "description": "只读观察被测调度器沿前状态或驱动测试时钟复位。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "观察count/prepared立即清零；测试平台控制恢复与合法重新装载。"
+      },
+      "behavior": [
+        "沿前按旧递推计算expected，沿后1ns检查count；合法末组接受时检查准备值。",
+        "全量顶层保持原向量和RNG，normal/stalls各要求147456次合法末组接受。",
+        "定向计数测试包含force原语，属于递推/优先级/复位分支测试，不代替合法完整事务。"
+      ],
+      "constraints": [
+        "仅仿真，不可综合；不证明亚稳态、物理时序或整网FPS。"
+      ],
+      "corner_cases": [
+        "PW连续两组、DW回绕、PW最终保持、长停顿、故障保持、异步复位、旧直接清零分支。"
+      ],
+      "verification_cases": [
+        "原完整顶层normal/stalls/control；1024个定向计数变体和7组明确复位身份。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "edge_check",
+          "title": "计数沿前预测与沿后检查",
+          "scenario": "edge_check",
+          "description": "图示两个接受沿；实际观察器在每个上升沿后1ns逐项检查。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p....."
+              },
+              {
+                "name": "last_accept",
+                "wave": "01010."
+              },
+              {
+                "name": "count",
+                "wave": "=.=.=.",
+                "data": [
+                  "k",
+                  "k+1",
+                  "k+2"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tb_counter_prepare",
+      "feature": "counter_verification",
+      "rtl_path": "tb_counter_prepare.v",
+      "description": "独立验证观察器或测试平台；不参与综合及生产数据路径。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "观察count/prepared立即清零；测试平台控制恢复与合法重新装载。"
+      },
+      "behavior": [
+        "沿前按旧递推计算expected，沿后1ns检查count；合法末组接受时检查准备值。",
+        "全量顶层保持原向量和RNG，normal/stalls各要求147456次合法末组接受。",
+        "定向计数测试包含force原语，属于递推/优先级/复位分支测试，不代替合法完整事务。"
+      ],
+      "constraints": [
+        "仅仿真，不可综合；不证明亚稳态、物理时序或整网FPS。"
+      ],
+      "corner_cases": [
+        "PW连续两组、DW回绕、PW最终保持、长停顿、故障保持、异步复位、旧直接清零分支。"
+      ],
+      "verification_cases": [
+        "原完整顶层normal/stalls/control；1024个定向计数变体和7组明确复位身份。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "edge_check",
+          "title": "计数沿前预测与沿后检查",
+          "scenario": "edge_check",
+          "description": "图示两个接受沿；实际观察器在每个上升沿后1ns逐项检查。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p....."
+              },
+              {
+                "name": "last_accept",
+                "wave": "01010."
+              },
+              {
+                "name": "count",
+                "wave": "=.=.=.",
+                "data": [
+                  "k",
+                  "k+1",
+                  "k+2"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

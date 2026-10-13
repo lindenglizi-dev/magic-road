@@ -1,0 +1,148 @@
+RoadYOLO 计数控制修复与阶段对比报告（2026-10-13）
+
+一、结论和未通过部分
+本阶段目标已取得：当前真实共享前端顶层在PH1P35MDG324-3、100MHz下，内部寄存器、存储、DSP相关setup/hold均无失败端点。
+采用counter_prepare_20261013作为下一阶段诊断基线，保留46083305参数预取基线和23359db8失败种子试验，可回退。
+仍未通过：外部诊断输入/输出、原始复位hold/removal、严格门禁及其中无端口TB规格生成。
+整体状态继续是IMPLEMENTED_WITH_TIMING_VIOLATIONS；internal_timing_pass=true只表示本次定义的内部检查范围通过。
+真实QAT模型、完整67层与DDR/后处理/板测尚未由本阶段验证；固定测试参数和前端结果不代表模型部署或5FPS。
+
+二、修改位置和结构
+实现：rtl/road_down2_tile_scheduler.v，声明约182行，准备逻辑约595行，原计数提交约848行。
+只改变该调度器的输出计数控制。Stem、共享顶层、MAC、round、动态重定标、SiLU源码全部冻结。
+旧路径：结果信用/ready→MAC实际接受→层/通道/位置清零或递增译码→输出计数寄存器。
+新路径：当前层/位置/计数→准备下一值寄存器；原实际last接受沿→直接提交准备值。
+增加5位逻辑准备寄存器；综合保留bit0..3共4个真实异步清零FF，bit4合法折叠为0。
+没有新队列、状态、端口、等待周期或ready寄存器，也没有修改算术/II/数值/故障/复位取消契约。
+
+准备值：DW计数<15时加一，否则0；PW计数<7时加一，否则非最后位置清0、最后位置保持。
+每拍捕获准备值，在原last接受沿提交。PW group1之前必有group0沿，DW group2有更多前置沿；
+这些已有沿允许准备值追上当前任务身份，不增加外部延迟。
+IDLE/start清零、DW_DRAIN达到256写入时清零和PP/load故障优先保持均保留。
+异步复位同时取消计数和准备值；仍按原完整装表/装载协议恢复。
+rtl/road_down2_tile_scheduler_spec.md及waveforms包含实际生成的接口与周期图。
+
+三、功能和周期证据
+reference.py：1800个抽象发行状态、86400次转移、256个唯一合法last状态，1536次last输入组合检查通过；
+另有524288组二值单拍递推条件通过。1800项reset_contract_checks仅核对抽象初始契约，不冒充1800次RTL复位。
+该模型只证明发行控制和计数递推，不证明完整算术、X/Z、亚稳态或厂商RAM行为。
+
+ModelSim实际完成两轮回归；第二轮补强观察器覆盖和复位身份，是最终回归依据。
+simulation_attempt2/receipt.json：control、normal、stalls、Stem权重地址、装表隔离、参数归属及计数专项均通过。
+normal/stalls各运行2304个Stem tile及576个DW/PW tile，原阶段数值、提交地址、缓存读回和最终输出检查均保留。
+每种模式明确检查147456次合法last接受；计数递推观察次数分别14022597和17992384。
+专项：1024个强制发行状态变体，7723次递推检查、512次last检查、4104次末组停顿、512次故障保持检查。
+复位包括DW g0/g1/g2、PW g0/g1、STORAGE、DW_DRAIN七组明确身份，另保留初始复位；覆盖两个直接清零分支。
+这些force测试只证明对应递推/优先级/取消分支，故障与强制accept同时有效的组合不作为合法接口证据。
+正常完整事务由两种完整顶层回归补充；原控制TB的in-flight reset发生在Stem，不称为down2各发行组覆盖。
+专项有70条未连接测试输入相关仿真告警，日志保留；没有把它们标为零告警。
+
+全部周期、事件和互斥停顿分类计数与冻结参数预取版本完全一致：
+模式       Stem核心       DW核心     PW核心     前端核心合计
+normal     10911744       630720     340992     11883456
+stalls     13196637       795011     581657     14573305
+cycle_summary.json保存逐项对照，包括预装载、导出和各bin；不是只比较总周期。
+本次修复获得100MHz内部时序可靠性，没有减少核心周期；不能据此宣布整网5FPS。
+
+四、真实综合/布局布线对照
+工具TD6.2.168116；器件PH1P35MDG324，工具speed=3对应-3；目标100MHz。
+实际顶层包含共享MAC/动态后处理/SiLU、Stem/down2调度及存储/诊断接口；未包含完整ROM、DDR或67层执行。
+build.tcl、frontend.sdc、frontend.adc与46083305基线字节完全相同；没有设置新seed或新增例外。
+TD返回0，468.549秒，完成route及全部报告；返回0与整体时序通过分开看。
+
+项目                         参数预取基线       本候选
+内部寄存器setup失败           1                  0
+内部寄存器最差setup           -0.142ns           +0.232ns
+内部寄存器最差hold            +0.054ns           +0.054ns
+寄存器setup/hold报告项        各9180             各9291
+全报告内部失败端点            1                  0
+全报告内部RAM WE失败          0                  0
+Slice                        10088              10101（+13）/21216
+LUT6                         9439               9404（-35）
+物理寄存器                   5535               5619（+84）
+DSP                          30                 30/40
+ERAM                         4                  4/108
+诊断IO                       142                142/160
+资源均含验证壳，不能与官方模板直接相加当整网资源。
+逻辑新增4个有效FF，物理寄存器增加84还包含实现阶段复制、打包和优化的变化，不是新增84项缓存。
+gate_netlist.v保留四个AL_MAP_SEQ_GSR，CEMUX=1、SRMODE=ASYNC，D来自next_cnt_output_prepared，Q进入实际计数更新。
+未以动态操作数常量化换资源；高位0由小于7/15的更新范围推出。SYN-5025历史告警仍保留，不将全部未指名端点一并签核。
+
+原问题各目标的内部setup最差：
+  cnt_output                 +1.715ns
+  新准备寄存器               +3.680ns
+  参数bank                   +2.369ns
+原4个PP入口RAM WE、halo及DW缓存/权重写使能均无内部负项。
+target_path_summary.json保存上述正裕量端点，完整数据在physical/internal_all_checks.timing。
+当前最差寄存器路径转为u_pp/u_pre/u_round/result_tag_o_reg[3]_syn_2.clk
+  →u_pp/u_pre/u_round/reg_half_delay_reg[41]_syn_2.cea，+0.232ns。
+该路径9.598ns，其中布线8.724ns（91%）、4层LUT、最大扇出847；目前通过，不在本轮追加微调。
+
+五、补充内部RAM/DSP检查，避免外部路径遮蔽
+从同一pr.db仅重新导出报告，不重新布局、不修改约束或数据库。
+依据实际RAM报告选择3969个存储对象（包含分布式RAM及ERAM）；另有30个DSP、5619个寄存器。
+内部来源含寄存器、DSP输出和存储输出；直接限制到存储/DSP输入，排除外部输入及raw reset入口。
+报告                         setup报告项/最差     hold报告项/最差
+internal_to_memory           963 / +0.258ns       489 / +0.348ns
+internal_to_dsp              784 / +2.393ns       775 / +0.324ns
+memory_to_registers          4103 / +0.851ns      1713 / +0.135ns
+dsp_to_registers             547 / +3.991ns       547 / +0.371ns
+四项均0失败端点，覆盖率100%；适用角点记录在internal_memory_timing/summary.json。
+这些数量不相加冒充互不重复的全网路径数。
+pr.db SHA256：9616223f9b465f2afc143c3b5b24aab4601f6ed826949a1a850487d50281f82c。
+
+六、外部/原始复位没有闭合，且部分数量增加
+唯一失败check/endpoint分类：
+范围                         参数预取基线       本候选
+外部输出setup                16                 30
+外部输入setup                2                  15
+外部输入hold                 886                871
+raw reset hold               488                586
+raw reset removal            1704               1828
+布局变化使部分外部/复位分类增加，因此不能说所有错误都减少。
+全报告setup/hold/recovery/removal最差分别-3.109/-1.532/+6.385/-1.858ns。
+DSP输入整体setup+0.720，hold-0.423，removal-0.443ns；ERAM输入整体setup+1.660、hold-0.777、removal-0.232ns。
+上述整体端点负值与已限定来源的内部报告并列；不能把内部通过扩写成DSP/RAM所有复位和外部检查通过。
+全报告覆盖率100%，包含slow/fast适用角点；include_ignored计数差为0。
+check_timing仍保留clock definition及DSP dummy node问题；没有无时钟、无路径约束或组合环报告项。
+当前为自动引脚、零外部延迟的诊断边界。真实外设时序、复位释放/分发和集成顶层的签核仍需对应阶段处理。
+
+七、严格门禁及流程失败记录
+执行修改前及修改后严格门禁；compile、静态testbench通过，ast/readability/comment/naming/profile失败，严格toolchain未请求。
+实际ModelSim和TD是另外的工具证据，不改写上述八项状态。
+RTL错误3766→3761，严格警告22→24；TB错误2292→2616，增加包含观察器/专项/覆盖断言，不是同作用域功能失败数。
+增量：VG040 -2、VG013 +1、VG020 -1、VG041 +2、VG062 -2、VG109 -3、VG122 +1、VG125 +2、VG145 -2、注释项+1。
+VG041是新增英文注释语言要求；VG013是next_命名要求。
+VG122新增净1来自两处5位加法替代一处：虽然静态结果推为6位，但分支条件严格限制操作数<7或<15，结果<=15，5位足够。
+该范围由完整二值枚举及RTL回归支持，原规则失败仍保留，没有豁免；没有新增队列计数溢出、多驱动或组合环发现。
+本会话无readable-python/script技能可用，脚本仅记录AST与实际执行，不宣称对应严格技能通过。
+
+周期图首次失败原因：脚本cwd设到specifications，使同级rtl被生成器判为workspace之外；
+已改为候选根目录并在specifications_attempt2成功生成，无源码行为变更，首次日志保留。
+测试规格额外尝试失败原因：生成器强制interfaces.ports非空，实际三个TB顶层均无端口。
+不编造测试端口；tests下附实际接口/无端口边界的同名说明，保留test_specifications失败记录，不称生成器严格通过。
+这些文档问题不改变实际回归和内部物理结果，也不解除正式交付门禁。
+
+八、阶段决定及后续具体承接
+采用此候选继续内部计算验证；1108个旧文件和所有冻结算术依赖执行前后未变。
+已验证范围为Stem和down2 DW/PW共享前端；内部时序修复到此收口，暂不继续优化已正裕量的round/SiLU路径。
+下一项回到“ROM活动参数预取→现有DW/PW计算”：
+1. 以本候选为计算输入，从现有数值包/manifest固定down2 DW/PW参数和权重偏移、长度、通道顺序。
+2. 复用已有ROM读口与本候选四项参数所有权环，只补当前层/当前输出组的必要读写适配。
+3. 用同一明确TEST_ONLY包逐项比较ROM读出、量化参数、MAC acc/pre/SiLU/post和真实写回地址。
+4. 分别统计一次装表、逐tile参数/权重装载、核心运行及导出，更新前端和逐层预算。
+5. 包含该适配的实际综合顶层再做资源和时序；真实QAT参数未冻结时不宣称模型部署精度。
+完整图/DDR阶段再处理真实内部接口时序和复位分发，外部诊断违例不得靠伪造板级延迟消除。
+若必须改核端口、II、数值、复位/故障契约、增加时序例外或真实外设协议，再集中提出具体决定。
+本阶段未训练、改生产、生成位流、上板或写Flash。
+
+九、主要证据入口
+rtl/road_down2_tile_scheduler.v及同名_spec.md/waveforms：实现和周期契约。
+reference_receipt.json：最终抽象参考及唯一状态计数。
+simulation_attempt2/receipt.json、normal/stalls/counter_prepare.log：实际最终回归和覆盖。
+cycle_summary.json：全部计数逐项对照；strict_summary.json和gate_attempt2：门禁原始状态。
+physical/physical_summary.json、pr.db、gate/routed_netlist.v、全部timing及工具日志：真实实现。
+internal_memory_timing/summary.json及四份timing：独立内部RAM/DSP端点范围。
+comparison.json：本候选直接对照46083305；其中解析器嵌套comparison仅为更早Stem历史比较。
+target_path_summary.json、frozen_check.json、artifact_manifest.json：目标正裕量、旧文件不变及完整本机文件哈希。
+数据库、大型timing/门禁/张量文件仍在本机，按现有Git范围排除，哈希和小型日志/报告入库。
