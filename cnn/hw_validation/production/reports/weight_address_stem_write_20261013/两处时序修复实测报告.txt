@@ -1,0 +1,111 @@
+2026-10-14：DW权重地址与Stem写使能修复实测
+
+结论：已执行修改和完整验证，但候选不采用为新基线。
+原8个DW/Stem负裕量目标已解决；整合后的公共前重定标推进控制出现104个setup失败，
+最差-1.481ns，比5586b9ba的8个全内部失败/-0.404ns更差。不能只报告局部成功。
+
+一、改动位置与实际结构
+rtl/road_down2_tile_scheduler.v：9个tap bank×16通道。
+输入仍为144项OIHW；已有pending写地址转换为(old%9)*16+old/9，
+高4位tap、低4位channel。读取先取得同一channel的9个tap，再做原空间lane选择。
+移走计算读路径中的channel*9+动态偏移，没有新增发射周期、队列或MAC。
+rtl/road_stem_tile_scheduler.v：新增flag_load_state_ready，仅1位逻辑状态资格。
+reset=1；每沿更新为state_next==IDLE；仅替换ready中的state_current比较。
+rstn/start/export/fault仍实时生效；合法RAM写入仍为原接受同沿，不增加写流水。
+算术五模块、共享前端、ROM读口/预取器、模型包、II、元数据和端口均保持不变。
+
+二、为什么功能等价
+地址0..143经转置仍为0..143的双射，tap0..8、channel0..15，不增加权重容量。
+DW合法cnt_output仅0..15；PW不读DW bank。负数8位位型及尾路置零不变。
+原pending最后一次写与最早start同沿，但计算锁定权重在随后STORAGE沿，故无新增气泡。
+Stem沿后state_current'=state_next，而flag'=next==IDLE，故资格与当前IDLE归纳等价。
+不是延后一拍登记state_current，也不是登记完整ready，避免start/export/fault反馈迟到。
+
+三、实际功能与周期验证
+Python：144地址双射，三套负极值/确定随机/冻结权重各9216组合；
+Stem16384状态转移、1024 ready组合及7168非法状态组合通过。
+ROM联合7例全部acc/pre/SiLU/post/提交及真实缓存导出一致；正常核心1687拍，导出384拍。
+专项：18432项DW组合权重读数一致；725笔连续Stem装载无额外间隔，原同沿写入通过。
+完整共享前端normal/stalls：2304个Stem tile和576个down2 tile，全部向量输出及CSV
+每个周期/事件字段和原counter_prepare_20261013基线逐字节相同。
+正常核心11883456拍；反压核心14573305拍；控制与原counter专项亦通过。
+额外pending复位：先提交A，再保管同地址B，在提交B前异步复位，RAM保持A，
+pending和loaded作废，释放后B不泄漏。未要求复位清空RAM内容。
+以上只证明Stem/down2 TEST参数；不证明完整67层、真实QAT、DDR或整网FPS/精度。
+
+四、实际TD实现与对比（全部含壳、共享Stem/down2及完整ROM）
+器件PH1P35MDG324-3，100MHz，TD6.2.168116；执行590.98秒。
+同一SDC/ADC和实现设置；无新增时序例外、无换seed、无位流生成。
+
+项目                         5586b9ba             本候选
+全内部setup失败端点                8                 104
+寄存器内部setup失败端点            5                 104
+最差内部setup                -0.404ns           -1.481ns
+最差内部hold                 +0.045ns           +0.026ns
+内部recovery                 +3.118ns           +0.706ns
+内部removal                  +0.231ns           +0.207ns
+Slice                          13638               13487
+MSlice                          6412                6237
+registers                      12849               12987
+DSP/ERAM                       30/60               30/60
+IO                                50                  50
+PLB占用                         2126                2376
+
+Slice少151、MSlice少175，但物理寄存器多138、PLB占用更分散；
+不能把“LUT少一点”直接当成“布线一定变好”，或把寄存器增138解释成源码新增138位。
+9个tap bank写通路和Stem资格寄存器在综合网表保留；并非把运算/状态裁剪后得到通过。
+56个ROM、4480项INIT在综合与布线网表均和冻结完整ROM一致。
+1857个旧冻结文件及本轮物理输入执行前后未变。
+
+五、当前失败的具体原因
+原DW/Stem所属内部负端点已无；不是原8条还没修好。
+新104条全在u_compute/u_pp/u_pre/u_round，共55个CEA、49个CEB。
+最差起点映射名result_tag_o_reg[0]，实际数据网为wire_pre_lane[0]；
+经ingress/identity资格到i_advance_dup_2，最终驱动round内部寄存器时钟使能。
+这是104个同根因端点，不是104处新的数值/语法错误。
+最差数据路径11.221ns：cell1.224ns（约10.9%），net9.997ns（约89.1%）。
+最大扇出824；最后i_advance分发网单段6.030ns；4级逻辑。
+算术源码没变，但整体布局改变后公共控制网的长线暴露出来。
+本次只能证明该实现中布线主导，不能由一次运行证明所有104条均可靠简单复制寄存器解决。
+
+内部存储输入限定来源setup+1.031/hold+0.380ns；内部DSP输入+0.948/+0.324ns。
+全报告coverage100%，适用slow/fast与高/低温角均有报告；include_ignored计数差0。
+外部输出setup13、外部输入hold96，raw_reset setup1/removal363/hold84继续未签核。
+自动引脚/零IO延迟不代表真实板级接口；不伪造延迟消除违例。
+check_timing的clock definition/dummy node及SYN-5025历史未指名对象仍保留，未豁免。
+
+六、严格门禁与本轮流程失败
+修改前完整严格报告在gate；同对象RTL/原测试债务保留。
+修改后gate_attempt2返回2，未发布完整八项矩阵，不能拿修改前矩阵冒充修改后。
+具体异常链：case_normalization_violation，触发语句为新case的单行default: begin end。
+这是合法Verilog且ModelSim/TD接受，但既有严格格式器要求多行空块或显式空语句形态。
+未修改全局检查器、未关闭规则；运行中的物理输入没有为格式问题偷偷改变。
+后续可仅展开该空块的换行，取得严格解析报告；需绑定修订后的来源，不冒充本次字节哈希相同。
+其余ast/readability/comment/naming/profile等不宣称闭合；实际toolchain：仿真PASS、物理内部时序FAIL。
+首次仿真因新观察器声明顺序及旧include缺失失败，修正测试/清单后simulation_attempt2通过。
+首次renderer因sandbox临时目录权限失败，已授权本地重跑成功；
+首次规格因Windows路径过长失败，缩短输出名后两个模块规格/周期图成功，原失败日志保留。
+
+七、决定与下一次单变量试验
+不提升本候选，不覆盖5586b9ba；保留该候选的数值正确布局与失败物理结果供回退/比较。
+不继续改DW/PW调度、不混入吞吐优化、缩网或换seed，也不为每个104端点单独补寄存器。
+下一项应只围绕公共i_advance的物理控制分发：
+1. 在5586b9ba和本候选同口径确认该网扇出、驱动位置、接收簇与最差延迟。
+2. 核实TD支持的网级扇出约束/组合驱动复制方式，优先不改数值流水或握手。
+3. 若必须修改冻结后处理/round控制源码，先提交具体对象、等价逻辑与所需授权；
+   不盲目复制同步器、不给ready随意加拍、不修改II或复位取消语义。
+4. 仅一个物理分发变量，回归同向量并检查所有内部端点；若无实测收益立即停止该分支。
+原8条DW/Stem修复和公共控制分发分开保留，避免每轮全体一起改导致无法归因。
+
+八、文件入口
+status.json / comparison.json / target_diagnosis.json：实际决定、资源、时序和根因分组。
+address_reference_receipt.json：地址/ready数学参考。
+simulation_attempt2/receipt.json及normal/stalls.csv：完整同向量/周期比较。
+pending_check/receipt.json：中途复位取消写入。
+physical/physical_summary.json、pr.db、全部timing和gate/routed网表：真实实现。
+strict_summary.json及gate_attempt2：严格检查失败；spec/及rtl/*_spec.md：成功规格/周期图。
+数据库、网表、大型timing/门禁留本机；源码、收据、失败摘要和本报告纳入本地work/roadyolo。
+
+简要总结：本轮真正完成了两处RTL修改、原向量完整回归及物理验证，
+没有停在计划。但功能正确/旧目标修好不等于整体时序改善；公共推进控制成为新的明确瓶颈。
+必须保留失败并缩小下一次变量，不能把结果藏掉、偷偷放宽100MHz或继续无目标试跑。
