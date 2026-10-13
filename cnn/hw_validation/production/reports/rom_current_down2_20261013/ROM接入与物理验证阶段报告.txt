@@ -1,0 +1,158 @@
+ROM接入当前计算链：阶段交付报告
+日期：2026-10-13；开始基线：本地work/roadyolo的33b2e3fe。
+
+一、结论与未通过项
+已接通完整schema2测试ROM→现有13字段参数预取→原Stem/down2共享前端→真实输出缓存。
+Python参考和三个ModelSim TB通过，7个联合计算场景逐项一致。
+实际TD综合/布局布线完成，但100MHz内部时序未闭合：5个寄存器数据端点，加3个
+Stem分布式RAM写使能端点，共8个setup失败端点；最差-0.404ns。
+这不是整网CNN或比赛精度验收通过。未训练、改生产、生成位流、上板或写Flash。
+
+二、具体新增代码及冻结范围
+rtl/road_rom_current_down2_top.v：50位I/O诊断壳，输入26/输出24，复用原并行计算接口。
+reference.py：数值包解包、物理lane重建、向量兼容和控制模型。
+tests/tb_rom_down2.v：ROM参数提交、真实装表、逐阶段及真实输出缓存读口对拍。
+run.py：本目录独立参考/仿真/门禁/TD构建、冻结校验和报告汇总。
+
+旧共享前端、Stem、down2调度器、ROM读口、预取器、ROM group共6份RTL复制后保持字节不变；
+算术核从board_selftest_20261010/core只读引用。1388个冻结文件执行前后未变。
+新增壳仅有一项47位参数保管缓存及注册所有权，不另造MAC、后处理、装表队列、CRC或总线。
+
+连接：
+  140522字节完整测试包/56ERAM
+    → 既有160位ROM读口
+    → 既有13字段预取器
+    → 1项参数保持寄存器 / 原装表缓存
+    → 冻结共享前端（保留Stem，但本次只选择down2）
+    → 原24MAC、动态重定标、共享SiLU
+    → 原down2输出缓存 → 窄口导出384项。
+
+复位异步断言、两级同步释放，最早第三沿接受内部操作；先完成down2选择，再释放预取器。
+完整参数实际排空且1024项表实际写入后注册开放halo。半装载不得启动。
+满缓存期间保持kind/address/data，不接新参数；无同拍pop/push替换，源预取足够慢无需增队列。
+故障或复位立即关闭新装载、启动和导出；重新装满后才恢复。不改变原算术/II/first-last契约。
+
+三、数值包与功能证据
+TEST_ONLY_NOT_TRAINED_NOT_ACCURACY_EVIDENCE，payload140522B，物理补齐143360B。
+payload SHA256：66284020976ae8a6decd841403a27c09b04ce5bbf4c8c6e3073368d8832abd43。
+13字段覆盖DW/PW权重、偏置、逐通道预重定标、后重定标及共享SiLU表。
+参数652笔+SiLU表1024笔=1676笔；预取字节2946，并不是每个tile读取完整140522B。
+全部393段哈希、56lane物理重建、20套旧向量兼容和19项控制模型检查通过。
+
+ModelSim三个TB：tb_rom_down2、tb_rom_reader、tb_parameter_prefetch，全部PASS。
+联合7例：interior/edge/bottom_right正常三例、各自随机反压三例、运行中复位后恢复一例。
+每例640项MAC累加、预重定标、SiLU、后重定标及提交，384项真实缓存输出逐项一致。
+覆盖提前start、装表中复位、参数槽满80拍、末表叶接口阻塞80拍、运行中输出阻塞复位，
+非法halo地址后12拍持续尝试仍不能重开。最后表项阻塞发生于实际SiLU叶ready，而非只遮上游ready。
+端点保持/数值不丢失不重复通过；这不等于模拟了亚稳态或验证了板级接口。
+ModelSim编译0 errors/578 warnings；联合运行0 errors/114 warnings，原日志保留，未写成无警告。
+
+四、周期与主要性能损失
+正常启动：复位释放到参数可用7915拍；其中预取计数7911拍。
+首次专项含人为80拍参数阻塞和80拍末表阻塞：8074拍；它不是正常启动成本。
+参数和SiLU只在复位后装载一次；同一down2参数集可跨tile复用。
+每tile halo接受1296个字节；TB装载计时窗口1297拍，含末尾关闭valid的一拍。
+正常核心1687拍，真实导出384拍；三种位置及恢复例相同，和旧ROM小块核心周期一致。
+随机反压核心2631/2608/2590、导出771/752/819拍；不同boot相位改变随机序列采样，
+不能把与旧随机场景的差异解释为吞吐优化。
+
+正常核心互斥分类（按TB条件优先级，不是各模块独立忙周期）：
+  外部提交阻塞                     0拍， 0.00%
+  后处理入口/结果预留容量阻塞     976拍，57.85%
+  提交                           249拍，14.76%
+  MAC输入接受                    222拍，13.16%
+  发射阶段其他等待               195拍，11.56%
+  排空及其他                      45拍， 2.67%
+  合计                          1687拍。
+同拍同时发生多项活动只记最高优先级一类，不能把上述数值解释成算子本身耗时或直接删掉976拍。
+
+冻结图down2输出72×128，4×4 tile共576个；本次1687×576=971712核心拍，
+与冻结基线既有完整down2计数一致。该全层值是本次小块外推/旧完整测试交叉核对，
+不是本次重新跑了一遍完整层。旧完整Stem+down2核心11883456拍亦只作为承接证据。
+未测完整DDR调度、其他64个卷积、非卷积和NMS，不发布整网FPS或5FPS通过结论。
+
+五、实际物理实现与资源
+TD6.2.168116，PH1P35MDG324、速度3（-3）、目标100MHz；自动引脚和零I/O延迟仅诊断。
+physical首次打开工程失败：PRJ-8437 File info lost，源项缺FileInfo；无综合结果。
+补齐工具要求的源元数据后，在physical_attempt2重新运行，耗时595.75秒，route和报告完成。
+没有更改任何SDC时序例外、seed或生产约束。首次失败目录及日志保留。
+
+                   冻结无ROM前端        当前含ROM壳          说明
+DSP                      30                  30             算术没有复制
+ERAM                      4                  60             +56完整数值ROM
+Slice                 10101               13638             +3537，含壳及布局影响
+registers              5619               12849             +7230，含ROM读流水/映射
+IO                      142                  50             窄口壳，不是原外部接口同构对比
+全局Slice剩余7578；MSlice占6412/8112，仅剩1700，需要关注分布式存储压力。
+这些是包含壳、Stem、down2和完整ROM的资源，不能可靠按独立壳净成本逐Slice分摊。
+报告保留1套MAC、1套动态后处理、1套SiLU；56个ROM的4480项INIT参数在综合及布线网表
+均与已验证完整ROM逐项一致。参数是测试参数，尚非实际训练模型权重。
+
+六、时序、覆盖及8个内部失败端点
+内部寄存器scope：setup -0.404ns/5端点；hold +0.045ns/0；recovery +3.118ns；removal +0.231ns。
+扩大到所有端点与分布式RAM后，额外3个内部写使能setup失败，合计8个。
+5个down2端点（目标均u_compute/u_down2/reg_mac_weight_reg）：
+  [67]_syn_2.id -0.404ns；[65] -0.248ns；[66] -0.230ns；[64] -0.199ns；[147] -0.037ns。
+3个Stem端点：
+  u_compute/u_stem/ramread10_syn_1228.we -0.313ns；
+  u_compute/u_stem/ramread11_syn_6260.we -0.149ns；
+  u_compute/u_stem/ramread11_syn_8500.we -0.028ns。
+
+最差映射起点名字为reg_mac_bias_reg[10]，但实际数据网为cnt_output[0]_dup_74；
+这是综合映射/共享后的名字，不能误判成偏置乘法路径。
+路径为输出通道计数→DW权重地址算术→分布式RAM读→权重选择→MAC输入权重寄存器。
+数据延迟10.146ns：cell2.758ns、net7.388ns；最大扇出231，7级逻辑。
+首段cnt_output网延迟2.780ns。冻结源码约567行的
+  cnt_output*9 + union_row*3 + union_column - spatial_lane*2
+仍在同拍异步读地址锥；单修cnt_output更新器并未保证整合后这个读取路径稳健。
+此次接入增加ROM/寄存流水、改变布局，暴露原来仅+0.232ns的薄裕量；
+尚未证明哪个新增模块单独造成退步，不能凭一次布局把全部原因归给ROM。
+
+内部DSP来源→DSP输入setup+3.155/hold+0.324ns，DSP来源→寄存器+3.817/+0.341ns。
+ERAM输出整体+5.000/+0.556ns；ERAM输入整体+1.187/+0.020ns，recovery+6.171/removal+0.116ns。
+上述ERAM表不包含所有分布式RAM的we；所以不能只看硬ERAM通过就遗漏3个Stem失败点。
+全报告STA coverage100%；适用slow_m40c/slow_125c/fast_m40c/fast_125c角点；
+各报告只列该类最坏路径实际出现的角点，不将其误写为所有路径逐角点独立签核。
+include_ignored前后各检查计数差0；已导出时钟、ignored、例外、未约束对象和check_timing报告。
+
+全端点失败分类：内部setup8；外部输出setup7；外部输入hold180；raw_reset removal288及hold10。
+诊断输入hold最差-0.926ns；输出setup-2.143ns；raw_reset removal-0.715ns、hold-0.062ns。
+这些外部/复位失败没有消除；零延迟不是真实板级契约，不用编造输入延迟改绿。
+check_timing无无时钟、无效约束、组合环或无路径约束；仍有clock definition和dummy node记录。
+SYN-5025使用0替代未驱动引脚的通用警告未提供完整对象清单，保留未闭合状态；
+实际操作数/参数装载和各级计算已有仿真与真实网表路径支持，不能由此宣称所有未指名对象均安全。
+
+七、严格门禁与执行边界
+本次7份RTL门禁6652 errors/27 strict warnings；3份TB为824 errors。
+对象集合不同于旧前端3文件3761，计数不可直接作同口径增减比较。
+RTL compile/静态testbench passed；ast/readability/comment/naming/profile failed；toolchain not_requested。
+TB compile/ast失败包含always header normalization failed；实际ModelSim编译与执行通过是独立证据。
+完整gate原文件与问题清单留在本机；strict_summary和semantic_review_inventory供追踪。
+位宽/驱动/复位/状态类检查仍须逐项闭合；格式、命名及注释债务单列，不以物理诊断代替严格交付。
+无readable-python/script技能可用，Python只记录AST与实际运行，不宣称对应技能门禁通过。
+
+八、下一项最小修复与停止边界
+当前阶段目标“ROM参数真正供给原DW/PW”已得到数值证据；物理100MHz目标未完成。
+保留33b2e3fe和本候选，不退回覆盖它们，也不扩展CRC或反复换布局seed。
+优先级1：只研究并切短down2 DW权重读地址锥。在既有STORAGE/发射准备窗口预置通道*9
+及当前组各空间lane索引，使异步权重RAM读路径不再串联通道乘加、减法和大选择。
+保持当前II、signed33/INT32契约、全部元数据、first/last、尾lane、反压和复位；
+若现有准备窗口不足，不靠偷偷增拍实现，先提交新增周期/接口决定。
+优先级2：单独研究3个Stem分布式RAM写使能，按真实state→写入资格路径切分控制，
+不得把当前未运行Stem当理由关闭它或加false path。先确认对装载/提交窗口的严格等价。
+上述两项会改当前冻结调度器，当前本轮没有实施；应以独立候选获得明确修改决定后进行。
+优先级3：内部时序恢复后，回到层选择/前端张量调度和DDR接续，而不是继续优化已通过的DSP/SiLU。
+性能方向随后才对976拍容量相关停顿做单变量实验；它不与本次地址/使能时序修复混做。
+
+九、证据和复现
+本目录run.py的reference/dependency/specifications/gate/simulate/physical/report/summarize动作。
+physical每次自动建新目录；不会覆盖失败目录。gate严格失败原样保留，不使其变成PASS。
+仿真与物理分别绑定源码、测试数值包、工具、约束、初始化文件、数据库和输入后校验。
+数据库、网表、完整timing、大型门禁保留本机；小型源码/收据/报告纳入本地Git。
+主要入口：status.json、reference_receipt.json、simulation/receipt.json及cycles.csv、
+physical_attempt2/physical_summary.json、failed_endpoint_inventory.json、pr.db、
+strict_summary.json、semantic_review_inventory.json、bounded_cycle_budget.json、frozen_check.json。
+
+简要总结：功能接通完成、核心周期未退步、完整ROM保留；资源未超本探针上限，
+但全内部仍有8个setup失败，整机集成与5FPS/精度尚无通过证据。下一步应修两处具体读取/写使能
+控制锥，而不是重新训练、换模型、缩分辨率、扩大CRC审计或凭经验宣称完成。

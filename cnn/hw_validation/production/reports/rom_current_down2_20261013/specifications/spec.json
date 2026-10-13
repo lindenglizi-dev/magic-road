@@ -1,0 +1,228 @@
+{
+  "modules": [
+    {
+      "name": "road_rom_current_down2_top",
+      "feature": "rom_current_down2",
+      "rtl_path": "road_rom_current_down2_top.v",
+      "description": "完整56ERAM数值ROM，经既有预取器与单项参数保持，接冻结共享前端的down2。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_clk",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_rstn",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "i_load_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_load_valid",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "i_load_addr",
+            "direction": "input",
+            "width": 11,
+            "clock_domain": "i_clk",
+            "role": "i_load_addr",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "i_load_data",
+            "direction": "input",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "i_load_data",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_load_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_load_ready",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_start",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "i_commit_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_commit_ready",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "i_export_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_export_start",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_output_ready",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_parameters_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_parameters_ready",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_busy",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_done",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_fault",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_output_valid",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_output_data",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_output_index",
+            "direction": "output",
+            "width": 9,
+            "clock_domain": "i_clk",
+            "role": "o_output_index",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          },
+          {
+            "name": "o_export_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_export_done",
+            "description": "固定单时钟验证接口，握手前保持负载；复位立即取消。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "异步断言，两级同步释放；最早第三沿接受；重新选down2并装满参数及1024表项。"
+      },
+      "behavior": [
+        "先在共享前端空闲时选择down2，之后释放预取器；ROM请求地址保持到接受，响应保持到消费。",
+        "652笔参数经单项缓存保管后提交；满时不接收新参数，valid/kind/address/data在反压时保持。",
+        "1024表项走共享前端既有装表缓冲；pref_done、参数缓存空、table_loaded后注册开放外部halo。",
+        "halo1296字节完整后才接受start；现有DW/PW调度、量化、元数据、II不变；导出384个PW结果。",
+        "故障屏蔽新提交/启动/输出，复位取消缓存、ROM响应与所有旧计算；只可复位恢复。"
+      ],
+      "constraints": [
+        "SCHEMA2 TEST权重；无真实QAT、DDR、完整67层或板级接口签核。",
+        "低IO诊断壳，无UART/AXI；含Stem共享前端保留，不重复造算术链。"
+      ],
+      "corner_cases": [
+        "表未满、末参数未提交、参数反压、边界tile、长反压、装载/运行中复位、非法halo地址。"
+      ],
+      "verification_cases": [
+        "13字段1676笔对拍、7个DW/PW场景逐阶段及读口对拍、ROM跨组/复位单测、实际TD资源及时序。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "parameter_handoff",
+          "title": "参数保管与整表完成后开放图像输入",
+          "scenario": "parameter_handoff",
+          "description": "省略ROM读取间隔；pending最后提交后，完整表实际装满才开放halo。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "pref_load_accept",
+                "wave": "010....."
+              },
+              {
+                "name": "pending",
+                "wave": "0.1.0..."
+              },
+              {
+                "name": "core_load_accept",
+                "wave": "0..10..."
+              },
+              {
+                "name": "pref_done",
+                "wave": "0...1..."
+              },
+              {
+                "name": "table_loaded",
+                "wave": "0....1.."
+              },
+              {
+                "name": "parameters_ready",
+                "wave": "0.....1."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
