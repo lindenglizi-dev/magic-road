@@ -1,0 +1,37 @@
+RoadYOLO 参数预取候选：滚动状态（2026-10-13）
+
+位置：Stem→down2 DW→PW 实际共享前端的内部时序修复；不是完整67层CNN交付。
+冻结基线：work/roadyolo @ 11fcb154，table_command_isolation_20261013。
+本候选只改变 rtl/road_down2_tile_scheduler.v；旧版本885项哈希核对未变。
+
+已完成：
+1. Python参考先行：任务归属、152位参数位序、同拍读旧头/写新尾、fault/reset。
+2. 同一次first握手为原四项所有权环保存pre/post参数；DW结果与参数一起进入原active槽。
+3. 新增4×152位寄存bank和152位active数据，不整阵列复位，不增队列或等待拍。
+4. ModelSim专项20次参数检查通过；覆盖满环、同址pop/push、DW替换、尾通道15、反压、故障与复位。
+   专项含明确标记的内部状态强制/非法忙时参数扰动，仅用于所有权压力测试；不能冒充合法输入全流程。
+5. 原control、normal、stalls、Stem地址与装表测试全部通过；合法输入全流程由这些回归提供。
+6. 同一测试重新运行旧RTL；所有正常/反压周期与事件计数完全一致。
+   正常：Stem 10,911,744；DW 630,720；PW 340,992；共11,883,456核心拍。
+   反压：Stem 13,196,637；DW 795,011；PW 581,657；共14,573,305核心拍。
+   每模式958,464个阶段输出，累加/重定标/SiLU/写回及真实缓存读回对拍。
+
+物理验证已完成：
+PH1P35MDG324 -3、100MHz，原ADC/SDC、post_route_opt off；新RTL重新综合并布局布线，TD退出码0。
+原4条PP入口RAM WE setup违例归零；全内部仍有1条cnt_output更新路径setup -0.142ns。
+内部hold最差+0.054ns，0违例。资源30DSP、4ERAM、10088Slice（比旧基线+232）。
+全量报告含RAM/DSP端点，100%报告覆盖，include_ignored数量差0；不能据此宣布整机通过。
+
+仍未通过：
+内部cnt_output唯一setup未闭合，不能宣布100MHz内部通过。外部接口及原始复位入口仍未签核。
+严格检查尚未闭合；RTL 3,766 errors / 22 warnings，TB 2,292 errors。新增项分类见审查记录.txt。
+测试系数非部署QAT；ROM完整参数链、DDR、剩余卷积/图算子、全网FPS和板测不在本次完成范围。
+
+工具失败保留：
+dependency_check：沙箱临时目录权限失败；经批准重跑dependency_check_attempt2通过。
+specifications：工具将子目录视作源码边界而拒绝；修正工作目录为候选根后specifications_attempt2通过。
+physical/report_error.txt：TD成功后摘要器历史比较路径绑定错误；只修新runner路径并重读既有报告，没有重跑TD。
+没有放宽门禁或增加时序例外。
+
+本轮结论：已取得4→1的内部失败端点收敛，候选保留，但不提升为生产或完全时序通过基线。
+下一项只针对握手→cnt_output更新及其远端副本的扇出/布线，不重新展开参数CRC、缩网或改MAC。

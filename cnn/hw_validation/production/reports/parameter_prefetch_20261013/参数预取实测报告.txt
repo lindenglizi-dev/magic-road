@@ -1,0 +1,117 @@
+RoadYOLO 参数预取：同向量回归与实际布局布线报告
+日期：2026-10-13；本地分支：work/roadyolo；回退点：11fcb154。
+
+一、先说仍未通过的问题
+内部仍有1个setup失败端点：u_down2/cnt_output_reg[0]_syn_45.ima，slack=-0.142ns。
+所以不是“100MHz内部全部通过”，也不是整机、5FPS或模型精度验收通过。
+外部诊断接口、原始复位入口和严格交付门仍未签核，详见第五节。
+
+二、本轮具体改了哪里
+独立候选：cnn/hw_validation/production/reports/parameter_prefetch_20261013/。
+唯一行为修改RTL：rtl/road_down2_tile_scheduler.v。
+旧table_command_isolation_20261013完整保留；885项冻结文件哈希核查未变。
+Stem、shared wrapper、MAC、动态重定标、round、SiLU源码均未改；端口、数值、II和故障/复位协议不变。
+
+原链路：结果队首/active元数据 → 通道参数RAM → PP合法性检查 → PP入口RAM WE。
+新链路：first握手时参数与任务一起存入原4项所有权环 → PW读队首或DW安装active → PP。
+没有增加队列；增加4×152位参数bank与152位DW active参数，合计760位数据存储。
+以4个显式packed寄存bank实现，而非依赖未公开同址读写保证的分布式RAM。
+参数是动态装载的TEST_ONLY值，不是编译期常量；pre/post完整参数跟随任务保存。
+数据不整阵列复位，复位立即清原count/valid；旧payload不能获得有效事务身份。
+
+三、验证及周期
+Python参考：522次旧查找/预取对照、277次结果转移、12次满环同拍pop/push、2个复位epoch，通过。
+专项ModelSim：20次参数对照；PW满环回绕、同址pop/push、反压保持、DW active接替、
+通道15单lane、故障弹出不安装active、复位换代通过。内部强制场景明确是白盒压力测试。
+合法输入验证：冻结control、normal、stalls、Stem权重地址、装表回归全部通过。
+每个normal/stalls模式对拍958464个阶段输出及中间量，缓存读回无重复、无空洞。
+使用相同测试和随机序列在新目录重新运行旧RTL；所有周期、互斥分类及事件计数完全一致：
+
+                         旧版核心拍       新版核心拍       差值
+normal Stem              10,911,744        10,911,744          0
+normal DW                   630,720           630,720          0
+normal PW                   340,992           340,992          0
+normal 合计              11,883,456        11,883,456          0
+stalls 合计              14,573,305        14,573,305          0
+
+normal preload统计：Stem halo559872，down2 746496；固定参数/表加载另见原日志。
+normal 导出窗口：Stem592131，PW221184；这些不混入核心拍，也不简单重复相加成FPS。
+本轮是时序修复，不是吞吐加速。20,000,000拍/帧是5FPS总预算，前三级通过不等于完整67层满足。
+
+四、实际物理对比
+器件PH1P35MDG324、速度-3、100MHz。ADC/SDC字节不变；无新增时序例外。
+旧基线：table_command_isolation_20261013/physical_runtime。
+新：本目录physical，重新综合/布局布线；两次显式place参数一致、post_route_opt均off。
+本次TD运行518.77秒，退出码0，REPORT_COMPLETION_DONE齐全。
+旧runtime从冻结gate.db导入，本次从新RTL综合；这是实际候选A/B，不是固定布局的单网络延迟实验。
+
+项目                        旧             新                判定
+内部PP RAM WE setup失败      4              0                 原目标路径消除
+内部寄存器setup失败          0              1                 仍未闭合
+内部hold失败                0              0                 保持通过
+DSP                         30             30                不变
+ERAM                         4              4                不变
+Slice                     9856          10088                +232
+LUT6                      9229           9439                +210
+物理寄存器                4854           5535                净+681
+
+新增760位在gate网表逐位保留为DFF；物理优化也会改变全设计其他寄存器副本，故净增寄存器数不必等于760。
+只有一套24路MAC、一套动态PP、一个共享SiLU；4ERAM为原前端存储，不是全模型56ERAM ROM。
+资源均含共享验证顶层及观测接口，不与官方视频链或完整模型存储相加后冒充整机通过。
+
+唯一剩余内部路径：
+  优化后起点名 u_down2/reg_mac_bias_reg[9]_syn_2.clk
+  实际源网 u_down2/o_pp_tags[15]_dup_202（层选择控制）
+  → shared控制选择/ MAC credit-ready逻辑
+  → flag_mac_input_accept
+  → cnt_output清零/递增更新
+  → 远端cnt_output[0]副本。
+这是控制/计数更新路径，不是偏置乘法；不能根据综合重命名起点归因于算术核。
+slack=-0.142ns，data=9.900ns，其中net=7.937ns（约81%），6级逻辑，最大扇出26。
+末段cnt_output更新网扇出21、延迟2.615ns；不能把这条路径当成新增参数bank D路径。
+旧版最差内部寄存器路径也落在cnt_output，余量只有+0.108ns；重布局后成为当前唯一失败点。
+
+五、全部范围必须分开看
+全端点唯一失败check/endpoint分类（非全网物理路径总条数）：
+  internal setup             1，最差-0.142ns
+  external output setup     16，最差-3.065ns
+  external input setup       2，最差-0.167ns
+  external input hold      886，最差-1.498ns
+  raw reset hold           488，最差-1.085ns
+  raw reset removal       1704，最差-1.953ns
+不能只报整体失败数减少；外部input setup等分类也出现变化，均保留，未宣称改善全部范围。
+内部寄存器报告setup/hold各9180个报告项，最差分别-0.142/+0.054ns。
+全报告覆盖率100%，slow/fast角点，include_ignored与普通报告的数量差均0。
+DSP输入setup最差+0.692ns；其hold/removal负项仍受原始复位/外部范围影响，不能说DSP所有检查通过。
+ERAM输入setup最差+1.591ns、hold最差-0.158ns；全端点归类没有内部hold失败，但外部/复位仍失败。
+recovery全报告最差+6.410ns；removal仍失败，不新增false path掩盖。
+check_timing保留clock definition和DSP dummy node警告；覆盖100%不代表这些警告已签核。
+
+严格八项：compile通过；ast/readability/comment/naming/profile失败；testbench静态门通过；toolchain未请求。
+外部ModelSim/TD是另外实际运行的证据，不伪装成严格toolchain门通过。
+RTL 3766 errors/22 warnings；TB2292 errors。新增89条RTL归类详见审查记录.txt；未放宽规则。
+
+六、决定与下一项最小工作
+保留该候选和11fcb154回退点，状态为IMPLEMENTED_WITH_TIMING_VIOLATIONS，不覆盖生产。
+下一项只修 down2 cnt_output 的握手更新/远端扇出路径；先以当前源码与数据库冻结为基线。
+鉴于81%为布线，先核实TD实际seed配置能力（本次日志只有enable_seed=off，不能臆造参数名），
+如工具支持，限定一次只改变布局种子的敏感性试验，RTL、约束和effort保持不变，不做无限seed扫描。
+若相同锥仍失败，再验证计数下一值/末组条件能否从握手长链提前解码，让同一接受沿只选取已准备的数据；
+不能简单寄存ready、延后计数、丢失反压接受、或为0.142ns盲目复制整组状态。
+一次只做一个候选；同向量/同周期回归后跑实际顶层，必须检查原4个RAM WE不回归。
+若需修改MAC接口、II、数值或真实外设/时序例外，先提出决定。
+该内部路径闭合后转回真实层/图调度与ROM参数衔接；不扩展CRC探针、不缩网、不训练。
+
+七、证据入口
+rtl/road_down2_tile_scheduler.v、同名_spec.md及waveforms：实现与接口。
+reference_receipt.json、focused/test.log：参考及参数压力测试。
+simulation/receipt.json、baseline_compare/receipt.json、cycle_summary.json：全量及周期对照。
+physical/physical_summary.json：以comparison_to_parameter_prefetch_baseline字段作直接前后对照；
+  其旧comparison字段仅为保留历史解析器对Stem阶段的比较，不应误当本轮直接对照。
+physical/internal_all_checks.timing、failed_endpoint_inventory.json：实际失败路径。
+physical/frontend_route.area、pr.db、routed_netlist.v、源清单/约束/TD日志：物理证据。
+frozen_check.json、artifact_manifest.json：旧版不变及本候选文件哈希。
+
+所有工具失败保留：首次renderer沙箱权限、首次spec工作目录边界、首次摘要器历史路径错误。
+最后一项只修摘要路径后重读既有TD结果，没有重跑硬件或覆写旧报告。
+未训练、未改生产、未生成位流、未上板、未写Flash；仅保存本地Git检查点。

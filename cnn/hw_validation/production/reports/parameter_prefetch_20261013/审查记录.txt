@@ -1,0 +1,37 @@
+参数预取候选独立审查摘要（2026-10-13）
+
+1. 功能和事件
+review / py_reference 两路只读复核：issue地址只来自当前任务；参数与meta在同一first握手、同一write指针保存。
+PW采旧head；DW旧标量发送和新结果接替时，active参数/meta/result同时从旧head安装。
+152位布局：[151:146]post_shift，[145:114]post_multiplier，[113:96]三个pre_shift，[95:0]三个pre_multiplier。
+低位对应lane0；DW通道15的无效lane1/2保持原参数地址16/17，但mask只有lane0有效。
+故障弹出不安装active；数据不复位，但原count/valid异步取消，复位后重新加载。
+接口、II、状态机、结果标签和算术核未改。
+
+2. 存储映射
+physical/gate_netlist.v：四个152位task bank和152位active均为AL_MAP_SEQ_GSR、DFFMODE("FF")，共760DFF。
+reg_head_parameters为组合4:1选择，不另增加152位存储；新增bank不连接RAM/DRAM宏。
+综合前端DFF 5177→5937，down2 seq 669→1429，均增加760，未把有效参数裁成常量。
+物理MSLICE RAM核心加密；因此不用未复位数组来依赖未公开同址读写语义，采用显式packed寄存bank。
+SYN-5025的无对象名通用告警在旧基线已有；新bank的D/CE/Q均连接，但不能将未指名告警整体标为已闭合。
+
+3. 严格门禁增量（失败记录保留，不豁免）
+RTL：3677→3766 errors；strict warnings仍22。
+新增89条分类：
+  格式/注释36：COMMENT_COMMENT_PLACEMENT +14，VG040 +11，VG062 +11。
+  显式常量位数21：VG125 +21；不是实际截断或溢出。
+  payload不复位/always风格12：VG015 +7，VG020/VG021/VG075/VG110/VG113各+1。
+  结构锥20：VG145 +2，VG147 +18；主要是bank D/enable、active enable和issue参数选择。
+VG122维持39；VG153维持109；VG146维持108。未发现新增高置信位宽溢出、多驱动或组合环错误。
+上述结论不能代替全门禁通过；特别是结构锥告警仍须实际布局布线检查。
+
+TB：1538→2292 errors。新文件的readability 650、注释103；含缩进/头部及always #5解析失败后的规则哨兵。
+独立复核未发现高置信测试逻辑错误；testbench静态门通过不等于实际仿真。
+实际ModelSim证据见focused/test.log与simulation/receipt.json；两者均已运行通过。
+
+4. 布线后唯一内部失败路径复核
+routed_netlist中的reg_mac_bias_reg[9]_syn_2是双寄存器packed slice；A存bias，STA实际沿B的clk→oqb。
+B输入为flag_layer_pw_reg_syn_3，输出为o_pp_tags[15]_dup_202，即层选择控制，不是偏置数据。
+其后经过MAC credit/ready、flag_mac_input_accept和cnt_output更新锥，没有新增参数bank的D路径。
+旧版最差内部寄存器路径已在同一握手/计数锥，余量+0.108ns；现在重布局后仅一端点-0.142ns。
+布线占81%，建议先限定一次、明确工具参数的布局敏感性试验，不盲目复制状态或修改II/ready。

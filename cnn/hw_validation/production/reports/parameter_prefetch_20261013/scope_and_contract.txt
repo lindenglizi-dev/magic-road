@@ -1,0 +1,19 @@
+动态参数预取候选；2026-10-13；work/roadyolo @ 11fcb154。
+
+目标：切断 down2 任务元数据→40通道参数RAM→PP参数检查→入口RAM写使能的长路径。
+只修改独立候选 road_down2_tile_scheduler.v，算术核、Stem、shared wrapper、端口、II和数值不变。
+复用原四项 MAC 归约所有权环；同一 first 握手同时保存元数据与完整 pre/post 参数记录。
+PW 结果使用当前队首参数；DW 结果弹出时把参数与三空间点结果、元数据同时移入现有 active 槽。
+DW 三个空间点共用同一组通道参数；保持原 lane mask、tag、shape fault 和标量发射顺序。
+不新增队列、握手或流水等待拍，不以裸 valid 推进；满环同拍读旧头/写新尾，取消仍由原有效状态控制。
+数据数组不新增整阵列复位；复位取消全部有效性并要求重新装表和参数，旧数据不得获得有效标签。
+权重和量化参数均保持动态装载；当前向量仍 TEST_ONLY，不代表部署 QAT。
+
+执行：冻结上一候选及原始失败→Python所有权参考→最小RTL→原五类回归+参数归属专项→实际顶层P&R。
+比较 normal/stalls 全部互斥周期、958464个阶段输出及读回，不把额外故障或不同窗口算为加速。
+PH1P35MDG324 -3、100MHz、原ADC/SDC；采用已完成基线的 post_route_opt off，不增加时序例外。
+全端点 RAM、DSP、外部与复位独立分类，不能以寄存器间通过代替全部内部通过。
+仍按 compile、ast、readability、comment、naming、profile、testbench、toolchain 记录严格状态。
+readable-python/script 专用技能不可用；不声称其门禁通过，保留Python参考/语法和实际工具证据。
+不训练、不改生产、不生成位流、不上板、不写Flash；只做本地Git检查点，不推送。
+若需要改变算术核接口、II、故障/复位/数值语义，停止该分支并集中请求决定。
