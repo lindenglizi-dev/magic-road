@@ -1,0 +1,72 @@
+装表命令隔离候选：过程失败记录
+2026-10-13
+
+1. 第一次 WaveDrom runtime 预检：沙箱临时目录权限失败。
+   证据：baseline/renderer.log。经授权使用本机权限后 baseline_attempt2/renderer.log 通过。
+   没有改 RTL、波形规则或门禁。
+
+2. 依赖预检：physical_report.py 尚未交接到位时启动，报告缺失文件。
+   后续文件就绪，dependency_check* 的 parser self-test 及 dependency.json 为 PASS。
+   这是脚本交接次序问题，不是 RTL 失败。
+
+3. 原 control 回归首次失败：simulation/control.log，
+   “Pending first table entry not accepted once”。
+   原断言在外部握手之后、内部提交之前观察 table_loaded；新缓冲使二者间隔一拍。
+   修复：候选 TB 在该处增加一拍内部提交等待，保留原 fault/loaded 断言；
+   simulation_attempt2/control.log 已通过。首次失败输入快照保留在 simulation/sources/。
+
+4. 专项 TB 的人为反压注入审阅修正（不是已观测 RTL 失败）：
+   仅强制父层 ready 低不会可靠阻止子层真实写表。
+   改为强制 PP 的 flag_table_enable，使 ready 和实际写入同时阻塞；
+   每拍检查 wrapper pop == SiLU table transfer，并核对总数一致。
+   最终 pushes=2051、pops=2050、inner=2050；差一项为复位取消，未丢失有效写入。
+
+5. 首次 physical 动作在 TD 启动前失败：
+   KeyError 'rtl/road_stem_tile_scheduler.v'。
+   baseline_sources.json 在 Windows 保存反斜线相对路径；查询错误使用正斜线常量。
+   仅将查询改为 str(Path('rtl') / name)，继续执行同一冻结哈希检查。
+
+6. 第二次 physical 动作在 TD 启动前失败：physical/preflight_before.log。
+   Python XML 解析器拒绝 TD 工程文件内 UsedInP&R 的未转义 &。
+   仅在只读解析副本中将该已知属性转义；实际 TD 工程文件不修改该属性。
+   后续 physical_attempt2/preflight_before.log 通过，实际 TD 在该目录运行。
+
+7. 严格门禁未通过，所有原始记录仍保留：gate/rtl.json、gate/tests.json。
+   不把工具链的真实编译/仿真通过写成严格交付通过；也不以格式诊断数量代替功能错误数量。
+
+8. physical_attempt2 实际 TD 运行未完成。
+   2026-10-13 12:06 核对进程列表，TD 与 Python 控制器均不在；工具会话句柄也已失效。
+   日志最后更新时间 11:51:49，停在 post-route relocation，未留下 td_launcher.command.json、
+   pr.db、REPORT_COMPLETION_DONE。没有正常退出码，不能断言 TD 自身崩溃或假定通过。
+   此前仅按日志阶段描述“仍在运行”不准确，已向用户更正。
+   保留该目录全部产物；12:07:17 启动一次相同输入的隐藏进程重试，controller PID 29920，
+   输出目录由 fresh 规则分配 physical_attempt3。无 RTL/数值/约束改变。
+
+9. physical_attempt3 在 1800.156 秒达到已存在的工具调用超时。
+   证据：physical_attempt3/td_launcher.command.json 和 physical_retry_stderr.log。
+   常规 20 轮加额外优化后仍停在 relocation；没有 pr.db 和完整报告，不能当作已完成布线。
+   这是有明确 TimeoutExpired 的超时，与上一次原因未明的进程退出分开记录。
+   后续只允许一次有界运行时诊断：从本轮已保存 gate.db 重新 place/route，
+   使用 TD 官方支持的 route post_route_opt off，保持全部约束与报告检查。
+   该结果与原 high+4 优化设置不同，不冒充相同实现配置的时序改善。
+
+10. physical_runtime 实际 place/route 和所有报告已完成，但 Tcl 缺少 exit，TD 停在 td>。
+    此前一次进程收尾申请因自动审批服务用量限制未执行，不是安全拒绝，未绕过审批。
+    本次继续后经正常审批核对进程 10944、父进程 42368、命令行、报告完成标记与 pr.db，
+    仅关闭本任务已完成的 TD。控制器 returncode=4294967295 是主动关闭造成，原记录保留。
+    source_check_after.json 与 before 一致；报告已单独解析，不需要重新综合或布线。
+    修正未来 runtime_diagnostic.py 生成结果，在完整报告尾部添加 exit；实际执行脚本不覆盖。
+    生成内容和原报告尾部不变检查通过，但未以重跑 TD 验证自动退出。
+
+11. 初次 physical_summary 将所有 /ramread*.we 负值强制标为 internal，误报 23 个内部 RAM 失败。
+    原始全量清单一直保留正确起点：9 个 external_input、10 个 raw_reset、4 个 internal。
+    修正 canonical physical_report.py，按起点 scope 筛选，禁止强制改写 scope；
+    添加三类来源回归，修正后剩余 4 个内部 setup，最差 -0.251 ns；整体状态仍失败。
+    原摘要保存在 physical_runtime/initial_summary_before_scope_fix/，实际工具报告和执行输入不改。
+    使用修正版脚本手动解析 existing physical_runtime，未复跑 TD。
+    未来 runtime_diagnostic 使用候选根目录修正版分析脚本并单列其哈希，防止重新复制旧分类缺陷；
+    实际已完成的 physical_runtime 副本仍冻结，不改变原工具输入收据。
+
+12. 收尾自检首次合并命令中有 PowerShell 引号错误，命令退出 1 且无有效自检输出。
+    拆开执行并去掉嵌套双引号后，PHYSICAL_REPORT_SELF_TEST_PASS 和
+    RUNTIME_EXIT_AND_UNCHANGED_REPORT_TAIL_PASS 均成功；没有据首次无输出推断测试通过。

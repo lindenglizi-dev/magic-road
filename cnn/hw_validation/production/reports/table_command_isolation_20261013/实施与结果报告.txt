@@ -1,0 +1,187 @@
+RoadYOLO：装表命令隔离候选实施与结果报告
+日期：2026-10-13；状态：功能通过，实际布局布线与报告完成；仍有内部 RAM 和外部/复位违例。
+
+一、目前还没有通过什么
+
+全量报告仍有 4 个内部 RAM 写使能 setup 失败端点，最差 -0.251 ns。
+寄存器间 setup/hold 均通过，不等于内部整体通过；也不等于正式整机通过。
+外部输出 setup 22 个失败端点，外部输入 hold 1191 个，原始复位 removal 2027 个、hold 24 个。
+这些是各检查类型的失败端点对数，不能当成等数量的独立 RTL 功能错误。
+严格门禁仍未闭合；外部真实 I/O/复位契约、完整 DDR 链路、真实部署 QAT 和整网验收均不在本次通过范围。
+本次验证的是 Stem→down2 DW→down2 PW 前端，不是完整 67 层 CNN，不报告整网 FPS。
+
+二、这次具体修改了哪里
+
+基线：本地 work/roadyolo @ 750deef5，旧候选 stem_weight_address_20261011 不变。
+功能检查点：fd256cf1；只提交本候选相关代码和已完成的功能证据，未推送。
+候选代码：本目录 rtl/road_frontend_shared_core.v。
+只增加一项 27 位暂存：1 位 pending、10 位表地址、16 位表数据；没有新模块或 FIFO IP。
+
+旧关系：空闲/准入判断 → PP 表请求 → SiLU ready → pre-round 推进使能。
+新关系：空闲/准入判断 → 命令暂存寄存器 → PP 表请求 → 原后处理链。
+目标是给配置控制加一个寄存边界，不是改乘法、舍入、SiLU 或卷积调度。
+
+已接受但未提交的表项：保持载荷，阻止新的 start/load/export/select。
+运行中尚未接受的装表请求：不阻断旧任务计算、排空与导出。
+保留原“装表请求优先于 select”规则，原始 table_valid 仍禁止切换 owner。
+最后一项外部握手不等于实际写表完成，o_table_loaded 仍以 SiLU 实际完成为准。
+支持旧项提交和新项接收同拍发生；已装满或末项待提交时，拒绝不能执行的非零后继；地址 0 可重装。
+复位立即取消暂存；释放后仍须完整装满 1024 项表。
+
+三、哪些没有修改
+
+rtl/road_stem_tile_scheduler.v 与 rtl/road_down2_tile_scheduler.v 和基线字节一致。
+MAC、动态前/后重定标、RNE、SiLU 源码不变；数值、II、fault、first/last、算术反压不变。
+端口仍 142 位；物理约束沿用原 100 MHz 自动引脚/零 I/O 延迟诊断约束，不是可上板接口。
+SDC/ADC 不变、不新增时序例外。最终 runtime 诊断改变了物理优化策略，见第六节；不能说 build Tcl 完全相同。
+不训练、不改生产、不生成位流、不上板、不写 Flash。
+
+四、功能和周期实测
+
+Python reference.py：PASS，种子 20261013；首次装表、重装、同拍接收/提交及边界通过。
+ModelSim simulation_attempt2：control、normal、stalls、Stem 权重地址专项、装表缓冲专项均 PASS。
+装表专项：push 2051，pop 2050，实际 SiLU transfer 2050；差一项为复位取消；同拍 push/pop 1986。
+覆盖连续表项、输入气泡、长反压、末项边界、错序故障、待提交命令封锁、复位与完整恢复。
+
+每种全量模式核对 Stem 589824、DW 147456、PW 221184 个标量输出，合计 958464；
+并核对累加、前重定标、SiLU、后重定标、写回/真实导出读口，没有重复或缺项。
+
+                        同时序旧 RTL      本候选
+normal Stem core           10911744        10911744
+normal DW core               630720          630720
+normal PW core               340992          340992
+normal 合计                 11883456        11883456
+stalls Stem core            13196637        13196637
+stalls DW core                795011          795011
+stalls PW core                581657          581657
+stalls 合计                 14573305        14573305
+
+旧 RTL 与候选使用同一个适配后的 TB、同一随机时序；cycle_summary.json 中全部周期分类计数相等。
+历史 stalls 14573306 与此次成对对比相差一拍，来源是全局随机反压相位，不是加速。
+本次没有计算吞吐提升；增加的是装表接受与实际提交之间的一拍边界。
+
+五、严格检查与实际工具证据分开
+
+本候选完整 RTL 检查：3677 errors、22 warnings；TB 检查：1538 errors。
+相对旧 RTL closure 的 3617/22，新增 60 条 errors、warnings 不变：43 条格式/注释/结构规则，
+17 条复位与组合复杂度分析（VG093 +1、VG145 +2、VG146 +5、VG147 +9）。
+RTL：compile/testbench 静态项通过；ast/readability/comment/naming/profile 未通过；toolchain 未请求。
+TB：工具内 formatter/AST 的 compile 与 ast 未通过；真实 ModelSim 编译和执行通过，二者不能互相冒充。
+这些计数不是等数量的电路功能错误，也不能因格式项较多就全部忽略。
+本次改变没有发现位宽、多驱动、组合环问题；装表 ready 准入仍存在组合复杂度，须由真实 TD 判断。
+新增测试与必要寄存器带来新的格式/注释诊断，原始失败与当前报告均保留，不为降数字重写冻结内核。
+
+六、物理结果
+
+physical_attempt2/ 实际运行未正常结束，日志止于 11:51:49 的 post-route relocation。
+12:06 已确认 TD 与控制器不在，未获得正常退出码/完成标记，原因未被证据确定。
+physical_attempt3/ 以相同输入重跑，在 1800.156 秒触发超时；没有最终 pr.db，不能当作完成。
+两次失败均完整保留，未反复覆盖重跑。
+
+physical_runtime/ 从 attempt3 的冻结 gate.db 导入并实际完成 place/route，12:47:59 写齐报告。
+仅关闭 route post_route_opt，省去 high 模式下的额外四轮优化；place 参数、SDC/ADC、100 MHz、
+全部端点及 ignored 报告范围保持不变。gate.db SHA256：
+0d9a237a174d69bd543e9d9b852b69b20cf81004031d94eeef78d40dd797b5c3。
+这是实际布线诊断，不是预计结果；但与旧 high+4 配方不等价，不能把差值全归因于新增缓冲。
+
+器件 PH1P35MDG324，速度 -3；实际顶层包含 Stem/down2 调度、共享 MAC、动态前后重定标、
+SiLU、参数/特征缓存和 142 位诊断接口；不包含官方视频主链、完整权重 ROM、DDR 或全网络。
+资源：30/40 DSP（MAC 24 + PP 6），4/108 ERAM，9856/21216 Slice，9229 LUT6，4854 寄存器。
+其中分布式 RAM 使用 3552 LUT；不能只看到 4 ERAM 就认为特征存储几乎不占资源。
+旧报告 9763 Slice，新报告多 93 Slice；优化配置不同，这不是纯粹 27 位缓冲的资源成本。
+
+                           setup 最差        hold 最差       recovery / removal 最差
+内部寄存器                 +0.108 ns          +0.054 ns       不适用
+DSP 输出方向               +3.909 ns          +0.263 ns       不适用
+DSP 输入方向               +0.924 ns          -0.581 ns       +6.639 / -0.598 ns
+ERAM 输出方向              +4.968 ns          +0.892 ns       不适用
+ERAM 输入方向              +2.833 ns          -0.767 ns       +8.281 / -0.152 ns
+诊断输入→寄存器            +1.555 ns          -1.278 ns       不适用
+寄存器→诊断输出            -2.716 ns          +3.024 ns       不适用
+原始复位入口               +0.254 ns          -0.059 ns       +6.818 / -1.969 ns
+
+DSP/ERAM 输入方向含原始复位和外部输入，不能将该方向的负值自动归入内部算术路径。
+内部寄存器分别报告 7742 个 setup 和 hold 路径，失败端点 0；最差 setup 为：
+u_down2/cnt_mac_group_reg[1]_syn_17.clk → u_down2/cnt_output_reg[2]_syn_48.imb，
+数据延迟 9.617 ns，其中 net 8.082 ns（85%），裕量仅 0.108 ns，不能视为宽裕。
+
+全量端点补查发现四个真正内部 setup 失败，均位于后处理入口 RAM 写使能：
+u_pp/ramread15_syn_59.we   -0.233 ns
+u_pp/ramread15_syn_139.we  -0.130 ns
+u_pp/ramread15_syn_179.we  -0.251 ns
+u_pp/ramread15_syn_219.we  -0.049 ns
+最差路径：任务元数据/通道选择 → 动态 shift 参数 RAM 读取 → 参数合法性与入队使能 → RAM WE。
+7 级逻辑，10.039 ns 数据延迟，其中布线 7.991 ns（80%），最大扇出 44；末段布线 2.070 ns。
+报告起点名是 u_stem/cnt_weight_address_reg[1]_syn_2，但路径实际跨过 down2 参数选择网，
+不能仅凭综合后的起点名字宣布“Stem 权重地址修复失效”。真实目的端已变成 PP 入口 RAM WE。
+证据：all_violations.timing 第 1166 行起及 frontend_route_ram.rpt 第 720/747/765/783 行。
+
+旧 36 个 pre-round CE 失败端点和旧 halo WE 在新完整报告中没有负裕量记录；这次控制隔离有效，
+但仍留下另一条动态参数→入队的组合路径，因此结论是局部改善、内部尚未全通过。
+旧/新优化策略不同，不宣称这是严格同配置 A/B 的改善量。
+
+覆盖：各报告 STA coverage 100%；最差路径覆盖 slow/fast、-40/125℃ 的工具选中角点；
+include_ignored 与普通全端点报告数量差 0，时序例外/ignored 摘要为空，未增加例外。
+check_timing 给出无缺失输入/输出延迟、无无时钟网、无组合环、无无效约束。
+仍保留 local clock、未列名称的 generated-clock/master 提示和 DSP mul9_mode/mul9_signed、
+LSlice ofb dummy-node 提示；clock_summary_debug 只列一个 100 MHz primary clock。
+该提示不一致尚不能当作已解释完毕的签核；零 I/O 延迟/自动引脚也不是实际板级契约。
+
+初次汇总脚本错误把 23 个 RAM WE 负值全部强制归内部；其中 9 个来自外部输入、10 个来自原始复位。
+现已按真实起点修正为 4 个内部，增加了 external/reset/internal 三类回归；原错误摘要保留于
+physical_runtime/initial_summary_before_scope_fix/，未删除原始失败，未减少任何真实违例。
+本次使用候选根目录修正版 physical_report.py 重新解析现有报告；实际运行时的 build.tcl 和
+physical_runtime/physical_report.py 副本保持原样，其原工具/输入哈希仍可追溯。
+
+工具收尾：执行的 Tcl 缺少 exit，报告齐全后 TD 停在 td>，不是仍在布线。
+核对 PID/父进程/命令行及完成标记后，仅关闭本任务的 TD 10944；控制器记录非零退出，
+该退出码是主动关闭已完成的交互进程，不冒充正常退出或新的时序失败。源码 before/after 相同。
+runtime_diagnostic.py 的未来生成结果补 exit，并复制当前修正的汇总脚本而非旧 checkpoint 副本；
+该分析脚本哈希单列，不冒充与旧副本相同。生成内容检查通过，没有重跑 TD。
+
+physical_attempt2 综合映射复核（不代替 routed 时序）：
+gate_netlist.v 保留 30 DSP，其中 u_mac 24、u_pp 6；4 ERAM，其中 SiLU 1、Stem 权重 3。
+命令 pending 1 位、地址 10 位、数据 16 位寄存器均保留；数据/地址取外部 D，CE 为真实 push。
+MAC 实际激活/权重、PP 动态重定标操作数、SiLU 地址/写数据/WE、Stem 权重地址/WE 路径均仍动态。
+网表证据行：命令状态 12312、15426、15566；MAC 102593；PP 144583、163177；
+SiLU ERAM 186924、187036；Stem ERAM 213133、223156、233179。
+旧/新均存在同一条泛化 SYN-5025 提示，工具没有逐 net 清单；本次检查没有证明整网不存在任何未驱动 net，
+但上述与本修改相关的有效载荷、RAM 地址/数据/WE 及算术输入没有发现错误置零。
+
+七、证据入口和复现
+
+run.py reference / simulate / baseline_compare / gate / physical / summarize。
+不要对已经冻结的目录执行 setup；该动作会拒绝覆盖。
+scope_and_contract.txt：范围与握手契约。
+reference_receipt.json、simulation_attempt2/receipt.json、cycle_summary.json：功能与周期。
+strict_summary.json 与 gate/：门禁原始状态。
+physical_attempt2/、physical_attempt3/：两次未完成运行与超时证据。
+physical_runtime/：最终实际数据库、约束、工具日志、完整逐端点报告及修正后的 physical_summary.json。
+frozen.json / frozen_check.json：645 个历史文件校验；artifact_manifest.json：当前本机产物哈希。
+过程失败记录.txt：测试观察时点、反压注入、脚本兼容与工具权限问题及处理。
+final_review_receipt.json：最终汇总自检、源文件不变和实际进程收尾记录。
+本次补充分派的独立复核代理未启动，已取消；本报告的最终端点核对由主代理直接读取原报告完成，
+不把未执行的独立复核写成通过。readable-python/script 专用技能当前不可用，未声明其严格门禁通过。
+
+只重新汇总最终物理报告、不运行 TD 的命令（在本候选根目录执行）：
+python -B -c "from pathlib import Path; import physical_report as p; p.ROOT=Path('physical_runtime').resolve(); p.CANDIDATE=p.ROOT.parent; p.PREVIOUS=p.CANDIDATE.parent/'stem_weight_address_20261011'; p.MANIFEST=p.ROOT/'source_manifest.json'; raise SystemExit(p.summarize())"
+返回 1 表示已解析到真实时序违例，不是报告丢失。随后 run.py summarize 更新总状态。
+不要误用冻结的 physical_runtime/physical_report.py 旧副本来覆盖修正版摘要。
+
+大型原始检查 JSON、完整 timing、数据库和网表留在本机；本地 Git 保存源码、脚本、小型报告和哈希。
+只冻结了工具入口及相关源/输入闭包，没有冻结整个 TD 安装与系统环境，不宣称跨机器完全可复现。
+
+八、下一步，只处理一个真实瓶颈
+
+本阶段不再扩大装表探针、不反复跑 high+4，也不混入 MAC 吞吐或缩网。
+优先在独立候选中将 down2 参数读取/选择与 PP 入队隔离：先检查是否能利用已有任务准备阶段提前
+寄存整组参数及对应元数据；不能只寄存 shift 或合法性标志而让乘数、mask、tags 错拍。
+先用逐拍参考确认参数与 MAC 结果的一对一归属、满队列反压及原子故障，再决定最小寄存边界。
+若需要改变内部核、接口、可见延迟/II 或故障语义，先提交具体决定，本轮没有实施此修改。
+验收按四个 RAM WE 的全端点清单、原五类功能测试、同向量核心/预装载/导出周期及实际顶层 P&R，
+不再只用 get_all_registers 的正裕量作为通过条件。
+
+性能主线随后处理 Stem 等待：当前 11883456 周期中 Stem 占 10911744（91.82%）；
+其 bin6=6782976 是按优先级互斥归类的 state 4 等待，不能直接称为全可消除的气泡。
+需要先分辨计算在途、后处理排空、RAM 和握手等待；在不改变结果归属的前提下估算任务周转收益。
+这些是三算子前端证据，不是全网 5 FPS；全网仍须在 100 MHz 的每帧 20000000 周期预算内闭合。

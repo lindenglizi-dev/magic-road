@@ -1,0 +1,31 @@
+装表命令隔离候选：滚动状态
+2026-10-13 收尾状态（北京时间；完成报告时间 12:47:59）
+
+基线：work/roadyolo @ 750deef5；旧 645 个冻结文件校验一致。
+本轮功能检查点：work/roadyolo @ fd256cf1（仅本地，未推送）。
+修改：仅 road_frontend_shared_core.v 中一项 27 位 SiLU 装表命令暂存。
+Stem/down2、MAC、重定标、SiLU 算术源码、II、SDC/ADC 不变。
+
+已完成：Python 协议参考、规格/周期图、原 control/normal/stalls、Stem 地址专项、装表缓冲专项。
+全部数值对拍通过；normal/stalls 与同一测试时间轴下的旧 RTL 计数逐项一致。
+无反压核心：11883456 周期；反压核心：14573305 周期。
+上述只包含 Stem→down2 DW→down2 PW，不是整网 FPS。
+
+未通过：严格门禁 RTL 3677 条 errors + 22 warnings，TB 1538 条 errors；
+物理结果已齐全，但仍有 4 个内部 PP RAM WE setup 违例，最差 -0.251 ns。
+内部寄存器 setup +0.108 ns、hold +0.054 ns，失败 0；不能据此说所有内部端点通过。
+真实外部接口、DDR 全链、部署量化及整网验收未完成。
+
+physical_attempt2/ 未正常结束，过程失败记录.txt 保留证据和已纠正的状态误判。
+physical_attempt3/ 在 1800 秒触发工具超时，无 pr.db 或完整报告，原进程已被超时处理结束。
+physical_runtime 已从 gate.db 实际完成 place/route，关闭 post_route_opt；
+SDC/ADC/频率/报告不变，属于不同物理优化配置的诊断证据，不是旧配方严格 A/B。
+器件 PH1P35MDG324-3，100 MHz，原诊断约束逐字节不变；无位流操作。
+最终 routed 资源：30 DSP、4 ERAM、9856 Slice，含诊断接口与三算子前端，不含整网/视频主链。
+旧 36 个 pre-round CE 和 halo WE 在本次完整报告无负值，剩余内部瓶颈转为动态参数→PP 入队 WE。
+已修正 RAM 起点分类，原 23 条中 19 条是外部/复位，4 条才是内部；原错误摘要与全部原报告保留。
+TD 完成后停在交互提示符，已身份校验后关闭本任务 PID 10944，不再运行新的综合/布线。
+
+下一判定：独立候选准备动态参数与元数据的前置寄存方案，先证明不改变归属/反压/故障，再修 4 个 WE。
+需要改变冻结内部核、接口、II 或数值/故障行为时先请求决定。
+本轮不修改 halo、不重写 Stem 调度、不缩网、不训练、不改生产、不上板、不写 Flash。

@@ -242,6 +242,11 @@ def grouped_failures(records, ram_report, rtl):
     return groups
 
 
+def internal_ram_failures(records):
+    return [item for item in records if item["scope"] == "internal"
+            and "/ramread" in item["end"] and item["end"].endswith(".we")]
+
+
 def summarize():
     if preflight():
         return 1
@@ -306,10 +311,9 @@ def summarize():
     current_groups = grouped_failures(
         internal_inventory, ROOT / "frontend_route_ram.rpt",
         CANDIDATE / "rtl/road_down2_tile_scheduler.v")
-    all_report_internal_ram = [item for item in inventory
-                               if "/ramread" in item["end"] and item["end"].endswith(".we")]
+    all_report_internal_ram = internal_ram_failures(inventory)
     all_report_ram_groups = grouped_failures(
-        [{**item, "scope": "internal"} for item in all_report_internal_ram],
+        all_report_internal_ram,
         ROOT / "frontend_route_ram.rpt",
         CANDIDATE / "rtl/road_down2_tile_scheduler.v")
     old_inventory = json.loads((PREVIOUS / "failed_endpoint_inventory.json").read_text(encoding="utf-8"))
@@ -343,9 +347,12 @@ def summarize():
         "internal_register_failed_endpoint_count": internal_negative,
         "internal_register_failed_endpoint_inventory":
             "internal_register_failed_endpoint_inventory.json",
+        "all_report_internal_failed_endpoint_count":
+            sum(item["scope"] == "internal" for item in inventory),
         "all_report_internal_ram_failed_endpoint_count": internal_ram_negative,
         "all_report_internal_ram_failure_groups": all_report_ram_groups,
-        "internal_timing_pass": internal_negative == 0 and internal_ram_negative == 0,
+        "internal_timing_pass": internal_negative == 0 and not any(
+            item["scope"] == "internal" for item in inventory),
         "ignored_path_count_delta": ignored_delta,
         "ignored_report_sha256": digest(ROOT / "timing_ignored.rpt"),
         "all_violations_report_sha256": digest(ROOT / "all_violations.timing"),
@@ -371,6 +378,10 @@ def summarize():
         "completion": "actual top routed; all endpoint/ignored and RAM reports parsed; no bitstream",
         "not_deployment": True,
     }
+    regime = ROOT / "optimization_regime.json"
+    if regime.is_file():
+        summary["optimization_regime"] = json.loads(regime.read_text(encoding="utf-8"))
+    summary["summary_generator_sha256"] = digest(Path(__file__))
     save(ROOT / "physical_summary.json", summary)
     rows = "\n".join(
         f"| {name} | {value['failed_check_endpoints']} | {value['worst_slack_ns']} |"
@@ -400,6 +411,13 @@ def self_test():
                     "end": "u_b/d.d"}, stats, negative)
     assert stats["setup"] == {"reported_paths": 1, "worst_slack_ns": -0.25}
     assert list(negative.values())[0]["scope"] == "internal"
+    for begin, end in (("i_load_addr[1]", "u_down2/ramread0.we"),
+                       ("i_rstn", "u_mac/ramread1.we"),
+                       ("u_stem/q.clk", "u_pp/ramread2.we")):
+        _finish_record({"slack_ns": -0.2, "check": "setup", "begin": begin,
+                        "end": end}, stats, negative)
+    ram_failures = internal_ram_failures(list(negative.values()))
+    assert len(ram_failures) == 1 and ram_failures[0]["end"] == "u_pp/ramread2.we"
     rtl = [""] * 530
     rtl[507] = "next = reg_halo[index];"
     assert failure_family({"end": "u_down2/ramread0_syn_1.we"},
