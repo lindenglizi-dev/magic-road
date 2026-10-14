@@ -1,0 +1,117 @@
+RoadYOLO：局部写许可候选实测与下一步
+日期：2026-10-14；本地分支work/roadyolo；输入基线60b37283。
+
+一、先给结论：仍未通过，候选不采用
+
+原保留版3项RAM WE setup、最差-0.095ns不变，路径为
+../prefetch_admission_20261014/physical/。
+本轮新RTL候选功能/周期回归通过，但真实完整内部setup增至107项、最差-0.555ns。
+不把目标三端点消失当成功；候选和全部失败证据保留，没有覆盖原版或生产工程。
+本轮只完成一个有界实验及根因定位，不宣布CNN内部100MHz通过或整网5FPS通过。
+
+二、实际修改了哪里
+
+rtl/road_stem_tile_scheduler.v：原唯一权重写入点中，变量写地址展开为7个64项银行case。
+rtl/road_down2_tile_scheduler.v：原唯一halo写入点中，展开为21个64项银行case。
+保持flat数组容量、全部读索引、原许可/合法性、loaded/fault/游标、接口、II、复位和算术核。
+没有新增显式寄存拍或镜像缓存。另将原一行空default展开，两版本RTL token校验相同。
+原源被严格冻结；修改前副本和风险审查见baseline_rtl/、修改前风险与逐拍契约.txt。
+
+三、已完成的验证
+
+- load_reference.py：27,436个二值地址/接受沿比较，0 mismatch；不宣称四态全等价。
+- 原8组：ROM连算、ROM读、预取、存储枚举、正常整层、带停顿整层、共享控制、计数准备。
+  原完整数值输出与周期CSV逐字节一致。normal和stalls各完成Stem2304个tile及down2 576个tile。
+- 新锁步测试load_compare_attempt4：5,531,328次字节比较、Stem875笔/halo2603笔接受；
+  每沿比较全部432项权重、1296项halo及ready、fault、loaded、游标、装载计数。
+  连续装载、气泡、首末/跨银行、地址零、越界、乱序、非法类型/数据、复位和全X地址点测均覆盖。
+  未穷举任意X/Z组合；原内部DW ready在reset期间可为高，外部壳另行屏蔽，未改原行为。
+- pending_check：旧DW pending写入中复位专测通过，旧写入取消。
+- 小块核心仍1687周期（DW1095、PW592），预装载1296有效传输、导出384；周期没有加速。
+- 两个修改模块及新TB的同名规格和周期图已由已安装WaveDrom生成，不依赖未验证ROM启动。
+- TD实际重新综合、布局布线、最终STA；不是沿用旧网表或旧资源。工具运行约784.10秒。
+
+四、同口径物理对比（100MHz、PH1P35MDG324、speed 3，均含验证壳）
+
+项目                         保留基线               本轮淘汰候选
+Slice                        13497                  13631（+134）
+DSP                          30                     30
+ERAM                         60                     60
+寄存器                       12987                  12910（-77）
+I/O                          50                     50
+完整内部setup失败端点        3                      107
+完整内部最差setup            -0.095ns               -0.555ns
+寄存器表setup                +0.220ns               +0.019ns
+寄存器表hold                 +0.034ns               +0.049ns
+寄存器表recovery             +1.224ns               +0.150ns
+寄存器表removal              +0.212ns               +0.123ns
+
+最终报告Confidence=Routed，Slow/Fast及适用温度角点保留，STA覆盖100%。
+包含ignored与普通全端点数量差均0；56个ROM ERAM及4480项INIT与冻结源逐项相同。
+为什么寄存器表setup为正却FAIL：107项落在RAM .imb/.waddr，并未完整出现在寄存器定向集合。
+全端点库存必须与RAM/DSP定向报告联合核对，不能用100.190MHz寄存器表Fmax宣布内部通过。
+候选全局另有external_output setup9、external_input hold37、raw_reset removal593/hold15。
+这些诊断外部路径没有以假IO延迟或false path清除，不代表真实板级签核。
+
+五、失败原因已经具体定位，不是“时序又差了”
+
+107项全部起于u_prefetch/state_current_reg[0]_syn_138，终点80个Stem RAM .imb和27个.waddr。
+最差链为：
+prefetch state → external_open/selected-valid → i_load_valid_dup_1
+              → mux46_syn_647 → ramread11_syn_10406 → RAM.imb
+
+该路径8级，10.227ns中cell2.437/net7.790ns；关键valid网58负载、单段2.911ns。
+mux46的~C*~E*D中D为i_load_valid，C/E为综合拆分的合法性/选择否决。
+下一LUT用这项资格同时门控i_load_data[6]和i_load_addr[5]，分别进入RAM数据/地址。
+原接受/合法检查没有丢失；问题是综合将它们搬进了RAM写地址和写数据选择。
+保留版对应RAM.waddr直接来自i_load_addr[5:1]、imb直接来自载荷数据，资格只落WE。
+平面数组内增加多条case写语句，引发实质性的RAM推断/打包变化，而不是仅产生本地WE。
+独立只读审查与routed_netlist/实际最差路径相互印证；不是凭RTL写法推测优化成功。
+原三WE失败端点确已消失，但新107项足以否决；不能把它们排除、忽略或改称外部路径。
+
+ROM复制另作有界核查：新的place已自动拆分，指定分支复制前28个负载，不再等于旧布局67。
+原固定67检查报警及日志保留，未修改历史检查器。当前28=24地址CE+2 quad CE+2 word CE；
+复制后15+13，LUT配置/输入及接收端并集一致、全global route、缺失/重复/新增均0。
+新检查只覆盖本布局28端分支，不能冒充旧67端全体或全设计形式/门级仿真。
+test_rom_control_check.py实际拒绝故意篡改LUT与重复接收端两个负例，未修改原网表。
+
+六、严格门禁的真实状态
+
+修改前完整门因一行空default解析失败，没有完整公开矩阵；旧失败记录未删除。
+token不变的换行修正后，完整矩阵可发布：RTL6734条、TB2673条errors，strict_warnings均0。
+这两个数字是源闭包和TB范围的严格诊断，不能与历史374/667/219或实际107条时序直接相加。
+RTL矩阵：compile passed；ast/readability/comment/naming/profile failed；testbench passed；
+静态toolchain not_requested。实际ModelSim已PASS，实际TD内部FAIL，分别作为外部工具证据记录。
+AST parse_errors=0，但formatter/profile仍有失败；不是“八项都通过”。
+其中仍有组合锥、宽度/驱动、外部接口等语义诊断，不把6734条全部说成格式问题。
+本轮没有改全局技能/检查规则，不自动重写不相关代码，strict_delivery_ready始终false。
+
+七、下一步：只做一个小样，先证明结构再花时间布局
+
+1. 从60b37283保留版重新分支到下个独立目录；不在此107-fail候选上继续叠改。
+2. 不再在同一flat数组内展开7/21路case。若继续银行方案，只选择一个实际失败银行
+   （先Stem地址64..127）做真正独立单写端口的小样；外部地址/数据/握手、II和完成沿不变。
+   读映射必须显式记录，不能保留镜像双写，也不能靠给同一布尔式改名字宣称局部化。
+3. 先做二值地址证明、原向量/锁步，再仅到门级结构检查。进入完整布局必须同时满足：
+   a) RAM容量/活动操作数保留，单写入者，WE确实局部化；
+   b) RAM写地址仍直接取低地址，写数据直接取载荷；
+   c) 不再出现prefetch/state→资格mux→RAM.waddr/imb，不能用setup寄存器表替代检查；
+   d) 没有用新增寄存拍/接口、时序例外或明显资源膨胀换取局部通过。
+4. 任一不满足，就不再跑约13分钟的完整实现、不扩到全部银行，回保留版重新选择方案。
+   若必须以新的写入级/完成沿才能切断长控制链，先集中提交具体拍点和握手决定。
+5. 当前资源/接口时序未签核不阻止保留已有功能证据，但不能上板部署；不自动缩网或降时钟。
+   内部物理收口后回到DW整批后处理、真实67层/DDR和20M周期预算，避免无限扩通用核。
+
+八、恢复和文件
+
+原2597个文件运行前后SHA256 changed=[]；完整基线60b37283及3-fail数据库仍在原处。
+本轮没有改生产、算术核、数值包/模型、接口、II、复位，没有训练、位流、上板或Flash。
+状态/对比：status.json、comparison.json；功能：simulation_attempt2/receipt.json、
+load_compare_attempt4/receipt.json、pending_check/receipt.json、load_reference_receipt.json。
+物理：physical/pr.db、routed_netlist.v、physical_summary.json、failed_endpoint_inventory.json及所有timing。
+新门禁：gate/rtl.json、gate/tests.json；较大的原始报告留本机，strict_summary.json保留摘要/哈希。
+脚本及测试壳问题的具体原因/修正在本轮失败定位记录.txt中，不把它们算成RTL修复收益。
+15份timing逻辑1414157950字节，无损压缩存储523395072字节；压缩前后哈希相同，未删文件。
+
+总结：完成了完整实验，结论是“不采用”，不是修好了。实际收获是定位并排除“在flat数组中
+展开case就会改善WE”的假设；下次先验收真实RAM端口结构，再决定是否投入完整布局。

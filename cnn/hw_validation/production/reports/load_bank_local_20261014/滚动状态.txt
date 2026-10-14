@@ -1,0 +1,18 @@
+2026-10-14：从60b37283保留版（3项WE setup，最差-0.095ns）开始。
+任务类：modify + validate。公共门compile/ast/readability/comment/naming/profile/testbench/toolchain均记录；不放宽门禁。
+仅同周期写许可与64项bank选择，保持flat数组/读路径；不分拆多目标always、不新增寄存器或接口。
+先跑原源formatter-backed gate并保存风险；原源已知case_normalization_violation未闭合。
+现有物理已隐式银行化，所以显式译码只是一个待证候选，不是承诺有效。
+Python/Tcl对应readable生成技能本会话未提供；复用现有脚本并做语法/实际工具检查，不宣称其严格门已过。
+预期验证：合法/乱序/首末地址/越界/连续装载/装载中复位、原8组回归及DW pending复位；
+同向量输出/核心周期不变，新实际顶层重新综合、正常route及全量内部RAM/DSP/复位检查。
+保留先前advance和ROM控制分流；无更多逐WE网强制复制、属性、时序例外、训练、生产/板卡/位流动作。
+
+最终：候选拒绝。真实内部107项setup（80 imb、27 waddr），最差-0.555ns；
+保留60b37283目录prefetch_admission_20261014/physical/的3项WE、-0.095ns基线。
+候选实际13631 Slice/30DSP/60ERAM/12910regs；全量报告覆盖100%，不表示通过。
+27,436参考检查、8组原回归同周期/同数值、5,531,328逐沿字节锁步、pending reset专测通过。
+根因已确认：平面数组case展开使load许可进入写地址/数据mux，新增8级控制路径。
+不继续扩银行，不改时序约束；下一次最多一个真实独立银行的小样，先看门级结构再决定布局。
+新完整严格矩阵已恢复发布：RTL6734、TB2673；compile通过不等于其他门通过。
+本轮15份timing已无损压缩，哈希不变；2597个旧文件未改。最终报告见本目录实测报告。

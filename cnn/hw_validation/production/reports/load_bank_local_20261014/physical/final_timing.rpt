@@ -1,0 +1,1744 @@
+Created by          : Tang Dynasty v6.2.168116
+                    : Copyright (c) 2012-2025 Anlogic Inc.
+Generated           : Wed Oct 14 18:37:46 2026
+
+Top Model           : road_rom_current_down2_top
+Device              : PH1P35MDG324
+Speed               : 3
+STA coverage        : 100.00%
+Constraint File     : E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/load_bank_local_20261014/physical/frontend.sdc;
+Confidence          : Routed
+Check Corner        : Both (Slow and Fast)
+CRPR Enabled        : Yes
+Report Scheme       : 10 end point(s) per path group, 1 path(s) per end point
+
+
+Check Status
+-------------
+
+Corner   | Max      Min     
+------------------------------------
+Slow     | yes      yes     
+Fast     | yes      yes     
+
+
+Timing Status
+--------------------
+	SWNS: -2.008ns, STNS: -25.044ns
+	HWNS: -1.029ns, HTNS: -109.467ns
+	Period Check WNS: 7.200ns
+
+
+Clock Summary
+--------------------
+
+       Clock-Id:       C-Freq       Fanout   Clock-Name
+--------------------------------------------------------------------------------
+           clk0:      100.000        11415   probe_clk
+--------------------------------------------------------------------------------
+
+       Name            Type         Rise(ns)   Fall(ns)          C-Period(ns)     C-Freq(MHz)          R-Period(ns)     R-Freq(MHz)         SWNS(ns)   STNS(ns)         HWNS(ns)   HTNS(ns)         Skew(ns)           Fanout        Max-Level        CC-From    CC-To
+       clk0   Inferred GCLK            0.000      5.000                10.000         100.000                12.008          83.278           -2.008    -25.044           -1.029   -109.467            0.224            11415                9             no       no
+
+Notes
+----------
+C-Period  :  constraint period
+C-Freq    :  constraint freq
+R-Period  :  report min period
+R-Freq    :  report fmax
+CC-From   :  has path(s) from cross-domain clock
+CC-To     :  has path(s) to cross-domain clock
+
+
+*   Clock R-Period data only takes intra-clock timing. SWNS/STNS/HWNS/HTNS take both intra-clock and inter-clock timing.
+*   If there is mismatch between R-Period and SWNS, check inter-clock timing of this clock as capture clock.
+*   SWNS/STNS/HWNS/HTNS of timing exception (SMCP/SMD) only counted in global Timing Status, not counted in Clock Summary.
+
+Intra clock domain timing
+--------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Path Group     :     probe_clk -> probe_clk
+Type           :     Self
+From Clock     :     probe_clk
+To Clock       :     probe_clk
+Min Period     :     12.008ns
+Fmax           :     83.278MHz
+
+Statistics:
+Max            : SWNS     -2.008ns, STNS    -25.044ns,       116 Viol Endpoints,     31788 Total Endpoints,   1234604 Paths Analyzed
+Min            : HWNS     -1.029ns, HTNS   -109.467ns,       650 Viol Endpoints,     31788 Total Endpoints,   1234604 Paths Analyzed
+----------------------------------------------------------------------------------------------------
+
+Max Paths
+----------------------------------------------------------------------------------------------------
+Slack               : -2.008ns
+Begin Point         : u_compute/u_stem/state_current_reg[3]_syn_4.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_valid (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 8.981ns (cell 4.423ns (49%), net 4.558ns (51%))
+Clock Skew          : 2.977ns
+Logic Level         : 6 ( PAD=2  LUT4=2  LUT6=1  LUT5=1 )
+Max Fanout          : 12
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.633          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/state_current_reg[3]_syn_4.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x022y023z1          0.126    f     3.103          pin: u_compute/u_stem/state_current_reg[3]_syn_4.oqa
+net (fo=10)                             0.588          3.691          net: u_compute/u_stem/state_current[3],  ../rtl/road_stem_tile_scheduler.v(55)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12774.ia
+LUT6                x021y017z0          0.408    f     4.099       1  pin: u_compute/u_down2/ramread2_syn_12774.ofb
+net (fo=1)                              0.464          4.563          net: u_compute/u_down2/ramread2_syn_9580,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12618.id
+LUT4                x025y015z6          0.266    r     4.829       2  pin: u_compute/u_down2/ramread2_syn_12618.ofb
+net (fo=12)                             0.400          5.229          net: u_compute/u_stem/o_fault_syn_2,  ../rtl/road_stem_tile_scheduler.v(16)
+                                                                      pin: u_rom/road_yolo_numeric_rom_group_Inst_lambda/word_data_o_reg[88]_syn_2.id
+LUT5                x025y021z6          0.266    r     5.495       3  pin: u_rom/road_yolo_numeric_rom_group_Inst_lambda/word_data_o_reg[88]_syn_2.ofb
+net (fo=2)                              2.319          7.814          net: o_parameters_ready_dup_3,  ../rtl/road_rom_current_down2_top.v(15)
+                                                                      pin: o_output_valid_syn_7.ie
+LUT4                x041y067z7          0.189    r     8.003       4  pin: o_output_valid_syn_7.ofb
+net (fo=1)                              0.787          8.790          net: o_output_valid_dup_1,  ../rtl/road_rom_current_down2_top.v(19)
+                                                                      pin: o_output_valid_syn_2.doq[0]
+PAD                 x043y076            0.648    r     9.438       5  pin: o_output_valid_syn_2.sg09_do
+PAD                 x043y076            2.520    r    11.958       6  pin: o_output_valid_syn_2.opad
+net (fo=1)                              0.000         11.958          net: o_output_valid,  ../rtl/road_rom_current_down2_top.v(19)
+                                                                      pin: o_output_valid
+--------------------------------------------------------------------  ---------------
+Arrival                                               11.958               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -2.008               
+
+Slack               : -1.219ns
+Begin Point         : u_compute/u_down2/cnt_export_reg[2]_syn_6.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[0] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 8.192ns (cell 4.421ns (53%), net 3.771ns (47%))
+Clock Skew          : 2.977ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 33
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=2741)                           0.635          2.977          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_down2/cnt_export_reg[2]_syn_6.clk
+launch edge                             0.000    r     2.977               
+--------------------------------------------------------------------  ---------------
+clk2q               x030y017z4          0.137    r     3.114          pin: u_compute/u_down2/cnt_export_reg[2]_syn_6.oqb
+net (fo=33)                             0.563          3.677          net: u_compute/u_down2/o_output_index[2]_dup_9,  ../rtl/road_down2_tile_scheduler.v(24)
+                                                                      pin: u_compute/u_down2/ramread50_syn_289.ib
+DRAM                x031y017z0          0.427    f     4.104       1  pin: u_compute/u_down2/ramread50_syn_289.ofb
+net (fo=1)                              0.364          4.468          net: u_compute/u_down2/ramread50_syn_73,  ../rtl/road_down2_tile_scheduler.v(469)
+                                                                      pin: u_compute/u_down2/ramread50_syn_122.ic
+LUT6                x033y016z7          0.265    r     4.733       2  pin: u_compute/u_down2/ramread50_syn_122.relut6
+net (fo=1)                              0.000          4.733          net: u_compute/u_down2/ramread50_syn_124[1],  ../rtl/road_down2_tile_scheduler.v(469)
+                                                                      pin: u_compute/u_down2/ramread50_syn_99.muxi[1]
+F7MUX               x033y016            0.075    r     4.808          pin: u_compute/u_down2/ramread50_syn_99.muxo
+net (fo=1)                              0.000          4.808          net: u_compute/u_down2/ramread50_syn_126,  ../rtl/road_down2_tile_scheduler.v(469)
+                                                                      pin: u_compute/u_down2/ramread50_syn_121.f78i
+                    x033y016z6          0.078    f     4.886          pin: u_compute/u_down2/ramread50_syn_121.ofa
+net (fo=1)                              0.374          5.260          net: u_compute/d_output_data[0],  ../rtl/road_frontend_shared_core.v(46)
+                                                                      pin: o_output_data[0]_syn_7.imb
+LUT3                x034y018z1          0.271    r     5.531       3  pin: o_output_data[0]_syn_7.ofb
+net (fo=1)                              2.470          8.001          net: o_output_data[0]_dup_1,  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[0]_syn_2.doq[0]
+PAD                 x043y050            0.648    r     8.649       4  pin: o_output_data[0]_syn_2.sg09_do
+PAD                 x043y050            2.520    r    11.169       5  pin: o_output_data[0]_syn_2.opad
+net (fo=1)                              0.000         11.169          net: o_output_data[0],  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[0]
+--------------------------------------------------------------------  ---------------
+Arrival                                               11.169               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.219               
+
+Slack               : -0.962ns
+Begin Point         : u_compute/u_stem/cnt_export_reg[2]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[1] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 7.934ns (cell 4.197ns (52%), net 3.737ns (48%))
+Clock Skew          : 2.978ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 38
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=2741)                           0.636          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/cnt_export_reg[2]_syn_2.clk
+launch edge                             0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+clk2q               x025y016z0          0.126    f     3.104          pin: u_compute/u_stem/cnt_export_reg[2]_syn_2.oqa
+net (fo=38)                             0.534          3.638          net: u_compute/u_stem/o_output_index[2],  ../rtl/road_stem_tile_scheduler.v(50)
+                                                                      pin: u_compute/u_stem/ramread1_syn_158.ib
+DRAM                x025y017z1          0.427    f     4.065       1  pin: u_compute/u_stem/ramread1_syn_158.ofb
+net (fo=1)                              0.379          4.444          net: u_compute/u_stem/ramread1_syn_22,  ../rtl/road_stem_tile_scheduler.v(130)
+                                                                      pin: o_output_data[1]_syn_6.ic
+LUT6                x026y017z5          0.287    r     4.731       2  pin: o_output_data[1]_syn_6.ofb
+net (fo=1)                              0.551          5.282          net: o_output_data[1]_syn_4,  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[1]_syn_7.ie
+LUT3                x033y018z0          0.189    r     5.471       3  pin: o_output_data[1]_syn_7.ofb
+net (fo=1)                              2.273          7.744          net: o_output_data[1]_dup_1,  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[1]_syn_2.doq[0]
+PAD                 x043y047            0.648    r     8.392       4  pin: o_output_data[1]_syn_2.sg09_do
+PAD                 x043y047            2.520    r    10.912       5  pin: o_output_data[1]_syn_2.opad
+net (fo=1)                              0.000         10.912          net: o_output_data[1],  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[1]
+--------------------------------------------------------------------  ---------------
+Arrival                                               10.912               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.962               
+
+Slack               : -0.761ns
+Begin Point         : u_compute/u_stem/cnt_export_reg[2]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[3] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 7.733ns (cell 4.280ns (55%), net 3.453ns (45%))
+Clock Skew          : 2.978ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 38
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=2741)                           0.636          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/cnt_export_reg[2]_syn_2.clk
+launch edge                             0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+clk2q               x025y016z0          0.126    f     3.104          pin: u_compute/u_stem/cnt_export_reg[2]_syn_2.oqa
+net (fo=38)                             0.534          3.638          net: u_compute/u_stem/o_output_index[2],  ../rtl/road_stem_tile_scheduler.v(50)
+                                                                      pin: u_compute/u_stem/ramread1_syn_160.ib
+DRAM                x025y017z3          0.427    f     4.065       1  pin: u_compute/u_stem/ramread1_syn_160.ofb
+net (fo=1)                              0.372          4.437          net: u_compute/u_stem/ramread1_syn_24,  ../rtl/road_stem_tile_scheduler.v(130)
+                                                                      pin: o_output_data[3]_syn_6.ic
+LUT6                x026y017z6          0.287    r     4.724       2  pin: o_output_data[3]_syn_6.ofb
+net (fo=1)                              0.548          5.272          net: o_output_data[3]_syn_4,  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[1]_syn_7.imf
+LUT3                x033y018z0          0.272    f     5.544       3  pin: o_output_data[1]_syn_7.ofa
+net (fo=1)                              1.999          7.543          net: o_output_data[3]_dup_1,  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[3]_syn_2.doq[0]
+PAD                 x043y044            0.648    r     8.191       4  pin: o_output_data[3]_syn_2.sg09_do
+PAD                 x043y044            2.520    r    10.711       5  pin: o_output_data[3]_syn_2.opad
+net (fo=1)                              0.000         10.711          net: o_output_data[3],  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[3]
+--------------------------------------------------------------------  ---------------
+Arrival                                               10.711               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.761               
+
+Slack               : -0.636ns
+Begin Point         : u_compute/u_stem/cnt_export_reg[2]_syn_2.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : o_output_data[2] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 7.608ns (cell 4.280ns (56%), net 3.328ns (44%))
+Clock Skew          : 2.978ns
+Logic Level         : 5 ( PAD=2  LUT6=1  LUT3=1  DRAM=1 )
+Max Fanout          : 38
+Clock Uncertainty   : 0.050ns (sdc uncertainty: 0.000ns, default uncertainty: 0.050ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.366          2.263          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkin
+SCLK                x023y019z12         0.079          2.342          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1.clkout
+net (fo=2741)                           0.636          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_r_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/cnt_export_reg[2]_syn_2.clk
+launch edge                             0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+clk2q               x025y016z0          0.126    f     3.104          pin: u_compute/u_stem/cnt_export_reg[2]_syn_2.oqa
+net (fo=38)                             0.534          3.638          net: u_compute/u_stem/o_output_index[2],  ../rtl/road_stem_tile_scheduler.v(50)
+                                                                      pin: u_compute/u_stem/ramread1_syn_159.ib
+DRAM                x025y017z2          0.427    f     4.065       1  pin: u_compute/u_stem/ramread1_syn_159.ofb
+net (fo=1)                              0.379          4.444          net: u_compute/u_stem/ramread1_syn_23,  ../rtl/road_stem_tile_scheduler.v(130)
+                                                                      pin: o_output_data[2]_syn_6.ic
+LUT6                x026y017z7          0.287    r     4.731       2  pin: o_output_data[2]_syn_6.ofb
+net (fo=1)                              0.466          5.197          net: o_output_data[2]_syn_4,  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[0]_syn_7.imf
+LUT3                x034y018z1          0.272    f     5.469       3  pin: o_output_data[0]_syn_7.ofa
+net (fo=1)                              1.949          7.418          net: o_output_data[2]_dup_1,  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[2]_syn_2.doq[0]
+PAD                 x043y047            0.648    r     8.066       4  pin: o_output_data[2]_syn_2.sg09_do
+PAD                 x043y047            2.520    r    10.586       5  pin: o_output_data[2]_syn_2.opad
+net (fo=1)                              0.000         10.586          net: o_output_data[2],  ../rtl/road_rom_current_down2_top.v(20)
+                                                                      pin: o_output_data[2]
+--------------------------------------------------------------------  ---------------
+Arrival                                               10.586               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+capture edge                           10.000    r    10.000               
+--------------------------------------------------------------------  ---------------
+output                                  0.000         10.000               
+clock uncertainty                      -0.050          9.950               
+clock pessimism                         0.000          9.950               
+--------------------------------------------------------------------  ---------------
+Required                                               9.950               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.636               
+
+Slack               : -0.555ns
+Begin Point         : u_prefetch/state_current_reg[0]_syn_138.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/ramread11_syn_7598.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 10.227ns (cell 2.437ns (23%), net 7.790ns (77%))
+Clock Skew          : 0.099ns
+Logic Level         : 8 ( LUT5=3  LUT3=2  LUT6=1  LUT4=1  DRAM=1 )
+Max Fanout          : 58
+Clock Uncertainty   : 0.075ns (sdc uncertainty: 0.000ns, default uncertainty: 0.075ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.clk
+launch edge                             0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+clk2q               x021y015z0          0.126    f     3.101          pin: u_prefetch/state_current_reg[0]_syn_138.oqa
+net (fo=6)                              0.402          3.503          net: u_prefetch/state_current[0]_dup_51,  ../rtl/road_down2_parameter_prefetch.v(29)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12626.ib
+LUT6                x021y015z3          0.427    f     3.930       1  pin: u_compute/u_down2/ramread2_syn_12626.ofb
+net (fo=1)                              0.079          4.009          net: u_compute/u_down2/ramread2_syn_9585,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.ic
+LUT4                x021y015z0          0.410    f     4.419       2  pin: u_prefetch/state_current_reg[0]_syn_138.ofa
+net (fo=1)                              1.265          5.684          net: u_compute/u_down2/ramread2_syn_9587,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.id
+LUT5                x020y016z7          0.266    r     5.950       3  pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.ofb
+net (fo=9)                              0.978          6.928          net: flag_external_open_n2,  NOFILE(0)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12955.ie
+LUT5                x016y035z6          0.189    r     7.117       4  pin: u_compute/u_down2/ramread2_syn_12955.ofb
+net (fo=20)                             0.617          7.734          net: u_compute/u_down2/ramread2_syn_dup_12738,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10594.id
+LUT5                x018y044z1          0.266    r     8.000       5  pin: u_compute/u_stem/ramread11_syn_10594.ofb
+net (fo=58)                             2.911         10.911          net: u_compute/u_stem/i_load_valid_dup_1,  ../rtl/road_stem_tile_scheduler.v(8)
+                                                                      pin: u_compute/u_stem/mux46_syn_647.id
+LUT3                x012y065z2          0.266    r    11.177       6  pin: u_compute/u_stem/mux46_syn_647.ofb
+net (fo=30)                             0.550         11.727          net: u_compute/u_stem/mux46_syn_dup_624,  ../rtl/road_stem_tile_scheduler.v(234)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10406.ib
+LUT3                x014y070z5          0.487    r    12.214       7  pin: u_compute/u_stem/ramread11_syn_10406.ofa
+net (fo=14)                             0.988         13.202          net: u_compute/u_stem/ramread11_syn_dup_10191,  ../rtl/road_stem_tile_scheduler.v(179)
+                                                                      pin: u_compute/u_stem/ramread11_syn_7598.imb
+DRAM (reg)          x005y069z6          0.000    f    13.202       8       
+--------------------------------------------------------------------  ---------------
+Arrival                                               13.202               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.556          0.556          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.448          1.004          pin: i_clk_syn_2.di
+net (fo=1)                              0.675          1.679          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.014          1.693          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.341          2.034          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkin
+SCLK                x023y059z0          0.068          2.102          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkout
+net (fo=1380)                           0.570          2.672          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/ramread11_syn_7600.wclk
+DRAM                x005y069            0.000          2.672          pin: u_compute/u_stem/ramread11_syn_7600.dpram_wclk
+net (fo=8)                              0.000          2.672          net: u_compute/u_stem/ramread11_syn_7606,  ../rtl/road_stem_tile_scheduler.v(179)
+                                                                      pin: u_compute/u_stem/ramread11_syn_7598.dpram_wclk
+capture edge                           10.000    r    12.672               
+--------------------------------------------------------------------  ---------------
+setup                                  -0.154         12.518               
+clock uncertainty                      -0.075         12.443               
+clock pessimism                         0.204         12.647               
+--------------------------------------------------------------------  ---------------
+Required                                              12.647               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.555               
+
+Slack               : -0.517ns
+Begin Point         : u_prefetch/state_current_reg[0]_syn_138.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/ramread11_syn_8440.waddr[1] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 10.164ns (cell 2.358ns (23%), net 7.806ns (77%))
+Clock Skew          : 0.099ns
+Logic Level         : 8 ( LUT5=3  LUT3=2  LUT6=1  LUT4=1  DRAM=1 )
+Max Fanout          : 58
+Clock Uncertainty   : 0.075ns (sdc uncertainty: 0.000ns, default uncertainty: 0.075ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.clk
+launch edge                             0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+clk2q               x021y015z0          0.126    f     3.101          pin: u_prefetch/state_current_reg[0]_syn_138.oqa
+net (fo=6)                              0.402          3.503          net: u_prefetch/state_current[0]_dup_51,  ../rtl/road_down2_parameter_prefetch.v(29)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12626.ib
+LUT6                x021y015z3          0.427    f     3.930       1  pin: u_compute/u_down2/ramread2_syn_12626.ofb
+net (fo=1)                              0.079          4.009          net: u_compute/u_down2/ramread2_syn_9585,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.ic
+LUT4                x021y015z0          0.410    f     4.419       2  pin: u_prefetch/state_current_reg[0]_syn_138.ofa
+net (fo=1)                              1.265          5.684          net: u_compute/u_down2/ramread2_syn_9587,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.id
+LUT5                x020y016z7          0.266    r     5.950       3  pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.ofb
+net (fo=9)                              0.978          6.928          net: flag_external_open_n2,  NOFILE(0)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12955.ie
+LUT5                x016y035z6          0.189    r     7.117       4  pin: u_compute/u_down2/ramread2_syn_12955.ofb
+net (fo=20)                             0.617          7.734          net: u_compute/u_down2/ramread2_syn_dup_12738,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10594.id
+LUT5                x018y044z1          0.266    r     8.000       5  pin: u_compute/u_stem/ramread11_syn_10594.ofb
+net (fo=58)                             2.911         10.911          net: u_compute/u_stem/i_load_valid_dup_1,  ../rtl/road_stem_tile_scheduler.v(8)
+                                                                      pin: u_compute/u_stem/mux46_syn_647.id
+LUT3                x012y065z2          0.266    r    11.177       6  pin: u_compute/u_stem/mux46_syn_647.ofb
+net (fo=30)                             0.666         11.843          net: u_compute/u_stem/mux46_syn_dup_624,  ../rtl/road_stem_tile_scheduler.v(234)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10411.ib
+LUT3                x012y075z7          0.408    f    12.251       7  pin: u_compute/u_stem/ramread11_syn_10411.ofb
+net (fo=12)                             0.888         13.139          net: u_compute/u_stem/ramread11_syn_dup_9883,  ../rtl/road_stem_tile_scheduler.v(179)
+                                                                      pin: u_compute/u_stem/ramread11_syn_8440.waddr[1]
+DRAM (reg)          x005y072            0.000    f    13.139       8       
+--------------------------------------------------------------------  ---------------
+Arrival                                               13.139               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.556          0.556          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.448          1.004          pin: i_clk_syn_2.di
+net (fo=1)                              0.675          1.679          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.014          1.693          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.341          2.034          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkin
+SCLK                x023y059z0          0.068          2.102          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkout
+net (fo=1380)                           0.570          2.672          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/ramread11_syn_8440.wclk
+capture edge                           10.000    r    12.672               
+--------------------------------------------------------------------  ---------------
+setup                                  -0.179         12.493               
+clock uncertainty                      -0.075         12.418               
+clock pessimism                         0.204         12.622               
+--------------------------------------------------------------------  ---------------
+Required                                              12.622               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.517               
+
+Slack               : -0.509ns
+Begin Point         : u_prefetch/state_current_reg[0]_syn_138.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/ramread11_syn_7578.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 10.180ns (cell 2.437ns (23%), net 7.743ns (77%))
+Clock Skew          : 0.100ns
+Logic Level         : 8 ( LUT5=3  LUT3=2  LUT6=1  LUT4=1  DRAM=1 )
+Max Fanout          : 58
+Clock Uncertainty   : 0.075ns (sdc uncertainty: 0.000ns, default uncertainty: 0.075ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.clk
+launch edge                             0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+clk2q               x021y015z0          0.126    f     3.101          pin: u_prefetch/state_current_reg[0]_syn_138.oqa
+net (fo=6)                              0.402          3.503          net: u_prefetch/state_current[0]_dup_51,  ../rtl/road_down2_parameter_prefetch.v(29)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12626.ib
+LUT6                x021y015z3          0.427    f     3.930       1  pin: u_compute/u_down2/ramread2_syn_12626.ofb
+net (fo=1)                              0.079          4.009          net: u_compute/u_down2/ramread2_syn_9585,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.ic
+LUT4                x021y015z0          0.410    f     4.419       2  pin: u_prefetch/state_current_reg[0]_syn_138.ofa
+net (fo=1)                              1.265          5.684          net: u_compute/u_down2/ramread2_syn_9587,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.id
+LUT5                x020y016z7          0.266    r     5.950       3  pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.ofb
+net (fo=9)                              0.978          6.928          net: flag_external_open_n2,  NOFILE(0)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12955.ie
+LUT5                x016y035z6          0.189    r     7.117       4  pin: u_compute/u_down2/ramread2_syn_12955.ofb
+net (fo=20)                             0.617          7.734          net: u_compute/u_down2/ramread2_syn_dup_12738,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10594.id
+LUT5                x018y044z1          0.266    r     8.000       5  pin: u_compute/u_stem/ramread11_syn_10594.ofb
+net (fo=58)                             2.911         10.911          net: u_compute/u_stem/i_load_valid_dup_1,  ../rtl/road_stem_tile_scheduler.v(8)
+                                                                      pin: u_compute/u_stem/mux46_syn_647.id
+LUT3                x012y065z2          0.266    r    11.177       6  pin: u_compute/u_stem/mux46_syn_647.ofb
+net (fo=30)                             0.550         11.727          net: u_compute/u_stem/mux46_syn_dup_624,  ../rtl/road_stem_tile_scheduler.v(234)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10406.ib
+LUT3                x014y070z5          0.487    r    12.214       7  pin: u_compute/u_stem/ramread11_syn_10406.ofa
+net (fo=14)                             0.941         13.155          net: u_compute/u_stem/ramread11_syn_dup_10191,  ../rtl/road_stem_tile_scheduler.v(179)
+                                                                      pin: u_compute/u_stem/ramread11_syn_7578.imb
+DRAM (reg)          x009y069z6          0.000    f    13.155       8       
+--------------------------------------------------------------------  ---------------
+Arrival                                               13.155               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.556          0.556          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.448          1.004          pin: i_clk_syn_2.di
+net (fo=1)                              0.675          1.679          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.014          1.693          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.341          2.034          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkin
+SCLK                x023y059z0          0.068          2.102          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkout
+net (fo=1380)                           0.569          2.671          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/ramread11_syn_7580.wclk
+DRAM                x009y069            0.000          2.671          pin: u_compute/u_stem/ramread11_syn_7580.dpram_wclk
+net (fo=8)                              0.000          2.671          net: u_compute/u_stem/ramread11_syn_7586,  ../rtl/road_stem_tile_scheduler.v(179)
+                                                                      pin: u_compute/u_stem/ramread11_syn_7578.dpram_wclk
+capture edge                           10.000    r    12.671               
+--------------------------------------------------------------------  ---------------
+setup                                  -0.154         12.517               
+clock uncertainty                      -0.075         12.442               
+clock pessimism                         0.204         12.646               
+--------------------------------------------------------------------  ---------------
+Required                                              12.646               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.509               
+
+Slack               : -0.470ns
+Begin Point         : u_prefetch/state_current_reg[0]_syn_138.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/ramread11_syn_8400.waddr[2] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 10.117ns (cell 2.358ns (23%), net 7.759ns (77%))
+Clock Skew          : 0.099ns
+Logic Level         : 8 ( LUT5=3  LUT3=2  LUT6=1  LUT4=1  DRAM=1 )
+Max Fanout          : 58
+Clock Uncertainty   : 0.075ns (sdc uncertainty: 0.000ns, default uncertainty: 0.075ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.clk
+launch edge                             0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+clk2q               x021y015z0          0.126    f     3.101          pin: u_prefetch/state_current_reg[0]_syn_138.oqa
+net (fo=6)                              0.402          3.503          net: u_prefetch/state_current[0]_dup_51,  ../rtl/road_down2_parameter_prefetch.v(29)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12626.ib
+LUT6                x021y015z3          0.427    f     3.930       1  pin: u_compute/u_down2/ramread2_syn_12626.ofb
+net (fo=1)                              0.079          4.009          net: u_compute/u_down2/ramread2_syn_9585,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.ic
+LUT4                x021y015z0          0.410    f     4.419       2  pin: u_prefetch/state_current_reg[0]_syn_138.ofa
+net (fo=1)                              1.265          5.684          net: u_compute/u_down2/ramread2_syn_9587,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.id
+LUT5                x020y016z7          0.266    r     5.950       3  pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.ofb
+net (fo=9)                              0.978          6.928          net: flag_external_open_n2,  NOFILE(0)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12955.ie
+LUT5                x016y035z6          0.189    r     7.117       4  pin: u_compute/u_down2/ramread2_syn_12955.ofb
+net (fo=20)                             0.617          7.734          net: u_compute/u_down2/ramread2_syn_dup_12738,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10594.id
+LUT5                x018y044z1          0.266    r     8.000       5  pin: u_compute/u_stem/ramread11_syn_10594.ofb
+net (fo=58)                             2.911         10.911          net: u_compute/u_stem/i_load_valid_dup_1,  ../rtl/road_stem_tile_scheduler.v(8)
+                                                                      pin: u_compute/u_stem/mux46_syn_647.id
+LUT3                x012y065z2          0.266    r    11.177       6  pin: u_compute/u_stem/mux46_syn_647.ofb
+net (fo=30)                             0.550         11.727          net: u_compute/u_stem/mux46_syn_dup_624,  ../rtl/road_stem_tile_scheduler.v(234)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10403.ib
+LUT3                x014y070z6          0.408    f    12.135       7  pin: u_compute/u_stem/ramread11_syn_10403.ofb
+net (fo=21)                             0.957         13.092          net: u_compute/u_stem/ramread11_syn_dup_10267,  ../rtl/road_stem_tile_scheduler.v(179)
+                                                                      pin: u_compute/u_stem/ramread11_syn_8400.waddr[2]
+DRAM (reg)          x005y071            0.000    f    13.092       8       
+--------------------------------------------------------------------  ---------------
+Arrival                                               13.092               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.556          0.556          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.448          1.004          pin: i_clk_syn_2.di
+net (fo=1)                              0.675          1.679          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.014          1.693          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.341          2.034          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkin
+SCLK                x023y059z0          0.068          2.102          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkout
+net (fo=1380)                           0.570          2.672          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/ramread11_syn_8400.wclk
+capture edge                           10.000    r    12.672               
+--------------------------------------------------------------------  ---------------
+setup                                  -0.179         12.493               
+clock uncertainty                      -0.075         12.418               
+clock pessimism                         0.204         12.622               
+--------------------------------------------------------------------  ---------------
+Required                                              12.622               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.470               
+
+Slack               : -0.430ns
+Begin Point         : u_prefetch/state_current_reg[0]_syn_138.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/ramread11_syn_8437.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Budget              : 10.000ns { probe_clk rising@10.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 10.102ns (cell 2.437ns (24%), net 7.665ns (76%))
+Clock Skew          : 0.099ns
+Logic Level         : 8 ( LUT5=3  LUT3=2  LUT6=1  LUT4=1  DRAM=1 )
+Max Fanout          : 58
+Clock Uncertainty   : 0.075ns (sdc uncertainty: 0.000ns, default uncertainty: 0.075ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.clk
+launch edge                             0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+clk2q               x021y015z0          0.126    f     3.101          pin: u_prefetch/state_current_reg[0]_syn_138.oqa
+net (fo=6)                              0.402          3.503          net: u_prefetch/state_current[0]_dup_51,  ../rtl/road_down2_parameter_prefetch.v(29)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12626.ib
+LUT6                x021y015z3          0.427    f     3.930       1  pin: u_compute/u_down2/ramread2_syn_12626.ofb
+net (fo=1)                              0.079          4.009          net: u_compute/u_down2/ramread2_syn_9585,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_138.ic
+LUT4                x021y015z0          0.410    f     4.419       2  pin: u_prefetch/state_current_reg[0]_syn_138.ofa
+net (fo=1)                              1.265          5.684          net: u_compute/u_down2/ramread2_syn_9587,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.id
+LUT5                x020y016z7          0.266    r     5.950       3  pin: u_compute/u_mac/reg_bias_dot_reg[71]_syn_2.ofb
+net (fo=9)                              0.978          6.928          net: flag_external_open_n2,  NOFILE(0)
+                                                                      pin: u_compute/u_down2/ramread2_syn_12955.ie
+LUT5                x016y035z6          0.189    r     7.117       4  pin: u_compute/u_down2/ramread2_syn_12955.ofb
+net (fo=20)                             0.617          7.734          net: u_compute/u_down2/ramread2_syn_dup_12738,  ../rtl/road_down2_tile_scheduler.v(576)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10594.id
+LUT5                x018y044z1          0.266    r     8.000       5  pin: u_compute/u_stem/ramread11_syn_10594.ofb
+net (fo=58)                             2.911         10.911          net: u_compute/u_stem/i_load_valid_dup_1,  ../rtl/road_stem_tile_scheduler.v(8)
+                                                                      pin: u_compute/u_stem/mux46_syn_647.id
+LUT3                x012y065z2          0.266    r    11.177       6  pin: u_compute/u_stem/mux46_syn_647.ofb
+net (fo=30)                             0.666         11.843          net: u_compute/u_stem/mux46_syn_dup_624,  ../rtl/road_stem_tile_scheduler.v(234)
+                                                                      pin: u_compute/u_stem/ramread11_syn_10410.ib
+LUT3                x012y075z5          0.487    r    12.330       7  pin: u_compute/u_stem/ramread11_syn_10410.ofa
+net (fo=15)                             0.747         13.077          net: u_compute/u_stem/ramread11_syn_dup_10149,  ../rtl/road_stem_tile_scheduler.v(179)
+                                                                      pin: u_compute/u_stem/ramread11_syn_8437.imb
+DRAM (reg)          x005y072z5          0.000    f    13.077       8       
+--------------------------------------------------------------------  ---------------
+Arrival                                               13.077               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.556          0.556          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.448          1.004          pin: i_clk_syn_2.di
+net (fo=1)                              0.675          1.679          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.014          1.693          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.341          2.034          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkin
+SCLK                x023y059z0          0.068          2.102          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1.clkout
+net (fo=1380)                           0.570          2.672          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_1_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/ramread11_syn_8440.wclk
+DRAM                x005y072            0.000          2.672          pin: u_compute/u_stem/ramread11_syn_8440.dpram_wclk
+net (fo=8)                              0.000          2.672          net: u_compute/u_stem/ramread11_syn_8446,  ../rtl/road_stem_tile_scheduler.v(179)
+                                                                      pin: u_compute/u_stem/ramread11_syn_8437.dpram_wclk
+capture edge                           10.000    r    12.672               
+--------------------------------------------------------------------  ---------------
+setup                                  -0.154         12.518               
+clock uncertainty                      -0.075         12.443               
+clock pessimism                         0.204         12.647               
+--------------------------------------------------------------------  ---------------
+Required                                              12.647               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.430               
+
+
+Period Check
+----------------------------------------------------------------------------------------------------
+    Type       Setting(ns)      Required(ns)         Slack(ns)   Point
+--------------------------------------------------------------------------------
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread39_syn_94.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_180.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread44_syn_51.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread39_syn_134.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_260.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1344.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread6_syn_46.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread12_syn_107.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread5_syn_161.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread19_syn_26.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread21_syn_67.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread12_syn_147.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_277.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread3_syn_152.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread4_syn_154.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread35_syn_94.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread34_syn_94.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread0_syn_51.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread0_syn_71.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_mac/ramread0_syn_280.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread0_syn_31.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_100.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread44_syn_71.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread43_syn_46.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread39_syn_34.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread39_syn_74.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread39_syn_114.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread43_syn_26.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_240.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread6_syn_26.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_mac/ramread0_syn_160.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_mac/ramread0_syn_180.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_mac/ramread0_syn_200.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_mac/ramread0_syn_220.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_mac/ramread0_syn_240.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_mac/ramread0_syn_260.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread12_syn_67.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread12_syn_87.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_37.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_57.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_77.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_97.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_117.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_137.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_177.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_217.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_257.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread21_syn_27.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread21_syn_47.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread35_syn_34.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread35_syn_74.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread35_syn_114.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread39_syn_54.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1024.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread12_syn_127.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread35_syn_134.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1304.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread34_syn_54.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread34_syn_134.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread35_syn_54.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread50_syn_317.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread1_syn_225.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1706.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1386.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread50_syn_177.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread50_syn_197.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread50_syn_217.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread50_syn_237.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread50_syn_257.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread50_syn_277.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread50_syn_297.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread1_syn_165.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread1_syn_185.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread1_syn_205.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1166.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1186.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1206.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1246.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1266.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1286.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1326.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1346.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1366.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1406.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1426.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1446.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1486.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1506.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1526.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1566.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1586.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1606.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1646.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1666.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1686.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1726.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1746.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1766.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1306.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1466.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread11_syn_408.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10255.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10275.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10295.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10535.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10515.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10495.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10475.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10435.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10415.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10395.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1626.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1546.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1104.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread11_syn_368.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1226.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9755.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9775.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9875.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread10_syn_1786.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread58_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1184.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread0_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread55_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread53_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread51_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread60_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8120.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9600.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9000.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread44_syn_31.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_40.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_60.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_80.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_120.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_140.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_160.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_200.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread47_syn_220.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_157.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_197.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_pp/ramread15_syn_237.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7080.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7100.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7120.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7140.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7160.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7180.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7200.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7220.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7240.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7260.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7280.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7300.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7320.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7420.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7440.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7480.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7500.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7520.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7540.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7560.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7580.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7600.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7620.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7640.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7660.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7680.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7700.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7720.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7740.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7760.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7780.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7800.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7820.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7840.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7860.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7880.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7900.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7920.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7940.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7960.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7980.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8000.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8020.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8040.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8060.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8080.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8100.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8140.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8160.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8180.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8200.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8220.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8240.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8260.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8280.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8300.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8320.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8340.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8360.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8380.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8400.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8420.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8440.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8460.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8480.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8500.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8520.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8540.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8560.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8580.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8600.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8620.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8640.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8660.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8680.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8700.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8720.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8740.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8760.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8780.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8800.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8820.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8840.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8860.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8880.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8900.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8920.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8940.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8960.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_8980.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9020.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9040.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9060.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9080.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9100.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9120.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9140.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9160.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9180.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9200.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9220.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9240.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9260.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9280.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9300.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9320.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9340.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9360.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9380.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9400.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9420.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9440.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9460.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9480.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9500.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9520.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9540.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9560.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9580.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9620.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9640.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9660.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9680.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9700.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9720.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9740.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9760.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9780.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_9800.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread34_syn_34.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread34_syn_74.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread34_syn_114.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread3_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_884.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_904.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_924.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_944.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_964.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1004.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1044.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1084.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1124.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1164.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1204.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1224.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1244.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1264.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1284.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1324.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread56_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10375.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread1_syn_25.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10975.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10995.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11015.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11035.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11055.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11075.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11095.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11115.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11135.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11155.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11175.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11195.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11215.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11235.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11255.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11275.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11295.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11315.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11335.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11355.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11375.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11395.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11415.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11435.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11455.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11475.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11495.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11515.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11535.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11555.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11575.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11595.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11615.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11635.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11655.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11675.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11695.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11715.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11735.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11755.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11775.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11795.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11815.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11835.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11855.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11875.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11895.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11915.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11935.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11955.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11975.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_11995.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_12015.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7340.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7360.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7380.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7400.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_stem/ramread11_syn_7460.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10035.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10055.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10075.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10095.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10115.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10135.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10155.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10175.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10195.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10215.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10235.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10315.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10335.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10355.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10015.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10455.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_984.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1064.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread10_syn_1144.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread11_syn_348.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread11_syn_388.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9655.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9675.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9695.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10615.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10635.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10655.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10675.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10695.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10715.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10735.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10755.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10775.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10795.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10815.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10835.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10855.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10875.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10895.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10915.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10935.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10955.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10555.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10575.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_10595.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9715.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9735.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9795.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9815.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9835.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9855.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9895.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9915.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9935.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9955.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9975.wclk
+    DRAM            10.000             2.800             7.200   u_compute/u_down2/ramread2_syn_9995.wclk
+
+Min Paths
+----------------------------------------------------------------------------------------------------
+Slack               : -1.029ns
+Begin Point         : i_load_valid (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : flag_load_fault_reg_syn_6.id (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 1.984ns (cell 0.926ns (46%), net 1.058ns (54%))
+Clock Skew          : 2.975ns
+Logic Level         : 3 ( HDIO=2  LUT4=1 )
+Max Fanout          : 6
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_load_valid
+net (fo=1)                              0.000          0.000          net: i_load_valid,  ../rtl/road_rom_current_down2_top.v(7)
+                                                                      pin: i_load_valid_syn_2.ipad
+HDIO                x022y000            0.745    r     0.745       1  pin: i_load_valid_syn_2.sg09_di
+HDIO                x022y000            0.000    f     0.745       2  pin: i_load_valid_syn_2.di
+net (fo=6)                              1.058          1.803          net: i_load_valid_dup_1,  ../rtl/road_rom_current_down2_top.v(7)
+                                                                      pin: flag_load_fault_reg_syn_6.id
+LUT4 (reg)          x021y016z5          0.181    r     1.984       3  net: flag_load_fault,  ../rtl/road_rom_current_down2_top.v(26)
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.984               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: flag_load_fault_reg_syn_6.clk
+capture edge                            0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.013               
+clock uncertainty                       0.000          3.013               
+clock pessimism                         0.000          3.013               
+--------------------------------------------------------------------  ---------------
+Required                                               3.013               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -1.029               
+
+Slack               : -0.981ns
+Begin Point         : i_rstn (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : reg_release_done_reg_syn_3.asr (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 1.994ns (cell 0.745ns (37%), net 1.249ns (63%))
+Clock Skew          : 2.975ns
+Logic Level         : 2 ( HDIO=2 )
+Max Fanout          : 28
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_rom_current_down2_top.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x024y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x024y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=28)                             1.249          1.994          net: i_rstn_dup_1,  ../rtl/road_rom_current_down2_top.v(6)
+                                                                      pin: reg_release_done_reg_syn_3.asr
+reg                 x020y019z3          0.000    f     1.994               
+--------------------------------------------------------------------  ---------------
+Arrival                                                1.994               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: reg_release_done_reg_syn_3.clk
+capture edge                            0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.975               
+clock uncertainty                       0.000          2.975               
+clock pessimism                         0.000          2.975               
+--------------------------------------------------------------------  ---------------
+Required                                               2.975               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.981               
+
+Slack               : -0.787ns
+Begin Point         : i_load_data[4] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/reg_post_multiplier_reg[4]_syn_2.id (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.227ns (cell 0.926ns (41%), net 1.301ns (59%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( HDIO=2  LUT3=1 )
+Max Fanout          : 8
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_load_data[4]
+net (fo=1)                              0.000          0.000          net: i_load_data[4],  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: i_load_data[4]_syn_2.ipad
+HDIO                x017y000            0.745    r     0.745       1  pin: i_load_data[4]_syn_2.sg09_di
+HDIO                x017y000            0.000    f     0.745       2  pin: i_load_data[4]_syn_2.di
+net (fo=8)                              1.301          2.046          net: i_load_data[4]_dup_1,  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[4]_syn_2.id
+LUT3 (reg)          x016y026z3          0.181    r     2.227       3  net: u_compute/u_stem/o_pp_post_multiplier[4],  ../rtl/road_stem_tile_scheduler.v(35)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.227               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[4]_syn_2.clk
+capture edge                            0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.014               
+clock uncertainty                       0.000          3.014               
+clock pessimism                         0.000          3.014               
+--------------------------------------------------------------------  ---------------
+Required                                               3.014               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.787               
+
+Slack               : -0.784ns
+Begin Point         : i_load_data[3] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/reg_post_multiplier_reg[3]_syn_2.ima (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.232ns (cell 1.056ns (47%), net 1.176ns (53%))
+Clock Skew          : 2.978ns
+Logic Level         : 3 ( HDIO=2  LUT3=1 )
+Max Fanout          : 10
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_load_data[3]
+net (fo=1)                              0.000          0.000          net: i_load_data[3],  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: i_load_data[3]_syn_2.ipad
+HDIO                x018y000            0.745    r     0.745       1  pin: i_load_data[3]_syn_2.sg09_di
+HDIO                x018y000            0.000    f     0.745       2  pin: i_load_data[3]_syn_2.di
+net (fo=10)                             1.176          1.921          net: i_load_data[3]_dup_1,  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[3]_syn_2.ima
+LUT3 (reg)          x015y022z7          0.311    r     2.232       3  net: u_compute/u_stem/o_pp_post_multiplier[3],  ../rtl/road_stem_tile_scheduler.v(35)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.232               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.634          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[3]_syn_2.clk
+capture edge                            0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.016               
+clock uncertainty                       0.000          3.016               
+clock pessimism                         0.000          3.016               
+--------------------------------------------------------------------  ---------------
+Required                                               3.016               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.784               
+
+Slack               : -0.752ns
+Begin Point         : i_load_data[0] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/reg_post_multiplier_reg[0]_syn_2.ima (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.264ns (cell 1.056ns (46%), net 1.208ns (54%))
+Clock Skew          : 2.978ns
+Logic Level         : 3 ( HDIO=2  LUT3=1 )
+Max Fanout          : 9
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_load_data[0]
+net (fo=1)                              0.000          0.000          net: i_load_data[0],  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: i_load_data[0]_syn_2.ipad
+HDIO                x021y000            0.745    r     0.745       1  pin: i_load_data[0]_syn_2.sg09_di
+HDIO                x021y000            0.000    f     0.745       2  pin: i_load_data[0]_syn_2.di
+net (fo=9)                              1.208          1.953          net: i_load_data[0]_dup_1,  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[0]_syn_2.ima
+LUT3 (reg)          x015y025z6          0.311    r     2.264       3  net: u_compute/u_stem/o_pp_post_multiplier[0],  ../rtl/road_stem_tile_scheduler.v(35)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.264               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.634          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[0]_syn_2.clk
+capture edge                            0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.016               
+clock uncertainty                       0.000          3.016               
+clock pessimism                         0.000          3.016               
+--------------------------------------------------------------------  ---------------
+Required                                               3.016               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.752               
+
+Slack               : -0.748ns
+Begin Point         : i_load_data[5] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/reg_post_multiplier_reg[4]_syn_2.imb (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.266ns (cell 0.948ns (41%), net 1.318ns (59%))
+Clock Skew          : 2.976ns
+Logic Level         : 3 ( HDIO=2  LUT3=1 )
+Max Fanout          : 6
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_load_data[5]
+net (fo=1)                              0.000          0.000          net: i_load_data[5],  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: i_load_data[5]_syn_2.ipad
+HDIO                x016y000            0.745    r     0.745       1  pin: i_load_data[5]_syn_2.sg09_di
+HDIO                x016y000            0.000    f     0.745       2  pin: i_load_data[5]_syn_2.di
+net (fo=6)                              1.318          2.063          net: i_load_data[5]_dup_1,  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[4]_syn_2.imb
+LUT3 (reg)          x016y026z3          0.203    f     2.266       3  net: u_compute/u_stem/o_pp_post_multiplier[5],  ../rtl/road_stem_tile_scheduler.v(35)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.266               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.632          2.976          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[4]_syn_2.clk
+capture edge                            0.000    r     2.976               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.014               
+clock uncertainty                       0.000          3.014               
+clock pessimism                         0.000          3.014               
+--------------------------------------------------------------------  ---------------
+Required                                               3.014               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.748               
+
+Slack               : -0.681ns
+Begin Point         : i_rstn (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_prefetch/reg_word_reg[64]_syn_2.asr (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.294ns (cell 0.983ns (42%), net 1.311ns (58%))
+Clock Skew          : 2.975ns
+Logic Level         : 3 ( HDIO=2  LUT3=1 )
+Max Fanout          : 28
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_rom_current_down2_top.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x024y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x024y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=28)                             1.139          1.884          net: i_rstn_dup_1,  ../rtl/road_rom_current_down2_top.v(6)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_118.ic
+LUT3                x020y016z5          0.238    f     2.122       3  pin: u_prefetch/state_current_reg[0]_syn_118.ofb
+net (fo=1)                              0.172          2.294          net: u_prefetch/i_rstn_dup_1481,  ../rtl/road_down2_parameter_prefetch.v(6)
+                                                                      pin: u_prefetch/reg_word_reg[64]_syn_2.asr
+reg                 x021y016z1          0.000    f     2.294               
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.294               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_prefetch/reg_word_reg[64]_syn_2.clk
+capture edge                            0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.975               
+clock uncertainty                       0.000          2.975               
+clock pessimism                         0.000          2.975               
+--------------------------------------------------------------------  ---------------
+Required                                               2.975               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.681               
+
+Slack               : -0.646ns
+Begin Point         : i_load_data[6] (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_stem/reg_post_multiplier_reg[6]_syn_2.id (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : hold
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.370ns (cell 0.926ns (39%), net 1.444ns (61%))
+Clock Skew          : 2.978ns
+Logic Level         : 3 ( HDIO=2  LUT3=1 )
+Max Fanout          : 8
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_load_data[6]
+net (fo=1)                              0.000          0.000          net: i_load_data[6],  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: i_load_data[6]_syn_2.ipad
+HDIO                x015y000            0.745    r     0.745       1  pin: i_load_data[6]_syn_2.sg09_di
+HDIO                x015y000            0.000    f     0.745       2  pin: i_load_data[6]_syn_2.di
+net (fo=8)                              1.444          2.189          net: i_load_data[6]_dup_1,  ../rtl/road_rom_current_down2_top.v(9)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[6]_syn_2.id
+LUT3 (reg)          x015y025z4          0.181    r     2.370       3  net: u_compute/u_stem/o_pp_post_multiplier[6],  ../rtl/road_stem_tile_scheduler.v(35)
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.370               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.634          2.978          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_compute/u_stem/reg_post_multiplier_reg[6]_syn_2.clk
+capture edge                            0.000    r     2.978               
+--------------------------------------------------------------------  ---------------
+hold                                    0.038          3.016               
+clock uncertainty                       0.000          3.016               
+clock pessimism                         0.000          3.016               
+--------------------------------------------------------------------  ---------------
+Required                                               3.016               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.646               
+
+Slack               : -0.600ns
+Begin Point         : i_rstn (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_rom/road_yolo_numeric_rom_group_Inst_xi/reg_lower_pair_reg[40]_syn_2.asr (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.375ns (cell 0.972ns (40%), net 1.403ns (60%))
+Clock Skew          : 2.975ns
+Logic Level         : 3 ( HDIO=2  LUT2=1 )
+Max Fanout          : 216
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_rom_current_down2_top.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x024y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x024y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=28)                             1.215          1.960          net: i_rstn_dup_1,  ../rtl/road_rom_current_down2_top.v(6)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_147.imb
+LUT2                x022y008z6          0.227    f     2.187       3  pin: u_prefetch/state_current_reg[0]_syn_147.ofb
+net (fo=216)                            0.188          2.375          net: domain_rstn_dup_71448,  ../rtl/road_rom_current_down2_top.v(32)
+                                                                      pin: u_rom/road_yolo_numeric_rom_group_Inst_xi/reg_lower_pair_reg[40]_syn_2.asr
+reg                 x021y008z7          0.000    f     2.375               
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.375               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_rom/road_yolo_numeric_rom_group_Inst_xi/reg_lower_pair_reg[40]_syn_2.clk
+capture edge                            0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.975               
+clock uncertainty                       0.000          2.975               
+clock pessimism                         0.000          2.975               
+--------------------------------------------------------------------  ---------------
+Required                                               2.975               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.600               
+
+Slack               : -0.600ns
+Begin Point         : i_rstn (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_rom/road_yolo_numeric_rom_group_Inst_xi/reg_lower_pair_reg[72]_syn_2.asr (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : removal
+Process             : slow_m40c
+Budget              : 0.000ns { probe_clk rising@0.000ns - probe_clk rising@0.000ns }
+Data Path Delay     : 2.375ns (cell 0.972ns (40%), net 1.403ns (60%))
+Clock Skew          : 2.975ns
+Logic Level         : 3 ( HDIO=2  LUT2=1 )
+Max Fanout          : 216
+Clock Uncertainty   : 0.000ns (sdc uncertainty: 0.000ns, default uncertainty: 0.000ns)
+
+Delay Type          Location             Incr           Path   Level  Netlist Info
+--------------------------------------------------------------------  ---------------
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+launch edge                             0.000    r     0.000               
+--------------------------------------------------------------------  ---------------
+input                                   0.000          0.000          pin: i_rstn
+net (fo=1)                              0.000          0.000          net: i_rstn,  ../rtl/road_rom_current_down2_top.v(6)
+                                                                      pin: i_rstn_syn_2.ipad
+HDIO                x024y000            0.745    r     0.745       1  pin: i_rstn_syn_2.sg09_di
+HDIO                x024y000            0.000    f     0.745       2  pin: i_rstn_syn_2.di
+net (fo=28)                             1.215          1.960          net: i_rstn_dup_1,  ../rtl/road_rom_current_down2_top.v(6)
+                                                                      pin: u_prefetch/state_current_reg[0]_syn_147.imb
+LUT2                x022y008z6          0.227    f     2.187       3  pin: u_prefetch/state_current_reg[0]_syn_147.ofb
+net (fo=216)                            0.188          2.375          net: domain_rstn_dup_71448,  ../rtl/road_rom_current_down2_top.v(32)
+                                                                      pin: u_rom/road_yolo_numeric_rom_group_Inst_xi/reg_lower_pair_reg[72]_syn_2.asr
+reg                 x021y008z2          0.000    f     2.375               
+--------------------------------------------------------------------  ---------------
+Arrival                                                2.375               
+
+source latency                          0.000          0.000               
+port                                    0.000          0.000          pin: i_clk
+hierarchy                               0.000          0.000          pin: i_clk_syn_2.ipad
+PAD                 x000y021            0.605          0.605          pin: i_clk_syn_2.sg09_di
+PAD                 x000y021            0.488          1.093          pin: i_clk_syn_2.di
+net (fo=1)                              0.788          1.881          net: i_clk_dup_1,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst.clkin[0]
+GCLK                x023y039z0          0.016          1.897          pin: i_clk_dup_1_created_gclkinst.clkout
+net (fo=4)                              0.368          2.265          net: i_clk_syn_3,  ../rtl/road_rom_current_down2_top.v(5)
+                                                                      pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkin
+SCLK                x023y019z0          0.079          2.344          pin: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1.clkout
+net (fo=2939)                           0.631          2.975          net: i_clk_dup_1_created_gclkinst_auto_created_sclk_s_0_l_bk1_sclk_outnet,  NOFILE(0)
+                                                                      pin: u_rom/road_yolo_numeric_rom_group_Inst_xi/reg_lower_pair_reg[72]_syn_2.clk
+capture edge                            0.000    r     2.975               
+--------------------------------------------------------------------  ---------------
+removal                                 0.000          2.975               
+clock uncertainty                       0.000          2.975               
+clock pessimism                         0.000          2.975               
+--------------------------------------------------------------------  ---------------
+Required                                               2.975               
+--------------------------------------------------------------------  ---------------
+Slack                                                 -0.600               
+
+
+Inter clock domain timing
+--------------------------------------------------
+
+IP timing
+--------------------------------------------------

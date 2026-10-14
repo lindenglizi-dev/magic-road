@@ -1,0 +1,27 @@
+本轮保留的失败/修正，不把脚本或测试壳问题算成RTL功能改善
+
+1. 原完整门禁（baseline_gate/rtl.log）exit2：down2空default单行被formatter拒绝。
+   仅在新副本展开这一行；skill自身token检查通过。修改前后未改变任何RTL token。
+   review此后可识别两个模块/端口/过程，候选完整矩阵已可发布，但仍有严格失败。
+2. 最初review调用附带write-spec才支持的--no-state，CLI拒绝；去掉后成功生成原源分析。
+3. 两个隔离ModelSim入口在加载vlib前WinError623；隔离渲染器在临时目录WinError5。
+   不改工具/系统设置；正常本地权限重跑相同范围，仿真和WaveDrom检查成功。
+4. 新入口dependency最初只转发第一层旧辅助模块，该层没有此函数。
+   改为沿已有第二层辅助入口转发；不改旧脚本，不安装新依赖。
+5. load_compare_attempt2：新测试壳引用reference_stem/down2，生成的原源别名带road。
+   修正测试壳模块名；原源逻辑和候选RTL未因此改变，首次加载失败日志保留。
+6. load_compare_attempt3：测试错误要求内部DW ready在reset期间为0。
+   实际旧内部ready仅译码IDLE，reset时可以高；外部壳另行屏蔽。不能为通过测试改旧RTL。
+   改为核对原合同：Stem ready为0，两调度状态立即回IDLE，写入被复位取消；逐沿仍
+   比较原源/候选DW ready。attempt4通过5531328次字节比较。该修改不是放宽原合同。
+7. 初次write-spec在specifications子目录运行；source在兄弟rtl目录，被正常路径保护拒绝。
+   将受控工作区设为本验证根目录，输出仍显式在specifications子目录；未关闭路径保护。
+8. 两次交互诊断的嵌套Python引号/混入command.json导致命令解析错误或KeyError，未写源。
+   后续统一复用脚本内入口和按报告类型读字段，不把这些诊断当成验证通过。
+
+锁步测试记录的X地址仅为一个全X地址点测，不宣称所有任意X/Z模式完全等价。
+simulation_attempt2保留完整源快照及原8组回归；各失败work库、日志和命令均未删除。
+
+9. 重用旧ROM连接检查时，固定67端断言失败。新place已经自动分组，当前dup_4实际为28端，
+   不是改了RTL契约，也不是选错功能网。原67端检查及失败不修改；新有界检查只证明本次
+   28端分为15+13，LUT/输入和接收端并集一致。不能外推为重新证明旧67端全体。

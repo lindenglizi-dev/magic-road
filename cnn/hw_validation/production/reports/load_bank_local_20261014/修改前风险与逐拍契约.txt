@@ -1,0 +1,17 @@
+基线60b37283 physical/保留：3项WE setup，最差-0.095ns；其余内部检查与外部未签核分列。
+任务modify+validate；不使用auto_apply或自动normalize重写整个模块。
+原baseline_gate因down2空default一行的formatter解析失败，exit2，无完整矩阵。
+先仅展开该空default为两行：skill自身comment-only token检查PASS，RTL token不变。
+之后review的formatter结构证据用于核对模块、端口和原always；风格失败不冒充通过。
+候选不拆always、不改数组容量/声明/读索引、FSM、模块边界、reset或输出端口。
+仅将同一数组的变量写地址展开为64项静态银行case；每个有效地址仍只出现于一个case。
+Stem保留外层flag_load_accept、flag_load_legal及kind2，431末项同沿写入/loaded/cursor归零；
+halo保留flag_halo_load_write及原cursor有效范围，1295末项同沿写入/loaded/cursor归零。
+地址0重启、乱序/越界只fault、不写、内容不复位、fault次沿封闭ready均不改变。
+最长装载响应仍为接受上升沿完成写入；没有另一级pending、没有改变读可见沿。
+低6位仅作bank内索引，高位case仅负责银行选择；bank7/21以外默认不写。
+最后部分银行的无效地址不能通过原许可；不新增上界比较到正常关键路径。
+风险：工具可能重建与旧隐式银行相同逻辑；实际驱动扇出未改善则候选无效，不扩镜像。
+可能改变映射及布线，必须用新实际顶层全量STA，不能引用旧13,497 Slice当候选资源。
+Python二值地址证明在RTL前执行；四态/故障/复位用baseline-candidate锁步及原完整回归。
+不放宽严格门；即使数值和物理通过，也不宣布严格交付或完整CNN部署通过。

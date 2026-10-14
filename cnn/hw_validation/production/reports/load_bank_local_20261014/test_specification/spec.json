@@ -1,0 +1,82 @@
+{
+  "modules": [
+    {
+      "name": "tb_load_bank_equivalence",
+      "feature": "load_equivalence",
+      "rtl_path": "tb_load_bank_equivalence.v",
+      "description": "原源与候选装载器锁步；每沿比较432权重和1296 halo字节及许可/完成/故障。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "test_complete",
+            "description": "全部断言通过后置1并结束仿真。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "frequency_hz": 100000000,
+        "edge": "posedge",
+        "internal": true
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "internal": true
+      },
+      "behavior": [
+        "相同输入同时驱动原源与候选；NBA后逐项case inequality比较全部目标数组和装载元数据。",
+        "先连续装载，再有界气泡；逐类越界/乱序/非法类型/数据、装载中异步复位及全X地址点测。",
+        "内部DW ready在reset期间沿原IDLE表达式可为高；必须立即取消写入，不能伪造ready=0的内部契约。"
+      ],
+      "constraints": [
+        "测试专用，不综合，不属于数值精度或完整CNN FPS证据。"
+      ],
+      "corner_cases": [
+        "63/64、127/128、639/640、703/704、431/432、1295/1296及地址0重启。"
+      ],
+      "verification_cases": [
+        "TB_PASS_LOAD_BANK_EQ；5531328字节比较，原8组回归和专门pending reset另行记录。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "lockstep",
+          "title": "接受沿后对比存储",
+          "scenario": "lockstep",
+          "description": "同输入分别作用于原源和候选，NBA后比较，不允许新增写入拍。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p....."
+              },
+              {
+                "name": "valid_ready",
+                "wave": "01.0.."
+              },
+              {
+                "name": "old_write",
+                "wave": "01.0.."
+              },
+              {
+                "name": "new_write",
+                "wave": "01.0.."
+              },
+              {
+                "name": "compare_after_edge",
+                "wave": "0.10.."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
