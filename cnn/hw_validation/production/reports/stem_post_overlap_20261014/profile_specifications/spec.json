@@ -1,0 +1,88 @@
+{
+  "modules": [
+    {
+      "name": "tb_stem_profile",
+      "feature": "stem_cycle_observer",
+      "rtl_path": "tb_stem_profile.v",
+      "description": "与原黄金值TB共同展开的被动周期观察器，不驱动设计。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "test_complete",
+            "description": "全部断言通过后置1并结束仿真。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "frequency_hz": 100000000,
+        "edge": "posedge",
+        "internal": true
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "internal": true
+      },
+      "behavior": [
+        "只统计原TB首个Stem小块；原逐阶段及导出对拍继续执行。",
+        "FSM五类状态计数互斥且相加等于core；pre/SiLU/post忙计数允许重叠，禁止相加代表耗时。",
+        "完成256次提交及导出后验证core一致并结束；不测故障退出的加速。"
+      ],
+      "constraints": [
+        "测试专用，不综合，不属于数值精度或完整CNN FPS证据。"
+      ],
+      "corner_cases": [
+        "观察器仅用于无停顿首tile；其他位置与反压由完整数值回归覆盖。"
+      ],
+      "verification_cases": [
+        "TB_PASS_STEM_PROFILE core=1566；五类FSM计数相加1566，commits=256。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "overlap",
+          "scenario": "overlap",
+          "title": "计算与后处理重叠计时",
+          "description": "一个时钟周期可同时属于MAC状态和PP忙；总耗时只统计一次。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p....."
+              },
+              {
+                "name": "core_busy",
+                "wave": "01...0"
+              },
+              {
+                "name": "mac_task",
+                "wave": "x====x",
+                "data": [
+                  "0",
+                  "1",
+                  "2",
+                  "last"
+                ]
+              },
+              {
+                "name": "pp_busy",
+                "wave": "0.1..0"
+              },
+              {
+                "name": "export_done",
+                "wave": "0....1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

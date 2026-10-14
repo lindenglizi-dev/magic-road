@@ -1,0 +1,88 @@
+{
+  "modules": [
+    {
+      "name": "tb_stem_overlap_protocol",
+      "feature": "stem_overlap_protocol",
+      "rtl_path": "tb_stem_overlap_protocol.v",
+      "description": "真实共享算术链的重叠、满队列反压、错误tag、末任务故障与五个阶段复位专项。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "test_complete",
+            "description": "全部断言通过后置1并结束仿真。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "frequency_hz": 100000000,
+        "edge": "posedge",
+        "internal": true
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "internal": true
+      },
+      "behavior": [
+        "实际PP pending满8项时阻止新结果准入，保持已出现的输出载荷512拍。",
+        "MAC在旧PP结果在途时继续接受；96个batch的256输出按tag0..255完整提交和导出。",
+        "分别在MAC/pre/SiLU/post/提交反压位置复位，整表及参数重装后恢复。",
+        "强制非法/重复tag与最后任务MAC故障，只作负向验证，不计入加速周期。"
+      ],
+      "constraints": [
+        "测试专用，不综合，不属于数值精度或完整CNN FPS证据。"
+      ],
+      "corner_cases": [
+        "63/64、127/128、639/640、703/704、431/432、1295/1296及地址0重启。"
+      ],
+      "verification_cases": [
+        "TB_PASS_STEM_OVERLAP_PROTOCOL；队列满、380次实际MAC接受重叠、512拍长反压、五个复位点和故障恢复。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "stall",
+          "scenario": "stall",
+          "title": "满队列与长反压保持",
+          "description": "只在真实握手时推进；恢复ready后完整排空，不能提前done。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "commit_ready",
+                "wave": "10...1."
+              },
+              {
+                "name": "pp_valid",
+                "wave": "01....."
+              },
+              {
+                "name": "pending",
+                "wave": "=.=..=.",
+                "data": [
+                  "growing",
+                  "8(full)",
+                  "draining"
+                ]
+              },
+              {
+                "name": "done",
+                "wave": "0.....1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

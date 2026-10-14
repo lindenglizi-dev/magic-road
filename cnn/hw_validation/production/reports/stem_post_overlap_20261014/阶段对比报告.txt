@@ -1,0 +1,92 @@
+RoadYOLO Stem计算/后处理重叠阶段报告（2026-10-14—15）
+
+一、结论和未通过项
+功能通过；完整内部时序通过=True，内部失败端点=0。
+外部窄口/原始复位入口未签核，严格交付门未闭合，不等于整机通过。
+仅固定测试参数；真实QAT、其余64卷积、完整DDR、后处理和板测尚不在本次证据范围。
+回退版本52da7fa2及全部旧报告保持；full_frozen_check.json核对3400个旧文件，变化为0。
+
+二、实际修改
+只修改rtl/road_stem_tile_scheduler.v：MAC结果被现有PP队列接受即推进下一任务，最后任务才等待256项提交齐全。
+当前发射位置不再用于校验旧返回；返回使用独立提交计数验证连续tag、int8符号扩展和输出类型。
+复用PP既有2项入口和8项退休队列，不新增FIFO；算术核、接口、数值、MAC II和复位契约不变。
+逐拍接口见逐拍方案.txt及rtl/road_stem_tile_scheduler_spec.md。
+
+三、同向量实测周期（无反压、相同测量窗口）
+Stem tile：4736 → 1566，减少66.93%。Stem整层：10911744 → 3608064。
+down2 DW：630720，PW：340992，合计971712，完全未改。
+前三卷积核心：11883456 → 4579776，减少61.46%，省7303680拍。
+原TB端点：14022597 → 6718917；含装载/导出及TB控制，不等于核心周期。
+反压TB端点：17992384 → 8471654；到达相位随Stem变更，单独报告，不用其比例宣称核心加速。
+5 FPS的20000000拍预算中，前三卷积核心占22.90%；剩15420224拍尚要承担64层及其他全部开销。
+layer_cycle_ledger.json列出67层：仅3层有实测，其余明确未知；不从旧版整网估算直接减本次差值。
+
+四、每tile周期来源
+真实FSM互斥统计：准备384、送入384、MAC等待672、推进96、最终排空30，合计1566。
+原串行后处理等待状态3200拍变为末尾30拍；其他四类状态未变，因此净省3170拍。
+另按停顿原因优先分类：输出反压0、PP准入反压0、提交256、MAC接受384、准备/送入其余306、MAC等待其余578、末排空其余25、推进其余17。
+两种互斥分类各自相加1566，不能横跨分类相加。
+pre忙1216、SiLU忙736、post忙1216，彼此重叠，不能加成总周期；1521拍存在计算状态与PP在途重叠。
+长反压专项另证实：8项pending满队列、512拍载荷保持、旧PP在途时380次MAC输入接受。
+无停顿下未出现PP准入等待；剩余瓶颈在准备/MAC任务周转，不再是逐任务等待PP完成。
+
+五、功能与协议证据
+simulation_attempt2/receipt.json：原8组回归全通过，2304个Stem及576个down2 tile，全量阶段/导出对拍，输出哈希与旧版一致。
+protocol_attempt2/receipt.json：256提交/导出、满队列、长反压、5个流水位置复位、2类tag故障、末任务MAC故障及恢复通过。
+profile/receipt.json及profile_baseline/receipt.json：新旧黄金值TB上只加同一被动观察器，core计数与FSM和相符。
+首次simulation/因封装脚本把完整帧向量误指向小tile目录而超时；保留失败日志，修正路径并加入文件预检后重跑，不归为RTL数值失败。
+TB规格按已确认实际单输出渲染；工具的task参数误识别问题保留，实际编译执行由ModelSim验证。
+
+六、实际物理结果（包含验证壳与ROM，不含视频模板）
+器件PH1P35MDG324-3，100 MHz，I/O50，自动引脚及零诊断延迟，不可直接上板。
+  slice: 13338 → 13479
+  dsp: 30 → 30
+  eram: 60 → 60
+  io: 50 → 50
+PLB实际2276/2652（85.82%），虽Slice未满，布局余量已较紧；不能把本壳资源直接当作与视频模板融合后的资源。
+内部reg-reg及功能复位检查：
+  setup: +0.022 ns (15266 paths)
+  recovery: +0.376 ns (7175 paths)
+  hold: +0.038 ns (15266 paths)
+  removal: +0.241 ns (7175 paths)
+该报告首条setup关键路径：
+Slack               : 0.022ns
+Begin Point         : u_compute/u_stem/flag_load_fault_reg_syn_8.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_pp/ramread10_syn_240.id (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Data Path Delay     : 9.739ns (cell 2.623ns (26%), net 7.116ns (74%))
+Max Fanout          : 15
+Slack               : 0.044ns
+Begin Point         : u_compute/u_down2/cnt_pw_meta_reg[1]_syn_5.clk (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+End Point           : u_compute/u_down2/reg_task_parameters_gamma_reg[14]_syn_2.cea (rising edge triggered by clock probe_clk  { rise@0.000000ns  fall@5.000000ns  period=10.000000 })
+Check Type          : setup
+Process             : slow_m40c
+Data Path Delay     : 9.712ns (cell 1.144ns (11%), net 8.568ns (89%))
+完整内部失败集合同时联合RAM/DSP到达及发出端点报告；最终采用目录：physical_route_attempt2/physical_summary.json。
+56块ROM、4480项INIT内容与冻结包一致；共享MAC/PP/SiLU各1实例。
+综合仍保留SYN-5025“未驱动端点置零”总告警，工具该条没有列出逐针对象；本次不宣称该告警已经闭合。
+动态输入和偏置的功能证据来自完整黄金值回归，物理保留证据来自实际网表/资源/ROM核对；不能拿两者代替全网表等价证明。
+沿用已批准物理扇出修复：从实际新网表查询已知控制族，选782负载advance分支与33负载ROM分支，不写死旧dup后缀。
+函数与负载集合由check_physical_controls.py核对；不新增时序例外。
+首次布线出现4个halo装载地址/数据寄存器CE setup违例，最差-0.363ns，最差路径net延迟占84%；失败physical_route数据库和报告保留。
+只追加一次物理候选：从首次pr.db对30负载flag_halo_load_write_dup_5按8负载目标进行局部原生复制并重新布线；不修改RTL。
+全端点仍失败项：
+  external_output:setup: 17
+  external_input:hold: 90
+  raw_reset:removal: 35
+  raw_reset:hold: 100
+这些外部入口不能靠编造输入延迟或全局false path消除；保留真实外设契约未决状态。
+全部适用角点、覆盖率、忽略路径、未约束/异常对象详见原始timing/rpt报告，不以摘要代替签核。
+check_timing仍报告clock definition(1)及dummy node(2)两类历史告警；60个DSP mul9_mode/mul9_signed对象与基线逐项一致，但未据此豁免。
+未驱动时钟、无路径约束、组合环及非法约束计数均为0；零诊断I/O延迟被约束不等于真实板级延迟已确定。
+内部setup仅+0.022ns，余量很薄：作为下一阶段诊断基线，不作为有充分裕量的生产实现。
+
+七、严格门与下一步
+Stem严格诊断596 → 585，compile通过，其余严格检查仍未闭合；不是修复11个功能bug。
+格式、注释、命名与语义规则均保留在gate/和strict_summary.json；未改动模块原失败状态沿用。
+下一步以本候选内部时序通过版本继续，转向冻结图真实PW24/48/96与DW块的调度及周期覆盖，先填完层周期账本，不继续孤立微调Stem或先缩网。
+优先参考层head2.cls_pw.conv与head2.reg_pw.conv：均48→48、128×72，每层21233664 MAC；再覆盖96→48与192→96融合PW。
+冻结图全卷积每输出归约最长192项，没有推广现有合法上限；该检查不是其余64层RTL验证。
+最值得单变量评估的是准备/任务周转开销；若要改算术接口或II，仍须单独决定。
+真实量化参数未接入前，测试系数通过不代表模型部署；不宣称整网5FPS、识别精度或整机资源通过。
