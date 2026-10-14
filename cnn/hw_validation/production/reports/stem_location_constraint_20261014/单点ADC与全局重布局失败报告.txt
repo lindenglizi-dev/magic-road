@@ -1,0 +1,78 @@
+RoadYOLO：单条ADC位置约束的全局重布局诊断
+日期：2026-10-14；仅独立验证目录；不是生产交付
+
+一、结论先行
+官方ADC命令真实生效，但普通place触发全局重布局，时序明显退化。
+拒绝此候选；保留60b37283绑定的旧3项内部setup违例版，不覆盖旧核和数据库。
+这65项是时序失败端点，不是新增65处RTL语法或数值错误。
+
+二、实际修改
+仅增加一条set_inst_assignment，将同名packed LSLICE固定为x36y24z3。
+RTL、SDC、内部接口、数值、II、反压、复位契约均未修改。
+使用相同source_placed.db，先重放旧两项已批准复制修复，再read_adc与普通place。
+布局和最终路由数据库读回均显示col36,row24,offset3,IsFixed=True。
+不是上轮move_cells的无操作结果，也不是仅凭命令返回0判断成功。
+
+三、实测对比（含验证壳、完整ROM和当前共享前端，不是整网）
+项目                         旧保留版             新候选
+内部setup失败端点            3                    65
+最差内部setup余量(ns)        -0.095               -1.174
+内部hold/recovery/removal负项 0                    0
+Slice                       13497                13522
+DSP                         30                   30
+ERAM                        60                   60
+寄存器                      12987                12909
+IO                          50                   50
+PLB                         2378/2652            2477/2652（93.40%）
+56个数值ROM ERAM、4480项INIT/INITP与冻结包一致；一个MAC、一个后处理、一个共享SiLU保留。
+
+新失败区域：Stem 33项、down2 7项、重定标DSP入口25项，全部setup。
+最差Stem路径：u_prefetch/add5_syn_69.clk
+ →u_compute/u_stem/ramread11_syn_7838.we，-1.174ns；
+数据延迟10.887ns，其中cell1.729ns、net9.158ns（85%），6级逻辑，最大扇出23。
+最差DSP入口：flag_pre_buffer_valid_reg_syn_10.clk
+ →u_pp/u_pre/mult0_syn_681.xa[0]，-0.732ns；
+数据延迟10.240ns，其中net8.941ns（88%），最大扇出54。
+主要问题是重新布局后的控制连线/扇出，而非INT8乘法数值算法改变。
+
+四、为什么不能只看局部通过
+普通寄存器专项setup最差+0.001ns、hold+0.025ns、recovery+0.026ns、removal+0.238ns。
+internal_to_memory专项只列3项负值，internal_to_dsp专项没有负值；
+但全局端点与DSP入口等报告合并去重后，实际内部setup有65项。
+因此使用全部端点与各专项并集，不能用寄存器或单一RAM报告宣布内部通过。
+全局报告覆盖100.00%，出现slow/fast、-40/125摄氏度过程；这是工具覆盖率，不是板级签核。
+外部输出setup12项、输入hold120项、原始复位removal76项另列。
+196项异常目标警告与上述外部输入/原始复位负项相对应，不能忽略或伪造外设延迟消除。
+check_timing的local-clock、generated-clock摘要和DSP dummy-node诊断原文保留，未按标题直接宣布无风险。
+
+五、功能与证据边界
+布局后目标41个引脚完整保留；ID/IE交换与LUT表同步，32种输入穷举一致。
+ASR改接另一复位副本；旧release_done两寄存器与新保留寄存器除输出名外字段一致，复位AND表32种输入一致。
+复核脚本显式检查LUTMODE、输出选择器、寄存器D/CLK/CE/SSR及复位配置。
+这只是该packed cell和复位副本的局部等价，不是全设计形式化。
+路由后区域时钟叶插入使clk网名变化；字面局部检查拒绝此额外变化，保留final_inspection_failure.json。
+不能把该未闭合检查说成功，也不为已因时序退化被淘汰的候选继续扩建验证器。
+初次引脚读取器遗漏带[索引]的5个未使用地址引脚，已最小修正，原失败保存previous_check_failure.json。
+本轮没有新RTL行为，数值/周期回归沿用完全相同的冻结源码证据，不声称新测了整网FPS。
+
+六、严格门禁
+本轮真实复跑未改动Stem的generated_deliverable_gate：compile通过；
+ast/readability/comment/naming/profile仍失败；testbench/toolchain在该门禁中not_requested。
+577条严格诊断未闭合，不删除旧记录，不放宽规则，不等同于本轮65项物理时序失败。
+配套Python/脚本严格技能当前不可用；仅提供AST检查、断言和实际工具执行，不冒充该门禁通过。
+
+七、停止盲试与下一条最小路径
+同一位置约束不能证明其余布局保持不动。普通place确实合并、复制、重连了大量单元。
+不调整更多位置、不增加时序例外、不改算术流水。
+在已批准的同一位置约束范围内，唯一有针对性的后续是验证官方place -eco能否保留既有布局：
+从旧source_placed.db建立另一个独立候选，使用完全相同的x36y24z3 ADC；
+先核对真实坐标与连接，再正常route和全端点STA。
+若eco无操作、结构不保留或仍退化，停止该布局分支，不扩大搜索。
+需要改RTL、II或时序例外时另行提交决定。
+
+八、文件抓手
+locality.adc：唯一物理约束；place.tcl：全局place流程；run.py：隔离执行/冻结/报告；
+connection_check.py：目标局部等价断言；physical/pr.db：失败候选路由数据库；
+physical/physical_summary.json、failed_endpoint_inventory.json：实际资源与去重失败端点；
+physical/*.timing、route.log、place.log、check_timing_verbose.rpt、abnormal_targets.rpt：完整原始证据。
+所有输出只在本目录；未训练、未改生产、未生成位流、未上板、未写Flash。
