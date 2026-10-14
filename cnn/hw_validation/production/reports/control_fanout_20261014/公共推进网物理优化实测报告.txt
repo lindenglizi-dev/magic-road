@@ -1,0 +1,125 @@
+2026-10-14：公共推进网物理优化实测报告
+
+结论：定点控制网优化已实际完成，原u_pre/u_round的104个失败端点清零；
+完整内部时序仍未通过，现有16个setup和5个recovery失败检查项，共21项。
+本候选保留为后续定位起点，不作为整机或生产交付通过版本。
+分支work/roadyolo；来源afd1ebd0。没有修改RTL、II、数值、反压或复位协议。
+
+一、本次修改及实际执行
+
+只新增本目录的构建、字面连接核查、报告文件，并复制冻结RTL供检查。
+实际有效构建入口为physical_attempt5/build.tcl：
+  冻结gate.db → 原实现参数place → 保存before_replication.db
+  → phys_opt -force_replication_on_nets {u_compute/u_pp/u_pre/u_round/i_advance_dup_2}
+      -fanout_threshold 128
+  → 正常route → 最终数据库、网表及全量适用时序报告。
+
+目标控制逻辑原有824个负载，最终分为7路：64、128、141、122、140、140、89。
+总数仍824。128是工具优化阈值，不是所有结果必须≤128的硬约束；实际最大141。
+新增6个组合驱动；七网最终均为global路由，正常route完成，open net=0。
+SDC、ADC和gate输入网表与基线哈希相同，未增加时序例外、换seed或重定时。
+TD6.2.168116，PH1P35MDG324-3，100MHz；有效构建实际513.90秒。
+
+二、为什么中间正裕量不采用
+
+physical：从已布线pr.db执行post_route优化，工具因bad initial timing主动退出，
+尝试数0，无实际改善；保留报告。
+physical_attempt2：直接复制实际产生5个新驱动，但新网unrouted。
+该状态的+0.193ns不属于最终物理通过；报告已加routing资格并标记未完成。
+physical_attempt3：place -eco无待放置单元；route -eco报PHY-8023/PHY-8075。
+physical_attempt4：跳过place的route -incremental仍报相同invalid physical pin。
+两种路由失败后停止修改post-route数据库，复制前移，形成attempt5实际正常布线。
+每个失败目录、命令、工具日志均保留。工具返回0也可能伴随内部脚本终止，
+因此执行器同时检查REPORT_COMPLETION_DONE、路由完成和错误内容。
+帮助命令在未打开设计时退出产生的dump保留本机，不将其当设计结果。
+
+三、资源和全内部对比（均含验证壳、共享Stem/down2及完整TEST ROM）
+
+项目                      afd1ebd0基线       本次attempt5
+Slice                       13487               13493（+6）
+DSP                            30                  30
+ERAM                           60                  60
+registers                   12987               12987
+PLB                          2376                2377/2652
+原前重定标失败端点             104                   0
+全内部setup失败                 104                  16
+全内部recovery失败                0                   5
+全内部唯一(check,end)失败         104                  21
+最差setup                  -1.481ns            -0.810ns
+最差hold                   +0.026ns            +0.024ns
+最差recovery               +0.706ns            -0.055ns
+最差removal                +0.207ns            +0.205ns
+
+internal_all_checks表头17项包含12个寄存器setup与5个recovery；另有4个RAM输入setup，
+完整内部必须计21项，不能只展示17或只展示原104清零。
+没有减少算术、表或缓存换取资源。56个ROM、4480项INIT在本次网表仍一致。
+STA覆盖率100%；包含RAM、DSP与适用角点。100%覆盖不表示所有检查通过。
+
+四、剩余21项：具体对象、原因和后续处理范围
+
+A. ROM预取地址许可：10项setup，最差-0.810ns。
+   u_prefetch/state_current[2] → 请求/接受资格 → u_rom/reg_address的CE。
+   最差路径10.553ns，其中cell0.669ns、net9.884ns；两级逻辑，最大扇出67，
+   最后地址更新许可网cnt_wait_b_n_dup_4单段5.409ns。
+   这仍是控制分发距离问题，不能用“算术太慢”解释。
+   下一次先核实请求valid/ready的二值方程与状态资格，优先同拍等价预译码或
+   局部组合驱动分发，保留地址只在原接受沿更新、响应保持和取消语义。
+   不直接给ready加拍，不把启动ROM路径当正常tile核心吞吐。
+
+B. PW任务预留至MAC输入资格：2项setup，均-0.342ns。
+   u_down2/cnt_pw_meta[0] → reg_mac_activation[3]/[5] CE。
+   先追踪flag_can_reserve与同时pop/push，研究提前登记容量资格的等价条件。
+   必须覆盖full-ring同时pop/push和反压；不扩大队列，不改跨任务MAC规则。
+
+C. 结果提交至DW缓存输入：4项setup，-0.147、-0.125、-0.069、-0.039ns。
+   u_pp/reg_retire_read[0] → down2/ramread11_syn_366/346/385/364.imb。
+   先核对实际RAM引脚和读写mux，不把imb误报为we。
+   优先简化已确定的结果地址/数据选择和局部布线；如果必须增加提交寄存拍，
+   先明确新增容量及握手影响，再决定，不能暗改接受沿。
+
+D. ROM局部复位分发：5项recovery，均-0.055ns。
+   reg_release_done → ROM reg_pair[1090]/[1082]/[1116]、reg_quad[636]/[602].asr。
+   先比较该同源复位网的扇出、物理跨度、recovery/removal，限定在ROM接收簇。
+   保留异步取消/同步释放及原释放等待；不复制首级同步器，不批量改同步复位，
+   不新增false path。若需要改变释放周期或复位契约，再提出具体决定。
+
+推荐顺序：保留本次控制网修复 → A预取许可 → B/C提交路径 → D复位分发。
+四组分别证明和回归，避免又将多个区域同改后仅比较总错误数。
+无需继续修改已清零的round算术流水。DW三点整批后处理尚未实施；
+待内部物理基线闭合后，直接做该项吞吐候选并更新整网20M周期预算。
+
+五、已经验证及证据边界
+
+2396个历史文件的运行前后检查changed=[]，生产和算术源码未变。
+check_replication.py实际通过：七驱动的LUT配置、mux及五输入逐项一致；
+824个接收端集合不缺、不重、不多，结果在physical_attempt5/replication_equivalence.json。
+这是有界二值组合等价与连接完整性证据，不冒充全设计形式证明或门级仿真。
+本轮没有新增RTL功能，因此沿用同哈希源码已保存的功能回归；未重新声称运行完整回归。
+预装载/核心/导出协议和逻辑周期未改；没有测得新的整网速度。
+原normal核心11883456、stalls核心14573305周期仍只适用Stem/down2 TEST向量。
+
+public门禁：compile、ast、readability、comment、naming、profile、testbench
+未重新运行，保留原修改后矩阵未发布及case_normalization_violation状态。
+toolchain本轮真实执行物理验证，最终内部时序FAIL。严格交付仍false。
+没有将旧矩阵、仿真成功或局部时序清零写成八项通过。
+
+外部诊断接口/原始复位尚未签核：最终全报告含external_output setup13、
+external_input hold131、raw_reset recovery86/removal486/hold59。
+工具还记录679条未参与路由修复的异常路径；最终STA仍保留完整报告及失败。
+frontend_route_status.rpt本次为空，真实route/DRC/open-net记录在td_launcher.log，
+不以空报告作为通过证据。自动引脚/诊断IO延迟不代表板级可直接使用。
+真实QAT模型、DDR整网闭环、67层、5FPS和识别精度不在本次通过范围。
+
+六、复现与文件
+
+本轮脚本run.py；最终实际Tcl为physical_attempt5/build.tcl。
+frozen.json/frozen_check.json：旧闭包及校验；comparison.json：同口径对比。
+physical_attempt5/physical_summary.json、failed_endpoint_inventory.json、pr.db、
+各timing、网表与td_launcher.log：完整实现证据。
+check_replication.py与replication_equivalence.json：本次驱动/接收端验证。
+run.py compress只压缩本轮新timing文件：47份、逻辑4964141314字节，
+系统报告压缩存储1839509504字节；全部压缩前后SHA256相同，未删除任何文件。
+旧基线和全部失败记录保留；本地Git只记录源码及较小证据，大型报告/数据库留本机。
+
+本次取得了可复用的控制网分发修复，代价6个Slice；仍不能宣布完整内部100MHz通过。
+后续按上述4组定位，无需再围绕原104条或重新设计算术核兜圈。
