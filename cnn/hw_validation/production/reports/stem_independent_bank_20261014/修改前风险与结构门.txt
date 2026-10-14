@@ -1,0 +1,12 @@
+任务：modify + validate。只处理Stem逻辑权重64..127的独立存储，不改DW和算术核。
+原源：weight_address_stem_write_20261013/rtl；保留物理基线prefetch_admission_20261014/physical，commit60b37283。
+原formatter-AST review：compile通过，parse_errors=0；严格不通过577条，ast模板1项；原模块/端口/always可识别。
+门禁：compile、ast、readability、comment、naming、profile、testbench、toolchain分别保留，不以仿真替代严格通过。
+风险：从原多目标always抽出唯一权重写入；原数组未在reset分支赋值，所有权重写仅有kind2一个lvalue。
+证明义务：新两个数组唯一同源写进程，异步断言不写数组；原ready/load accept/legal及loaded/cursor/fault所在进程不移动。
+每个合法逻辑地址只有一个owner，64+368=432字节，不镜像；所有读按同一纯地址双射，不含load/state资格。
+read重映射可能增加MUX；不提前断言时序改善，真实综合网表先查24路读/地址/数据/WE。
+Python地址参考先通过；RTL原8组回归与逐沿432权重/1296halo比较必须通过，周期和输出必须相同。
+结构门：真实独立RAM bank保留；waddr只接地址低位，data只接i_load_data；资格不进入waddr/imb。
+若结构门失败或无法确认局部WE改善，不布局布线，不扩展全银行，不覆盖旧基线。
+脚本/Python配套技能当前列表未提供：只做Python语法/自检和实际脚本执行，不宣称其严格门禁通过。

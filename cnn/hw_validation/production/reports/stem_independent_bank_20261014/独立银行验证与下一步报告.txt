@@ -1,0 +1,100 @@
+RoadYOLO：单个Stem独立银行验证与下一步
+日期：2026-10-14；分支work/roadyolo；本轮开始HEAD a15056c0。
+
+一、先说未通过和整体位置
+
+本轮没有取得新的100MHz内部时序通过结果。单独拆Stem权重64..127，功能正确，但综合结构未证明写使能改善，停止于gate映射，不运行完整布局布线。
+继续采用prefetch_admission_20261014/physical，commit60b37283对应的诊断基线：内部setup仍3项、最差-0.095ns；13497 Slice、30 DSP、60 ERAM，含验证顶层。外部接口和严格门禁均未签核。
+这不是整网、官方视频主链或板卡结果；本轮无训练、生产修改、位流、上板、Flash及新时序例外。
+
+二、改了哪里，为什么这样改
+
+rtl/road_stem_tile_scheduler.v：
+1. 独立reg_weight_middle[0:63]保存逻辑64..127。
+2. reg_weight[0:367]保存其余内容：0..63同址，128..431减64。总声明容量仍432字节，没有镜像。
+3. 权重唯一写口单独存储进程；原reset不清数组；原loaded、顺序游标、fault保留原进程及同沿。
+4. 读口按同一纯地址双射访问；不增加流水，不改算术、端口、II、反压和发布规则。
+测试只适配两处层次存储观察，golden原源不改；其他RTL和算术核逐字节保持。
+
+本轮从原3项基线对应的源码出发，没有复用上次“平面数组分case”的失败实现。旧版、107项失败版及全部既有数据库/报告均冻结。
+
+三、实际验证
+
+Python：559872次地址读取比较通过；432逻辑地址到64+368存储为一一映射，无漏/重。
+RTL原源/候选锁步：5531328次字节比较通过；连续装载II1、气泡、63/64、127/128、431/432、地址零重载、非法数据/乱序、故障、装载中复位及恢复行为一致。
+原8组回归通过：ROM→down2、ROM reader、参数预取、存储枚举、完整normal、完整stalls、control、counter_prepare。
+专门DW pending复位取消通过，cancelled_old_write=1。
+normal/stalls的完整CSV及输出文件与冻结旧版逐字节相同。每个完整模式均覆盖2304个Stem tile和576个down2 tile。
+标准down2：1095 DW +592 PW =1687核心周期；halo预装载1296传输、输出导出384周期。标准Stem4736核心周期。
+全前端normal核心总11883456周期；stalls14573305周期。此处不包含整网DDR及67层，不等于真实FPS。
+7个ROM场景仍使用测试数值包；不是模型准确率证据。
+
+四、综合实物结构，不是源代码猜测
+
+工具TD6.2.168116，PH1P35MDG324/-3，100MHz原约束，实际完整ROM+共享Stem/down2+动态后处理顶层。
+成功综合耗时75.49秒；文件synthesis_attempt2/gate.db与gate_netlist.v。没有place/route。
+
+目标独立银行：24个DRAMHARDCON和192个MSLICE位单元，确实为RAM读副本，不是编译期常量或失效存储。
+24个写地址均直接接所选装载地址[5:1]；192个位数据直接接i_load_data相应bit。
+byteaddr不是简单alias：现有owner选地址bit0后反相，再LUT1反相；实际INIT 0x47与0x1的8种输入逐项验证，等于owner?external_addr0:prefetch_addr0。不含新增write资格，不能误称完全没有逻辑。
+完整ROM仍56个ERAM，4480个INIT/INITP参数与基线相同。
+
+未通过的关键结构门：
+                        原目标bank1          新独立middle
+综合WE锥最大LUT深度         7                    7
+WE输入leaf集合             112                  112，相同
+WE连接RAM控制副本           21                   24
+末级页译码                 ~addr8 & ~addr7 & addr6 & enable，两者相同
+
+因此拆数组没有缩短上游许可链，还增加了该WE连接数量。不能把“独立存储推断成功”写成“时序修复成功”。
+
+同阶段gate估算：
+                         原源                  候选                差值
+registers                12464                 12488               +24
+LUT                      8026                  8029                +3
+gate #slices             4263                  4431                +168
+ERAM                     60                    57                  -3
+DSP                      30                    30                   0
+
+gate #slices不是最终物理Slice，不能与旧版13497的布局结果直接比较。
+ERAM减少不是免费收益：旧Stem三个权重读副本ramread11_syn_62/71/80从DP20K转为分布式RAM。
+全顶层DRAMHARDCON409→430，MSLICE3288→3456，说明存储映射成本转移。不能仅看ERAM下降宣布资源优化。
+独立审查与mapping_receipt.json均支持停止，不扩展到全部银行，不做盲目完整布局。
+
+五、当前3项失败的真正方向
+
+旧基线保留的失败：
+1. down2/ramread2_syn_9870.we，-0.095ns；来源prefetch状态，末端halo写使能。
+2. stem/ramread11_syn_7458.we，-0.061ns；来源flag_table_pending。
+3. stem/ramread11_syn_7858.we，-0.010ns；来源同上。
+
+两条Stem路径实际6级LUT；net分别8.116/8.054ns，占83–84%。注意这里是已布局的关键路径；上面的7级是综合网表最大锥，测量范围不同。
+Stem最慢内部网段不是大扇出网络：state_syn_99只有4个sink，却有1.863ns net延迟；i_load_valid扇出14、1.434ns；末级WE扇出7/5、1.260/1.198ns。
+物理位置沿x13y15→x14y7→x15y18→x16y9→x19y24→x35y22→x36y33→RAM x41y37/x39y41反复跨区。
+所以不能再把这个问题笼统归为“银行没拆好”或“高扇出”，也不应继续广泛复制全部WE。
+
+下一步单一优先方向：回到旧3项基线，仅做一次针对装载许可→目标RAM的精确物理locality收尾；不再改数组或valid方程。
+先锁定两条Stem失败路径末两级LUT、对应DRAM sink、坐标和路由段，核对TD提供的合法局部布局操作。当前已保存报告证实跨区长线，不能再以“可能高扇出”扩大实验。
+只在独立目录、正常布线前的placed数据库上做局部调整并正常route；不修改已route连接后直接报告STA，避免之前未布线/无效物理引脚的问题。
+一次候选必须同时满足：内部失败数严格下降、最差slack改善、无新增内部失败、存储/原时序约束/协议不变。否则保留旧3项，不扩大WE复制范围。
+共享前端资格闭包只作为备用分析入口，当前不实施；不得删除child ready而让busy期间valid变化，不能偷偷放宽握手协议。
+若必须加流水拍、改变内部valid协议或算术/II，必须集中请求决定。当前没有授权这些变化。
+
+六、严格门禁与工具失败如实保留
+
+Stem定义作用域：原严格577项，候选609项；两者compile通过、parse_errors=0，ast/readability/comment/naming/profile不通过，testbench通过，静态矩阵toolchain=not_requested。
+这里的609不能与旧全闭包6734或历史374/667/219直接相加。实际ModelSim通过，TD综合通过，完整物理未运行，分别记录在strict_summary.json。
+完整TB闭包仍遇未改DW的单行empty default格式器问题，未能发布完整矩阵；不伪造八项全通过，也不借此重写冻结DW。
+周期图及同名规格已生成；存储TB原task输入kind/count被规格工具误当模块端口，因此该TB采用已确认真实模块头的no-source契约生成，失败日志保留。不是新增模块端口。
+WaveDrom沙箱预检失败，在正常本机权限复检通过；未安装新依赖、未SSH。
+首次TD Tcl入口因Windows反斜杠转义未读到脚本，返回码虽0仍被产物断言判失败；修正为正斜杠后成功，首次日志保留。
+字面网表检查脚本的INIT统计起初未计INITP，断言拒绝；补齐INITP后4480参数全量比较通过。该脚本不是第二套HDL parser，不替代formatter-AST或实际STA。
+
+七、恢复与成果位置
+
+不需要回滚覆盖文件：旧源码和旧物理目录未被修改，本候选只在独立目录。status.json明确保留旧基线，不含新时序通过声明。
+入口：run.py；地址参考bank_reference.py；结构检查mapping_check.py；实际综合数据库synthesis_attempt2/gate.db。
+功能收据：simulation/receipt.json、load_compare/receipt.json、pending_check/receipt.json。
+最终冻结校验：frozen_check.json，旧2804项内容哈希必须无变化。
+
+结论：本轮用功能对拍和一次75秒综合，排除了“只拆独立权重银行就能修好WE时序”的假设，避免多跑一次约13分钟的完整布局。下一动作应回到装载资格和物理局部性，不再沿银行拆分方向扩大改动。

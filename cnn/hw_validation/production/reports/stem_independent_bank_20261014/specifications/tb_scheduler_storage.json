@@ -1,0 +1,81 @@
+{
+  "modules": [
+    {
+      "name": "tb_scheduler_storage",
+      "feature": "tb_scheduler_storage",
+      "rtl_path": "tb_scheduler_storage.v",
+      "description": "独立银行物理视图适配：测试按显式逻辑地址映射观察；不在硬件中增加镜像或别名。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "test_complete",
+            "description": "全部断言通过后置1并结束仿真。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "frequency_hz": 100000000,
+        "edge": "posedge",
+        "internal": true
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "internal": true
+      },
+      "behavior": [
+        "原存储/ready枚举测试不变，仅Stem权重观察改为middle64和remaining368的双射。",
+        "DW 18432次选权重比较、Stem725笔完整加载、最后加载到start无气泡及故障复位。"
+      ],
+      "constraints": [
+        "测试专用，不综合，不属于数值精度或完整CNN FPS证据。"
+      ],
+      "corner_cases": [
+        "63/64、127/128、639/640、703/704、431/432、1295/1296及地址0重启。"
+      ],
+      "verification_cases": [
+        "TB_PASS_SCHEDULER_STORAGE；原测试覆盖保持。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "lockstep",
+          "title": "接受沿后对比存储",
+          "scenario": "lockstep",
+          "description": "同输入分别作用于原源和候选，NBA后比较，不允许新增写入拍。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p....."
+              },
+              {
+                "name": "valid_ready",
+                "wave": "01.0.."
+              },
+              {
+                "name": "old_write",
+                "wave": "01.0.."
+              },
+              {
+                "name": "new_write",
+                "wave": "01.0.."
+              },
+              {
+                "name": "compare_after_edge",
+                "wave": "0.10.."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

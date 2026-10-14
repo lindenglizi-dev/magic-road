@@ -1,0 +1,461 @@
+{
+  "modules": [
+    {
+      "name": "road_stem_tile_scheduler",
+      "feature": "independent_stem_bank",
+      "rtl_path": "road_stem_tile_scheduler.v",
+      "description": "逻辑64..127独立64字节RAM；其余368字节紧密存放，总容量432字节。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_clk",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_rstn",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_table_loaded",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_table_loaded",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_load_valid",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_kind",
+            "direction": "input",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "i_load_kind",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_addr",
+            "direction": "input",
+            "width": 9,
+            "clock_domain": "i_clk",
+            "role": "i_load_addr",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_data",
+            "direction": "input",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "i_load_data",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_load_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_load_ready",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_start",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_busy",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_done",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_fault",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_core_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_core_cycles",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_valid",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_mac_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_ready",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_first",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_first",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_last",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_last",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_mask",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_mac_mask",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_activation",
+            "direction": "output",
+            "width": 64,
+            "clock_domain": "i_clk",
+            "role": "o_mac_activation",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_weight",
+            "direction": "output",
+            "width": 192,
+            "clock_domain": "i_clk",
+            "role": "o_mac_weight",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_bias",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_mac_bias",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_mac_result_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_result_valid",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_result_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_result_ready",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_mac_result",
+            "direction": "input",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "i_mac_result",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_mac_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_fault",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_valid",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_ready",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_acc",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_pp_acc",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_multipliers",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_pp_multipliers",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_shifts",
+            "direction": "output",
+            "width": 18,
+            "clock_domain": "i_clk",
+            "role": "o_pp_shifts",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_post_multiplier",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_pp_post_multiplier",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_post_shift",
+            "direction": "output",
+            "width": 6,
+            "clock_domain": "i_clk",
+            "role": "o_pp_post_shift",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_mask",
+            "direction": "output",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "o_pp_mask",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_tags",
+            "direction": "output",
+            "width": 48,
+            "clock_domain": "i_clk",
+            "role": "o_pp_tags",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_valid",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_ready",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_data",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_pp_data",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_tag",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_pp_tag",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_int16",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_int16",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_fault",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_commit_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_commit_ready",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_export_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_export_start",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_output_valid",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_output_ready",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_output_data",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_index",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_output_index",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_export_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_export_done",
+            "description": "沿用冻结Stem接口；valid保持到ready，复位立即取消。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "立即取消旧事务；同步释放后重新完整装载1024项表及全部参数/halo。"
+      },
+      "behavior": [
+        "4×4输出tile，3输入16输出，3×3 stride2，9×9×3 halo，OIHW432字节权重。",
+        "输出通道组仅0/3/6/9/12/15，归约四组八lane，最后组仅前三lane有效。",
+        "权重地址=六组常量基址+9位零扩展term；合法地址0..431，输出尾路置零。",
+        "PREPARE注册到SEND；SEND背压时载荷保持，不增加寄存器、延迟或II。",
+        "偏置仅first加入；真实缓存256项完整写回后才可导出；故障只可复位恢复。",
+        "单一存储写进程，接受同沿写；原loaded/cursor/fault所在进程不变。",
+        "0..63同址；64..127读独立bank低6位；128..431读余下bank地址减64。纯地址变换不含许可。",
+        "复位不清存储，取消资格/游标/完整性；装载II1、算术/接口/核心周期不变。"
+      ],
+      "constraints": [
+        "TEST_ONLY量化参数；仅前三个卷积验证；不含DDR/生产/位流。",
+        "调度FSM及全部算术源码冻结，非合法通道状态不扩展契约。"
+      ],
+      "corner_cases": [
+        "channel15尾路、group3尾lane、地址431、负权重、反压、装载/计算中复位。"
+      ],
+      "verification_cases": [
+        "Python地址穷举；RTL两组权重指纹穷举；冻结normal/stalls/control整帧回归。",
+        "逐沿5531328存储比较、原8组同输出/周期回归及真实完整顶层综合RAM结构门。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "cross_bank",
+          "title": "接收同沿跨独立银行写入",
+          "scenario": "cross_bank",
+          "description": "原许可和完成沿不变；只改变存储归属，数据不延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p....."
+              },
+              {
+                "name": "valid_ready",
+                "wave": "01..0."
+              },
+              {
+                "name": "logical_address",
+                "wave": "x===x.",
+                "data": [
+                  "63",
+                  "64",
+                  "127"
+                ]
+              },
+              {
+                "name": "remaining_we",
+                "wave": "010..."
+              },
+              {
+                "name": "middle_we",
+                "wave": "0.1.0."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
