@@ -1,0 +1,745 @@
+{
+  "modules": [
+    {
+      "name": "road_down2_tile_scheduler",
+      "feature": "registered_load_commit",
+      "rtl_path": "road_down2_tile_scheduler.v",
+      "description": "Stem权重或down2 halo接受时验证并注册；下一沿提交RAM，连续装载II=1。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_clk",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_rstn",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_table_loaded",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_table_loaded",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_load_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_load_valid",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_load_kind",
+            "direction": "input",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "i_load_kind",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_load_addr",
+            "direction": "input",
+            "width": 11,
+            "clock_domain": "i_clk",
+            "role": "i_load_addr",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_load_data",
+            "direction": "input",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "i_load_data",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_load_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_load_ready",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_start",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pw_only",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pw_only",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_commit_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_commit_ready",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_busy",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_done",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_fault",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_export_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_export_start",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_output_ready",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_output_valid",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_output_data",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_output_index",
+            "direction": "output",
+            "width": 9,
+            "clock_domain": "i_clk",
+            "role": "o_output_index",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_export_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_export_done",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_debug_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_debug_valid",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_debug_phase",
+            "direction": "output",
+            "width": 2,
+            "clock_domain": "i_clk",
+            "role": "o_debug_phase",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_debug_layer",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_debug_layer",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_debug_position",
+            "direction": "output",
+            "width": 4,
+            "clock_domain": "i_clk",
+            "role": "o_debug_position",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_debug_channel",
+            "direction": "output",
+            "width": 5,
+            "clock_domain": "i_clk",
+            "role": "o_debug_channel",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_debug_value",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_debug_value",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_preload_writes",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_preload_writes",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_core_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_core_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_mac_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pre_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_pre_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_silu_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_silu_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_post_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_post_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_writeback_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_writeback_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_storage_wait_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_storage_wait_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_scheduler_idle_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_scheduler_idle_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_export_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_export_cycles",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_result_queue_count",
+            "direction": "output",
+            "width": 2,
+            "clock_domain": "i_clk",
+            "role": "o_result_queue_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_result_reserved",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_result_reserved",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_meta_count",
+            "direction": "output",
+            "width": 4,
+            "clock_domain": "i_clk",
+            "role": "o_meta_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_result_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_mac_result_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pre_accept_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_pre_accept_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_silu_accept_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_silu_accept_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_post_accept_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_post_accept_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_writeback_count",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_writeback_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_mac_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_ready",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_mac_result_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_result_valid",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_mac_result",
+            "direction": "input",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "i_mac_result",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_mac_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_fault",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_valid",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_first",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_first",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_last",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_last",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_mask",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_mac_mask",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_activation",
+            "direction": "output",
+            "width": 64,
+            "clock_domain": "i_clk",
+            "role": "o_mac_activation",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_weight",
+            "direction": "output",
+            "width": 192,
+            "clock_domain": "i_clk",
+            "role": "o_mac_weight",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_bias",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_mac_bias",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_mac_result_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_result_ready",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_ready",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_valid",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_data",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_pp_data",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_tag",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_pp_tag",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_int16",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_int16",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_fault",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_result_queue_count",
+            "direction": "input",
+            "width": 2,
+            "clock_domain": "i_clk",
+            "role": "i_pp_result_queue_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_meta_count",
+            "direction": "input",
+            "width": 4,
+            "clock_domain": "i_clk",
+            "role": "i_pp_meta_count",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_pre_busy",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_pre_busy",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_silu_busy",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_silu_busy",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_post_busy",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_post_busy",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_pre_accept",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_pre_accept",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_silu_accept",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_silu_accept",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "i_pp_post_accept",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_post_accept",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_valid",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_acc",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_pp_acc",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_multipliers",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_pp_multipliers",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_shifts",
+            "direction": "output",
+            "width": 18,
+            "clock_domain": "i_clk",
+            "role": "o_pp_shifts",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_post_multiplier",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_pp_post_multiplier",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_post_shift",
+            "direction": "output",
+            "width": 6,
+            "clock_domain": "i_clk",
+            "role": "o_pp_post_shift",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_mask",
+            "direction": "output",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "o_pp_mask",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_tags",
+            "direction": "output",
+            "width": 48,
+            "clock_domain": "i_clk",
+            "role": "o_pp_tags",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_input_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_input_fault",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          },
+          {
+            "name": "o_pp_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_ready",
+            "description": "冻结端口；仅 valid 与 ready 同时有效时接受，停顿保持负载。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "取消环和active有效性；数据不整阵列清零；调用者同步释放并完整重装表及参数。"
+      },
+      "behavior": [
+        "原四项所有权环同一个first握手同时登记任务身份和152位参数，不增加队列或II。",
+        "参数记录高到低为post_shift6、post_multiplier32、pre_shifts18、pre_multipliers96。",
+        "PW参数索引16+输出组起始通道；DW索引为当前发射通道向下对齐到三通道组。",
+        "PW结果使用旧队首记录；DW结果与参数、active_meta同拍保存，三空间点复用同一参数。",
+        "满环同拍pop/push必须消费旧队首；DW末标量和新结果同拍时新active安装优先。",
+        "原状态机、标签、mask、shape fault及数值核不变；fault终止后只能复位恢复。",
+        "准备寄存器每拍计算：DW小于15加一否则0；PW小于7加一，否则非最后位置清0、最后位置保持。",
+        "每个合法last接受前至少已有一拍当前layer/position/output稳定，PW group0提供最短准备窗口。",
+        "cnt_output仅在原last接受沿提交准备值，IDLE/start及DW_DRAIN清零、PP/load故障保持优先级不变。",
+        "异步复位同时清零准备寄存器；算术、元数据、端口、II和外部延迟不变。",
+        "外部144项OIHW加载顺序和原pending一拍写入保持；物理地址为(old%9)*16+old/9。",
+        "高4位选择tap，低4位选择channel；每个tap单独16×8存储，只按cnt_output低4位读取。",
+        "9个tap读出后按原三组21点并集及空间lane选择，不改变bias、mask、元数据和MAC发射沿。",
+        "接收游标和loaded仍在合法接受沿更新；loaded表示完整接收，最后pending在下一沿落入RAM。",
+        "写许可、地址、数据一起注册；写端仅依赖本地pending，不再次串联外部ready或故障判断。",
+        "最后写项后紧接start的沿同时提交最后pending并进入准备状态；首个RAM读沿在其后。",
+        "前项合法pending与新非法项同沿时，前项提交、新项置故障且不入队；结果有效性取消。",
+        "复位即时清pending/完整性，不清存储；不插入装载气泡，不修改计算II或算术源码。"
+      ],
+      "constraints": [
+        "TEST_ONLY参数，非部署QAT；无DDR、整网或板级通过声明。",
+        "接口与计算周期不变；完整RAM/DSP端点时序必须另测。"
+      ],
+      "corner_cases": [
+        "满环同址pop/push、DW active替换、尾通道15、长反压、故障与复位。"
+      ],
+      "verification_cases": [
+        "Python归属参考、原五类回归、专项参数对拍、实际顶层物理实现。",
+        "Python可达状态转移枚举、RTL准备值不变量/原递推逐拍检查、原完整回归及全量周期比较。",
+        "同向量完整normal/stalls周期和输出逐字节比较、专项存储/ready枚举、实际50IO顶层TD全端点检查。",
+        "连续和带气泡装载、地址零重启、非法末项、待提交中复位",
+        "末项到单拍start无丢失、真实计算读出、同向量完整回归、全端点STA"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "commit",
+          "scenario": "commit",
+          "title": "接受与上一项写入重叠，末写后读取",
+          "description": "沿N接收A，沿N+1写A并收B；最后提交可与start同沿，读取在下一沿。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "accept",
+                "wave": "0110..."
+              },
+              {
+                "name": "accept_address",
+                "wave": "x==x...",
+                "data": [
+                  "A",
+                  "B(last)"
+                ]
+              },
+              {
+                "name": "pending",
+                "wave": "0.1.0.."
+              },
+              {
+                "name": "ram_commit",
+                "wave": "0.110.."
+              },
+              {
+                "name": "start_accept",
+                "wave": "0..10.."
+              },
+              {
+                "name": "first_ram_read",
+                "wave": "0...10."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+装载提交候选：独立审阅与保留失败
+
+独立评审load_commit_review：未发现本补丁的具体新增语义缺陷。
+数组均为单一写入者；最后提交与start可同沿，首次PREPARE/STORAGE读在后。
+owner切换不取消原调度器所属pending；原ready/start/非法项故障、接收游标及loaded沿保持。
+任意X/Z未形式化证明；原非法高位数据/矛盾命令契约不在本次扩展范围。
+
+实际功能证据：simulation_attempt2/receipt.json，原8组回归PASS，完整normal/stalls周期CSV及输出hash相同。
+pending_check/receipt.json，原DW权重pending复位回归PASS。
+load_compare_attempt4/receipt.json，1728项完整数组检查；Stem1886和down2 5196接受。
+真正连续II1耗时断言：432项4320ns、1296项12960ns（100MHz），末提交/start与首读正确。
+
+保留失败及修正：
+1. simulation/vlib.command.json：沙箱启动ModelSim WinError623，未进入RTL仿真；正常权限重跑attempt2。
+2. dependency_check/renderer.log：沙箱临时目录清理拒绝；已安装renderer在正常权限预检通过。
+3. specifications/日志：生成器以spec子目录当workspace，拒绝读取兄弟rtl；改工作目录为本验证根后attempt2生成成功。
+4. load_compare_attempt2：TB全局loop index被比较进程覆盖，177ns提前结束装载；改独立比较变量。
+5. load_compare_attempt3：PASS仅证明带间隔事务，初版helper每项插入空拍，不作为II1证据；attempt4修正并加精确耗时断言。
+6. physical/：新综合后的推进网没有旧_dup_2后缀；精准对象检查停止，TD退出0但没有route完成标记，程序正确判失败。
+   保留该次综合、布局和before_replication.db；只读查询确认当前850负载推进网和50负载ROM同族分支。
+   physical_attempt2从这个新候选数据库续接，不重复综合，不使用旧版资源；保持原128/16阈值分流机制。
+7. check_gate_commit.py首次字面提取错误：只支持转义实例名，跨过普通实例导致输出字段丢失。
+   补充普通实例名边界后限定写口核查通过；未改变RTL或工具数据库。
+
+严格门：full gate原源/候选均遇到down2控制解析/normalization失败，保留退出2及日志。
+逐文件矩阵：Stem原577→候选596条；down2原528→候选529条，严格警告均0。
+新增声明/赋值注释和未复位存储写过程等检查不被抹掉；新独占写口仅复位pending，存储不清零。
+down2 compile/AST失败来自formatter控制解析；ModelSim编译0错误且真实仿真通过，两个结论分别保留。
+严格交付ready仍false，格式项不混入本次行为修复。
+
+8. test_specification两次source核对失败：先因裸module声明未提取，增加真实完成观察输出后重跑定向TB通过；
+   随后task的kind/address/data被误作模块端口。按已确认的单输出契约使用受支持的无source渲染模式，
+   不修改全局检查器、不编造端口，生成成功；最终定向证据为load_compare_attempt5。
+9. 控制网字面检查初版只认识旧布局DLUT5/OFB模式；新推进网实际为LUT6/OFB，ROM分支为DLUT5/OFA且选择IMF。
+   依据本次before网表分别绑定两半INIT、全部有效输入及选择器；最终原生复制的函数字段和850/50接收端集合一致。
+   这些是检查辅助的适配，不是修改RTL数值，也不作为完整网表形式等价证明。
