@@ -1,0 +1,66 @@
+============================================================
+   Tang Dynasty, V6.2.168116
+   Copyright (c) 2012-2025 Anlogic Inc.
+   Executable = E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/bin/td_commands_prompt.exe
+   Built at =   16:32:07 Jun 12 2025
+   Run by =     lenovo
+   Run Date =   Wed Oct 14 20:14:14 2026
+
+   Run on =     LAPTOP-AC1VCBB6
+============================================================
+COMMAND_INVENTORY *place* report_placement_status place replace_clock_buffer lreplace initplace preplace_floorplan
+COMMAND_INVENTORY *move* mpnr_move_inst remove_clock remove_cell move_cells remove_bound dr_move fix_hold_move remove_cells_from_bound remove_input_delay remove_source remove_model remove_output_delay remove_net
+COMMAND_INVENTORY *loc* import_clock_liberty remove_clock add_route_blockage check_clock_bound create_clock report_leaf_clock_net get_clocks report_clock_buffers set_skew_clock_buffers clockplan fblocked derive_clocks set_clock_groups set_cell_location report_clock_summary set_clock_latency route_clock set_clock_net set_inst_init_loc read_clock_constr all_clocks rename_clock eco_lock_design replace_clock_buffer set_clock_sense report_clock_intersection print_sdc_clock_tree set_clock_route analyze_clock create_generated_clock set_clock_route_enforce report_clock_utilization report_clock_polarity clock set_clock_uncertainty derive_pll_clocks export_liberty_clock_tree report_liberty_clock_path
+COMMAND_INVENTORY *eco* auto_execok eco_lock_design
+COMMAND_INVENTORY *route* report_route_status mpnr_route_net add_route_blockage route route_clock multi_try_route mpnr_unroute_net import_route_tree import_ph2_clkroute_tlib set_clock_route set_clock_route_enforce imux_route
+COMMAND_INVENTORY *cell* get_cells remove_cell move_cells report_design_cell_num add_cells_to_bound remove_cells_from_bound set_cell_location report_cells scoped_to_cells create_cell
+USAGE_BEGIN move_cells
+move_cells                              -inst { inst, ... } -location { x*y*, ... } -mode {enforce/nonforce/f78mux} -step {place/route} -cong_thod
+[-mode]                                 enforce mode will find a location surrounding and move in, nonforce mode will only try specified location
+[-step]                                 ph1 support move_cells after place and route, ph2 support move_cells after place
+[-cong_thod]                            set congestion threshold for destination
+
+USAGE_END move_cells
+USAGE_BEGIN mpnr_move_inst
+USAGE_END mpnr_move_inst
+USAGE_BEGIN set_inst_init_loc
+USAGE_END set_inst_init_loc
+USAGE_BEGIN dr_move
+USAGE_END dr_move
+USAGE_BEGIN set_cell_location
+USAGE_END set_cell_location
+USAGE_BEGIN report_cells
+report_cells                            get_cells <cell name> -connection -mode <string> -timing ...
+[get_cells <cell name>]                 Print cell attributes
+[-attributes]                           Print detailed cell attributes
+[-connection]                           Print each pin of the cell, and the net connected
+[-pin_loc]                              Print location of each pin of the cell, based on [-connection]
+[-mode <mode>]                          Used with [-timing]/[-dsp]/[-bram]/[-mux]/[-shifter]/[-dramhardcon], set mode
+[-timing]                               Print the slack of each pin based on [-connection], mode can be <basic/manhattan/final>
+[-grid <coord>]                         Print all cells in the grid specified with col and row, e.g x21y54
+[-entity <id>]                          Print all packed cells in the specified id entity
+[-dsp -mux -bram -shifter -dramhardcon] Print all dsp/mux/bram/shifter/dramhardrcon information, include name, location and slack
+[-file <file name>]                     Used with [-dsp]/[-bram]/[-mux]/[-shifter]/[-dramhardcon], export information to file
+[-export_adc -export_init_adc]          Used with [-dsp]/[-bram]/[-dramhardcon], export adc information to generated adc file
+[-empty_location]                       Used with [-dsp]/[-bram], print empty bram/dsp location information
+
+USAGE_END report_cells
+USAGE_BEGIN get_property
+USAGE_END get_property
+USAGE_BEGIN place
+place                                   [-eco] [-keep_pad] [-export_adc]
+[-eco]                                  To process unplaced instances only, legal instance locations are taken.
+[-keep_pad]                             Opt command
+[-export_adc]                           To save current IO placement as adc constraint file.
+
+USAGE_END place
+USAGE_BEGIN route
+route                                   [-eco] [-incremental] [-verbose]
+[-eco]                                  To process unrouted nets only, routed legal nets are fixed.
+[-incremental]                          To process unrouted nets only, routed legal nets can be changed.
+[-verbose]                              To print detailed run logs.
+
+USAGE_END route
+USAGE_BEGIN report_placement_status
+USAGE_END report_placement_status
+LOCALITY_COMMAND_HELP_DONE

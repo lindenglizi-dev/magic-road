@@ -1,0 +1,55 @@
+RoadYOLO：局部布局核查与工具阻塞
+日期2026-10-14；work/roadyolo；起点e8f473f3。
+
+一、当前未通过的具体问题
+不是新RTL数值错误：本轮没有修改RTL。TD move_cells对带[130]的物理单元名解析不一致，5次同目标、同位置的API参数探针均没有实际移动。
+前三次原名/对象/唯一匹配模式均记录-inst为空，USR-8001 Mis-matched instances and locations。
+转义后命令识别了参数，却报skipped unknown instance ...reg\[130\]...；内部引用同样报unknown instance "...reg[130]..."。两次ECO summary均Successfully moved 0 instances，AFTER仍x35y22。
+get_cells和get_property NAME已经证明目标唯一存在，不能将问题误报为原设计缺少目标。实际故障停在move_cells的名称参数解析/查找边界；没有证明TD内部源码的具体缺陷。
+工具返回码0、DONE或导出local_placed.db均不能作为成功；已增加实际坐标、恰好1个移动、无ERROR/unknown实例的硬检查。
+本分支停止，不继续猜参数，不执行route，不宣称取得新时序结果。
+
+二、此次得到的可用设计证据
+1. 旧3项版原源码、SDC、ADC和数据库保留；只复制到独立验证目录。
+2. 只读inspection实际打开旧已布线pr.db和布线前source_placed.db，确认目标两边同为x35y22/offset0。
+3. 目标PH1P_PHY_LSLICE：u_rom/road_yolo_numeric_rom_group_Inst_xi/word_data_o_reg[130]_syn_2。
+   非fixed、非macro；原内部bound Intnl_25_0_23_40允许目标位置x36y24。
+4. 它不是只有WE组合逻辑：OFB输出Stem reg_weight_n1_dup_810；OQA/OQB分别输出ROM group_data[13][130]和[150]。
+   移动必须同时承担这两位FF的D/Q/clock/reset路由变化，全量setup/hold/recovery/removal不可省略。
+5. x35y23/24/25均为已占满的分布式RAM位置，不能强塞LSLICE；x36y24为真实LSLICE位置，只占offset0..2，有空位。
+6. 旧关键链x19y24→x35y22→x36y33有垂直折返。候选位置x36y24将这两段简单曼哈顿长度30格降为26格。
+   这只是选择实验位置的理由，不能把4格减少换算成已改善的ns或新通过时序。
+
+三、实施边界与检查结果
+全部脚本工作/输出限制在stem_we_locality_20261014；旧文件绑定frozen.json，在开始/结束全量校验。
+物理探针重放的只有已证明的advance128与ROM16两条分流，没有增加WE复制、没有修改逻辑功能。
+没有训练、生产修改、上板、Flash、位流、缩网、增加流水拍或时序例外。
+没有形成成功的局部物理候选，因此不新报资源、全网FPS或周期加速；原3项基线仍为13497 Slice、30 DSP、60 ERAM，含验证顶层。
+原内部setup仍3项：down2 RAM WE -0.095ns；Stem两个RAM WE -0.061/-0.010ns。外部接口未签核。
+本次重跑原Stem定义严格门禁：compile通过；ast/readability/comment/naming/profile仍失败；testbench/toolchain为not_requested。完整闭包旧诊断不删除、不放宽。
+普通Python/Tcl配套严格技能当前不可用；仅做Python语法、自检、实际TD执行和日志核查，不宣称其严格门通过。
+
+四、工具相关失败，逐项保留
+inspection首次校验把TD会更新的工作工程.al也当不可变输入，因此断言失败；两份复制.db本身未变化，旧源也未变化。后续脚本单独保留project_input.al快照，与工作.al区分。
+五个move分目录的Tcl、输入数据库、日志和命令收据均保留。同一位置的语法探针不是五个时序方案，没有运行五轮布局布线。
+physical_attempt4的comment-only验证被厂商网表原有/* synthesis max_fanout=16 */块注释拒绝；这不是连接不同的证明，也不能解释成连接已通过。
+由于该次实际移动0，已经没有继续连接检查或布线的意义，未删除厂商属性去伪造通过。
+report_placement_status提示原数据库未开启placement tracer；不为了生成此辅助报告重跑全局布局，实际逐单元属性和坐标已记录。
+新增文件只做无损NTFS压缩检查并校验内容哈希，不删除失败数据库或报告。
+保存压缩收据时E盘一度剩余0字节，出现Errno28；随后读盘恢复约0.8GB，原因未确认，不归功于本轮压缩。待空间恢复后补齐最终状态/哈希收据，原失败记录保留。
+
+五、需要的唯一决定
+建议批准：只在一个新的独立候选中，为上述唯一单元增加一条经安路语法确认的物理位置约束，目标x36y24，改用约束驱动重新布局，再正常route。
+这会改变原来“原约束完全不变、仅命令移动”的执行方式，因此本轮未擅自加入。
+SDC保持原字节；不新增false_path/multicycle或任何时序例外；RTL/算术/II/握手/复位/数值保持不变。物理位置约束不是时序豁免，但必须单列约束增量和全部布局变化。
+批准后的连续步骤：
+  A. 确认实际TD位置属性语法、对象和合法槽，不套用其他厂商LOCATE语法。
+  B. 独立副本新增唯一物理位置绑定；记录原/新约束差异，不能改生产ADC。
+  C. 检查目标实际到达、无单元丢失/资源错配，导出前后连接和全部保留模块；失败则停止，不盲route。
+  D. 正常布局/布线和原全量RAM/DSP/寄存器/IO/复位检查，保留数据库与失败报告。
+  E. 只有内部失败数下降、最差slack改善、无新增内部失败且数值/时序约束未改变才保留；否则继续用旧3项版。
+如果位置属性无法作用到这个打包实例，不继续堆命令；集中反馈是否允许拆分该packed cell的物理实现，再做决定。
+
+总结
+本轮确认了可操作目标、真实空位、packed cell附带的ROM FF风险，并明确了TD命令阻塞；没有获得新时序通过结果。
+最小下一步是一个明确的物理约束授权，不是再改CNN算术、拆权重银行或扩展加速器。
