@@ -1,0 +1,128 @@
+RoadYOLO：ROM预取许可修复与剩余RAM写使能实测报告
+日期：2026-10-14；Git分支：work/roadyolo；输入基线：8b8c3ac3。
+
+一、先看未通过和本次决策
+
+完整内部100MHz仍未通过。保留physical/，完整内部21项→3项setup，
+最差-0.095ns；不是只看寄存器报表。外部接口/原始复位和严格门禁仍单列未签核。
+physical_attempt2/为已完成但淘汰的实验：额外分流三个RAM写使能后增至15项setup。
+不覆盖该失败结果，不把最新运行目录自动当最佳版，也不再盲目扩大复制范围。
+
+当前完成的是“完整测试ROM→参数预取→共享Stem/down2 DW/PW计算前端”的物理诊断。
+不是67层CNN、DDR闭环或官方视频整机通过；没有测得新的FPS或模型精度。
+
+二、此次实际行动和根因
+
+1. 冻结2504个历史来源、约束、工具及报告，内容SHA256检查changed=[]。
+2. 从保存的post-place/pre-route数据库重放已验证的advance分流（阈值128）。
+3. 只对ROM接受控制u_rom/cnt_wait_b_n_dup_4执行原生分流（阈值16），再正常route。
+   映射名虽含cnt_wait，实际为ROM请求valid&&ready的地址捕获许可，不是任意延时计数。
+   原最差路径只有2级逻辑，10.553ns中9.884ns来自网络，末段67负载、5.409ns。
+   目标是减少分发距离，而非加深算术流水或改变ROM应答沿。
+4. 最终67个接收端分为16+11+13+11+16；5网全部global路由。
+   LUT配置、标量输入、mux和接收端集合一致；不缺、不重、不多。
+   ROM地址10项setup全部消失。旧21项中的PW许可、提交输入和内部复位recovery也
+   随此次实际布线不再违例；这些是本版测量，不宣称对应结构从此具有任意布局余量。
+5. 保存physical/全部文件哈希后，仅加做一次三条WE网的阈值2分流并正常route。
+   原3个端点均改善，但新路径出现，完整内部增至15项。因此淘汰，不继续“打地鼠”。
+
+三、同口径对比（均为PH1P35MDG324、speed 3、100MHz，含验证壳）
+
+项目                         输入基线8b8c3ac3    保留physical/     淘汰physical_attempt2/
+Slice                        13493              13497              13507
+DSP                          30                 30                 30
+ERAM                         60                 60                 60
+寄存器                       12987              12987              12987
+I/O                          50                 50                 50
+完整内部setup失败端点        16                 3                  15
+完整内部recovery失败端点     5                  0                  0
+完整内部最差setup            -0.810ns           -0.095ns           -0.546ns
+internal_all_checks setup    -0.810ns           +0.220ns           -0.546ns
+internal_all_checks hold     +0.024ns           +0.034ns           +0.033ns
+internal_all_checks recovery -0.055ns           +1.224ns           +0.372ns
+internal_all_checks removal  +0.205ns           +0.212ns           +0.207ns
+
+为什么寄存器setup为正却仍FAIL：三个失败是分布式RAM WE，出现在全端点报告。
+因此本次联合all_endpoints_include_ignored、内部寄存器、RAM/DSP双向报告取并集，
+按(check,end)去重；不能以internal_all_checks单表替代完整内部。
+两次均完成实际route和最终STA，Slow/Fast及适用温度角点保留，报告覆盖率100%。
+include_ignored相对普通端点报告的数量增量均为0；覆盖100%不等于检查通过。
+56个数值ROM ERAM、4480项INIT内容均与冻结源一致，没有剪掉计算或RAM换取资源。
+保留版寄存器到memory setup +0.253、到DSP +1.248、memory到寄存器 +0.462ns；
+这些定向集合仍不能替代上述全端点WE检查。TD耗时约223.12秒/311.63秒，不是推理时间。
+
+四、保留版具体剩余3项（全部setup）
+
+A -0.095ns
+起点 u_prefetch/state_current_reg[1]_syn_11.clk
+终点 u_compute/u_down2/ramread2_syn_9870.we
+7级路径，cell1.818/net7.979ns；末网flag_halo_load_write_syn_209，7负载、1.817ns。
+
+B -0.061ns
+起点 u_compute/flag_table_pending_reg_syn_3.clk
+终点 u_compute/u_stem/ramread11_syn_7458.we
+
+C -0.010ns
+同B起点，终点 u_compute/u_stem/ramread11_syn_7858.we
+B/C为6级路径，网络分别约8.116/8.054ns；末网reg_weight_n1_syn_dup_702/716。
+它们来自装载接受资格、合法地址及bank译码，不是MAC乘法或SiLU数值路径。
+
+五、为什么额外WE分流不采用
+
+三条网的局部复制正确：down2 7端分2+2+2+1；Stem分别7端分2+2+2+1、5端分2+2+1。
+全global；各自接收端集合相等，LUT真值/mux/输入一致，原3个失败端点全部消失。
+特别核查Stem同一packed单元的OFA/OFB/QB：原单元只保留原QB；组合输出移至clone。
+tag网仍1驱动+9负载，clone无时钟/复位/OQ功能连接；总寄存器未增加。路由open net=0，
+日志无multi-drive错误。证据为write_replication_equivalence.json及独立只读网表复核。
+
+新增15项分为：
+- 8项down2任务参数，-0.546至-0.043ns。代表路径网络占8.806/10.249ns，
+  cnt_output[0]_dup_31为105负载、3.755ns，wire_issue_parameter_beta[3]为40负载、1.611ns。
+- 5项down2缓存RAM数据imb，-0.220至-0.103ns。起点reg_retire_read[1]，8级逻辑；
+  网络占7.572/9.869ns，不能误报为WE。
+- 2项新的同族halo WE，-0.036/-0.004ns；末网_syn_218/_201仍7负载、1.900/1.692ns。
+  说明继续逐末网复制容易只是把最差端点转移。
+新增10个Slice和重布线伴随这些路径退化；证据指向全局路由扰动而非复制函数错误。
+异常路由目标554→848也记录保留，不以“原三端点好了”抵消整体退化。
+
+六、下一步：只做本地写许可，不重设计算术核
+
+从保留版的同哈希RTL出发，在新目录做同周期组合bank-select与bank-local write-enable：
+- down2：road_down2_tile_scheduler.v的flag_halo_load_write（445-446）及halo写入（1043-1047）。
+- Stem：road_stem_tile_scheduler.v权重装载分支（242-243）。
+实际冻结源码路径：../weight_address_stem_write_20261013/rtl/；不是修改历史目录。
+仅覆盖造成上述3项的存储写资格。保持原读索引、字节映射、合法/非法地址、loaded/fault
+可见拍点、连续load II=1、ready/accept、复位取消不变；不顺带改任务参数或提交数据路径。
+先核实综合目前已隐式生成的bank选择，不能把相同共享布尔式换名字就声称完成优化。
+显式局部写入必须保持每个存储元素单一写入者，不引入第二写端口。
+先对同周期写地址/数据/使能做对拍，覆盖连续load、随机气泡、首末地址、非法地址、
+装载中复位和最后loaded/fault沿，再对实际顶层重新综合、正常布局布线及全量STA。
+若工具重新合并，需要keep/max_fanout先确认TD正式语义；不能靠未验证属性或时序例外。
+若只有加寄存拍或改变握手才能实现，再集中提出确切接口/拍点决定，不暗加一级缓存。
+停止条件：同口径全量内部不改善就保留当前3-fail版，不扩张到整核重写或任意多网复制。
+内部闭合后立即回到DW三点整批后处理和20M周期预算，不继续无限微调已通过算术块。
+
+七、边界、复现和失败保留
+
+未改RTL、生产工程、接口、II、数值、复位或SDC；没有新例外、训练、bitgen、上板/Flash。
+本次没有重新运行数值仿真；同哈希源沿用既存回归，连接检查不是全设计形式证明/门级仿真。
+逻辑周期未改变且未重测；历史TEST前端核心11883456/带停顿14573305周期不冒充新测或整网。
+严格门compile/ast/readability/comment/naming/profile/testbench未重跑，原矩阵未发布及
+case_normalization_violation状态继续保留；toolchain真实运行但完整内部FAIL，交付ready=false。
+保留版外部：output setup13、input hold133、raw_reset removal348/hold73。自动引脚及
+诊断IO延迟不代表真实外设签核；不编造输入延迟来消除这些违例。
+
+run.py：仅本目录输出；physical/build.tcl为保留版，physical_attempt2/build.tcl为淘汰版。
+comparison.json/status.json明确选择；各physical_summary.json和失败库存不改写成通过。
+frozen_check.json保护2504个旧文件；local_checkpoint_check.json保护首次新候选全文件。
+check_replication.py检查67端ROM及三条WE的二值LUT/接收端/路由和packed tag边界。
+test_checks.py正例通过，并实际拒绝故意篡改WE LUT和tag寄存器输入的两个负例。
+source_closure.json逐项确认两候选gate、SDC、ADC、源布局数据库与冻结输入一致。
+pr.db、routed_netlist.v、所有timing、工具日志留在本机；较小源码/报告提交本地Git。
+大报告只在本新目录做NTFS无损压缩，内容前后SHA256相同，记录compression_receipt.json。
+本轮30份timing逻辑2912115655字节，系统报告压缩存储1079902208字节；没有删除报告。
+connection_check_failure.txt和compression_failure.txt保留本轮两个脚本问题及具体修正，
+均不冒充RTL失败：前者字面提取多取一个右括号，后者底层输出目录绑定被路径保护拦截。
+
+结论：本次真实取得21→3的内部时序改善，代价4个Slice；额外WE分流15-fail已淘汰。
+下一次以局部写许可结构为单变量，既不宣布完整CNN可用，也不回头重设计算术核。

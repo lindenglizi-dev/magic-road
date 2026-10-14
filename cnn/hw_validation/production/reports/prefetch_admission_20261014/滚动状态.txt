@@ -1,0 +1,25 @@
+2026-10-14：ROM预取地址许可验证
+
+基线8b8c3ac3：16项setup、5项recovery；其中ROM地址许可10项setup，最差-0.810ns。
+本次仅处理该组，输出位于本目录，分支work/roadyolo。
+2504个历史来源、约束、数据库和报告内容SHA256冻结，初次检查changed=[]。
+
+选择：实际失败路径2级逻辑、10.553ns中net9.884ns；地址CE驱动网67负载，
+最后一段5.409ns。先复用已验证的工具原生驱动分流，RTL/接口/II/复位/拍数不变。
+从上一候选保存的post-place/pre-route before_replication.db出发，重放advance
+threshold128修复，再仅对u_rom/cnt_wait_b_n_dup_4执行threshold16复制，之后正常route。
+不是重新随机布局，不在post-route数据库上补丁式路由。
+
+physical/build.tcl已完成：完整内部21→3 setup，最差-0.095ns；保留本版。
+资源13497 Slice、30 DSP、60 ERAM；RTL/时序约束/逻辑周期没有修改。
+physical_attempt2/build.tcl也已完成：三条WE局部分流正确，但重布线后完整内部15 setup，
+最差-0.546ns。淘汰，不覆盖原版；原3个端点虽改善，整体不改善，不扩张复制范围。
+下一步为局部同周期写许可译码候选；若需增加寄存拍/改握手，再集中提出决定。
+核查包括：同一LUT配置/输入、原67个接收端不丢不重不多、响应和地址协议沿用
+不变源码；56个ROM/4480项初始化、DSP/RAM及全内部setup/hold/recovery/removal。
+strict门禁保留原未闭合状态，不以物理局部改善替代交付。
+本次没有新增RTL算法，也未重训或改变TEST模型参数。
+
+已完成：两次完整实际route/STA、ROM/WE字面与接收端核查、packed tag单驱动及9负载核查、
+两个故意篡改负例、冻结旧文件及首次候选哈希复查、30份timing无损压缩。
+源码/gate/约束/源布局数据库闭包一致。完整报告：ROM预取许可修复与剩余写使能报告.txt。

@@ -1,0 +1,5 @@
+2026-10-14：首次复用历史压缩辅助函数时，未同步重定向最底层save/command的ROOT。
+在写compression_before.json前触发路径范围保护ValueError，没有运行compact，没有改旧文件。
+具体错误：新目录compression_before.json is not in the subpath of control_fanout_20261014。
+修正：同时将helper.ROOT、helper.prior.ROOT、helper.prior.helpers.ROOT绑定本新目录。
+该错误属于本轮脚本路径配置，不属于RTL功能或STA违例；保留此记录。

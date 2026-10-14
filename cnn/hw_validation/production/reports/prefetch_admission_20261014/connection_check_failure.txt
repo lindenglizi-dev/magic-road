@@ -1,0 +1,5 @@
+首次check_replication.py读取before_rom_clone.v时在OFB_SD比较处AssertionError。
+原因：参数表末项格式为.OFB_SD("LUTX"))，原字面提取正则把额外右括号读入值，
+得到"LUTX")而不是"LUTX"。这属于本轮字面报告脚本的提取错误，不是RTL或布线失败。
+修正仅限定字面值不包含括号，并允许参数表的末尾闭括号；不修改全局检查器、
+不变更期望的LUT函数/引脚/接收端数量，随后重跑同一网表。
