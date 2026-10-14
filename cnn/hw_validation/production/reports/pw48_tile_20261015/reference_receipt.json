@@ -1,0 +1,712 @@
+{
+  "schema_version": 1,
+  "status": "TEST_ONLY_NOT_TRAINED_NOT_ACCURACY_EVIDENCE",
+  "baseline": {
+    "branch": "work/roadyolo",
+    "contract_commit": "2e872d9c"
+  },
+  "sources": {
+    "reference.py": "60090b099c1311a4cd456a1f6dde1bb538ed822b6e93f7de74e9bb52bf47fe9e",
+    "execution_contract_sha256": "d8038ac21de7da03f99ce9a9943ad5c930f2d591bf224e31db05a6b9fc233775",
+    "package_manifest_sha256": "3520e3ca6e82b01b2cbf671630a9d236f7f6096681c69d0d85067c103fcff45d",
+    "numeric_test_bin_sha256": "66284020976ae8a6decd841403a27c09b04ce5bbf4c8c6e3073368d8832abd43",
+    "package_generator_sha256": "46a7cee20e7d6fc7d2a2eee2445a10150b4415aa19492c7a5833604dab35f2fe",
+    "package_contract_sha256": "5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681",
+    "frozen_graph_source_sha256": {
+      "cnn/model.py": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c",
+      "cnn/contract.json": "4c6aed237469ee17425e586797816def1ab5ea657ffd2cc07da0f4efc2dfcc5a",
+      "cnn/integer.py": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+      "cnn/hw_validation/production/deployment_contract.json": "5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681",
+      "cnn/hw_validation/production/graph.py": "8df08989729771739e9c1a9c920e9a37e8319b5a0bad92e6e6efca95dba59d54"
+    },
+    "live_graph_source_sha256": {
+      "cnn/model.py": "403c41b0d2acf7fe789f0f96e9470a60abed9ae23989618a69f61f3f9e00ac4c",
+      "cnn/contract.json": "4c6aed237469ee17425e586797816def1ab5ea657ffd2cc07da0f4efc2dfcc5a",
+      "cnn/integer.py": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+      "cnn/hw_validation/production/deployment_contract.json": "5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681",
+      "cnn/hw_validation/production/graph.py": "8df08989729771739e9c1a9c920e9a37e8319b5a0bad92e6e6efca95dba59d54"
+    }
+  },
+  "contract": {
+    "shape": {
+      "height": 4,
+      "width": 4,
+      "input_channels": 48,
+      "output_channels": 48
+    },
+    "input_layout": "HWC; flat index=position*48+input_channel",
+    "weight_layout": "OIHW 48x48x1x1; flat index=output_channel*48+input_channel",
+    "output_layout": "HWC; tag=position*48+output_channel",
+    "task_order": "position_then_output_group; 256 tasks; 3 outputs per task",
+    "reduction": "6 input groups x 8 input lanes",
+    "activation_bank": "bank=ic%8,address=position*6+ic//8",
+    "weight_bank": "bank=(oc%3)*8+ic%8,address=(oc//3)*6+ic//8"
+  },
+  "cases": [
+    {
+      "case_id": 0,
+      "name": "cls_package",
+      "kind": "frozen_test_package",
+      "parameter_source": "stem_post_overlap_20261014/artifacts/numeric_test.bin",
+      "input_description": "formula: (p*37+c*19+p*c+13)%256-128",
+      "source_segments": [
+        {
+          "name": "head2.cls_pw.conv.weights",
+          "offset": 106140,
+          "length": 2304,
+          "dtype": "int8",
+          "count": 2304,
+          "sha256": "70798fa3d102379d2408a61bfd5b386d34bbd74be0bb415135f5d2a34d721ffe"
+        },
+        {
+          "name": "head2.cls_pw.conv.bias",
+          "offset": 108444,
+          "length": 192,
+          "dtype": "int32_le",
+          "count": 48,
+          "sha256": "5d89f056865052bcb89c910d2d62872e029fb273c3db03f8968a52a41593c1b5"
+        },
+        {
+          "name": "head2.cls_pw.conv.pre_multiplier",
+          "offset": 108636,
+          "length": 192,
+          "dtype": "int32_le",
+          "count": 48,
+          "sha256": "ba81a1b779e8e074e0a412730601ad4f38440d76b8c84e2814277f87c9957607"
+        },
+        {
+          "name": "head2.cls_pw.conv.pre_shift",
+          "offset": 108828,
+          "length": 48,
+          "dtype": "uint8",
+          "count": 48,
+          "sha256": "5760ca6a2bc6488b815ce62bcd6c07d5f7937658af44a8a38c1ca7642723f055"
+        },
+        {
+          "name": "head2.cls_pw.conv.post_multiplier",
+          "offset": 108876,
+          "length": 4,
+          "dtype": "int32_le",
+          "count": 1,
+          "sha256": "b40711a88c7039756fb8a73827eabe2c0fe5a0346ca7e0a104adc0fc764f528d"
+        },
+        {
+          "name": "head2.cls_pw.conv.post_shift",
+          "offset": 108880,
+          "length": 1,
+          "dtype": "uint8",
+          "count": 1,
+          "sha256": "ffe679bb831c95b67dc17819c63c5090d221aac6f4c7bf530f594ab43d21fa1e"
+        }
+      ],
+      "files": {
+        "input": {
+          "name": "cls_package_input.hex",
+          "count": 768,
+          "bits": 32,
+          "sha256": "b69ef1557162207faa1d6e1b37ea6441f2dec96f355739a7bb00262ec5ed7295",
+          "signed": true
+        },
+        "weights": {
+          "name": "cls_package_weights.hex",
+          "count": 2304,
+          "bits": 8,
+          "sha256": "b5f01ba6a7bd99d1f05d8c691e4274e14759472b15e2b1d6b6d3287f58f0fc24",
+          "signed": true
+        },
+        "bias": {
+          "name": "cls_package_bias.hex",
+          "count": 48,
+          "bits": 32,
+          "sha256": "77251a054519e0d70d410528e2065719b194d150556f9eff495ef0d6bf7713d2",
+          "signed": true
+        },
+        "pre_multiplier": {
+          "name": "cls_package_pre_multiplier.hex",
+          "count": 48,
+          "bits": 32,
+          "sha256": "10247aa66ed383f5a244f4b888b5890d7461de7448d76fcfb3a1d197dee02309",
+          "signed": false
+        },
+        "pre_shift": {
+          "name": "cls_package_pre_shift.hex",
+          "count": 48,
+          "bits": 8,
+          "sha256": "f357de6729f696901446d8aefe21bd20b73fa48630fcb38367f53754ab5f1b8e",
+          "signed": false
+        },
+        "post_params": {
+          "name": "cls_package_post_params.hex",
+          "count": 2,
+          "bits": 32,
+          "sha256": "b9e9107ca862f3d7a30221598d328b581cf64e44cf9c9bb2d7a778785e4f6ec0",
+          "signed": false
+        },
+        "acc": {
+          "name": "cls_package_acc.hex",
+          "count": 768,
+          "bits": 32,
+          "sha256": "3c782f52f5e791e706b1371f639b0a0160ab327b45a3e06552b4b67b103a0d43",
+          "signed": true
+        },
+        "pre": {
+          "name": "cls_package_pre.hex",
+          "count": 768,
+          "bits": 16,
+          "sha256": "9ccec2afd03d31195634744f4044cd78044e7819ec19a05d52784ef3f1834c5b",
+          "signed": true
+        },
+        "silu": {
+          "name": "cls_package_silu.hex",
+          "count": 768,
+          "bits": 16,
+          "sha256": "41b044a1ac85cfca30b0d49740d35877a45575ba3e5886d80c3d7e3f7159bf3c",
+          "signed": true
+        },
+        "post": {
+          "name": "cls_package_post.hex",
+          "count": 768,
+          "bits": 8,
+          "sha256": "61b3ee56b314f0bc83b86510a83f90c80dec6bc1551cc17f4768930c25651b91",
+          "signed": true
+        }
+      },
+      "ranges": {
+        "input": {
+          "min": -128,
+          "max": 127
+        },
+        "weights": {
+          "min": -128,
+          "max": 127
+        },
+        "bias": {
+          "min": 0,
+          "max": 0
+        },
+        "pre_multiplier": {
+          "min": 65536,
+          "max": 65536
+        },
+        "pre_shift": {
+          "min": 24,
+          "max": 24
+        },
+        "post_params": {
+          "min": 31,
+          "max": 16777216
+        },
+        "acc": {
+          "min": -137050,
+          "max": 124899
+        },
+        "pre": {
+          "min": -535,
+          "max": 488
+        },
+        "silu": {
+          "min": -71,
+          "max": 425
+        },
+        "post": {
+          "min": -1,
+          "max": 3
+        }
+      },
+      "checks": {
+        "activation_bank_bijection_entries": 768,
+        "weight_bank_bijection_entries": 2304,
+        "signed33_term_prefix_values": 36864,
+        "signed33_term_prefix_min": -147464,
+        "signed33_term_prefix_max": 127690,
+        "signed33_group_prefix_values": 4608,
+        "signed33_group_prefix_min": -141618,
+        "signed33_group_prefix_max": 124899,
+        "group_matrix_values_matched": 4608,
+        "final_int32_values": 768,
+        "direct_conv_match": true,
+        "requantize_and_silu_from_cnn_integer": true
+      }
+    },
+    {
+      "case_id": 1,
+      "name": "reg_package",
+      "kind": "frozen_test_package",
+      "parameter_source": "stem_post_overlap_20261014/artifacts/numeric_test.bin",
+      "input_description": "formula: (p*53-c*31+p*c*7+91)%256-128",
+      "source_segments": [
+        {
+          "name": "head2.reg_pw.conv.weights",
+          "offset": 109864,
+          "length": 2304,
+          "dtype": "int8",
+          "count": 2304,
+          "sha256": "8166d9c5f2642c6701dae12dbf9a7651ed02deabe4f6d9b605ae2f355213ba6a"
+        },
+        {
+          "name": "head2.reg_pw.conv.bias",
+          "offset": 112168,
+          "length": 192,
+          "dtype": "int32_le",
+          "count": 48,
+          "sha256": "5d89f056865052bcb89c910d2d62872e029fb273c3db03f8968a52a41593c1b5"
+        },
+        {
+          "name": "head2.reg_pw.conv.pre_multiplier",
+          "offset": 112360,
+          "length": 192,
+          "dtype": "int32_le",
+          "count": 48,
+          "sha256": "ba81a1b779e8e074e0a412730601ad4f38440d76b8c84e2814277f87c9957607"
+        },
+        {
+          "name": "head2.reg_pw.conv.pre_shift",
+          "offset": 112552,
+          "length": 48,
+          "dtype": "uint8",
+          "count": 48,
+          "sha256": "5760ca6a2bc6488b815ce62bcd6c07d5f7937658af44a8a38c1ca7642723f055"
+        },
+        {
+          "name": "head2.reg_pw.conv.post_multiplier",
+          "offset": 112600,
+          "length": 4,
+          "dtype": "int32_le",
+          "count": 1,
+          "sha256": "b40711a88c7039756fb8a73827eabe2c0fe5a0346ca7e0a104adc0fc764f528d"
+        },
+        {
+          "name": "head2.reg_pw.conv.post_shift",
+          "offset": 112604,
+          "length": 1,
+          "dtype": "uint8",
+          "count": 1,
+          "sha256": "ffe679bb831c95b67dc17819c63c5090d221aac6f4c7bf530f594ab43d21fa1e"
+        }
+      ],
+      "files": {
+        "input": {
+          "name": "reg_package_input.hex",
+          "count": 768,
+          "bits": 32,
+          "sha256": "2f824b780660593f820feae4f089111d73259cc77c70113ff3a39ba87a1871d1",
+          "signed": true
+        },
+        "weights": {
+          "name": "reg_package_weights.hex",
+          "count": 2304,
+          "bits": 8,
+          "sha256": "2b9b38a22eae8c840dde3d241f2f8f957509cf982b8800ba55ecf563411e776a",
+          "signed": true
+        },
+        "bias": {
+          "name": "reg_package_bias.hex",
+          "count": 48,
+          "bits": 32,
+          "sha256": "77251a054519e0d70d410528e2065719b194d150556f9eff495ef0d6bf7713d2",
+          "signed": true
+        },
+        "pre_multiplier": {
+          "name": "reg_package_pre_multiplier.hex",
+          "count": 48,
+          "bits": 32,
+          "sha256": "10247aa66ed383f5a244f4b888b5890d7461de7448d76fcfb3a1d197dee02309",
+          "signed": false
+        },
+        "pre_shift": {
+          "name": "reg_package_pre_shift.hex",
+          "count": 48,
+          "bits": 8,
+          "sha256": "f357de6729f696901446d8aefe21bd20b73fa48630fcb38367f53754ab5f1b8e",
+          "signed": false
+        },
+        "post_params": {
+          "name": "reg_package_post_params.hex",
+          "count": 2,
+          "bits": 32,
+          "sha256": "b9e9107ca862f3d7a30221598d328b581cf64e44cf9c9bb2d7a778785e4f6ec0",
+          "signed": false
+        },
+        "acc": {
+          "name": "reg_package_acc.hex",
+          "count": 768,
+          "bits": 32,
+          "sha256": "b6f97c41b9820f080ec7c5b665b38c15a93a22a129331425cb3c7b203e4d21dd",
+          "signed": true
+        },
+        "pre": {
+          "name": "reg_package_pre.hex",
+          "count": 768,
+          "bits": 16,
+          "sha256": "b95a4226b6b4bddef398ded13ae97c0ecc91e5276cf3db17ee5e1713732ac900",
+          "signed": true
+        },
+        "silu": {
+          "name": "reg_package_silu.hex",
+          "count": 768,
+          "bits": 16,
+          "sha256": "07c69825befa3b3f14d0d7b358ed3e0976580327d00d958e60ab10d3ae2a0ea9",
+          "signed": true
+        },
+        "post": {
+          "name": "reg_package_post.hex",
+          "count": 768,
+          "bits": 8,
+          "sha256": "39ca40978a752fd9c7cc5c83f5dd274137c2aeece57d482021c4d78576023b5d",
+          "signed": true
+        }
+      },
+      "ranges": {
+        "input": {
+          "min": -128,
+          "max": 127
+        },
+        "weights": {
+          "min": -128,
+          "max": 127
+        },
+        "bias": {
+          "min": 0,
+          "max": 0
+        },
+        "pre_multiplier": {
+          "min": 65536,
+          "max": 65536
+        },
+        "pre_shift": {
+          "min": 24,
+          "max": 24
+        },
+        "post_params": {
+          "min": 31,
+          "max": 16777216
+        },
+        "acc": {
+          "min": -141730,
+          "max": 107632
+        },
+        "pre": {
+          "min": -554,
+          "max": 420
+        },
+        "silu": {
+          "min": -71,
+          "max": 352
+        },
+        "post": {
+          "min": -1,
+          "max": 3
+        }
+      },
+      "checks": {
+        "activation_bank_bijection_entries": 768,
+        "weight_bank_bijection_entries": 2304,
+        "signed33_term_prefix_values": 36864,
+        "signed33_term_prefix_min": -141730,
+        "signed33_term_prefix_max": 107632,
+        "signed33_group_prefix_values": 4608,
+        "signed33_group_prefix_min": -141730,
+        "signed33_group_prefix_max": 107632,
+        "group_matrix_values_matched": 4608,
+        "final_int32_values": 768,
+        "direct_conv_match": true,
+        "requantize_and_silu_from_cnn_integer": true
+      }
+    },
+    {
+      "case_id": 2,
+      "name": "extrema_channel_scale",
+      "kind": "synthetic_stress",
+      "parameter_source": "explicit synthetic boundary values",
+      "input_description": "extrema cycle [-128,-127,126,127], index=(3*p+c)%4",
+      "source_segments": [],
+      "files": {
+        "input": {
+          "name": "extrema_channel_scale_input.hex",
+          "count": 768,
+          "bits": 32,
+          "sha256": "be21fdf5427f229241f9e8f31544887e82f5d47c5a0b4f11e3d9ee66b7d92338",
+          "signed": true
+        },
+        "weights": {
+          "name": "extrema_channel_scale_weights.hex",
+          "count": 2304,
+          "bits": 8,
+          "sha256": "b604505c4b046d83940addf715273a2b4eaaa1d53afee90d960ad3748eb954b7",
+          "signed": true
+        },
+        "bias": {
+          "name": "extrema_channel_scale_bias.hex",
+          "count": 48,
+          "bits": 32,
+          "sha256": "14519b04436c3c26137ac52981e2e0c289a3949ad805db42bcb6a570dba5bd70",
+          "signed": true
+        },
+        "pre_multiplier": {
+          "name": "extrema_channel_scale_pre_multiplier.hex",
+          "count": 48,
+          "bits": 32,
+          "sha256": "12ff5629fe0d89f609030eb4dac8b7002a91bcfac28e0efd71f03c7e59b23d85",
+          "signed": false
+        },
+        "pre_shift": {
+          "name": "extrema_channel_scale_pre_shift.hex",
+          "count": 48,
+          "bits": 8,
+          "sha256": "cb23b7e58d2d09ade81ab8d7ea935bea3483577c0d57ba6d4090c1ba26c39f58",
+          "signed": false
+        },
+        "post_params": {
+          "name": "extrema_channel_scale_post_params.hex",
+          "count": 2,
+          "bits": 32,
+          "sha256": "d8e0fd0dc2d74be7c5140a7ac7fae2984c25290b2a7ab0ca25f138eb276cd15e",
+          "signed": false
+        },
+        "acc": {
+          "name": "extrema_channel_scale_acc.hex",
+          "count": 768,
+          "bits": 32,
+          "sha256": "33b623aad3efdc5dcf9a042eed534a75e14975eac096c05466f3586096c23449",
+          "signed": true
+        },
+        "pre": {
+          "name": "extrema_channel_scale_pre.hex",
+          "count": 768,
+          "bits": 16,
+          "sha256": "23359f37e05f31736900c5b17f0b6fca50528ae95e67db492cc14e99f942ff24",
+          "signed": true
+        },
+        "silu": {
+          "name": "extrema_channel_scale_silu.hex",
+          "count": 768,
+          "bits": 16,
+          "sha256": "ed046f97a29a4b5773a844afac399b5637459fa5ec52a2d0d4daf575576ed6df",
+          "signed": true
+        },
+        "post": {
+          "name": "extrema_channel_scale_post.hex",
+          "count": 768,
+          "bits": 8,
+          "sha256": "21b908163c1f68fefe2003fb8711e9561e309714b42f96ca13c8577251e19e64",
+          "signed": true
+        }
+      },
+      "ranges": {
+        "input": {
+          "min": -128,
+          "max": 127
+        },
+        "weights": {
+          "min": -128,
+          "max": 127
+        },
+        "bias": {
+          "min": -1200000,
+          "max": 1150000
+        },
+        "pre_multiplier": {
+          "min": 1,
+          "max": 1073741823
+        },
+        "pre_shift": {
+          "min": 0,
+          "max": 31
+        },
+        "post_params": {
+          "min": 30,
+          "max": 1073741824
+        },
+        "acc": {
+          "min": -1974192,
+          "max": 1924192
+        },
+        "pre": {
+          "min": -32768,
+          "max": 32767
+        },
+        "silu": {
+          "min": 0,
+          "max": 32767
+        },
+        "post": {
+          "min": 0,
+          "max": 127
+        }
+      },
+      "checks": {
+        "activation_bank_bijection_entries": 768,
+        "weight_bank_bijection_entries": 2304,
+        "signed33_term_prefix_values": 36864,
+        "signed33_term_prefix_min": -1974192,
+        "signed33_term_prefix_max": 1924192,
+        "signed33_group_prefix_values": 4608,
+        "signed33_group_prefix_min": -1974192,
+        "signed33_group_prefix_max": 1924192,
+        "group_matrix_values_matched": 4608,
+        "final_int32_values": 768,
+        "direct_conv_match": true,
+        "requantize_and_silu_from_cnn_integer": true
+      }
+    },
+    {
+      "case_id": 3,
+      "name": "zero_bias_limits",
+      "kind": "synthetic_stress",
+      "parameter_source": "explicit synthetic boundary values",
+      "input_description": "all-zero activation and weights; bias includes both INT32 limits",
+      "source_segments": [],
+      "files": {
+        "input": {
+          "name": "zero_bias_limits_input.hex",
+          "count": 768,
+          "bits": 32,
+          "sha256": "9c855c23fe92771b8efd87d0517134c7f0550633992e38ecf93b3ac0ed9f3fa5",
+          "signed": true
+        },
+        "weights": {
+          "name": "zero_bias_limits_weights.hex",
+          "count": 2304,
+          "bits": 8,
+          "sha256": "6bd28f87e0a8189c5c06c61a43f9bb04c36166d43053a9ba667e00824af7da61",
+          "signed": true
+        },
+        "bias": {
+          "name": "zero_bias_limits_bias.hex",
+          "count": 48,
+          "bits": 32,
+          "sha256": "278f427bbd377c8c70c8fdfce9f84ff38e83c01e7bc3b85e6db5e856507b7be0",
+          "signed": true
+        },
+        "pre_multiplier": {
+          "name": "zero_bias_limits_pre_multiplier.hex",
+          "count": 48,
+          "bits": 32,
+          "sha256": "52d6456d80ab14d8974a9a99df1de4b5845124ed714b09bc9911bafd2948e38d",
+          "signed": false
+        },
+        "pre_shift": {
+          "name": "zero_bias_limits_pre_shift.hex",
+          "count": 48,
+          "bits": 8,
+          "sha256": "d9600776a123244603e255224fdee920490ef753f917c26423fdf0f45c0dc34d",
+          "signed": false
+        },
+        "post_params": {
+          "name": "zero_bias_limits_post_params.hex",
+          "count": 2,
+          "bits": 32,
+          "sha256": "9e43eaed3efcbe575138e901a2c1d29de30f4740cf29444304f01bbaf977b6a4",
+          "signed": false
+        },
+        "acc": {
+          "name": "zero_bias_limits_acc.hex",
+          "count": 768,
+          "bits": 32,
+          "sha256": "554b8918e7b38b1d4c12d363b5d299bf2adcce101b66c8acd97029a14e9ec59a",
+          "signed": true
+        },
+        "pre": {
+          "name": "zero_bias_limits_pre.hex",
+          "count": 768,
+          "bits": 16,
+          "sha256": "f4029bfc7ce4394a10f0678eb9e0cbe31233e3598f254a6bbad20685396c7918",
+          "signed": true
+        },
+        "silu": {
+          "name": "zero_bias_limits_silu.hex",
+          "count": 768,
+          "bits": 16,
+          "sha256": "3d1b039c4a5af330f584c615cc094d67e1e4a03186a7a5edd73d2fce33cd30fa",
+          "signed": true
+        },
+        "post": {
+          "name": "zero_bias_limits_post.hex",
+          "count": 768,
+          "bits": 8,
+          "sha256": "ef01821a303d7ebd25790e60ce10634ec85b8f04490859104c7d54fdda56199e",
+          "signed": true
+        }
+      },
+      "ranges": {
+        "input": {
+          "min": 0,
+          "max": 0
+        },
+        "weights": {
+          "min": 0,
+          "max": 0
+        },
+        "bias": {
+          "min": -2147483648,
+          "max": 2147483647
+        },
+        "pre_multiplier": {
+          "min": 1,
+          "max": 1
+        },
+        "pre_shift": {
+          "min": 0,
+          "max": 0
+        },
+        "post_params": {
+          "min": 0,
+          "max": 1
+        },
+        "acc": {
+          "min": -2147483648,
+          "max": 2147483647
+        },
+        "pre": {
+          "min": -32768,
+          "max": 32767
+        },
+        "silu": {
+          "min": 0,
+          "max": 32767
+        },
+        "post": {
+          "min": 0,
+          "max": 127
+        }
+      },
+      "checks": {
+        "activation_bank_bijection_entries": 768,
+        "weight_bank_bijection_entries": 2304,
+        "signed33_term_prefix_values": 36864,
+        "signed33_term_prefix_min": -2147483648,
+        "signed33_term_prefix_max": 2147483647,
+        "signed33_group_prefix_values": 4608,
+        "signed33_group_prefix_min": -2147483648,
+        "signed33_group_prefix_max": 2147483647,
+        "group_matrix_values_matched": 4608,
+        "final_int32_values": 768,
+        "direct_conv_match": true,
+        "requantize_and_silu_from_cnn_integer": true
+      }
+    }
+  ],
+  "common_files": {
+    "silu_table": {
+      "name": "silu_table.hex",
+      "count": 1024,
+      "bits": 16,
+      "sha256": "305db026a2961c891369dfe4c9191a27adc89cf80f6ad8b6ac5042e09cf2de43",
+      "signed": true,
+      "ordering": "address_0_to_1023",
+      "source_segment_sha256": "18b1d30006dab6a21b6c0b15db8c799e9d5d9d6e1532fbd2208a9698e876e763"
+    }
+  },
+  "verification": {
+    "cases": 4,
+    "outputs_per_case": 768,
+    "tasks_per_case": 256,
+    "signed33_term_prefix_values_per_case": 36864,
+    "signed33_group_prefix_values_per_case": 4608,
+    "all_bank_bijections": true,
+    "all_group_matrices_match_direct_conv": true,
+    "all_final_accumulators_int32": true,
+    "no_training_run": true,
+    "no_accuracy_claim": true
+  }
+}

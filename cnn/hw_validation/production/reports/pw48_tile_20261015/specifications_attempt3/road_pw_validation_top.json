@@ -1,0 +1,176 @@
+{
+  "modules": [
+    {
+      "name": "road_pw_validation_top",
+      "feature": "pw_fixed_tile",
+      "rtl_path": "road_pw_validation_top.v",
+      "description": "42位诊断窄口；动态装载全部操作数及表，不含ROM/视频。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "i_rx_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "i_rx_data",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_rx_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_tx_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_tx_data",
+            "direction": "output",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "i_tx_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_parameters_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "立即取消旧事务；同步释放后重新完整装载1024项表及全部参数/halo。"
+      },
+      "behavior": [
+        "16位header/low/high组成完整装载；部分包内的控制字是数据，不能启动。",
+        "8000后接1024表项；8001启动；8002逐项导出index/data及F000；8003快照core低/高16；8004/8005控制commit。",
+        "异步断言两级同步释放，最早第三上升沿接受。复位后全部重装，未导出缓存不能被装载覆盖。",
+        "TX等待ready保持字，实际缓存只在数据字接受后推进；无checksum替代逐项值。"
+      ],
+      "constraints": [
+        "仅固定48→48、1×1、4×4；不支持任意形状，不改变当前核端口、II或数值。",
+        "测试参数不是训练权重；资源/时序只对应实际验证顶层，不代表整机。"
+      ],
+      "corner_cases": [
+        "7/8、47/48、767/768、2303/2304、地址零重装、INT32边界、末组故障、反压及复位。"
+      ],
+      "verification_cases": [
+        "四组黄金向量全阶段对拍、连续六组、随机/长反压、满队列、复位取消和窄口实际导出。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "packet",
+          "scenario": "packet",
+          "title": "完整窄口装载后提交",
+          "description": "header/low/high先缓存，下一拍向调度器提出完整32位记录，等待ready时保持。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "rx_valid",
+                "wave": "01110.."
+              },
+              {
+                "name": "rx_word",
+                "wave": "x===x..",
+                "data": [
+                  "header",
+                  "low",
+                  "high"
+                ]
+              },
+              {
+                "name": "load_valid",
+                "wave": "0...10."
+              },
+              {
+                "name": "load_accept",
+                "wave": "0...10."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

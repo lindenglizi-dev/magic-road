@@ -1,0 +1,77 @@
+{
+  "modules": [
+    {
+      "name": "tb_pw_tile",
+      "feature": "pw_testbench",
+      "rtl_path": "tb_pw_tile.v",
+      "description": "PW48数值/协议实测，不代表模型精度或整网FPS。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "test_complete",
+            "description": "全部断言通过后置1并结束仿真。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "frequency_hz": 100000000,
+        "edge": "posedge",
+        "internal": true
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "internal": true
+      },
+      "behavior": [
+        "四组向量对拍实际MAC/pre/SiLU/post/提交及输出；互斥状态统计与端点周期相等。",
+        "随机/512拍反压、完整性、复位、最终故障；窄口逐字导出并覆盖done同拍export。"
+      ],
+      "constraints": [
+        "测试专用，不综合，不属于数值精度或完整CNN FPS证据。"
+      ],
+      "corner_cases": [
+        "16位置、48通道、768写回、六组归约、部分包/部分表与复位。"
+      ],
+      "verification_cases": [
+        "TB_PASS_PW_TILE 或 TB_PASS_PW_NARROW；实际ModelSim收据另存。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "check",
+          "scenario": "check",
+          "title": "对拍与完整提交",
+          "description": "测试结束前逐项比较；输出完成之前不得通过。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p....."
+              },
+              {
+                "name": "checks",
+                "wave": "01..0."
+              },
+              {
+                "name": "export_done",
+                "wave": "0...10"
+              },
+              {
+                "name": "o_test_done",
+                "wave": "0....1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

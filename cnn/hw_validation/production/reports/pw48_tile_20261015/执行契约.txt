@@ -1,0 +1,33 @@
+PW48固定小块执行契约，2026-10-15
+
+基线：work/roadyolo，2e872d9c；原Stem/down2和算术核完全冻结。
+目标：head2.cls_pw.conv与head2.reg_pw.conv的真实48→48、1×1、stride1、4×4 tile。
+输入/输出都是tile4x4 HWC；输入768个signed INT8，OIHW权重2304个signed INT8，bias48个signed INT32。
+每任务三个输出通道，共16位置×16输出组=256任务；每任务6组×8输入，每路48项，未扩展192项合法上限。
+当前MAC与PP全部复用；每任务PP实际接收后推进下任务，不做跨任务MAC重叠。
+
+新增road_pw_tile_scheduler端口沿Stem算术边界，区别仅属于新模块：i_load_addr[11:0]、o_output_index[9:0]。
+装载类别：0 signed激活0..767；2 OIHW权重0..2303；3 bias、4 pre_multiplier、5 pre_shift各0..47；6 post_multiplier/shift地址0/1。
+类别1/7非法。参数范围沿旧核，pre/post multiplier为0..INT32_MAX，shift为0..62。
+每类严格连续装载，地址0可重新开始该类；未完整或SiLU表未完整时start无效。装载非法置粘滞故障，禁止发布。
+输入已有量化中心化，不再做pixel−128。最后权重提交与start同沿允许，首次读取发生在后续PREPARE沿。
+
+激活按8个输入lane分bank，每bank96项；权重按3输出lane×8输入lane分24bank，每bank96项。
+外部OIHW顺序不变。装载游标生成bank与bank地址；禁止为了bank化改变模型包权重含义。
+发射顺序position→output_group→input_group。输入bank地址position×6+input_group；权重bank地址output_group×6+input_group。
+沿已验证PW预取方法，首组PREPARE，SEND接受组g同沿保管g+1，反压保持注册组。MAC接口/II不变。
+三路tag为position×48+channel，输出按0..767独立提交计数校验；PP保存已接受的全部参数/tag。
+done只在768项全部提交后产生；导出真实输出缓存，valid等待ready时数据和index保持。复位立即取消旧事务及完整性。
+
+新物理验证壳road_pw_validation_top复用16位窄口命令思想，不引入UART/AXI/DDR。
+RX包：bit15=0的header，kind[14:12]、address[11:0]，随后low16、high16，待实际装载接受后回IDLE。
+控制：8000开始1024个INT16表项；8001 start；8002 export；8003查询core周期低/高16；8004禁止commit；8005允许commit。
+TX导出每项两字：A000|index，随后符号扩展INT8数据；末尾F000。错误F001。状态输出为core低/高16。
+顶层另有busy/done/fault/parameters_ready四位观察，展开目标42位I/O。异步断言、两级同步释放；最早第三个上升沿接收。
+所有操作数、参数、SiLU表通过窄口动态装入，不做编译期常量替换；partial packet不得启动计算。
+
+本批执行：Python矩阵/银行映射参考→算子复用RTL→全阶段数值/反压/复位/故障/窄口对拍→独立实际顶层实现→周期账本与报告。
+物理顶层含新PW缓存/调度、既有MAC/动态PP/SiLU和窄口；不含完整56块ROM或视频模板，资源不可当整机或与旧壳直接对比。
+采用冻结数值包的测试参数，另加零/极值/通道尺度应力；真实QAT未接入，不宣称精度或整网5FPS。
+所有新输出限定本目录；保留失败与旧数据库，不训练、不改生产、不生成位流、不上板、不写Flash、不新增时序例外。
+八项严格门状态与真实ModelSim/TD证据分列；历史门禁不豁免。缺少独立Python/script技能时不声称对应技能门禁通过。

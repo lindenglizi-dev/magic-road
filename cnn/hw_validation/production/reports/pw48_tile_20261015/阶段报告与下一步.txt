@@ -1,0 +1,63 @@
+RoadYOLO PW48固定小块：阶段结果与下一步（2026-10-15）
+
+当前未通过：严格RTL控制解析/交付门；外部窄口及原始复位时序；与ROM/视频融合后的存储与整机资源；完整67层、真实QAT及精度/FPS验收。
+本次完成：新48→48小块的真实算术/逐级对拍和新实际顶层布局布线，未改旧核、生产、训练或位流。
+
+1. 代码和边界
+rtl/road_pw_tile_scheduler.v：固定4×4、48→48 PW，输入HWC，权重OIHW；8输入bank、24权重bank，装载仅重排，不改数值。
+rtl/road_pw_validation_top.v：42位I/O、16位窄口，全部操作数/量化参数及1024表项动态装入；含两级复位释放、完整包保管和真实缓存导出。
+复用既有road_mac_probe、dynamic PP、round和SiLU源码，接口、signed33、末组INT32、RNE、复位及MAC II均未改。
+每tile256任务，1536组，36864 MAC，768输出；每路48项，未推广192项合法上限。
+两组参数来自冻结TEST_ONLY包的head2.cls_pw.conv/reg_pw.conv，另加极值和INT32边界；不等于训练权重。
+
+2. 通过的功能测试
+Python：bank双射、48项signed33逐前缀、六组矩阵对直接卷积及整数算子链通过。
+ModelSim：simulation_attempt3两TB通过，0 errors；供应商模型INIT_FILE警告保留。
+cls/reg/极值/INT32边界逐项比较MAC、pre、SiLU、post、提交和实际导出。
+覆盖随机反压、512拍满队列、连续重装、部分装载/表、非法记录、MAC/PP中复位及末任务故障禁止发布。
+窄口3218个成功fixture scalar包、1024表项；两次各768项index/data对拍，包含TX反压、状态两字及错误F001。
+修复的具体壳层错误：done同周期只看旧flag_unexported会吞掉已握手export，或放入装表；改为flag_unexported||s_done，共同门控，并新增同拍回归。
+
+3. 实测周期，不把不同窗口混用
+正常cls/reg小块均3874核心拍；装载窗口3220/3223，导出769。后者多3拍是不完整start检查，不是核心变慢。
+随机reg：core3875、export991；512满队列应力：core4375；不能把故障早退出算加速。
+核心互斥分解：PREPARE256（6.61%）、有效MAC送入1536（39.65%）、MAC等待1792（46.26%，其中256拍接受结果）、推进256（6.61%）、末排空34（0.88%）。
+总和3874，正常MAC输入反压为0；剩余主损失在任务关闭/周转，不是未填满8输入lane。
+pre/SiLU/post原始busy分别3328/2048/3328，彼此重叠，禁止相加代表耗时；每级实际输出768项。
+窄口fixture窗口21359拍，含TB主动插入的包间节拍；第一次core计数4376、窄口观察窗口4379，第二次3874/3876，导出窗口3244/3243。
+窄口窗口不是DDR吞吐，也不是算术核吞吐；窗口之间控制空隙不隐含纳入其他计数，详见CSV和TB起止注释。
+
+4. 真实物理结果
+PH1P35MDG324-3，100 MHz，新实际顶层为PW48缓存/调度+MAC+动态PP+SiLU+窄口，不含完整56块ROM或视频模板。
+30 DSP、3806 Slice、16 ERAM、42 I/O；PLB728/2652。
+内部setup +1.287ns，hold +0.020ns，recovery +3.987ns，removal +0.357ns；全端点含ignored及DSP/ERAM报告核对，内部失败端点0。
+最差内部setup：PP退休读指针→scheduler写回计数CE，5级逻辑，布线占79%。hold余量仅20ps，仍偏紧，不宣称生产裕量充分。
+外部失败分类：{'external_output:setup': 9, 'external_input:hold': 78, 'raw_reset:removal': 2, 'raw_reset:hold': 4}。ERAM专项的负setup/hold属于外部入口/出口，不能当内部通过或整机通过互相替代。
+无无时钟、组合环、无路径约束项；dummy node两类及SYN-5025告警保留，不自动豁免。
+
+5. ERAM为什么仍需优化
+从实际pr.db只读导出的RAM映射：input2、weight6、output1、SiLU1、bias3、pre_multiplier3，总16。
+48×32的bias/pre数组各因三路读映射成3块，深度浅，浪费ERAM容量；不是CNN新增了更多DSP，也不是时序失败。
+若直接叠加本壳16+完整ROM56+留存视频模板40，达到112>108，尚未算其余共享/适配。
+这只是非共享直叠加的条件警告，不是假装已综合整机；同样不能拿不含ROM的新壳3806 Slice去对比旧壳13479声称整机省了近万Slice。
+
+6. 帧周期账本
+前三卷积已有完整张量RTL核心4579776拍；两个S4 PW单层各576个相同形状tile，条件外推各2231424拍。
+五层条件合计9042624拍，20M预算还剩10957376拍给62卷积及全部DDR、非卷积、解码/NMS开销。
+这里只是3层完整回归+2层小块形状外推，不是5层整帧硬件闭环。layer_cycle_ledger.json仍把剩余层标为未测，不宣称整网5FPS。
+
+7. 失败记录与门禁
+首轮simulation因runner指向不存在的vectors/而失败；实际向量在本目录。修正路径并加文件预检，原日志保留。
+首轮TD未打开工程：新源记录缺BelongTo/CompileOrder。补齐已验证模板字段后完成第二轮；不是CNN综合失败。
+首轮spec工具cwd过窄导致source越界；改回本验证根目录，规格及周期图通过，不改工具安全规则。
+TD自动将AL绝对路径改为相对路径并重排XML，原input_check_after same=false保留；重建初始AL字节与初始hash完全一致，语义指纹及所有其他源/约束一致，见project_provenance.json。
+新RTL严格门897条含控制解析失败和级联规则；TB126条单独保留。不能把它们与旧Stem585条相加，也不能视作这些数量的已证实硬件错误。
+compile/ast/readability/comment/naming/profile/testbench/toolchain八项原矩阵见strict_summary.json；真实ModelSim与TD成功另列，不宣布严格交付通过。
+未安装的独立readable-python/script技能不冒充通过；本地原有Python/构建链已实际执行。
+
+8. 下一步：只改一个存储变量，不先缩网
+冻结本目录源码、数据库、向量和周期。建立独立候选，将bias及pre系数按三输出lane拆为三个16深浅bank，替代48深三读数组。
+目标先消除这6块低利用率ERAM；预计可改善但必须看实际映射，不能提前宣布16→10。
+保持窄口/算术接口、数值、六组预取、PP重叠和3874正常核心周期；同向量回归后再实现，禁止新增时序例外。
+随后扩充真实96/192输入PW及stride1 DW的周期覆盖，复用已有down2调度经验；若任务周转仍占预算主要部分，单列该变量而不混改网络。
+只有含DDR/后处理的完整预算明确仍不达标，再评唯一H24备选。未完成上述证据前不删除S4或放宽验收。
