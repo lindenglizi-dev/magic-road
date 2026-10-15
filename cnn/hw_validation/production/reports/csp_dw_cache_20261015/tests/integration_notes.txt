@@ -1,0 +1,22 @@
+范围
+- 本次只把 road_csp_dw_cache 接入冻结的 tb_csp_first_probe，保留原 case 0..16、全部中间数值、计数、地址及 128-bit 打包检查。
+- road_csp_first_probe、算术核、参数、向量、生产 RTL 和 Git 均未修改。
+
+DW 写入
+- 缓存写 valid 仅在原输出同时满足 output_valid、output_ready 且 output_tag<192 时拉高。
+- 写 index=output_tag[7:0]，写 data=output_data；数据来自真实 DW 输出，不从 golden_dw_post 或 actual_dw 回填。
+- 每次真实DW接受都要求cache_write_ready；实际返回算术包装的ready为output_ready&&(tag>=192||cache_write_ready)。DW缓存不可写时真正阻止上游接受；PW结果不受DW缓存ready影响。
+- 完整正常回归要求 192 个唯一 DW 输出后 cache_loaded=1、cache_write_count=192、cache_fault=0。
+
+PW 读取
+- task_index>=96 时，build_normal_activation 不再从 actual_dw 取数。
+- PW 顺序映射为 pixel=(task_index-96)/4，group=group_index%2；请求 valid 保持到 ready。
+- 缓存响应在 output_ready=0 时额外保持一拍，逐项检查 64-bit 数据、mask、pixel 和 group 后才消费。
+- 32 个 pixel/group 组合各应成功读取 4 次，共 128 次。actual_dw 仅保留为 DW 输出及最终打包 scoreboard。
+- SAT case 9/15 保持原直接输入数据，不经过缓存读取。
+
+复位和证据边界
+- reset_dut 清除缓存读请求、读地址、响应 ready 和响应保持监视状态；缓存自身必须清 loaded、write_count、fault 和响应 valid，RAM 内容无需清零。
+- 本子任务按要求未运行仿真、综合或 readable-verilog 八项门禁；compile、ast、readability、comment、naming、profile、testbench、toolchain 均没有新的执行证据。
+- 当前仍由 testbench 依次驱动 task、halo、参数和缓存读请求；没有接 scheduler 或 DMA，也不是完整 CSP RTL、整网、DDR 或板级验收。
+- 原17项保留；另加CASE17：缓存满后重发DW任务，核结果真实保持64拍且上游零接受，复位后完整重跑。修复前失败快照保留在simulation_attempt3。
