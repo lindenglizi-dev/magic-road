@@ -1,0 +1,285 @@
+RoadYOLO 资源收敛：具体修改建议与执行步骤
+版本：RM1；日期：2026-10-15；工作分支：work/roadyolo。
+性质：源码核对后的实施建议。本轮只写文档，没有执行下面的RTL修改。
+承接：同目录《RoadYOLO_整机资源配额与跨聊天取舍计划_20261015.txt》（RB1）。
+工程根目录：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision
+下文R表示工程内cnn/hw_validation/production/reports/，行号绑定文末源码哈希。
+
+一、推荐怎样改：先消除真实冗余，不先缩网或加算力
+
+建议分成四刀，而不是一次重写：
+1. ROM读出瘦身：先去掉重复160位寄存级，保持reader外部请求/响应时序。
+2. PW权重小缓存：输入缓存不动，权重改为当前三输出通道驻留，配套修改组间装载和提交顺序检查。
+3. 合并算术实例：用已有owner机制接入深PW与CSP；保留各调度器必要控制，不保留各自第二套MAC/PP。
+4. 去重后的真实联合顶层做布局与周期测量，再按最大的真实瓶颈优化Stem；没有这份结果前不批准继续堆缓存。
+
+ROM和PW可以由两个不同文件所有者并行准备，先各自验收，再合并。CSP、视频/DDR、训练线仍各自推进已有工作，不重复开发同一模块。
+第一项建议实际执行的是ROM-R1：改动小、可保持reader外部周期不变、收益有明确结构来源。
+若当前最急的是ERAM超额，则并行启动PW-W1；不能仅凭ROM省寄存器就宣布存储问题解决。
+
+当前仍未通过：完整67层/真实DDR/视频并发资源与时序、整网20M拍、完整复位和外设签核、严格交付门、部署精度。
+CSP v2 attempt4的内部setup/hold已通过（+0.484/+0.021ns），资源5,396 Slice/30DSP/1ERAM；不重新修复旧attempt2的0%覆盖问题。
+19,000 Slice/38 DSP/107 ERAM仍是RB1目标，不是已证明的整机成本；新增资源必须按A/B/C/D共同台账登记。
+
+本次八项门禁：compile、ast、readability、comment、naming、profile、testbench、toolchain均为NOT_RUN。
+可引用的CSP历史严格记录为compile passed；ast/readability/comment/naming/profile failed；testbench/toolchain not_requested。
+实际ModelSim/TD收据与上述静态记录分别保留，不混成“八项全通过”。本轮是readable-verilog-generator的analyze路线，不输出替换RTL。
+
+二、先纠正资源归因，避免改错地方
+
+PW实际8块scheduler ERAM是：输入2块，权重6块。
+证据：
+- R/pw_deep_slices_20261015/memory_query/ram.rpt：input映射到源码134行，weight映射到142行。
+- R/pw_deep_slices_20261015/physical/gate_netlist.v：108241、108369、108497、108625、108753、108881行为6个weight ERAM；109889、110017行为2个input ERAM。
+- 输入合并为384×64，权重合并为96×192；不是“8个输入数组就等于8块ERAM”。
+
+因此：不要把输入8×8改成4×16当作本轮主要省RAM方案，当前输入已经只占2块。
+也不要把“2304字节权重容量很小”当成只占1块的证据；192bit并行读宽和映射方式实际占了6块。
+RB1的8→4应解释为共同工作存储配额，而不是指定把8个输入bank压成4个。
+
+ROM也有明确归因：历史联合映射的reader层级包含56ERAM和6,899个寄存器；14个group各320个寄存位，reader又有7+4+2+1组160位选择寄存器。
+相比之下，down2拆包器当时只有119 logic LUT、24 ripple、246寄存器。优先减重复宽寄存，不先重写字节拆包器。
+该历史报告与最终联合顶层范围不同，寄存位减少不能直接等同于Slice减少。
+
+三、ROM-R1/R2：具体改哪里、如何保留契约
+
+选用冻结输入：
+R/rom_current_down2_20261013/rtl/road_yolo_numeric_rom_group.v
+R/rom_current_down2_20261013/rtl/road_numeric_rom_reader.v
+R/rom_current_down2_20261013/rtl/road_down2_parameter_prefetch.v
+R/rom_current_down2_20261013/rtl/road_rom_current_down2_top.v
+只在新的独立候选目录派生，不回写这四个旧文件。它们可与后续相同哈希副本复用，不重造一个ROM框架。
+tb_rom_down2必须绑定上述同目录top，不混用weight_address或control候选中的同名顶层。
+
+R1：去掉group的第二级完整字寄存，保留物理RAM后第一道寄存边界
+
+位置：group.v约74～115行；reg_lower_pair、reg_upper_pair、word_data_o。
+当前：四路40bit物理RAM → 两个80bit pair寄存器 → 160bit word_data_o寄存器 → reader选择树。
+候选：四路40bit物理RAM → 两个80bit pair寄存器 → 拼接输出 → 原reader选择树。
+保留pair寄存和其复位，不把ERAM原始输出直接拉过长距离送下游。
+结构上减少14×160=2,240个寄存位；56ERAM、初始化内容和reader外部端口保持。
+
+关键边界：group子模块的可见延迟会少一拍，不能宣称其独立接口逐拍不变。
+本候选只允许把它封闭在当前reader内部使用；reader仍在cnt_wait==7时采样并进入RESPONSE，保持原请求到响应时序与反压保持。
+先核实完整源清单中没有依赖原group两级延迟的旁路消费者；若有，旧group保留供该消费者，候选不得直接全局替换。
+这是ROM内部延迟调整，不涉及冻结MAC/round/SiLU核；后续实施须在候选接口规格中明确。
+
+R1验收：
+- 同一请求序列逐拍比较reader的ready、valid、data、fault，而不是只比最终CRC。
+- 14组首尾、20字节边界、未对齐字段、7167末词、7168非法地址、响应长反压、WAIT/RESPONSE中复位。
+- 使用原56份非零且各组不同的初始化文件；可变13位地址必须可观测，不允许固定down2地址导致其它组被裁剪。
+- 新实际顶层确认56ERAM仍保留，再看寄存、Slice、PLB、MSlice和有效时序。若寄存减少而布局/时序明显更差，保留R1失败并回退，不继续硬叠R2。
+
+R2：只在R1通过后压缩reader选择树
+
+位置：reader.v 19～23、55～70行；reg_pair[7]、reg_quad[4]、reg_oct[2]、reg_selected。
+当前：7→4→2→1层层注册160位数据，最后再进入response_data_o。
+候选：4个160bit quadrant寄存器，分别在组0～3、4～7、8～11、12～13内选择；最终由响应寄存器选择quadrant。
+组内索引来自已锁存reg_address[10:9]，quadrant索引来自同一reg_address[12:11]；低9位仍是每组512词地址。
+非法14/15组有确定默认值，但合法请求必须仍由addr<7168准入；不吞非法地址fault。
+保留原IDLE/WAIT/RESPONSE/FAULT、cnt_wait==7及response背压保持。
+按声明位宽，reader选择树+response从2400bit变800bit，再减少1,600寄存位；与R1合计3,840位。不是“必省3840 Slice”。
+
+风险与回退：4选1组合逻辑可能增大局部路径/扇出。先只增加这一项，实际route比较。若代价超过收益，保留R1，R2撤回；不降低100MHz或新增例外。
+本阶段不缩短reader固定等待、不加多未决读、不改变160bit格式；这些吞吐变化留待实际ROM等待占比证明有必要时再提。
+down2拆包器的28位重复字段锁存可后置，其收益小，删除后可能把译码逻辑放入更多控制路径，不列为必做任务。
+
+可直接复用的测试入口：R/rom_current_down2_20261013/tests/tb_rom_reader.v、tb_parameter_prefetch.v、tb_rom_down2.v。
+reader改动后再跑原1676条装载（652参数/权重项+1024表项）及down2三夹具，原boot周期和结果应一致。不能为本任务扩展CRC探针。
+
+四、PW-W1：从“整分片权重常驻”改成“当前输出组三通道常驻”
+
+主文件：R/pw_deep_slices_20261015/rtl/road_pw_tile_scheduler.v。
+保留：132～138行输入bank；现有输入装载、MAC64/192/96接口、33位累加、后处理、输出缓存、SiLU表。
+修改集中在：62～67行状态/启动准入、102行权重读地址、140～146行权重bank、150～176行状态输出握手、178行提交合法性、188～260行装载准入/游标及214～233行状态跳转、326行附近循环推进。
+
+W1.1 先固定最小形状：PROFILE2的一个192→12分片
+
+当前24个8bit权重bank各96深，全部预装2304字节，包含4个三输出通道组。
+候选24个8bit浅bank各24深，仅当前3×192=576字节；保留24路并行读，仍每拍提供192bit权重。
+输入64bit仍由原2ERAM提供。权重浅bank目标映射分布式RAM，不与输入争同一读口。
+理论64深单bit LUTRAM口径约192个DRAM LUT，实际还受端口/写使能/合并影响，必须确认TD映射。不能把“两块ERAM容量足够”误说成“两块可同时给出192bit”。
+目标：当前6块权重ERAM不再常驻；B组释放出的ERAM用于其它同时存活工作数据，整体仍受4块工作存储配额约束，不新增一套私有层缓存。
+
+W1.2 循环必须一起改，不能只改数组深度
+
+原遍历：position外层 → output_group内层 → input_group归约。
+候选：output_group外层 → 装当前组三路权重/参数 → position 0～15 → 每个position遍历input_group 0～23。
+当前组三路权重在16个空间位置之间复用；读地址只取input_group，不再加output_group×GROUP_COUNT。
+原同一tile输入保持到所有输出组完成；不为每个输出组重新装一遍输入。
+每个像素任务仍first加入bias一次、last检查最终INT32；三路原子故障照旧。权重驻留一次不等于bias只在整组加一次。
+
+W1.3 增加一个有界的组间装载阶段，不新建队列系统
+
+复用现有i_load_* / o_load_ready的物理位宽，组间只接受当前组权重及相应参数，输入/表/其它组不得混入。
+装载映射：bank=output_lane×8+input_lane；row=input_group；本地权重地址每组从0开始；全局模型地址按OIHW计算。
+最后一个实际bank写提交之后才置group_loaded；只收到最后一字节但尚未落bank时不能发first。
+当前组全部有效输出退休、MAC/PP无旧在途之后才允许覆盖该组参数/权重。第一版先排空再重装，不做双bank预取。
+加载时MAC valid=0；反压时装载载荷和游标保持。半组重启/复位取消后，group_loaded清零，不发布半组结果。
+flag_start_accept拆分静态资源已装满与当前group_loaded条件；组间装载态保持o_busy=1及owner不释放，不能借用会拉低busy的初始空闲态。
+o_load_ready仅在准许的装载阶段接纳对应类型；组间只开放当前权重/参数，完成条件须包含最后物理bank写提交，不能沿用旧全片装满计数。
+
+注意：端口位宽不变不等于协议完全不变。旧producer是“全片一次装满→start”；新producer需在tile运行中按组继续供数。
+这项外围装载契约变化须随实施方案一起批准，原窄口壳和旧TB保持原样作为回退，不悄悄修改既有生产调用者。
+可以在独立候选中改外层装载适配器，不能给旧producer假ready或接受后丢掉多余权重。
+
+W1.4 输出顺序、标签和计数必须同步修改
+
+现flag_write_illegal检查i_pp_tag==cnt_written，适用于原position-major提交；改遍历后这个条件不成立。
+保留HWC逻辑地址tag=position×Cout+channel，输出仍写现有reg_output[tag]，导出仍按原HWC次序。
+新增/调整独立的提交group、position、lane游标，按实际握手产生expected_tag；cnt_written只计数量，不能再充当地址。
+group重装前等待该组所有结果真正写入，避免新组通道号改变旧结果的合法性判断。
+不新建第二份结果缓存，不取消重复/越界/INT16类型检查，也不以“数量相等”替代每个地址正确。
+
+W1.5 对拍方式与真实代价
+
+由于任务顺序变化，旧/新波形不能按第n拍或第n个MAC事务直接对齐；以(layer,tile,position,output_group,input_group)关联比较。
+逐事务比较activation、weight、bias、first/last、mask；逐逻辑地址比较acc/pre/SiLU/post及导出结果。
+再扩展PROFILE0/1、PROFILE2八个slice；已有Cin48/96/192都是8的倍数，其PASS不覆盖Cin12或2/5预测尾路。
+必补：组间随机气泡、长反压、半组复位、最后一字节/物理写提交与启动相邻、参数切组、末组溢出、未导出拒换owner。
+分别记录输入装载、组权重装载、归约/后处理、组排空、结果导出；组重装等待必须进入同一tile端点，不能挪到“核心窗口之外”制造加速。
+
+W1验收目标：输入仍2ERAM；权重实际退出6ERAM；新增LUTRAM/控制不把PLB及时序推坏；所有数值/地址正确。
+若工具仍映成6ERAM，优先复用项目已验证的浅分布式RAM写法并确认使能/读寄存；不能自造未经确认的厂商属性。
+只保留一个备选：保持原调度，将完整96×192权重改为分布式RAM，理论约384 DRAM LUT，控制改动小但LUT代价更大。因PLB已紧，不默认采用；需要一次实际比较后作取舍。
+两案都无净收益时，报“权重宽读映射瓶颈”，不要继续改输入bank或挪用Top-K预算掩盖问题。
+
+五、W2：把浅权重缓存接到唯一完整ROM，而不是接PC或另一份参数库
+
+R1/R2和W1分别通过后再接线，避免同时调试读ROM、循环顺序和算术。
+复用reader的单未决ready/valid；160bit ROM不能每拍直接供192bit MAC权重，先预取当前3×Cin字节到活动bank，再计算16个位置。
+按模型manifest给出的权重、bias、pre及post偏移取数，不把当前小块的case常量表当正式模型。
+20字节物理词缓存保留，跨词按有效字节消费；一个24字节连续窗口最多跨3词，但OIHW三路8字节通常分散，不能假定都是连续24字节。
+范围、字节序和三路重排按实际OIHW通道切片，DW空间打包三路复制同一逻辑通道参数，不能按物理lane取不同量化参数。
+
+当前road_down2_parameter_prefetch只描述down2字段，第一字段是字节offset581；Stem占offset0～580。旧rom_top还硬选down2。
+因此先用现有down2接通验证reader改动，再补真实PW活动组取数；Stem与CSP需要各自的固定字段/地址适配，不宣称“完整ROM已接好所有层”。
+只生成冻结图需要的字段表/循环，不增加任意模型解释器。
+
+CSP特别处理：R/csp_tile_integrated_20261015_v2/rtl/road_csp_tile_program.v目前固定同步返回192bit权重和248bit参数，没有response_valid。
+R/csp_tile_integrated_20261015_v2/rtl/road_csp_tile_integrated.v在ST_PREPARE固定拍采样，不能直接接可变延迟reader。
+候选外围加“等待完整参数有效”阶段，或者先预装活动寄存组；全部字段有效才允许SEND。不得继续固定采样旧值。
+原248bit布局沿用：bias96、pre_multiplier96、pre_shift18、post_multiplier32、post_shift6。
+原56个展开权重词/16个参数词保留作oracle；逐词一致后才将测试case ROM排除出候选综合源清单，不删除旧文件。
+
+六、U1/U2：唯一算术实例，最小的四客户owner选择
+
+复用入口：R/frontend_ddr_full_20261015/reused/road_frontend_shared_core.v。
+它已经有Stem/down2互斥owner，不应再新建一个通用总线或多主仲裁器。
+候选仅扩为固定Stem、down2、deepPW、CSP四个客户；一个owner寄存器，MAC/PP输入各一组选择，返回ready/valid只给owner。
+
+固定数据流：
+  Stem / down2 / deepPW / CSP任务适配
+                  ↓ 固定owner，任务退休后切换
+      唯一road_mac_probe → 唯一road_dynamic_postprocess/SiLU
+                  ↓ 返回当前owner
+      原有输出缓存 / CSP残差与五级写回 → 存储
+
+必须保留的线：
+- MAC：valid/ready、first/last、mask8、activation64、weight192、bias96、result96、result_ready/fault。
+- PP：acc96、pre_multiplier96、shift18、post_multiplier32、post_shift6、mask3、tags48及返回data/tag/int16/fault。
+- 当前frontend把i_activate绑1；接未来INT16预测头时必须由已冻结模式驱动现有端口，不能沿用常1导致头被SiLU/INT8截断。
+- 队列/流水busy等已有观察口可复用；不新增算术核端口。
+
+按两个小步合并：
+U1：先接deepPW。其scheduler已暴露以上端口，移除候选中的road_pw_validation_top私有MAC/PP和窄口壳；先不改其它核。
+U2：再接CSP。只将R/csp_tile_integrated_20261015_v2/reused/road_csp_first_probe.v约504～546行的MAC/PP实例外提。
+不能删除first_probe整体：186～209行的握手、tag和饱和，225～359行的五级写回/三路槽，362～420行退休，431～491行参数/地址/bypass锁存均为功能逻辑。
+CSP集成器的注册task_done、DW cache写合法性、局部clear也保留，不恢复曾导致组合反馈的early_done路径。
+外提连接会新增CSP适配包装端口，但五个冻结算术文件保持逐字节一致；不强迫其它客户穿过CSP单上下文包装。
+
+owner切换条件：旧调度结束、MAC无结果、PP队列/流水排空、输出/残差写回真正退休、未导出表已处理、无待提交装表项。
+对于DDR客户，“写回被本地缓冲接纳”与“可见性屏障完成”分开记录；切算术owner不能顺便释放仍有在途DDR读写的槽。
+等待切换的请求不能挡住旧owner排空。首次只保守串行切换，不同时增加跨任务MAC重叠。
+
+验收：Stem→down2→PW→Stem，再加CSP前后切换；长反压下owner不变；参数不串层；复位取消后重装1024表；原三组功能回归保留。
+综合网表必须只有24个MAC DSP及6个动态后处理DSP，而不是多个30DSP实例被常量裁掉；用不同客户的动态数据证明路径真实可达。
+原板级壳里的DDR/PHY/HDMI/PLL不一并搬入，官方视频底座仍唯一。
+
+七、工作存储如何逐步共享：不要先造万能缓存
+
+先完成PW权重省ERAM，保留原输入/输出已验证端口，再逐客户复用。不要在W1同时改DDR布局、DW打包和CSP缓存。
+冻结图的容量核对：最大PW输入4×4×192=3072B；最大stride2 DW halo为9×9×48=3888B；最大stride1 DW halo为6×6×48=1728B。
+这说明64bit×512逻辑输入工作区有容纳这些单一输入的容量可能；并不证明任意8点的读口、bypass和输出同时存活已满足。
+
+共享时按生命周期分工：
+- Stem阶段：输入halo、当前权重、待导出结果；done后仍需真实导出退休。
+- DW阶段：输入halo在最后一次读取前保留；DW结果缓存独立保留至对应PW最后一次读取。
+- PW阶段：输入tile覆盖所有输出组；不能为了加载下一组覆盖输入或未退休结果。
+- CSP阶段：旁路保留至残差写回，DW缓存保留至PW读完；两者不是因为“同一个tile”就可重叠覆盖。
+首先复用不同层之间不同时活跃的输入bank；不删除确有同时读写需要的小缓存。
+4ERAM是共同工作存储总额度；小浅bank若落LUTRAM，连同元数据、输出和复制成本进入Slice/MSlice账。
+
+八、S1：Stem先做低改动取数优化，算术周转另外立项
+
+位置：R/frontend_ddr_full_20261015/rtl/road_stem_ddr_sequence.v 231～240、259～269、321～322、356～362行。
+当前每个RGB字节都重新走MAP→ROW→ADDRESS→CACHE四个地址状态，即同一像素R/G/B重复算坐标和行偏移。
+候选只增加同像素快路径：R计算地址；R/G握手后，如果下一个字节仍在现有16B cache内，推进byte_lane和channel后继续送字节；B结束才换像素。
+遇byte_lane=15跨16B边界、padding、cache无效或复位时回原路径；反压期间绝不提前推进lane/通道/地址。
+保留当前native地址换算，本候选不改PAXI协议、不新增异步FIFO、不增加整行缓存。
+这会减少状态重复，不必减少DDR读次数；两项分别测，不能把少几拍状态处理宣传为带宽翻倍。
+
+必须覆盖RGB起点落在lane14/15的跨词、三通道唯一编号、四边padding、长背压和输入/导出复位。
+通过同一完整前三层向量比较原17,252,079拍与新端点；核窗口、halo窗口单列。
+前三层Stem核心窗口本身10,914,048拍，占63.26%；RGB halo窗口3,004,788拍，占17.42%。仅快路径不可能解决整网5FPS。
+
+若需要改Stem核：R/frontend_ddr_full_20261015/reused/road_stem_tile_scheduler.v 208～212行中，每组PREPARE/SEND，之后MAC_WAIT、POST_WAIT、ADVANCE。
+先用已有TB统计这些互斥状态，证明剩余最大等待确由任务周转造成，再单独提出沿用现有reservation的发射/写回解耦方案。
+不得在本轮资源调整里同时放开跨任务MAC、改变II或扩大在途上下文；这些会改变故障/结果归属契约，需独立决定。
+
+九、怎样形成一次可信的联合结果，而不是继续绕圈
+
+建议实施批次及完成凭据：
+
+批次  修改范围                          必须交付                          不通过时的下一动作
+0     复制候选/绑定原哈希和源清单         可回退；本轮只完成分析文档          只修路径/清单，不重跑全部历史审计
+1     ROM-R1；通过后单独ROM-R2           同周期reader对拍+真实资源及时序     R2坏则仅保留R1，不强上复杂mux
+2     PW-W1单192→12，再扩其它形状        group-major数值/地址+RAM实际映射    只比较一个完整LUTRAM备选，不改输入2ERAM
+3     W2接唯一ROM；U1/U2逐个共享核       参数逐项一致、单实例、跨客户退休    定位适配/退休，不复制核绕过问题
+4     S1及必要存储生命周期适配          同口径完整端点周期/读写量           有证据才申请Stem核周转修改
+5     官方视频+ROM+单核+真实调度联合实现  全资源/内部时序/未签核边界清单      按最大占用源减法，不另造缺组件小壳
+6     剩余图与后处理在已验证余量内接入   67层+非卷积+DDR+NMS同口径总周期     超20M时比较周转改造与H24，不无期限拖延
+
+每个候选只新增自己的RTL/测试/构建/报告；冻结报告目录不改，旧文件不删。先核对构建脚本的cwd/out指向新目录，不能复制run.py后仍写回旧报告。
+每个有意义修改先跑原针对性回归，再跑包含该修改的实际顶层实现；不靠多次随机route挑一份好结果。
+仅配置/报告解析失败可以在原输入闭包下修构建后重跑；功能或时序失败按一个具体原因修，不同时混入其它优化。
+
+联合资源验收：38DSP常规配额、107ERAM目标、19,000Slice目标；40/108/21,216硬限不变；同时看PLB/MSlice，详见RB1。
+不能把“当前组权重少占6ERAM”提前折算成整机少6：其它客户的并发工作存储、源/输出缓冲和浅bank LUT成本要重新计。
+500ms年龄、完整帧发布、Top128每类、NMS、64框、真实模型精度等不因资源紧张而删减。
+阶段止损点是“出现需要改变算术核、II、数值、真实外设协议、时序例外的具体决定”，不是每完成一个小步骤就停下来。
+
+十、跨聊天分工与本次结论
+
+本聊天：ROM-R1/R2、PW-W1及共享算术接入的协调；不再开发另一套CSP provider。
+CSP工作线：沿v2继续完整CSP/真实源取数；先保留五级写回语义，按U2约定提供外提实例适配；不要另建完整ROM。
+DDR/视频工作线：S1、唯一控制器/视频客户边界、真实写可见性；不接入第二个DDR/HDMI顶层。
+训练/量化工作线：冻结图与参数/向量，明确训练精度与集成测试；不因某壳资源不够自行改网络形状。
+所有共享文件只有一个写入者；另一聊天给独立候选/差异，不同时覆盖同一文件。本文件未向其它聊天发送指令。
+
+总结：真正优先修改的是ROM重复宽寄存、PW整分片宽权重仓、各测试壳内的重复算术实例。
+不是去改已经只占2ERAM的PW输入，也不是删除CSP残差写回，更不是把未实现的存储共享直接计为节省。
+本轮没有修改RTL、运行训练/综合、生成位流、操作板卡或写Flash。后续RTL实施前应批准上述外围组间装载与包装调整范围；冻结算术核接口仍不变。
+
+附：本次直接读取的关键源哈希
+
+R/pw_deep_slices_20261015/rtl/road_pw_tile_scheduler.v
+318538fb74fd62065ff3b866f347b6242386058cb62f01efdd6f7c09ad90b0cf
+R/pw_deep_slices_20261015/physical/gate_netlist.v
+694b114f5de3388a930a33220ebe256a09878babeb293baf03ed7ddeaf5951bc
+R/rom_current_down2_20261013/rtl/road_yolo_numeric_rom_group.v
+a3eafe9e403a4292e4458c2fe0c30a77dce400ac00a3d52459b41fd8e4ce391c
+R/rom_current_down2_20261013/rtl/road_numeric_rom_reader.v
+d22a4ffec8e3b8536408a117865394c38b8999f7d9bb621ca5ca11e193c79421
+R/rom_current_down2_20261013/rtl/road_down2_parameter_prefetch.v
+cd20611a1c9493c5fcbc3f30b0188e8bb3815b7f80b3e14f0fefb64a9511dd80
+R/rom_current_down2_20261013/rtl/road_rom_current_down2_top.v
+b4d9a7599f3e20dd9619e5520e3029c74e78c6c7c705620fb3265b2432609992
+R/frontend_ddr_full_20261015/reused/road_frontend_shared_core.v
+13d528bf0d4f3c43604bcaff42bc77c25997d20cefc69135329462f646eeda5c
+R/frontend_ddr_full_20261015/rtl/road_stem_ddr_sequence.v
+35c53bf5e1ee2e461df79d53c7f35535539c881c4c8bc35d25a24e57d6e8b156
+R/csp_tile_integrated_20261015_v2/reused/road_csp_first_probe.v
+7b2d47045787a38842001f97fc27ce212cc2e5b0ce9776fc60634b487c6d4f0d
+
+文档自检：上述9份源文件SHA-256逐项核对；7168个合法ROM词地址的组内/组间索引拆分逐项核对；寄存位差额3840及当前PW权重576B由结构公式复算。这里只验证文档依据和算术，不代表新RTL仿真或综合通过。
