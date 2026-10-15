@@ -1,0 +1,43 @@
+tb_csp_scheduled_chain.v is a single-transaction operand provider and result consumer.
+It never calls or duplicates the old per-group drive tasks. It binds the frozen 25-bit descriptor stream,
+the original QAT group/task vectors, input_words-based bypass reconstruction, and all numeric golden stages.
+PW response activation is deliberately poisoned so passing PW arithmetic requires the RTL DW cache.
+
+CASE=0 runs two complete tiles after one SiLU table load, without reset or table reload between tiles.
+Expected per tile: 320 requests/responses/MAC accepts, 160 task commits, 384 results,
+192 cache writes, 128 cache reads, 384 acc/pre/SiLU/post checks, and 192 residual-sum checks.
+Each TILE line also partitions encoded reason 7 into five mutually exclusive pre-edge observations:
+start/cache-clear, MAC-to-postprocess accept, closed reduction before that accept, owned postprocess/output
+work after that accept, and other commit/transition work. Their sum is asserted equal to reason 7.
+The reported pre/SiLU/post busy counts are raw overlapping activity and must not be added as total cycles.
+table_accept counts only table_valid&&table_ready and must remain 1024 across CASE0's two tiles.
+An independent sink scoreboard derives the current task's expected result count from the accepted first-group
+mask, counts only result_valid&&result_ready, and requires task_commit exactly one cycle after the final accepted
+result. Common reset clears this observer. Every accepted response descriptor is also required to be fully known;
+this states the two-state synchronous internal-provider contract without adding X/Z detection hardware.
+CASE0 drives start and table_valid together on the final initial table entry and proves table acceptance wins,
+start is not accepted, and no reload or unintended tile begins.
+CASE=1 adds random request/response delay and result backpressure.
+CASE=2 holds result ready low for at least 512 cycles.
+CASE=3 resets after a request accept but before response, cancels the provider, reloads after common reset, and reruns.
+CASE=4 resets after entering PW, reloads after common reset, and reruns.
+CASE=5 injects shift 63 into the first task and expects sticky fault with zero output.
+CASE=6 injects operand_fault on the final task first group and expects 381 prior results with no partial final task.
+CASE=7 corrupts the echoed response descriptor and expects adapter fault with zero output.
+
+No simulator, synthesis, training, board, Flash, or Git operation was run by this agent.
+The coordinator-owned run.py later produced simulation_attempt4/receipt.json with PASS for CASE=0..7,
+including the independent previous-cycle task_commit relation, known response descriptor, and CASE0
+table-priority assertions.
+Its vlog compile reported 0 errors and 0 warnings. First elaboration reported 12 warnings: ten inherited
+unconnected observation outputs on the frozen postprocess instance and two vendor ERAM INIT_FILE bounds;
+these were not changed or suppressed. CASE0 measured 7969 busy cycles per tile; reason 7 split as
+1/160/960/5408/160 for start-clear/MAC-to-PP/closed-before-acc/owned-after-acc/other, and raw overlapping
+pre/SiLU/post busy was 1984/1184/1984. CASE1 measured 8654 with 111 result-stall cycles. CASE2 emitted
+the same complete TILE metrics, measured 8481 cycles, and held output for 512 cycles. Every complete
+tile observed exactly 1024 table accepts. CASE5/6/7 ended in the
+expected fault with 0/381/0 results. This is actual arithmetic and hardware-scheduler simulation with
+a TB operand provider, not ROM/DDR integration, synthesis, physical timing, or board evidence.
+The remaining readable-verilog public gates (ast, readability, comment, naming, profile, and physical
+toolchain evidence) are not claimed here; consult the coordinator-owned gate outputs separately.
+The earlier 18-case wrapper regression remains separate evidence and is not claimed as scheduled-chain coverage.

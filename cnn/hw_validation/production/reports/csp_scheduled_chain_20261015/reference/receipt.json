@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "scope": "fixed first-CSP schedule/address derivation and handshake-only control model",
+  "source_sha256": "8e10aa8cb5ac366c6b3d9a1ea74092bfe979322af7b3a19592465fb43547f882",
+  "input_sha256": {
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\qat_g10_csp_first_data_20261015_v2\\mac_tasks.json": "72d404d4f6e0ca22b10bcbd87b0f6c931d5bf34bbea5a253c33b24a9d409ac51",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\qat_g10_csp_first_data_20261015_v2\\contract.json": "30e992571d5b9a316fe670d4babfb8ad07dc7f746236356d19d20bbd2fe3480f",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\csp_tile_schedule_20261015\\reference\\descriptor.hex": "8d5eae0d7cf5e9aa9deef263681dc59a09e9c01b37261ee6c23bbd1c2bad82f1",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\csp_dw_cache_20261015\\frozen.json": "63a9becbb4b8c7226f3ac47f0e704406e53ad10749e9fbdb3c4741960df933e1",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\qat_g10_csp_first_closure_20261015_v2\\vectors\\task_tags.hex": "f10afcde47a55be64db8de92c7f98bd709ce688af9a66f51f4da72a4a20d74a6",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\qat_g10_csp_first_closure_20261015_v2\\vectors\\task_addresses.hex": "4e432d5e1830856d1e55d5cd736b92a586a35f2081ad0206940bf3dbca35c806",
+    "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\qat_g10_csp_first_closure_20261015_v2\\vectors\\task_mask.hex": "27693973b52a59921c3ae8c4dafe54bbc5fb8cc2be8fbb72c1af4d37cdb34d3b"
+  },
+  "comparison": {
+    "base_report": "csp_dw_cache_20261015",
+    "actual_vector_directory": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\reports\\qat_g10_csp_first_closure_20261015_v2\\vectors",
+    "legacy_invalid_tag": "ffff only in masked lanes; generated invalid tag is 0000",
+    "valid_lane_mismatches": 0,
+    "address_mismatches": 0,
+    "mask_mismatches": 0,
+    "descriptor_mismatches": 0
+  },
+  "results": {
+    "tasks": 160,
+    "groups": 320,
+    "valid_writes": 384
+  },
+  "packing": {
+    "descriptor": "[24:17] task_id [16] pw [15:14] y [13:12] x [11:8] channel [7] first [6] last [5:3] output_mask [2:0] zero",
+    "tags": "3 x 16-bit fields; lane0 least-significant; invalid lane=0",
+    "addresses": "3 x 32-bit byte addresses; lane0 least-significant; invalid lane=0"
+  },
+  "address_rules": {
+    "dw": "56532992 + ((y*4+x+lane)*12+c)",
+    "pw": "56643584 + ((192+(y*4+x)*12+c+lane)-192)"
+  },
+  "model_checks": {
+    "random_seed": 846647922709,
+    "observed_cycles": 2332,
+    "request_accepts": 320,
+    "pw_cache_requests": 128,
+    "mac_accepts": 320,
+    "write_accepts": 384,
+    "task_done": 160,
+    "bubble_and_backpressure_hold_checks": 1197,
+    "stale_response_rejections": 1,
+    "early_response_rejections": 1,
+    "descriptor_mismatch_rejections": 1,
+    "tile_restart_without_silu_reload": 1
+  },
+  "cycle_boundary": "counts only explicit valid/ready handshakes under randomized stimulus; no arithmetic latency or performance claim",
+  "reset_boundary": "reset cancels the transaction, requires provider_clear, and requires SiLU reload; a new tile only clears local DW cache",
+  "output_sha256": {
+    "tags.hex": "f238600546a31228312814bb2ce70275065363414a249d7c2f0b96a52a77020f",
+    "address.hex": "4e432d5e1830856d1e55d5cd736b92a586a35f2081ad0206940bf3dbca35c806",
+    "descriptor.hex": "8d5eae0d7cf5e9aa9deef263681dc59a09e9c01b37261ee6c23bbd1c2bad82f1"
+  }
+}
