@@ -123,3 +123,30 @@ model_id32=0xB35D4A66绑定完整payload SHA；32bit匹配不能代替完整包�
 ROM-R1本回合阶段结果：新group候选已删除第二级160bit输出寄存，pair保留；reader/prefetch/top与旧源相同。
 全部7168词、14组边界、17拍响应反压、WAIT/RESPONSE复位及7167/7168在旧新trace中均通过；90114行外部逐拍trace相同。
 该条仅记录最窄reader功能回归，原三TB/规格/八门状态仍待最终封存；没有TD资源/时序结果，不把2240声明寄存位删除写成Slice实测节省。
+
+第四批：连续视频、真实CNN 1 FPS保底
+时间：2026-10-15 21:14，北京时间。用户在1FPS说明后明确要求“好的，继续，分发任务”。
+本批唯一文件：连续视频1FPS目标与第四批任务_20261015.txt；含100M周期预算、SRIF1结果元数据与时间快照边界。
+四次send_message_to_thread均成功；随后即时wait_threads显示四个聊天active/inProgress。
+这是实际启动回执，不是第四批功能、资源、时序完成报告。
+
+最新证据纠正：
+- CSP2全幅按层：正常19426266拍，随机20209755拍，四次全幅运行；原8M未达，ROM/真实DDR/整网/物理仍未通过。
+- C2最新Icarus/vvp13项已PASS，真实图start→seal837581拍；先前“工具异常”已不是当前状态。TB注释门21项单列。
+- C8彩色缩放/双槽9组PASS，正式64框CDC尚待实现，原265bit字段与安全时间输入阻塞本批由SRIF1统一。
+- C9串行NMS当前有48项PASS及6944比较368509拍收据，继续收口长反压/故障恢复后进入联合。
+- ROM-R1现在原3TB实际通过；旧新90114行逐拍一致；严格6653errors/27warnings，继承旧闭包失败，实际资源/TD未测。HANDOFF.md有精确路径。
+
+分工：
+C4：当前CSP2封存后，csp_family_layer_scheduled_20261015/实现CSP3全幅→CSP4全幅，同核/同包/4ERAM目标；PAN先复用差异，不扩通用引擎。
+C8：detection_table_cdc_20261015/实现三表64框CDC、SOF与共享时间快照；500ms保留、2000ms仅提议/对照，不自动启用。
+C2：head交接后，shared_lut_service_1fps_20261015/实现sigmoid/exp→唯一ROM读口适配；不复制ROM，不改reader等待。
+C9：NMS收口后，postprocess_joint_1fps_20261015/接实际C2+C9和唯一候选RAM做12096cell→FINAL97联合对拍与完整周期。
+C7：ROM-R1候选、唯一源/地址/模型与TD统一排期；接收四线稳定交付后整合，不重复增加公共硬件。
+
+当前读取游标：
+C4 77607270-2a91-441b-bf44-317cb0c1d7e8:8
+C8 3971ce40-5137-4349-a123-66468ebd26af:8
+C2 aec4f9e8-0f7b-41c5-a274-d8ab94726150:8
+C9 1d5e7ca8-93e2-409e-b9bb-ed92f1feb6fc:7
+不训练、不改生产、不生成位流、不上板/Flash、不新增时序例外；真实DDR写可见性厂商问题继续保留，未联系厂商。
