@@ -1,0 +1,77 @@
+RoadYOLO 第六批：共享计算、ROM仲裁、结果发布与源帧时间
+日期：2026-10-15；work/roadyolo；普通执行均显式gpt-6.1-sol/high。
+承接PIF1、SRIF1及第四/第五批；目标连续视频＋真实CNN争取1FPS，100MHz/100M总周期。
+
+一、已检查的实际交付，不是整机通过
+C2：正确G10包在真实厂商模型下7168词/143360B一致，1280项LUT一致；reader8拍、查询29拍、取消排空8拍。旧包差异已在新候选修复。
+C9：带真实ROM后处理24/24、受控ROM25/25；真实图7框1577513拍，随机1591283拍，最大完整恢复帧1591477拍。单客户LUT，不含参数竞争或CNN。
+C4：CSP3/4共16组、6次全幅；正常14712536/9204840拍。CSP3/4仍是编译期分支、内部缓存，没有运行时共用4ERAM的实际证明。
+C8：64框三表与同源时间8组功能＋1组端点观察通过，count64 seal到copy_ack930ns；未绑定实际摄像头SOF、未物理签核。
+独立覆盖层集合22/67，不是连续运行22层。剩45卷积：SPPF2、PAN12、DSDown8、lateral2、head21。骨干down3/down4仍未实际接入，不能漏算。
+统一payload b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145；physical bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417。
+
+二、刚获用户确认的演示规则
+用户明确选“保留最多2秒并显示年龄”。新演示候选AGE_LIMIT_MS=2000；旧500ms模块/收据保持只读，不倒改原正式验收。
+沿SRIF1保守age_upper：snapshot-capture+4ms。只画age_upper≤2000ms的完整有效结果；未知/失联/错身份不画。
+显示最新结果年龄和AGE_INVALID，不能用0ms代表未知。冻结帧内文字/数值可在HDMI SOF更新，安全失效仍可立即撤框。
+新source_frame_id完整结果才计一次检测；保留旧表1秒不增加FPS。新正常空表在下一SOF清框；本规则不改变数值、分数、NMS或模型。
+
+三、C4：单一固定计算客户端与SPPF/PAN
+新目录production/feature_blocks_shared_20261015/，旧CSP2/3/4只读。
+先将CSP2/3/4固定块选择放到一个新客户端：仅start握手锁存block_id，busy期间不切换，一个工作缓存/权重bank/算术owner，不并排例化三套客户。
+这是应用调度的新接口，不改冻结MAC/重定标/SiLU端口、II、数值或复位。固定case查冻结图，不做任意图引擎。
+核验同实例CSP2→CSP3→CSP4切换、缓存覆盖、反压及共同复位；发布唯一缓存owner/端口/生命周期，不把内部数组说成免费或已映射ERAM。
+随后SPPF squeeze→三次pool5x5→四路concat→out，接lateral4与fuse3_td，继续lateral3与fuse2_td；按可验小阶段推进，不等整支全部写完才测。
+PAN每块只有reduce PW→DW→PW残差三个卷积，无out.conv；底部两块需down3_bu/down4_bu实际生产者，缺失就明确标记，不用TB旁路冒充已接。
+最大归约24组/192乘积，应用group计数至少5bit；fuse4_bu输入tile3072B、weight bank最多24×192bit；Cin12尾组mask0x0f，S16尾两行不得写y18/19。
+SPPF INT8有符号max，算法padding=-128，物理尾tile padding=0；nearest/concat/split/residual地址沿冻结graph，长寿命旁路保留至最后读消费。
+公用工作缓存4ERAM为目标，必须报告实际存储组织；未综合仍记未证实，扩容不得默加私有RAM。若必须改冻结核/II/数值则停相关分支集中报决定。
+
+四、C2：唯一ROM参数/LUT两客户仲裁
+新目录production/rom_two_client_20261015/，复用正确G10 ROM闭包。
+只做两个现有字请求客户到一个reader的最小仲裁：参数预取与LUT服务；request addr13、response data160/valid/ready，单未决。
+每个实际接受请求锁存owner，返回只交owner，响应消费前不得释放；不得OR两个ready或广播返回。双方都请求时逐请求轮转，响应持有时不强行切客户。
+取消仍由客户DRAIN消费旧返回，仲裁不因cancel清owner或丢其返回；共同reset同时清reader/客户。未接收的请求可取消，已接受必须排空。
+新仲裁不改reader等待，不重复全ROM，无新增ERAM/DSP目标；接口规格、逐拍、数值/身份、随机背压、双客户竞争、取消晚返回及复位回归。
+接已有参数预取的真实down2权重/偏置/系数与真实sigmoid/exp查询；原预取若仅支持固定层就保留该范围，不冒充67层参数完成。
+报每客户等待/公平条件/ROM请求计数；无返回ready的有限等待上界就明确条件，不靠固定timeout宣称退休。
+结束再整理余下8 DSDown＋2 lateral＋21 head的冻结层清单/输入输出/参数地址与现算子适配差异，优先准备可复用描述，不另写第二套计算缓存。
+
+五、C9：真实后处理→C8唯一source表→pending/active
+新目录production/result_publish_joint_20261015/。冻结复制已通过后处理、正确ROM与C8表/时间组件，不改上游原件。
+新增最小publisher：只寄存SRIF1帧上下文、计数和状态；FINAL97直接流入C8 i_src_entry_*，ready返回NMS，不增加第四张框表。
+start时锁存epoch/task/source_frame/model/capture_ms；frame_token对应task_id。一次只处理一帧，C8 source未释放前禁止新任务进入。
+NMS done且全部entry接受、count一致、无fault/cancel后锁存同源completion_ms；metadata valid保持至ready，末entry与metadata分拍，count0也发布。
+故障/取消在seal前撤销部分source表；不得把NMS done直接当copy_ack，也不得发布半表。已seal后i_src_abort无法撤回，应保持至copy_ack；共同reset才可取消已发布事务。
+默认新实例AGE_LIMIT_MS=2000，旧500基线不改。真实12096cell→ROM/LUT→TopK/NMS→三表，在100/75MHz及真实SOF周期下验证7框、空表、64框、反压、部分fault、复位与连续帧。
+年龄1996/1997原始差值边界、时间失联、未知年龄、新空表清框及1FPS更新场景均测。现阶段capture上下文仍受控输入，实际SOF绑定由C8新交付接入，不能先宣称摄像头闭环。
+报postprocess start→元数据接受→copy_ack→下一SOF active分段端点，重叠不重复计；只有真实源帧不同的完整完成表计新结果。
+
+六、C8：真实源SOF身份/同源时间绑定及年龄文字
+新目录production/source_sof_identity_20261015/，旧表/时间和采集组件只读。
+先核对官方模板实际AWB/摄像头时钟、SOF脉冲与现采集admit位置，不改生产/MIPI或HDMI主链。
+唯一100MHz计时器沿现road_time_snapshot.o_src_now_ms；为实际AWB域复用冻结payload req/ack发布同源时间镜像，不再生成第二独立绝对计数器，不直接同步动态64bit。
+在真正源SOF冻结frame_id/epoch/capture_ms；frame_id所有物理SOF递增，含跳过帧。capture_ms采用已完整接收且有效的同源时间镜像，其滞后保守增加年龄而不能使结果显得更年轻；报告最大误差/失联条件。
+整组冻结事件到100MHz后才作为描述符；一个在途即可，busy或时间无效时整帧不接纳，不中途补接、不反压视频。已有admit/槽credit未接通须明确，不拿事件通过冒充完整像素DMA。
+沿已有冻结请求/确认协议，不新增异步FIFO/UART/视频链；源payload保持到ack，取消用共同复位，独立热复位/真实DDR排空不作未证保证。
+新增必要年龄文字适配：复用既有字形/显示机制，展示AGE xxxx ms或AGE_INVALID，取table.age_upper和draw许可。只在独立候选验证，不写生产，不能新增64路画框比较树。
+新演示表实例2000ms，测试旧500与新2000分列。给C9/C7稳定身份/时间端口、原视频插入点、时钟/误差及资源增量，不启动自己的TD。
+
+七、共同交付和未通过项
+硬限21216Slice/40DSP/108ERAM；管理19000/38/107，均不因降到1FPS而放宽。TD由C7统一排期。
+各线目录独占、不互改、不自行commit/push或互发消息。普通局部问题连续修复验证，不每小步停下。
+严格八门实际失败保留，数值/握手/位宽/归属相关项优先，非关键格式另列；不降门禁宣称生产通过。
+当前仍缺运行时单一缓存、余下45卷积完整衔接、共享ROM竞争、实际DDR写可见性、原视频框叠加与真实资源/时序；本批组件通过不等于这些全部完成。
+不训练、不改生产、不生成位流、不上板/Flash、不新增时序例外。
+
+八、实际派发回执
+将在发送与状态快照后追加，文件存在不等于任务已经执行。
+
+2026-10-15 22:50 北京时间：四次派发均成功，全部显式model=gpt-6.1-sol、thinking=high；即时wait_threads显示四线均active/inProgress并各自确认新范围。
+C4：feature_blocks_shared_20261015/，77607270-2a91-441b-bf44-317cb0c1d7e8:12。
+C2：rom_two_client_20261015/，aec4f9e8-0f7b-41c5-a274-d8ab94726150:12。
+C9：result_publish_joint_20261015/，1d5e7ca8-93e2-409e-b9bb-ed92f1feb6fc:11。
+C8：source_sof_identity_20261015/，3971ce40-5137-4349-a123-66468ebd26af:12。
+用户对“保留最多2秒并显示年龄”的问答回复已直接收到，故本批2000ms是已批准的新演示配置，不再列为未决定提案。
+图覆盖集合经独立只读复核：graph.json SHA 2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738，22+45=67；4ERAM物理共用尚未实现。
+本次总协调只新增任务合同/回执，未改任何功能RTL；新任务通过情况须读后续实际收据，不能用active替代功能或物理通过。
