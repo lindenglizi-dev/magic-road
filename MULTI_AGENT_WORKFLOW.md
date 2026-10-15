@@ -13,13 +13,13 @@ Codex 的仓库级持久指令由根目录 `AGENTS.md` 提供。角色模型不�
 | 角色 | 模型 | 推理强度 | 主要职责 | 默认写入范围 |
 |---|---|---:|---|---|
 | `arch_lead` | `gpt-6-astra` | `medium` | 跨模块架构、接口契约、CDC、帧号、bank 所有权、吞吐和资源取舍 | 架构与接口文档；默认不写实现 |
-| `py_reference` | `gpt-5.6-sol` | `high` | 数据导入、Python golden model、特征/定点/SVM、训练评估、可复现向量 | `tools/*.py`、Python 测试、数据与评估产物 |
-| `rtl_frontend` | `gpt-5.6-sol` | `high` | 灰度分析流、背景差分、去噪、RLE-CCL、候选和跟踪前端 | 分配到的前端 RTL 与专属 testbench |
-| `rtl_classifier` | `gpt-5.6-sol` | `high` | ROI 读取、HOG、定点 SVM、分类任务控制及经批准的接入逻辑 | 分配到的分类 RTL 与专属 testbench |
-| `verify` | `gpt-5.6-sol` | `high` | Python/RTL 对拍、仿真、周期与边界测量、失败复现、回归检查 | `tests/`、测量脚本与验证报告；默认不改功能 RTL |
-| `review` | `gpt-5.6-sol` | `high` | 独立审查接口、位宽、符号、越界、CDC、帧身份、证据边界 | 默认只读；输出问题清单和定位 |
+| `py_reference` | `gpt-6.1-sol` | `high` | 数据导入、Python golden model、特征/定点/SVM、训练评估、可复现向量 | `tools/*.py`、Python 测试、数据与评估产物 |
+| `rtl_frontend` | `gpt-6.1-sol` | `high` | 灰度分析流、背景差分、去噪、RLE-CCL、候选和跟踪前端 | 分配到的前端 RTL 与专属 testbench |
+| `rtl_classifier` | `gpt-6.1-sol` | `high` | ROI 读取、HOG、定点 SVM、分类任务控制及经批准的接入逻辑 | 分配到的分类 RTL 与专属 testbench |
+| `verify` | `gpt-6.1-sol` | `high` | Python/RTL 对拍、仿真、周期与边界测量、失败复现、回归检查 | `tests/`、测量脚本与验证报告；默认不改功能 RTL |
+| `review` | `gpt-6.1-sol` | `high` | 独立审查接口、位宽、符号、越界、CDC、帧身份、证据边界 | 默认只读；输出问题清单和定位 |
 
-模型名必须保持完整拼写。架构任务使用 `gpt-6-astra`/`medium`；其余五个角色使用 `gpt-5.6-sol`/`high`。如果指定模型在某次运行中不可用，协调代理应报告实际限制，不静默换成别的模型。
+模型名必须保持完整拼写。2026-10-15 用户明确要求：除当前总协调外，普通执行、参考、验证和审阅默认使用 `gpt-6.1-sol`/`high`，覆盖先前五个角色的 `gpt-5.6-sol` 选择。当前总协调配置不因该要求改变；另行委托的普通架构子任务也默认 `gpt-6.1-sol`/`high`。工具调用须显式指定 model/thinking 或 model/reasoning_effort，不能仅在提示词宣称已切换。正在进行的外部仿真不因切换模型重复启动。如果指定模型在某次运行中不可用，协调代理应报告实际限制，不静默换成别的模型。
 
 ## 3. 当前阶段的启用规则
 
