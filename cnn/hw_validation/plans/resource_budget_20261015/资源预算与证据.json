@@ -1,0 +1,69 @@
+{
+  "version": "RB1",
+  "snapshot_time": "2026-10-15T17:23:00+08:00",
+  "repo": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "branch": "work/roadyolo",
+  "status": "planning_only_joint_fit_not_proven",
+  "hard_limits": {"slice": 21216, "dsp": 40, "eram": 108, "plb": 2652, "mslice": 8112},
+  "planned_totals_not_measurements": {"slice": 19000, "dsp": 38, "eram": 107},
+  "central_reserve": {"slice": 2216, "dsp": 2, "eram": 1},
+  "allocations": [
+    {"owner": "A_video", "slice": 12400, "dsp": 8, "eram": 40},
+    {"owner": "B_shared_compute_and_tile", "slice": 4600, "dsp": 30, "eram": 5},
+    {"owner": "C_model_rom_and_reader", "slice": 900, "dsp": 0, "eram": 56},
+    {"owner": "D_cnn_io_and_postprocess", "slice": 1100, "dsp": 0, "eram": 6}
+  ],
+  "eram_breakdown": {"video": 40, "model_rom": 56, "active_silu": 1, "tile_and_active_parameters": 4, "cnn_dma_cdc": 2, "resize": 2, "topk_nms": 2},
+  "conditional_goal": {"eram": 106, "condition": "DMA_CDC_2_to_1_mapping_and_protocol_proven"},
+  "management_thresholds_not_device_limits": {"plb_green_max": 2386, "plb_red_min": 2520, "mslice_green_max": 7300, "mslice_red_min": 7706},
+  "performance_target": {"clock_hz": 100000000, "fps": 5, "cycles_per_frame_max": 20000000},
+  "selection": {
+    "csp_functional_mainline": "cnn/hw_validation/production/reports/csp_tile_integrated_20261015_v2",
+    "csp_timing_qualified": false,
+    "csp_internal_setup_hold_pass": true,
+    "csp_physical_evidence": "physical_attempt4",
+    "csp_rollback_only": "cnn/hw_validation/production/reports/csp_scheduled_chain_20261015",
+    "shared_mac_instances": 1,
+    "shared_postprocess_instances": 1,
+    "model_rom_instances": 1,
+    "ddr_controller_instances": 1,
+    "hdmi_path_instances": 1
+  },
+  "open_gaps": [
+    "tile_scheduler_current_8_ERAM_to_target_4_not_implemented",
+    "ROM_reader_900_slice_target_vs_historical_joint_delta_2697_not_scope_identical",
+    "CSP_latest_route_5396_slice_vs_shared_group_4600_not_scope_identical",
+    "CSP_attempt4_internal_setup_hold_pass_but_external_reset_and_complete_timing_open",
+    "D_group_1100_slice_and_6_ERAM_unmapped",
+    "complete_frontend_PLB_2472_and_17252079_cycles_not_full_network",
+    "DDR_write_visibility_and_late_return_scope_not_fully_closed",
+    "strict_gates_and_full_network_accuracy_not_passed"
+  ],
+  "shared_core_sha256": {
+    "road_mac_probe.v": "4b8bde2194511dd6a892a556a744d1b6f6a878b26a06170210299bd8aa6f45fb",
+    "road_dynamic_postprocess.v": "81f63fb75558090994586a41a42d0f7206bb60620be810d70b293232fc49bd8a",
+    "road_dynamic_requant.v": "80fda130210764ffabd543f6e480943faf4137f18bd93d56948d598e9dcdb05f",
+    "road_round_shift.v": "cb8f1e308e5832eecc9d5a0cebb86df221ea5f12abe97a5796dc49bea04b382d",
+    "silu_shared_unit.v": "5f357b493c7b3f941d9fa954a0ce5ec09091e466b641474360d2f64d0e42c938"
+  },
+  "evidence": [
+    {"id": "E01", "path": "cnn/hw_validation/baseline/template_route.area", "sha256": "a6b44a46a54ea396ecdf4c20f43c358c5d4f67380fe89290ef1996f4ffb48165"},
+    {"id": "E02", "path": "cnn/hw_validation/production/deployment_contract.json", "sha256": "5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681"},
+    {"id": "E03", "path": "cnn/hw_validation/production/reports/pw_deep_slices_20261015/physical/frontend_route.area", "sha256": "970e34c5fe39be997d356281ce96bc0f4f433c549bced9376981efe7f8113892"},
+    {"id": "E04", "path": "cnn/hw_validation/production/reports/pw_deep_slices_20261015/status.json", "sha256": "d3ceea8796674ef55b20e5271ebfeaf1cbee84e3d01e33120d7b13d578b56541"},
+    {"id": "E05", "path": "cnn/hw_validation/production/reports/rom_schema2_mapping_20261010/status.json", "sha256": "d51b1be57b3f9cdf5760a06f41e40462cbcfa5dd53b2e4e83f943844baba84bc"},
+    {"id": "E06", "path": "cnn/hw_validation/production/reports/rom_down2_prefetch_20261010/ROM参数接入结果与回退说明.md", "sha256": "d69def82d44e9a130dd59efecda531b9c1dcce727234828ec29ccfe3fc94c431"},
+    {"id": "E07", "path": "cnn/hw_validation/production/reports/frontend_ddr_full_20261015/physical/route.area", "sha256": "0ae14c438640db3e8305b2a46623315fd221060fb01dc6e2e356923d88aef029"},
+    {"id": "E08", "path": "cnn/hw_validation/production/reports/frontend_ddr_full_20261015/执行与对比报告.txt", "sha256": "01345619e0ad52f3ac23a87beb4dbca734fa3a6799dc8c650cffffaf96a8dc93"},
+    {"id": "E09", "path": "cnn/hw_validation/production/reports/csp_scheduled_chain_20261015/status.json", "sha256": "bbb9a1d673f63a0770a9e518f8a1a3bbb58bfaa3ec82928cc6e2ca9036a34357"},
+    {"id": "E10", "path": "cnn/hw_validation/production/reports/csp_tile_integrated_20261015_v2/input_binding.json", "sha256": "119fe272180b812dc84f0c3a42efd753211acf69eea427de409888b50ece75b5"},
+    {"id": "E11", "path": "cnn/hw_validation/production/reports/csp_tile_integrated_20261015_v2/status.json", "sha256": "89111df0f877a9101d8fa113b30efa807d120236a6f9c712c5dc353dd33e65de"},
+    {"id": "E12", "path": "cnn/hw_validation/production/reports/csp_tile_integrated_20261015_v2/physical_attempt2/status.json", "sha256": "87a8f18261472b42e6b756990b81abc958fa15e6de37edb25e91e701c09ed612"},
+    {"id": "E13", "path": "cnn/hw_validation/production/reports/csp_tile_integrated_20261015_v2/physical_attempt2/frontend_route.area", "sha256": "7bf9e28ccf3198f5c6284d49b92fe47d09b0309fcae3fda7b8b865a47b9a3eb2"},
+    {"id": "E14", "path": "cnn/hw_validation/production/reports/csp_tile_integrated_20261015_v2/physical_attempt2/final_timing.rpt", "sha256": "414d4656d694b4aa9ae51f6c95e58a8977e3a987efb557204d4e187c97d9826c"},
+    {"id": "E15", "path": "cnn/hw_validation/production/reports/ddr_real_handshake_20261013/DDR真实接口验证报告.txt", "sha256": "24c3c0db2acdc6b04e2c04b97aae2bb46fcb382f6cad020919496863131c18d9"},
+    {"id": "E16", "path": "cnn/hw_validation/production/reports/csp_tile_integrated_20261015_v2/physical_attempt4/physical_summary.json", "sha256": "0a7242475b0b5d62d4052f398948f97a044e374fcae99f03f6e57313735f4892"},
+    {"id": "E17", "path": "cnn/hw_validation/production/reports/csp_tile_integrated_20261015_v2/physical_attempt4/frontend_route.area", "sha256": "4b6dc2573f9a143e0c1767db3dfdb316c255be432460b0f6ac93e7d06cecac08"},
+    {"id": "E18", "path": "cnn/hw_validation/production/reports/rom_schema2_mapping_20261010/artifacts/manifest.json", "sha256": "3520e3ca6e82b01b2cbf671630a9d236f7f6096681c69d0d85067c103fcff45d"}
+  ]
+}
