@@ -1,0 +1,57 @@
+RoadYOLO深通道PW：执行、总体位置与下一步（2026-10-15）
+
+尚未通过：外部I/O/原始复位时序、严格交付门、67层图执行、真实DDR可见性、整网精度及5FPS。
+当前位于B/C扩展收口、D固定图执行的前段；本次不是训练或整机部署。
+
+1. 本轮实际完成
+冻结9661d2ae参数浅bank基线及59项依赖，未覆盖旧核/旧报告。新代码位于本目录rtl/。
+三种编译形状：PROFILE0原48→48；PROFILE1真实sppf.squeeze.conv的96→24；PROFILE2真实fuse4_bu.reduce.conv按8个192→12片执行。
+每片权重2304B不变、24权重bank仍96深，输入bank变为192/384深，参数3浅bank，输出只保留当前片。
+12位装载地址、16位窄口、42位I/O、算术接口/II/数值/复位契约不变。未加新算术核、FIFO或外设协议。
+三种PROFILE仅用于独立测量，部署不能复制三套MAC；最终仍应一套24MAC/PP由固定图调度器复用。
+
+2. 参数与数值
+复用另一条线已保存的QAT-G10硬件联调包；原manifest标记TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED保持不改。
+这代表已有训练参数的硬件联调资产，不是完整QAT/精度合格证明。输入为固定种子随机中间激活，不是整网真实图像。
+96→24及192→96的全部acc/pre/SiLU/post参考通过；192八片四阶段重组完全一致。
+192全层294912逐乘积prefix、36864分组prefix通过；普适上界2^31+192*128*128=2150629376<2^32，最终INT32另作实际检查。
+concat.10固定通道顺序[down4_bu.pw.conv,sppf.out.conv]，不互相交错。
+最终ModelSim五顶层均PASS；全部阶段/地址/真实缓存导出比较，旧48的两份CSV每列完全不变。
+新测试含正常、随机及512拍满队列、部分装载/表、末组/PP复位和末MAC故障禁止发布。192窄口5414包、1024表项和192真实输出通过。
+
+3. 实测周期，分清范围
+96→24：正常core=2722；128任务×12组，384输出。互斥分桶={'prepare': 128, 'send_accept': 1536, 'send_stall': 0, 'mac_wait_accept': 128, 'mac_wait': 768, 'drain': 34, 'advance': 128}。
+192→12：每片正常core=2146，8片均相同；每片64任务×24组，192输出。互斥分桶={'prepare': 64, 'send_accept': 1536, 'send_stall': 0, 'mac_wait_accept': 64, 'mac_wait': 384, 'drain': 34, 'advance': 64}。
+192→96八片core算术合计=17168。这是8次片内运行之和，不含片间图级调度、参数搬运和全局DDR写址。
+原48→48保持3874拍。三者每片恰好36864 MAC，不能只看2146<3874就称整网加速；输出数分别192/384/768，归约长度不同。
+正常96装载3915、导出385；192首片装载5415、后续5416、导出193；重装检查额外1拍来自TB启动校验，不是核变慢。
+窄口端点记录=[{'profile': '2', 'table_entries': '1024', 'scalar_packets': '5414', 'load_window_cycles': '34535', 'core_cycles': '2146', 'core_window_cycles': '2148', 'export_window_cycles': '818', 'status_words': '2', 'export_items': '192', 'tx_words': '387'}]。raw pre/SiLU/post busy有重叠，不能相加代替core；数据搬运和主机节拍也不当DDR带宽。
+
+4. 实际PH1P35MDG324-3、100MHz实现
+本轮实际顶层PROFILE2：4101 Slice、30 DSP、9 ERAM、42 I/O，含参数/特征缓存与窄口壳。
+不含完整权重ROM、DDR、摄像头或HDMI。资源仅对应192→12分片，不是三种PROFILE同时集成或整个CNN。
+全报告负端点并集内部失败=0；寄存边界slack(ns)={'recovery': 0.172, 'setup': 1.234, 'hold': 0.022, 'removal': 0.291}。
+外部及raw-reset仍有违例：{'external_input:hold': 102, 'raw_reset:hold': 26, 'raw_reset:removal': 30}；没有新增例外或编造板级延迟。
+全量报告含ignored/DSP/ERAM，四角点与覆盖=['fast_125c', 'fast_m40c', 'slow_125c', 'slow_m40c']/['100.00%']。
+actual RAM归属见memory_query/ram.rpt；相对旧48候选的10 ERAM不能不分形状直接称再省1块，输出缓存容量已改变。
+实查ERAM为输入2、权重6、SiLU1；192字节片内输出映射为分布式RAM，distributed RAM LUT共400。
+最紧内部max检查是recovery：reg_release_done→u_mac/add3.asr，扇出1635、net占94%，余量0.172ns。
+最紧setup：reg_release_done→u_post/u_round/reg_quotient_compare[40].cea，扇出701，余量1.234ns。
+这不表示旧48候选的0.017ns路径被通用修复；两者编译形状不同，最终共享图顶层必须再测。
+严格RTL=963、TB=264条，八项状态见strict_summary.json。原AST控制解析与格式/注释项保留，真实ModelSim/TD不替代严格门。
+SYN-5025及dummy控制端诊断原样保存，未做完整逐pin生产签核。
+
+5. 整网预算更新
+把本次实测形状用于冻结图8个96/192输入PW的条件投影；18×32按40个4×4 tile计算（包含底部不足4行的片），不按36个整tile漏算。
+上述8层条件core合计=3670032；加原5层条件9042624，13层累计=12712656。
+100MHz/5FPS每帧20M拍，剩余7287344需容纳54卷积、DDR/ROM等待、非卷积和NMS。
+只有前3层是旧测试参数完整张量RTL证据，其余均为小块/形状投影；未实现全图遍历、边缘裁写或全帧时序，因此这不是整网速度上下界或通过结论。
+
+6. 与其他线的交接和下一步
+本聊天已补深通道PW，不再自己开发另一套CSP/stride1 DW黄金值。
+下一步承接qat_g10_csp_first_data_20261015_v1的12通道split/DW/PW/residual参考，按现有算术核最小适配，形成首个完整CSP残差块。
+同时跟踪旧855使能与本轮1635复位分发的高扇出路径；不能通过复制核、随机反复布局或新增例外逃避资源/时序问题。
+图级联调应接同一真实参数包、同一共享核和明确全局地址；板/DDR线另闭合写完成/读可见性，当前受控端点不能代替真实DDR。
+需要改变算术核、II、数值、真实外设协议或例外时先提出单独决定；未训练、不改生产、不生成位流、不上板、不写Flash。
+
+结论：本轮实际补齐了深通道PW的数值、周期和实际顶层证据，而非再扩校验探针。失败经过见失败记录.txt，旧版本可回退。

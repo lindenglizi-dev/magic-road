@@ -1,0 +1,12 @@
+分类：modify/validate；本地work/roadyolo，起点9661d2ae；输出仅本目录。
+目标：用实际冻结图深通道PW取得周期证据，不训练、不改网络、不继续微调SiLU。
+PROFILE0=原48→48兼容；PROFILE1=sppf.squeeze.conv的96→24完整4×4；PROFILE2=fuse4_bu.reduce.conv的192→96按8片192→12执行。
+不是任意形状加速器：只有三个编译时形状，无新增运行时配置口。
+保持12位测试装载、16位窄口、MAC/PP所有端口与II/数值/反压/复位契约；每片权重固定2304B，24权重bank仍各96深。
+输入缓存按Cin变深，偏置/pre三浅bank按Cout变浅；输出缓存只存当前片。192八片的全局合并由测试校验，图级全局写址尚未实现。
+每路12/24组、96/192有效乘积，first只加一次偏置，末组才检查INT32；所有中间signed33需先由参考证明。
+Python参考优先复用当前真实QAT-G10包；使用确定性中间激活，不宣称真实图像整网或精度。
+先原48全部回归/CSV不变，再深形状数值/周期、反压/复位，再新实际顶层布局布线；外部违例与严格门继续单列。
+八项：compile、ast、readability、comment、naming、profile、testbench、toolchain；严格失败保留，不以物理诊断替代生产交付。
+readable-python-generator/readable-script-generator当前未安装，沿用既有工具并记录此边界，不声称通过其门禁。
+不新增时序例外、不改变真实外设协议、不改生产、不上板、不生成位流、不写Flash。

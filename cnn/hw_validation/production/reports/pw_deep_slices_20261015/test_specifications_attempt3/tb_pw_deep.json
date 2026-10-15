@@ -1,0 +1,85 @@
+{
+  "modules": [
+    {
+      "name": "tb_pw_deep",
+      "feature": "pw_testbench",
+      "rtl_path": "tb_pw_deep.v",
+      "description": "PW固定形状逐级对拍与独立周期窗口；o_test_done只在完整自检通过时置位。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "clk",
+            "role": "test_complete",
+            "description": "全部断言通过后置1并结束仿真。"
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "PROFILE",
+          "type": "integer",
+          "default": 1,
+          "description": "仅1=96→24或2=192→12"
+        }
+      ],
+      "clock": {
+        "name": "clk",
+        "frequency_hz": 100000000,
+        "edge": "posedge",
+        "internal": true
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "internal": true
+      },
+      "behavior": [
+        "旧PROFILE0沿冻结四套向量；新96/192先正常窗口，再压力、故障和复位。",
+        "acc/pre/SiLU/post/提交/真实导出逐项比较；192八片重组不代替图级全局地址执行。",
+        "prepare/send/mac_wait/drain/advance互斥周期和等于core；raw PP busy有重叠，不相加。"
+      ],
+      "constraints": [
+        "测试专用，不综合，不属于数值精度或完整CNN FPS证据。"
+      ],
+      "corner_cases": [
+        "16位置、48通道、768写回、六组归约、部分包/部分表与复位。"
+      ],
+      "verification_cases": [
+        "ModelSim实际日志PASS且0 errors；源码/参数快照另存。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "check",
+          "scenario": "check",
+          "title": "对拍与完整提交",
+          "description": "测试结束前逐项比较；输出完成之前不得通过。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p....."
+              },
+              {
+                "name": "checks",
+                "wave": "01..0."
+              },
+              {
+                "name": "export_done",
+                "wave": "0...10"
+              },
+              {
+                "name": "o_test_done",
+                "wave": "0....1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

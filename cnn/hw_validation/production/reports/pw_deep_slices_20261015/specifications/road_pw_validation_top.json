@@ -1,0 +1,190 @@
+{
+  "modules": [
+    {
+      "name": "road_pw_validation_top",
+      "feature": "pw_fixed_tile",
+      "rtl_path": "road_pw_validation_top.v",
+      "description": "冻结三种形状：PROFILE0=48→48兼容，1=96→24，2=192→12输出分片；同一算术核和窄口协议。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "i_rx_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "i_rx_data",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_rx_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_tx_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_tx_data",
+            "direction": "output",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "i_tx_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          },
+          {
+            "name": "o_parameters_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "diagnostic",
+            "description": "窄口同步诊断信号；语义见执行契约。"
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "PROFILE",
+          "type": "integer",
+          "default": 2,
+          "description": "只支持0/1/2三个冻结编译形状；不是运行时任意卷积配置。"
+        }
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "立即取消旧事务；同步释放后重新完整装载1024项表及全部参数/halo。"
+      },
+      "behavior": [
+        "PROFILE0保留原回归；PROFILE1/2分别12/24组×8输入，未超过192有效乘积。",
+        "输入bank=ic%8,row=position*(Cin/8)+ic//8；权重bank=(local_oc%3)*8+ic%8,row=(local_oc//3)*(Cin/8)+ic//8。",
+        "bias/pre三浅bank不变；装载地址0重启，完整性与合法性检查按冻结片形状展开。",
+        "每片输出local tag=position*Cout+local_oc；局部输出真实缓存逐项导出。全局OC合并由参考检查，不声称图执行器已实现。",
+        "表1024项重装、first/last、长反压、故障禁止发布、复位即时取消与既有接口保持。"
+      ],
+      "constraints": [
+        "12位逻辑装载地址不变；每片权重2304，输入768/1536/3072，输出768/384/192。",
+        "192→96按8个12输出通道分片；当前外部图级遍历和全局写址尚未实现。",
+        "算术核signed33末组INT32、RNE、SiLU、II、反压和复位行为不变。"
+      ],
+      "corner_cases": [
+        "输入1535/1536、3071/3072，权重2303/2304，24/12参数边界，末24组及输出分片拼接。"
+      ],
+      "verification_cases": [
+        "PROFILE0同CSV回归；96及192八片真实参数逐级黄金值、随机/长反压、复位取消。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "slab",
+          "scenario": "slab",
+          "title": "输出分片逐段归约",
+          "description": "装载→PREPARE→12或24组接受→MAC等待→下一任务，所有输出提交才done，再导出。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........"
+              },
+              {
+                "name": "load_complete",
+                "wave": "01......."
+              },
+              {
+                "name": "mac_valid",
+                "wave": "0.1...0.."
+              },
+              {
+                "name": "group",
+                "wave": "x.====x..",
+                "data": [
+                  "0",
+                  "1",
+                  "...",
+                  "11/23"
+                ]
+              },
+              {
+                "name": "result_accept",
+                "wave": "0......10"
+              },
+              {
+                "name": "next_task",
+                "wave": "0.......1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

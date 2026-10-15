@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "0": {
+      "shape": "48->48",
+      "source": "../pw48_tile_20261015",
+      "duplicated": false
+    },
+    "1": {
+      "shape": "96->24",
+      "case": "p96_squeeze"
+    },
+    "2": {
+      "shape": "192->12",
+      "cases": [
+        "p192_slice00",
+        "p192_slice01",
+        "p192_slice02",
+        "p192_slice03",
+        "p192_slice04",
+        "p192_slice05",
+        "p192_slice06",
+        "p192_slice07"
+      ]
+    }
+  },
+  "task_order": "position then local_output_group; 3 outputs per task",
+  "reduction": "Cin/8 sequential input groups, 8 products per output per group",
+  "input_bank": "bank=ic%8,row=position*(Cin/8)+ic//8; depth 192 for Cin96, 384 for Cin192",
+  "weight_bank": "bank=(local_oc%3)*8+ic%8,row=(local_oc//3)*(Cin/8)+ic//8; always 24 banks x 96",
+  "parameter_bank": "3 banks,row=local_oc//3; 8 rows for Cout24, 4 rows for Cout12",
+  "concat_10_input": "HWC channels are contiguous in frozen graph order: down4_bu.pw.conv then sppf.out.conv; no channel reorder",
+  "numeric": "signed33 every prefix; final INT32; cnn.integer exact RNE, Q7.8 SiLU, post INT8",
+  "limits": "fixed profiles only; 12-bit load addresses unchanged; no graph/global output writer"
+}
