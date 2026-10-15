@@ -1,0 +1,46 @@
+后处理共享候选RAM与接口约定；PIF1；2026-10-15
+总协调C7发布，供C2解码/TopK与C9串行NMS实现。仅独立候选，不改冻结算术核或生产工程。
+数值依据：cnn/integer.py与production/postprocess_golden_2fps_20261015/handoff.txt、boundary_vectors.json。
+模型：frozen-Stem QAT-G10 payload b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+集成model_id32由C7绑定为0xB35D4A66（payload SHA前32bit）；必须同时登记完整SHA，不能只凭32bit认定两包等价。
+
+一、唯一候选存储与所有者
+C2拥有两类各128×160bit候选存储及全部片上读写适配；总目标2ERAM，不是C2和C9各2块。
+阶段为SCAN→SORT→DECODE→NMS→FREE，同一帧NMS接收前不开始下一帧写入；首次保守串行，不新增双bank整表。
+内部RAW可为高效key读取重排，但对外DECODED160严格沿现golden；只在seal/sort后原槽改写，不额外复制完整候选表。
+候选槽物理可分4个40bit词；跨模块为完整160bit记录服务，聚合/保持归C2，不让C9直接驱动ERAM。
+
+二、C2封存与C9读取
+同一100MHz时钟域。封存metadata valid/ready：frame_token32、count_person8、count_vehicle8（0..128）。
+封存前接满12096个112bit cell；scale/cell顺序与阈值沿golden，不能靠最后请求发出即seal。
+该帧两类记录已完成排序和解码且全部RAM写可读后才sealed_valid；直到NMS接收保持payload。
+NMS开始后候选RAM归NMS读取，C2禁止SCAN/SORT/DECODE写；整帧finish/abort后再释放。
+读请求 valid/ready：class1、index7；读响应 valid/ready：相同class1/index7、data160、error1。
+一次仅一个未决读，响应保持到接受，错身份/越界响应为fault。读完一条再读下一条，不假定单拍RAM返回。
+NMS先person再vehicle；一类count=0合法，直接跳过，不读取伪零记录。
+
+DECODED160：
+[17:0]x0 [35:18]y0 [53:36]x1 [71:54]y1，无符号网络Q8；
+[85:72]cell14 [101:86]score16 [102]class [103]geometry_valid；[159:104]=0。
+每类记录按score降序、cellID升序。Top128在decode/零面积过滤之前，geometry_valid=0仍保留槽位和count，不补第129候选。
+
+三、C9输出和少量局部状态
+输出entry valid/ready + FINAL97；payload反压保持。person最多32、vehicle最多32，总64。
+FINAL97：[0]class [16:1]score [36:17]source_x0 [56:37]source_y0 [76:57]source_x1 [96:77]source_y1。
+四坐标为一次RNE(network_q8*5/512)后的整数像素<<8，20bit Q12.8。源坐标舍入塌缩不新增过滤，与现参考一致。
+同类严格3*intersection>area_a+area_b抑制；面积40bit、比较42bit，不能截断或以近似除法代替。
+C9可以保留当前两条记录、每类最多32个已保留index及必要面积小缓存；不再保存第二份128候选或申请额外ERAM。
+默认串行精确乘法、0新增DSP为目标，实际周期/映射待测；不能用乘法源码存在或不存在推断DSP成本。
+整帧done只在所有输出entry接受后产生，携output_count7；包括count0。C7组装source-held表并管理265bit帧元数据。
+若error/取消发生，C7撤销本帧未发布表；早期entry已被接纳不等于完整结果可显示。C8只收完整表并在SOF切换。
+
+四、复位、错误和数值
+ready/valid只在共同接口允许且无fault时接受；复位/取消优先，不泄漏旧token/响应/entry。片上接口取消必须与服务一起清旧在途，不宣称外部DDR排空。
+score=RNE(obj_uint16*class_uint16/65536)；默认阈值32768，等号保留；满堆key=(score,-cell)，严格更优才替换。
+共享sigmoid/exp仍从唯一模型ROM来；C2可先用受控LUT端点验证请求/返回，不能因TB内容正确宣称全ROM硬件接入完成。
+各模块附规格/周期图，保存八项门禁及实际仿真状态。旧参考文件只读，跨端口差异先交C7统一，不各自改记录格式。
+
+五、预算与交付范围
+50M周期为原本周2FPS整流程目标；用户正在询问1FPS可行性，100M仅作为备选评估，不擅自改变500ms过期规则。
+解码/TopK/NMS原管理额度合计2M，按两段真实端点和等待测量后再分配，不把各段都当作独占2M。
+本轮只各自实现独立RTL与golden对拍，联合资源/时序和最终接入由C7完成；不得用桩或常量裁剪代替有效功能。
