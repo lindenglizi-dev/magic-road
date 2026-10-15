@@ -1,0 +1,11 @@
+任务分类：modify + validate；基线 work/roadyolo @2be925d5。
+只修改PW48的bias、pre_multiplier存储。各48×32、三读口，改为三路16×32、每路一读口。
+逻辑通道c→bank=c%3,row=c//3；计算读row=cnt_output_group。
+装载接口不变；两类分别保留逻辑顺序校验，独立lane/row游标，地址0重启。
+非法记录不写bank、不推进游标；复位取消完整性和游标，不复位数组内容。
+PREPARE仍在同沿捕获三路bias/multiplier；shift、算术核、窄口、FSM及握手不变。
+成功条件：原四组全阶段黄金值一致；原CSV每列一致、正常核心3874拍；新增重装/交错/边界/复位覆盖；实际TD映射与全量内部时序。
+八项门禁compile/ast/readability/comment/naming/profile/testbench/toolchain如实记录。原AST控制解析失败不假装通过；保留真实ModelSim与TD独立证据。
+只读审阅已执行。缺少readable-python-generator/readable-script-generator，不宣称其门禁通过；沿用现有本地工具流程，不安装无关依赖。
+不改生产、训练、位流、板卡、Flash、外设协议、时序例外、核接口/II/数值/复位契约。
+冻结依赖见frozen.json。旧基线不能覆盖；所有新输出限定本目录。

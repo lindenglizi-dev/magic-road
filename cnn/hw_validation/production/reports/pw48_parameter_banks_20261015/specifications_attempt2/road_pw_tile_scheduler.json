@@ -1,0 +1,511 @@
+{
+  "modules": [
+    {
+      "name": "road_pw_tile_scheduler",
+      "feature": "pw_fixed_tile",
+      "rtl_path": "road_pw_tile_scheduler.v",
+      "description": "固定48→48 PW，8激活bank/24权重bank；六组预取，已有PP接受任务后继续计算。",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_clk",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_rstn",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_table_loaded",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_table_loaded",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_load_valid",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_load_kind",
+            "direction": "input",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "i_load_kind",
+            "description": "0 signed输入、2权重、3bias、4premul、5shift、6post；1/7非法。"
+          },
+          {
+            "name": "i_load_addr",
+            "direction": "input",
+            "width": 12,
+            "clock_domain": "i_clk",
+            "role": "i_load_addr",
+            "description": "各类严格连续的逻辑标量地址；输入0..767，权重0..2303，通道参数0..47。"
+          },
+          {
+            "name": "i_load_data",
+            "direction": "input",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "i_load_data",
+            "description": "signed INT8以32位符号扩展承载；bias为signed32，其余范围见执行契约。"
+          },
+          {
+            "name": "o_load_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_load_ready",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_start",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_busy",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_done",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_fault",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_core_cycles",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_core_cycles",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_valid",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_mac_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_ready",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_first",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_first",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_last",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_last",
+            "description": "当前归约组5；六组共48个有效乘积。"
+          },
+          {
+            "name": "o_mac_mask",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_mac_mask",
+            "description": "固定8'hff，48输入没有尾lane。"
+          },
+          {
+            "name": "o_mac_activation",
+            "direction": "output",
+            "width": 64,
+            "clock_domain": "i_clk",
+            "role": "o_mac_activation",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_weight",
+            "direction": "output",
+            "width": 192,
+            "clock_domain": "i_clk",
+            "role": "o_mac_weight",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_bias",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_mac_bias",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_mac_result_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_result_valid",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_mac_result_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_mac_result_ready",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_mac_result",
+            "direction": "input",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "i_mac_result",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_mac_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_mac_fault",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_valid",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_ready",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_acc",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_pp_acc",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_multipliers",
+            "direction": "output",
+            "width": 96,
+            "clock_domain": "i_clk",
+            "role": "o_pp_multipliers",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_shifts",
+            "direction": "output",
+            "width": 18,
+            "clock_domain": "i_clk",
+            "role": "o_pp_shifts",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_post_multiplier",
+            "direction": "output",
+            "width": 32,
+            "clock_domain": "i_clk",
+            "role": "o_pp_post_multiplier",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_post_shift",
+            "direction": "output",
+            "width": 6,
+            "clock_domain": "i_clk",
+            "role": "o_pp_post_shift",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_mask",
+            "direction": "output",
+            "width": 3,
+            "clock_domain": "i_clk",
+            "role": "o_pp_mask",
+            "description": "固定3'b111，48输出没有尾通道。"
+          },
+          {
+            "name": "o_pp_tags",
+            "direction": "output",
+            "width": 48,
+            "clock_domain": "i_clk",
+            "role": "o_pp_tags",
+            "description": "三路完整tag=position×48+channel，范围0..767。"
+          },
+          {
+            "name": "i_pp_valid",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_valid",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_pp_ready",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_pp_ready",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_data",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_pp_data",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_tag",
+            "direction": "input",
+            "width": 16,
+            "clock_domain": "i_clk",
+            "role": "i_pp_tag",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_int16",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_int16",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_pp_fault",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_pp_fault",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_commit_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_commit_ready",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_export_start",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_export_start",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_output_valid",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "i_output_ready",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "clock_domain": "i_clk",
+            "role": "o_output_data",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          },
+          {
+            "name": "o_output_index",
+            "direction": "output",
+            "width": 10,
+            "clock_domain": "i_clk",
+            "role": "o_output_index",
+            "description": "HWC真实缓存读索引0..767，只在输出握手后推进。"
+          },
+          {
+            "name": "o_export_done",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "o_export_done",
+            "description": "沿用冻结PW48接口；valid保持到ready，复位立即取消。"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "立即取消旧事务；同步释放后重新完整装载1024项表及全部参数/halo。"
+      },
+      "behavior": [
+        "16位置×16输出组，256任务，各6组/48项，MAC first只加一次bias，内部signed33末组检查INT32。",
+        "输入HWC768字节，权重OIHW2304字节；装载游标只做bank重排，不改变包；每bank96项。",
+        "类别0 signed激活、2权重、3bias、4premul、5shift、6post；完整六类及1024表后才能启动。",
+        "首组PREPARE；SEND接受g同沿保管g+1，反压保持当前组；MAC与PP端口、数值和II不变。",
+        "已有PP接受结果后推进下一任务；按独立tag0..767提交，768项齐全才done，真实缓存导出完才可复用。",
+        "reset立即取消事务和装载完整性；非法记录、溢出及错误返回禁止发布。",
+        "bias/pre_multiplier各三路16×32浅bank；通道c存bank=c%3,row=c//3，PREPARE读三bank的output_group。",
+        "两类装载lane/row独立，地址0重启；非法记录不写不推进，reset只清游标/完整性，不清数组。"
+      ],
+      "constraints": [
+        "仅固定48→48、1×1、4×4；不支持任意形状，不改变当前核端口、II或数值。",
+        "测试参数不是训练权重；资源/时序只对应实际验证顶层，不代表整机。"
+      ],
+      "corner_cases": [
+        "7/8、47/48、767/768、2303/2304、地址零重装、INT32边界、末组故障、反压及复位。"
+      ],
+      "verification_cases": [
+        "四组黄金向量全阶段对拍、连续六组、随机/长反压、满队列、复位取消和窄口实际导出。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "prefetch",
+          "scenario": "prefetch",
+          "title": "六组归约与后处理重叠",
+          "description": "只在接受沿保管下一组；末组结果被PP接受后推进下一任务，不等待旧PP全部输出。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "mac_valid",
+                "wave": "01.....0.."
+              },
+              {
+                "name": "group",
+                "wave": "x======x..",
+                "data": [
+                  "0",
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5"
+                ]
+              },
+              {
+                "name": "pp_accept",
+                "wave": "0.......10"
+              },
+              {
+                "name": "next_task",
+                "wave": "0........1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "parameter_bank",
+          "scenario": "parameter_bank",
+          "title": "三浅bank连续装载",
+          "description": "逻辑地址按0..47连续接受；三bank轮转，row每三项推进，addr0重启。计算读地址无需除3。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "load_accept",
+                "wave": "01....0"
+              },
+              {
+                "name": "logical_address",
+                "wave": "x=====x",
+                "data": [
+                  "0",
+                  "1",
+                  "2",
+                  "3",
+                  "4"
+                ]
+              },
+              {
+                "name": "write_bank",
+                "wave": "x=====x",
+                "data": [
+                  "0",
+                  "1",
+                  "2",
+                  "0",
+                  "1"
+                ]
+              },
+              {
+                "name": "write_row",
+                "wave": "x=..=.x",
+                "data": [
+                  "0",
+                  "1"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

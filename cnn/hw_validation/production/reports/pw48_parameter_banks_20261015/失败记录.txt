@@ -1,0 +1,7 @@
+1. 默认隔离Python调用打印“Failed to find real location”，但setup/review实际已经执行。
+   随后重复setup被frozen.json存在断言拒绝，没有覆盖旧冻结文件；review_attempt2保留。
+2. compare最后源码绑定新增测试源码校验后失败：simulation/sources/tb_pw_tile.v与tests/tb_pw_tile.v相差一常量。
+   旧非法premul地址3的数据32'hdead0004本身为负，也违反乘数非负契约；最终改为32'h0bad0004，隔离“地址非连续”条件。
+   第一次sim是在这次测试改动之前捕获快照。功能RTL和物理源码没有变化。
+   处理：保留第一次simulation，重新执行最终TB仿真及严格门，再以最新收据核对所有源码及全部CSV字段。
+   不豁免哈希差异，也不将原收据充当最终源码验证。
