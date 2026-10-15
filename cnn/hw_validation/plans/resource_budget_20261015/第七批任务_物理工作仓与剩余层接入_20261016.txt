@@ -1,0 +1,77 @@
+RoadYOLO 第七批：物理工作仓、剩余标准层、READY任务与完整画框
+2026-10-16；work/roadyolo；四执行线显式gpt-6.1-sol/high。
+目标仍连续视频＋真实CNN争取1FPS、100MHz/100M；新演示2000ms并显示年龄，旧500ms基线不改。
+
+一、最新证据与位置
+C4单一CSP2/3/4客户端通过，CSP4→SPPF实际链也已通过；SPPF新增两卷积及三池化，独立覆盖集合可增至24/67，但不是连续跑24层。
+剩43卷积：PAN12、DSDown8、lateral2、head21。物理4ERAM工作仓尚未实现，当前数组不能算免费。
+C2两客户单ROM已有652参数、1024 SiLU、1280 sigmoid/exp一致的实跑收据；稳定最终交接需先核对封存，不能将down2固定预取当67层已完成。
+C9真实ROM后处理→publisher→三表已31项基线＋2项补充、500拍参考对拍；无第四张完整表。实际摄像头身份/READY输入槽尚未配对。
+C8源身份和AGE字形已过功能回归；帧描述符128位：epoch[127:96]/source_frame_id[95:64]/capture_ms[63:0]。完整64框绘制仍未实现。
+统一payload b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145，保留PTQ诊断包资格，不宣称QAT/精度验收。
+
+二、C4：落实物理4ERAM，保持单一计算owner
+新目录production/workstore_feature_20261016/；读取第六批SPPF稳定交付，不改旧候选。
+优先实现唯一workstore：3072B byte仓用两块2048×8候选组织，24×192bit权重仓用两块512×40（并行80bit，每group三word，剩48bit填0）。native模式以真实厂商模型与TD为准，不凭容量宣布成立。
+去掉新客户端的两份大寄存array，改用下节WIF1端点；只保留当前操作数拼装/参数小寄存，byte与权重端点可并行。不得改冻结算术核或用额外RAM绕过4ERAM目标。
+同步读延迟须真实测量并完整同步元数据，可改新应用客户端的局部等待/流水，冻结核II不变；记录新增端点周期，不以不同计时窗口作加速。
+先厂商模型下memory边界/写后读/反压/复位，再原CSP2→3→4及CSP4→SPPF同向量回归；每次用前完整覆盖，未初始化内容不作为有效结果，不依赖bitstream初值。
+回归闭合后，本批唯一TD任务由C7在此明确排给C4：仅对包含新仓、实际feature客户端、冻结MAC/动态重定标/SiLU的真实诊断顶层运行综合，核查RAM/DSP/Slice及保留路径。
+这是有条件的诊断综合，不是绕过严格交付门。高置信位宽/驱动/组合环/数值风险未解释则停止实现分支。保留八门与失败，不新增例外；不做布局布线/位流/板卡。其余线不得同时启动TD。
+工作仓稳定后继续既定lateral/nearest/PAN，不另造引擎；优先fuse3_td/fuse2_td，底部DSDown生产者由C2接续，缺失不得以CPU补洞冒充连续链。
+
+三、WIF1：C4拥有实现，C2只消费，不复制
+同一100MHz/共同协调复位；全系统一次仅一个计算客户拥有仓，任务切换前所有已接受响应已消费、权重写提交已确认。
+byte通道：req_valid/ready，req_write1、req_addr12（0..3071）、req_data8；rsp_valid/ready、rsp_data8、rsp_error1。
+weight通道：req_valid/ready，req_write1、req_group5（0..23）、req_data192；rsp_valid/ready、rsp_data192、rsp_error1。
+每通道最多一个未退休事务，允许响应消费同拍接受下一请求；两通道独立。请求/响应反压均保持，完成响应必须在实际native读取得/全部write word提交后才出现。
+byte写返回data0，weight写返回data0；越界返回error且sticky fault，非法请求不得触碰RAM。读不得与同地址写碰撞，client保证读前已完整写入本次数据。
+本地共同reset取消两通道旧valid；不宣称外部DDR排空。内容不复位，client不依赖旧内容；更换任务必须重新覆盖所用范围。
+C4先在新目录发布workstore_interface.txt，给上述语义对应的准确RTL端口、native延迟和hash；不改变这里的位宽/保持/完成语义。C2其间可准备参考/任务，不等待空转，更不得自己复制一份工作仓。
+
+四、C2：封存ROM交接后，实际执行剩余31个标准卷积
+新目录production/standard_layers_shared_20261016/；先收口rom_two_client_20261015的独立收据/稳定handoff，已PASS的ROM穷举不重跑。
+依据remaining_layers.csv/json和冻结graph，复用既有DW/PW任务发射、唯一24MAC/动态重定标/SiLU及C4 WIF1；客户端不得增加私有tile/weight数组。
+固定layer_id选择，不造任意网络引擎。先down3 DW/PW与down4 DW/PW，使CSP3/4实际生产者不再由CPU跨越；再两组bottom-up DSDown、两lateral、三头21卷积。
+每个可验小阶段做真实参数的完整输出或明确代表向量对拍，随后推进；优先将down3→CSP3→down4→CSP4接成同一共享owner顺序链。
+C4工作仓交付前先生成各层参考/固定任务表与byte/weight请求轨迹，不复制RAM凑进度；可用明确行为端点验证调度，标注非物理存储，随后必须接真实WIF1复跑。
+head cls2/reg5最终INT16、无SiLU路径与偏置一次/尾输出mask必须沿冻结契约；三尺度按HWC7组装tx/ty/tw/th/obj/person/vehicle，最终12096个112bit cell顺序/地址正确，不新增完整片上head RAM。
+记录各层读写、MAC/激活/存储等待及端点；CPU输入只证明该层，不宣称完整前缀。C2不修改C4目录，不单独TD，不复制完整ROM/候选表。
+
+五、C9：源身份与完整READY槽配对，再发计算任务
+新目录production/frame_ready_dispatch_20261016/；复用已过publisher与C8身份/槽组件。
+只接受128位完整身份和已经属于该epoch/frame的READY槽；SOF/event ACK、AW/W接受、半帧EOF均不能代替READY。write_visible实际服务缺口继续标记。
+两个槽最多两条小型身份上下文，匹配epoch/frame，不增图像/框表RAM；capture_ms取源身份的保守同源戳，槽内部诊断时间若不同不得混用或伪造相等。
+job valid/ready锁存slot/base/epoch/task_id/source_frame/model/capture；task_id按实际job握手递增，不等于source_frame。新任务仅在前任务/共享owner允许时发出。
+claim/释放沿原槽接口：最后输入读响应真正消费后才释放READING，NN done不能替代；复制ACK只释放结果source表，不能释放输入槽。计数回绕需协调epoch/排空，不静默复用。
+测试身份与READY乱序、双槽、无槽跳帧、错误身份、背压、半帧隔离、复位与最后读释放；用已过后处理/发布链承接job上下文，实际CNN缺口保持明确。
+本批不实现摄像头slot-credit CDC或新DMA，避免与C8/真实DDR协议冲突；受控READY与head输入不当成摄像头完整闭环。给C7实际接纳credit缺口的精确端口，不另扩CRC探针。
+
+六、C8：真正64框叠加＋AGE，保持原视频连续
+新目录production/box_overlay_joint_20261016/；复用已过三表/源身份/AGE与官方mixer→hdmi_tx插入点，旧源不改。
+利用每行消隐从现active单读口串行扫描最多64条，准备该行必要x端点/类别/边缘模式；活动区只做端点事件/区间状态及有界归并，不展开64份完整xy四边比较树，不保存第四张完整框表。
+允许小型逐行状态，计入D组；新DSP/ERAM目标0、Slice先管理≤600，均待真实映射。不能因小模块超预算直接降低64框或追加ERAM。
+按源图半开框画1px边缘（右/下边取x1-1/y1-1），空/塌缩几何不绘但不改原结果表。person/vehicle颜色和重叠优先级固定，画框许可只取实时table.draw_valid。
+active表整帧不变，SOF在消隐切表，预备不足时不画错误行；证明模板每行消隐足够完成64条准备，不反压RGB/HDMI，不靠平均1FPS掩盖像素吞吐。
+框层与AGE层RGB/VS/HS/DE等延迟；AGE使用对齐消隐SOF并在其后一消隐沿取新表年龄，失效撤许可不等文字刷新。
+与实际C9 publisher/三表/时间、正确ROM后处理建立独立联合TB：0/1/32/33/64框、四边、小框/重叠、随机表到达、2000ms撤框、AGE_INVALID、无新增视频丢像素/时序错位。完整帧RGB对照Python，不用注入框冒充CNN演示。
+本批不改生产、不生成位流、不上板；不启动TD。给C7实际视频源清单、固定延迟、行预算和资源预计，随后统一整机实现。
+
+七、保持的硬边界与交付
+硬限21216Slice/40DSP/108ERAM；管理19000/38/107。降FPS不放宽资源或数值/握手。
+不训练、不改生产、不生成位流、不上板/Flash、不新增时序例外。仅C4在功能与语义风险解释后有本批一次诊断综合排期；其他TD仍由C7决定。
+各线独占新目录，不自行commit/push或互发消息。普通执行均6.1-sol/high；原失败与严格八门状态保留，格式项不扩成整库改写。
+第七批的抓手：工作仓真映射、真实标准层、READY才开工、完整64框像素输出。全部通过仍不等于67层/DDR/板测1FPS通过。
+
+八、实际派发回执
+发送和active快照后追加，不用计划文件存在代替执行结果。
+
+2026-10-16 00:46 北京时间：四次send_message_to_thread均成功，全部显式model=gpt-6.1-sol/thinking=high；随后四线active/inProgress，均确认新范围。
+C4 workstore_feature_20261016/，游标77607270-2a91-441b-bf44-317cb0c1d7e8:14。
+C2 standard_layers_shared_20261016/，游标aec4f9e8-0f7b-41c5-a274-d8ab94726150:14。
+C9 frame_ready_dispatch_20261016/，游标1d5e7ca8-93e2-409e-b9bb-ed92f1feb6fc:13。
+C8 box_overlay_joint_20261016/，游标3971ce40-5137-4349-a123-66468ebd26af:14。
+承接证据窄复核：ROM实际最终summary SHA098bf27eba702f925e23fa2c9f4f415cfa44a92349f9645ff79d3b63710c915d，现79项候选闭包一致；仅down2参数+共享LUT范围。
+SPPF正常6322166拍，CSP4→SPPF干净15527006拍、sequence15527015拍；同一新client原CSP2→3→4回归43343642拍。独立功能通过、物理4ERAM/综合/整网未通过的界线不变。
+派发前未发现运行中的TD/ModelSim目标进程；本批C4诊断综合是唯一排期且须先回归、解释真实语义风险，不代表现在已开始或已通过综合。
+总协调本次只新增计划/回执，未改功能RTL，未改全局记忆或模型默认；上述工具参数是本次模型选择的实际证据。
