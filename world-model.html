@@ -1,0 +1,218 @@
+<div id="world-lab">
+  <style>
+    #world-lab { color: var(--foreground); display: grid; gap: 16px; }
+    #world-lab .world-pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+    #world-lab .world-board { display: grid; grid-template-columns: repeat(11,minmax(0,1fr)); gap: 3px; margin-top: 8px; }
+    #world-lab .world-cell { aspect-ratio: 1; display: grid; place-items: center; background: var(--muted); color: var(--foreground); }
+    #world-lab .wall { background: var(--foreground); opacity: .22; }
+    #world-lab .unknown { background: transparent; color: var(--muted-foreground); }
+    #world-lab .route { background: color-mix(in srgb,var(--viz-series-1) 25%,var(--background)); }
+    #world-lab .agent { background: var(--viz-series-1); color: var(--background); }
+    #world-lab .special { background: color-mix(in srgb,var(--viz-series-2) 22%,var(--background)); }
+    #world-lab .world-status { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+    #world-lab h3 { margin: 0; }
+    @media(max-width: 520px) { #world-lab .world-pair { grid-template-columns: 1fr; } }
+  </style>
+  <h3>世界模型 · 先学习，再想象</h3>
+  <div class="viz-controls">
+    <button type="button" class="btn btn-primary" data-action="explore">探索 400 步</button>
+    <button type="button" class="btn" data-action="plan">想象路线</button>
+    <button type="button" class="btn" data-action="execute">执行一步</button>
+    <button type="button" class="btn" data-action="change">改变世界</button>
+    <button type="button" class="btn btn-ghost" data-action="home">回到起点</button>
+  </div>
+  <div class="world-status tabular-nums" aria-live="polite">
+    <span data-value="samples">观察 0 次</span>
+    <span data-value="known">已学 0 条转移</span>
+    <span data-value="accuracy">近期预测：暂无</span>
+  </div>
+  <div class="world-pair">
+    <section><div>真实环境</div><div class="world-board" data-board="real" role="img" aria-label="真实迷宫"></div></section>
+    <section><div>已观察地图 · 想象路线</div><div class="world-board" data-board="model" role="img" aria-label="已观察地图和预测路线"></div></section>
+  </div>
+  <div class="viz-row text-small"><span>● 智能体</span><span>钥 钥匙</span><span>门 有钥匙可通过</span><span>终 目标</span><span>· 未观察</span><span>箭头 预测动作</span></div>
+  <div class="viz-controls" aria-label="手动探索">
+    <button type="button" class="btn" data-move="0" aria-label="向右移动">向右 →</button>
+    <button type="button" class="btn" data-move="1" aria-label="向下移动">向下 ↓</button>
+    <button type="button" class="btn" data-move="2" aria-label="向左移动">向左 ←</button>
+    <button type="button" class="btn" data-move="3" aria-label="向上移动">向上 ↑</button>
+  </div>
+  <div data-value="detail" aria-live="polite">模型为空。探索后，才有可用于规划的经验。</div>
+</div>
+<script id="world-core">
+(() => {
+  const layout = ['###########','#S...#...G#','#.##.#.##.#','#....D....#','#.##.#.##.#','#K...#....#','###########'];
+  const directions = [[1,0],[0,1],[-1,0],[0,-1]];
+  const start = () => ({x:1,y:1,key:false});
+  const id = s => `${s.x},${s.y},${Number(s.key)}`;
+  const pair = (s,a) => `${id(s)}:${a}`;
+  const equal = (a,b) => Boolean(a && b && id(a) === id(b));
+  const goal = s => s.x === 9 && s.y === 1 && s.key;
+  const createWorld = () => ({changed:false});
+  function tile(world,x,y) {
+    if (world.changed && x === 7 && y === 3) return '#';
+    return layout[y]?.[x] ?? '#';
+  }
+  function transition(world,state,action) {
+    if (!directions[action]) throw new Error('Invalid action');
+    const [dx,dy] = directions[action], x = state.x+dx, y = state.y+dy;
+    const cell = tile(world,x,y);
+    if (cell === '#' || (cell === 'D' && !state.key)) return {...state};
+    return {x,y,key:state.key || cell === 'K'};
+  }
+  class Model {
+    constructor() { this.transitions = new Map(); }
+    predict(s,a) { const next = this.transitions.get(pair(s,a)); return next && {...next}; }
+    observe(s,a,next) { this.transitions.set(pair(s,a),{...next}); }
+    // ponytail: deterministic lookup table; use probabilistic dynamics for noisy environments.
+    search(state,frontier=false) {
+      const queue = [{state,path:[]}], seen = new Set([id(state)]);
+      for (let i=0;i<queue.length;i++) {
+        const entry = queue[i];
+        if (!frontier && goal(entry.state)) return entry.path;
+        for (let a=0;a<4;a++) {
+          const next = this.predict(entry.state,a);
+          if (!next) { if (frontier) return [...entry.path,a]; continue; }
+          if (!seen.has(id(next))) {
+            seen.add(id(next)); queue.push({state:next,path:[...entry.path,a]});
+          }
+        }
+      }
+      return null;
+    }
+  }
+  function createLab() {
+    return {world:createWorld(),model:new Model(),state:start(),samples:0,results:[],seen:new Map([['1,1','S']])};
+  }
+  function step(lab,action) {
+    const before = {...lab.state}, predicted = lab.model.predict(before,action);
+    const actual = transition(lab.world,before,action);
+    const [dx,dy] = directions[action];
+    // Observation is limited to the current cell and the cell attempted by this action.
+    lab.seen.set(`${before.x+dx},${before.y+dy}`,tile(lab.world,before.x+dx,before.y+dy));
+    lab.seen.set(`${actual.x},${actual.y}`,tile(lab.world,actual.x,actual.y));
+    const correct = predicted ? equal(predicted,actual) : null;
+    if (correct !== null) lab.results.push(correct);
+    lab.results = lab.results.slice(-50);
+    lab.model.observe(before,action,actual);
+    lab.state = actual; lab.samples++;
+    return {before,predicted,actual,correct};
+  }
+  function explore(lab) {
+    let path = lab.model.search(lab.state,true);
+    if (!path) { lab.state = start(); path = lab.model.search(lab.state,true); }
+    if (!path) return null;
+    return step(lab,path[0]);
+  }
+  globalThis.WorldLab = {layout,directions,start,id,equal,goal,tile,transition,Model,createLab,step,explore};
+})();
+</script>
+<script>
+(() => {
+  const root = document.getElementById('world-lab');
+  const W = globalThis.WorldLab, lab = W.createLab();
+  const arrows = ['→','↓','←','↑'];
+  let imagined = null, message = '模型为空。探索后，才有可用于规划的经验。', timer = null;
+  const value = name => root.querySelector(`[data-value="${name}"]`);
+  const position = s => `(${s.x},${s.y})${s.key ? '＋钥匙' : ' 无钥匙'}`;
+  function save() {
+    if (window.openai?.setWidgetState) window.openai.setWidgetState({modelContent:{project:'表格世界模型迷宫',observations:lab.samples,transitions:lab.model.transitions.size,worldChanged:lab.world.changed,status:message},privateContent:{version:1,changed:lab.world.changed}}).catch(()=>{});
+  }
+  function applySaved(snapshot) {
+    const saved = snapshot?.privateContent;
+    if (saved?.version === 1 && saved.changed) {
+      lab.world.changed = true;
+      message = '已恢复改变后的环境；模型从空白开始重新学习。';
+    }
+  }
+  applySaved(window.openai?.widgetState);
+  window.addEventListener('openai:set_globals',event => {
+    if (event.detail?.globals?.widgetState && !lab.samples) { applySaved(event.detail.globals.widgetState); render(); }
+  });
+  function render() {
+    const route = new Map();
+    let future = {...lab.state};
+    if (imagined) for (const action of imagined) {
+      route.set(`${future.x},${future.y}`,arrows[action]);
+      const next = lab.model.predict(future,action);
+      if (!next) break;
+      future = next;
+    }
+    for (const name of ['real','model']) {
+      const board = root.querySelector(`[data-board="${name}"]`);
+      board.replaceChildren();
+      for (let y=0;y<7;y++) for (let x=0;x<11;x++) {
+        const location = `${x},${y}`;
+        const cell = name === 'real' ? W.tile(lab.world,x,y) : lab.seen.get(location);
+        const el = document.createElement('div'); el.className = 'world-cell';
+        let label = cell === undefined ? '·' : ({K:lab.state.key?'':'钥',D:lab.state.key?'开':'门',G:'终',S:'始'}[cell] ?? '');
+        if (cell === undefined) el.classList.add('unknown');
+        else if (cell === '#') el.classList.add('wall');
+        else if ('KDG'.includes(cell)) el.classList.add('special');
+        if (name === 'model' && route.has(location)) { el.classList.add('route'); label = route.get(location); }
+        if (lab.state.x === x && lab.state.y === y) { el.classList.add('agent'); label = '●'; }
+        el.textContent = label;
+        board.append(el);
+      }
+      board.setAttribute('aria-label',`${name === 'real'?'真实环境':'观察地图与预测路线'}；位置 ${position(lab.state)}；${imagined ? `计划 ${imagined.length} 步` : '暂无计划'}`);
+    }
+    value('samples').textContent = `观察 ${lab.samples} 次`;
+    value('known').textContent = `已学 ${lab.model.transitions.size} 条转移`;
+    const n = lab.results.length;
+    value('accuracy').textContent = n ? `最近 ${n} 次已知转移预测：${Math.round(lab.results.filter(Boolean).length/n*100)}%` : '已知转移预测：暂无';
+    value('detail').textContent = message;
+    root.querySelector('[data-action="explore"]').textContent = timer ? '暂停探索' : '探索 400 步';
+    root.querySelector('[data-action="execute"]').disabled = Boolean(timer) || !imagined?.length;
+    root.querySelector('[data-action="change"]').textContent = lab.world.changed ? '恢复原世界' : '改变世界';
+    for (const el of root.querySelectorAll('[data-move], [data-action="plan"], [data-action="change"], [data-action="home"]')) el.disabled = Boolean(timer);
+  }
+  function describe(result) {
+    return `${result.correct === null ? '未知转移 → 获得一条新经验' : result.correct ? '预测正确' : '预测失误 → 已更新该转移'}；预测 ${result.predicted ? position(result.predicted) : '未知'}，实际 ${position(result.actual)}。`;
+  }
+  function stop() { clearInterval(timer); timer = null; }
+  root.addEventListener('click',event => {
+    const button = event.target.closest('button'); if (!button || button.disabled) return;
+    if (button.dataset.move !== undefined) {
+      imagined = null; message = describe(W.step(lab,Number(button.dataset.move)));
+    } else switch (button.dataset.action) {
+      case 'explore': {
+        if (timer) { stop(); message = '探索已暂停，经验保留。'; break; }
+        imagined = null;
+        let count = 0;
+        timer = setInterval(() => {
+          let last = null;
+          for (let batch=0;batch<4 && count<400;batch++) {
+            last = W.explore(lab); if (!last) break; count++;
+          }
+          message = last ? `本轮探索 ${count}/400 步；${describe(last)}` : '当前可达的转移已探索完毕。';
+          if (!last || count>=400) { stop(); lab.state = W.start(); message += ' 已回到起点，可以想象路线。'; save(); }
+          render();
+        },40);
+        break;
+      }
+      case 'plan':
+        imagined = lab.model.search(lab.state);
+        message = imagined === null ? '已学经验中没有通向目标的完整路线，请继续探索。' : imagined.length ? `仅用已学转移想象了 ${imagined.length} 步。箭头是预测，执行后才能验证。` : '已经到达目标。';
+        break;
+      case 'execute': {
+        const action = imagined.shift(), result = W.step(lab,action);
+        message = describe(result);
+        if (result.correct === false) {
+          imagined = lab.model.search(lab.state);
+          message += imagined ? ` 已重新规划 ${imagined.length} 步。` : ' 暂无替代路线，请继续探索。';
+        }
+        if (W.goal(lab.state)) { imagined = []; message += ' 已携带钥匙到达终点！'; }
+        break;
+      }
+      case 'change':
+        lab.world.changed = !lab.world.changed;
+        message = `真实环境${lab.world.changed?'在 (7,3) 新增一堵墙':'恢复原样'}；模型仍保留旧经验，直到亲自尝试后才会更新。`;
+        break;
+      case 'home':
+        lab.state = W.start(); imagined = null; message = '已回到起点，保留全部经验。'; break;
+    }
+    render(); save();
+  });
+  render();
+})();
+</script>
