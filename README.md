@@ -1,6 +1,42 @@
 # Magic Road：视觉世界模型与硬件加速
 
-目标是先建立可复现的视觉预测任务，再研究小型学习模型及其多步状态预测加速器。当前已有 **P1 桌面仿真数据与解析基线**和 **P2 首轮桌面视觉预测模型试训**；P2 图像预测尚未超过简单对照。下一条主线按下文规划推进 **Minecraft 小场景世界模型 → 定点参考 → RTL**，Minecraft 采集、训练及硬件实现均未开始。
+目标是先建立可复现的视觉预测任务，再研究小型学习模型及其多步状态预测加速器。当前已有 **P1 桌面仿真数据与解析基线**、**P2 首轮桌面视觉预测模型试训**和 **Minecraft M0 离线数据契约与检查器**；P2 图像预测尚未超过简单对照。下一条主线按下文规划推进 **Minecraft 小场景世界模型 → 定点参考 → RTL**，Minecraft 游戏采集、训练及硬件实现均未开始。
+
+## Minecraft M0：离线数据检查
+
+无需安装游戏、FPGA 或第三方 Python 库，在项目根目录运行：
+
+```powershell
+python -S software/minecraft_data.py examples/minecraft-offline.json
+python -S software/test_minecraft_data.py
+```
+
+第一条命令只读检查样例，输出 JSON 摘要及输入文件的 SHA-256；无效输入返回退出码 1 并说明问题。第二条运行边界与反例检查，不训练模型。`-S` 禁用第三方 site-packages，验证这一步只依赖标准库。
+
+[examples/minecraft-offline.json](examples/minecraft-offline.json) 是 **人工编写的格式样例**：3 个动作段、4 个状态、12 个合成 tick，最后一个记录状态到达目标。样例没有游戏截图，也没有验证其运动与 Minecraft 一致。检查器只接受 `minecraft-m0-v1` 的人工 `example` 数据，不能把它作为游戏训练集或 M1 实采验收器。
+
+### 当前数据契约
+
+JSON 字段以样例和 [software/minecraft_data.py](software/minecraft_data.py) 为准；每层对象严格检查字段，缺项或未知字段均拒绝。
+
+| 字段 | 定义 |
+|---|---|
+| `schema_version / episode_id / split` | 固定版本 `minecraft-m0-v1`、非空轨迹标识、固定 `example` 分组 |
+| `provenance` | 固定 `hand_authored`、`synthetic_tick`；`game_captured=false`、`physics_validated=false`、`server_tick=null`、`image_source=none` |
+| `units / state_order` | 未归一化；位置为方块单位，速度为方块／记录 tick；状态顺序固定为 `[x,z,vx,vz]` |
+| `action_order` | 固定 `[forward,back,left,right,idle]`，未来 one-hot 编码按此顺序；`idle` 表示松开控制，不保证速度立即归零 |
+| `task` | 场景标识、中心坐标允许边界与障碍、目标中心／半径、固定朝向和统一干燥平地声明、动作段 tick 数、最大动作段数 |
+| `states[i]` | `tick` 与四维 `value`；从 tick 0 开始，每个动作段末尾记录下一个状态 |
+| `actions[i]` | `start_tick / end_tick / control / collision`；动作作用于 `[states[i].tick, states[i+1].tick)` |
+| `terminated / truncated` | 最后一个记录状态首次到达目标时为 `true/false`；未到达且恰好耗尽动作预算时为 `false/true` |
+
+动作数 N 必须为正且不超过预算，状态数必须为 N+1；动作区间与两端状态一一对应，固定步长、严格递增、没有空隙或重叠。样例的每段 4 个合成 tick 仅用于格式验证，不换算成秒，也不代表已选定游戏控制周期。
+
+地图坐标按 `[xmin,zmin,xmax,zmax]` 记录。`center_bounds` 包含边界；`center_obstacles` 的严格内部禁止玩家中心进入，边界接触允许。它们描述的是**玩家中心的允许区域**，不是未经处理的方块外形；M1 必须结合实际玩家碰撞尺寸建立对应地图。
+
+到达判据为记录状态的中心到目标的二维距离 `<= goal_radius`，不推断两个记录状态之间是否曾穿过目标。首版拒绝初始就在目标、到达后继续记录动作、预算尚未耗尽却声称超时，以及未完成的轨迹片段。最后一步同时耗尽预算并到达时优先记为到达。
+
+所有状态、边界、目标和朝向必须是有限数；布尔值不能冒充数字或 tick。速度是人工填写的边界值，不强制等于相邻位置差除时间；`collision` 是动作区间内是否曾接触／受阻的人工布尔标签，不从两个端点推断。检查器不执行运动、碰撞或渲染；M1 需另行验证这些声明及标签来源，并冻结游戏版本、bot／服务端时间与图像对齐契约。
 
 ## 运行
 
@@ -159,7 +195,7 @@ PC：候选评分 → 只执行第一段动作 → 重新观察并规划
 | M5：RTL 仿真与实现评估 | 模块规格、Python 整数参考、Verilog、testbench、实际工具报告 | 逐项匹配整数参考；握手、复位、候选隔离通过；选定器件与约束后再验收资源及实现后时序 |
 | M6：FPGA 板测与 ASIC 评估 | 板上对照、端到端耗时；有库和约束后的 ASIC 报告 | 有板卡后验证输出与链路；ASIC 综合、布局布线、功耗估算分别标明实际工具与证据范围 |
 
-每阶段先检查上一阶段证据，通过后才推进。**没有 FPGA 不影响 M0–M4 与 M5 的仿真；实际综合和时序评估取决于工具与目标器件。** 目前先做 M0，游戏环境可用后再进行 M1，不先生成占位 RTL。
+每阶段先检查上一阶段证据，通过后才推进。**没有 FPGA 不影响 M0–M4 与 M5 的仿真；实际综合和时序评估取决于工具与目标器件。** M0 已有上文的人工样例与只读检查器；下一阶段 M1 在游戏环境可用后进行，不先生成占位 RTL。
 
 ### 数据与软件目标
 
