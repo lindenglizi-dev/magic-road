@@ -57,6 +57,16 @@ def main():
             result['checks']['softmax_compile']=run_case('softmax_compile',['iverilog','-g2012','-s','tb_softmax_row','-o',str(executable),str(PROJECT/'rtl/softmax_row_int32.sv'),str(BASE/'validation/tb_softmax_row.sv')],PROJECT)
             if result['checks']['softmax_compile']['status']=='PASS':
                 result['checks']['softmax_rtl']=run_case('softmax_rtl',['vvp',str(executable),f'+VECTORS={REPORTS/"softmax_unit_vectors/cases.txt"}'],PROJECT,'PASS SOFTMAX_ROW')
+        result['checks']['requant_vectors']=run_case('requant_vectors',[sys.executable,str(BASE/'validation/gen_requant_vectors.py')],PROJECT,'PASS REQUANT_VECTORS')
+        if result['checks']['requant_vectors']['status']=='PASS':
+            executable=REPORTS/'tb_requant.out'
+            result['checks']['requant_compile']=run_case('requant_compile',['iverilog','-g2012','-s','tb_requant','-o',str(executable),str(PROJECT/'rtl/requant_shift_sat.sv'),str(PROJECT/'rtl/ffn_relu_requant.sv'),str(BASE/'validation/tb_requant.sv')],PROJECT)
+            if result['checks']['requant_compile']['status']=='PASS':
+                result['checks']['requant_rtl']=run_case('requant_rtl',['vvp',str(executable),f'+VECTORS={REPORTS/"requant_unit_vectors/cases.txt"}'],PROJECT,'PASS REQUANT_UNIT')
+        executable=REPORTS/'tb_probability_writer.out'
+        result['checks']['probability_compile']=run_case('probability_compile',['iverilog','-g2012','-s','tb_probability_writer','-o',str(executable),str(PROJECT/'rtl/probability_writer.sv'),str(BASE/'validation/tb_probability_writer.sv')],PROJECT)
+        if result['checks']['probability_compile']['status']=='PASS':
+            result['checks']['probability_rtl']=run_case('probability_rtl',['vvp',str(executable)],PROJECT,'PASS PROBABILITY_WRITER')
         executable=REPORTS/'tb_transformer.out'
         compile_cmd=['iverilog','-g2012','-s','tb_transformer_block','-o',str(executable)] + rtl_sources + [str(PROJECT/'tb/tb_transformer_block.sv')]
         result['checks']['top_compile']=run_case('top_compile',compile_cmd,PROJECT)
@@ -64,7 +74,7 @@ def main():
             for case in CASES:
                 result['checks'][f'rtl_{case}']=run_case(f'rtl_{case}',['vvp',str(executable),f'+CASE=vectors/{case}'],PROJECT,f'PASS TRANSFORMER BLOCK case=vectors/{case}')
     statuses=[c.get('status') for c in result['checks'].values() if isinstance(c,dict)]
-    required=('mac_rtl','gemm_rtl','softmax_rtl') + tuple(f'rtl_{case}' for case in CASES)
+    required=('mac_rtl','gemm_rtl','softmax_rtl','requant_rtl','probability_rtl') + tuple(f'rtl_{case}' for case in CASES)
     rtl_pass=all(result['checks'].get(name,{}).get('status')=='PASS' for name in required)
     result['gate']='FAIL' if 'FAIL' in statuses else ('RTL_PASS' if rtl_pass else 'RTL_UNVERIFIED')
     (REPORTS/'summary.json').write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding='utf-8')
