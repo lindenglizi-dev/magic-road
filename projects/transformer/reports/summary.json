@@ -1,5 +1,5 @@
 {
-  "time_utc": "2026-10-23T16:25:14.288116+00:00",
+  "time_utc": "2026-10-23T16:53:02.289610+00:00",
   "sources": "lesson14_transformer_full",
   "tool_iverilog": "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.EXE",
   "tool_vvp": "E:\\project\\qiansai\\.tools\\iverilog\\bin\\vvp.EXE",
@@ -92,6 +92,31 @@
         "+VECTORS=C:\\Users\\lenovo\\Documents\\ChatGPT\\magic_road\\projects\\transformer\\reports\\gemm_unit_vectors"
       ],
       "log": "gemm_rtl.log"
+    },
+    "gemm_control_compile": {
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "iverilog",
+        "-g2012",
+        "-s",
+        "tb_gemm_control",
+        "-o",
+        "C:\\Users\\lenovo\\Documents\\ChatGPT\\magic_road\\projects\\transformer\\reports\\tb_gemm_control.out",
+        "C:\\Users\\lenovo\\Documents\\ChatGPT\\magic_road\\projects\\transformer\\lesson14_transformer_full\\rtl\\mac_array_4x4.sv",
+        "C:\\Users\\lenovo\\Documents\\ChatGPT\\magic_road\\projects\\transformer\\lesson14_transformer_full\\rtl\\tiled_gemm_4x4_banked_compact.sv",
+        "C:\\Users\\lenovo\\Documents\\ChatGPT\\magic_road\\projects\\transformer\\validation\\tb_gemm_control.sv"
+      ],
+      "log": "gemm_control_compile.log"
+    },
+    "gemm_control_rtl": {
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "vvp",
+        "C:\\Users\\lenovo\\Documents\\ChatGPT\\magic_road\\projects\\transformer\\reports\\tb_gemm_control.out"
+      ],
+      "log": "gemm_control_rtl.log"
     },
     "softmax_vectors": {
       "status": "PASS",
@@ -246,6 +271,17 @@
         "+CASE=vectors/sat_1x1"
       ],
       "log": "rtl_sat_1x1.log"
+    },
+    "rtl_control": {
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "vvp",
+        "C:\\Users\\lenovo\\Documents\\ChatGPT\\magic_road\\projects\\transformer\\reports\\tb_transformer.out",
+        "+CASE=vectors/demo",
+        "+CONTROL"
+      ],
+      "log": "rtl_control.log"
     }
   },
   "gate": "RTL_PASS"

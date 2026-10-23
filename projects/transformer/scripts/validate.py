@@ -51,6 +51,10 @@ def main():
             result['checks']['gemm_compile']=run_case('gemm_compile',['iverilog','-g2012','-s','tb_tiled_gemm','-o',str(executable),str(PROJECT/'rtl/mac_array_4x4.sv'),str(PROJECT/'rtl/tiled_gemm_4x4_banked_compact.sv'),str(BASE/'validation/tb_tiled_gemm.sv')],PROJECT)
             if result['checks']['gemm_compile']['status']=='PASS':
                 result['checks']['gemm_rtl']=run_case('gemm_rtl',['vvp',str(executable),f'+VECTORS={vectors}'],PROJECT,'PASS GEMM_UNIT')
+        executable=REPORTS/'tb_gemm_control.out'
+        result['checks']['gemm_control_compile']=run_case('gemm_control_compile',['iverilog','-g2012','-s','tb_gemm_control','-o',str(executable),str(PROJECT/'rtl/mac_array_4x4.sv'),str(PROJECT/'rtl/tiled_gemm_4x4_banked_compact.sv'),str(BASE/'validation/tb_gemm_control.sv')],PROJECT)
+        if result['checks']['gemm_control_compile']['status']=='PASS':
+            result['checks']['gemm_control_rtl']=run_case('gemm_control_rtl',['vvp',str(executable)],PROJECT,'PASS GEMM_CONTROL')
         result['checks']['softmax_vectors']=run_case('softmax_vectors',[sys.executable,str(BASE/'validation/gen_softmax_vectors.py')],PROJECT,'PASS SOFTMAX_VECTORS')
         if result['checks']['softmax_vectors']['status']=='PASS':
             executable=REPORTS/'tb_softmax_row.out'
@@ -73,8 +77,9 @@ def main():
         if result['checks']['top_compile']['status']=='PASS':
             for case in CASES:
                 result['checks'][f'rtl_{case}']=run_case(f'rtl_{case}',['vvp',str(executable),f'+CASE=vectors/{case}'],PROJECT,f'PASS TRANSFORMER BLOCK case=vectors/{case}')
+            result['checks']['rtl_control']=run_case('rtl_control',['vvp',str(executable),'+CASE=vectors/demo','+CONTROL'],PROJECT,'PASS TRANSFORMER_CONTROL')
     statuses=[c.get('status') for c in result['checks'].values() if isinstance(c,dict)]
-    required=('mac_rtl','gemm_rtl','softmax_rtl','requant_rtl','probability_rtl') + tuple(f'rtl_{case}' for case in CASES)
+    required=('mac_rtl','gemm_rtl','gemm_control_rtl','softmax_rtl','requant_rtl','probability_rtl','rtl_control') + tuple(f'rtl_{case}' for case in CASES)
     rtl_pass=all(result['checks'].get(name,{}).get('status')=='PASS' for name in required)
     result['gate']='FAIL' if 'FAIL' in statuses else ('RTL_PASS' if rtl_pass else 'RTL_UNVERIFIED')
     (REPORTS/'summary.json').write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding='utf-8')

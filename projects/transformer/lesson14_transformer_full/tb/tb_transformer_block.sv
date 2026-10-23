@@ -50,6 +50,11 @@ module tb_transformer_block;
  integer seenQ[0:OUTDEPTH-1],seenA[0:OUTDEPTH-1],seenH[0:OUTDEPTH-1],seenY[0:OUTDEPTH-1];
  integer i,j,off,idx,bank,addr,fd,nread,timeout=1000000;
  string case_dir;
+ bit control_mode=0,expect_error=0,fault_mode=0,fault_injected=0;
+ integer control_jobs=0,invalid_cases=0,reset_cases=0;
+ wire traffic=|{x_rd_en,w_rd_en,q_rd_en,key_rd_en,v_rd_en,p_rd_en,
+    act_rd_en,hidden_rd_en,q_wr_en,key_wr_en,v_wr_en,score_rd_en,
+    score_wr_en,p_wr_en,o_wr_en,act_wr_en,hidden_wr_en,y_wr_en,out_valid};
  genvar lane;
  generate for(lane=0;lane<4;lane=lane+1)begin:g_src
     wire [AW-1:0] xa=x_rd_addr[lane*AW+:AW],wa=w_rd_addr[lane*AW+:AW];
@@ -59,6 +64,9 @@ module tb_transformer_block;
         x_rd_data[lane*8+:8]<=0;w_rd_data[lane*8+:8]<=0;
       end else begin
         x_rd_valid[lane]<=x_rd_en[lane];
+        if(lane==0 && fault_mode && !fault_injected && x_rd_en[lane])begin
+          x_rd_valid[lane]<=0;fault_injected=1;
+        end
         w_rd_valid[lane]<=w_rd_en[lane];
         if(x_rd_en[lane])begin
           if(xa<xb || xa>=xb+((L+3)/4)*D || xa>=DEPTH) $fatal(1,"X read range");
@@ -147,10 +155,10 @@ module tb_transformer_block;
       end
     end
  end
- always @(posedge clk) if(rst_n)begin
+ always @(posedge clk) if(rst_n && !fault_mode)begin
     cycles=cycles+1;
     if(cycles>timeout) $fatal(1,"TIMEOUT phase=%0d state=%0d",dbg_phase,dbg_state);
-    if(error) $fatal(1,"DUT error phase=%0d state=%0d",dbg_phase,dbg_state);
+    if(error!==0 && !expect_error) $fatal(1,"DUT error phase=%0d state=%0d",dbg_phase,dbg_state);
     if(dbg_gemm_start)begin
        if(dbg_phase!==launches) $fatal(1,"GEMM launch order exp=%0d got=%0d",launches,dbg_phase);
        launches=launches+1;
@@ -205,21 +213,9 @@ module tb_transformer_block;
     end
     for(integer k=0;k<4;k=k+1)if(v_wr_en[k])vwrites=vwrites+1;
  end
- initial begin
-   if(!$value$plusargs("CASE=%s",case_dir))case_dir="vectors/demo";
-   fd=$fopen({case_dir,"/config.txt"},"r");
-   if(fd==0)$fatal(1,"Missing config file");
-   nread=$fscanf(fd,"%d %d %d %d %d %d %d %d %d %d %d %d",L,D,sh[0],sh[1],sh[2],xb,wb[0],wb[1],wb[2],yb[0],yb[1],yb[2]);
-   $fclose(fd);
-   if(nread!=12) $fatal(1,"Bad config");
-   fd=$fopen({case_dir,"/ffn_config.txt"},"r");
-   if(fd==0)$fatal(1,"Missing FFN config");
-   nread=$fscanf(fd,"%d %d %d %d %d",F,asft,hsft,w1base,w2base);
-   $fclose(fd);
-   if(nread!=5)$fatal(1,"Bad FFN config");
-   fd=$fopen({case_dir,"/softmax_scale.txt"},"r");
-   nread=$fscanf(fd,"%d",scale);$fclose(fd);
-   if(nread!=1) $fatal(1,"Bad softmax scale");
+ task apply_config;
+ begin
+   cfg_score_base=100;
    cfg_seq_len=L;cfg_dim=D;cfg_hidden_dim=F;
    cfg_shift_attn=asft;cfg_shift_hidden=hsft;
    cfg_w1_base=w1base;cfg_w2_base=w2base;
@@ -227,31 +223,39 @@ module tb_transformer_block;
    cfg_x_base=xb;cfg_wq_base=wb[0];cfg_wk_base=wb[1];cfg_wv_base=wb[2];
    cfg_q_base=yb[0];cfg_key_base=yb[1];cfg_v_base=yb[2];
    cfg_shift_q=sh[0];cfg_shift_key=sh[1];cfg_shift_v=sh[2];
-   $readmemh({case_dir,"/x_sparse.hex"},xm);
-   $readmemh({case_dir,"/weights_sparse.hex"},wm);
-   $readmemh({case_dir,"/raw.hex"},raw_expected,0,3*L*D-1);
-   $readmemh({case_dir,"/out.hex"},out_expected,0,3*L*D-1);
-   $readmemh({case_dir,"/score.hex"},score_expected,0,L*L-1);
-   $readmemh({case_dir,"/prob.hex"},p_expected,0,L*L-1);
-   $readmemh({case_dir,"/pv.hex"},pv_expected,0,L*D-1);
-   $readmemh({case_dir,"/act.hex"},act_expected,0,L*D-1);
-   $readmemh({case_dir,"/hidden.hex"},hidden_expected,0,L*F-1);
-   $readmemh({case_dir,"/final.hex"},final_expected,0,L*D-1);
+ end
+ endtask
+ task clear_job;
+ begin
+   writes=0;scorewrites=0;pwrites=0;owrites=0;vwrites=0;
+   actwrites=0;hiddenwrites=0;ywrites=0;launches=0;cycles=0;
    for(i=0;i<3*L*D;i=i+1)seenQ[i]=0;
    for(i=0;i<L*D;i=i+1)begin seenO[i]=0;seenA[i]=0;seenY[i]=0;end
    for(i=0;i<L*F;i=i+1)seenH[i]=0;
    for(i=0;i<L*L;i=i+1)begin seenP[i]=0;seenS[i]=0;end
    for(i=0;i<4*DEPTH;i=i+1)begin qm[i]='x;km[i]='x;vm[i]='x;pm[i]='x;am[i]='x;hm[i]='x;end
-   repeat(4)@(negedge clk);rst_n=1;
+   for(i=0;i<L*L;i=i+1)scoremem[i]='x;
+ end
+ endtask
+ task launch_job;
+ begin
    @(negedge clk);start=1;
    @(negedge clk);start=0;
-   begin:wait_done
-      integer t;
-      t=0;
-      while(!done && t<timeout) begin @(negedge clk);t=t+1;end
-      if(!done)$fatal(1,"timeout before DONE");
-   end
-   if(error || busy || launches!=7 || writes!=3*L*D || scorewrites!=L*L || pwrites!=L*L || owrites!=L*D || vwrites!=L*D || actwrites!=L*D || hiddenwrites!=L*F || ywrites!=L*D)
+   if(busy!==1 || done!==0 || error!==0)$fatal(1,"Valid start rejected");
+   expect_error=0;
+ end
+ endtask
+ task await_done;
+ integer t;
+ begin
+   t=0;
+   while(done!==1 && t<timeout)begin @(negedge clk);t=t+1;end
+   if(done!==1)$fatal(1,"timeout before DONE");
+ end
+ endtask
+ task verify_job;
+ begin
+   if(error!==0 || busy!==0 || launches!=7 || writes!=3*L*D || scorewrites!=L*L || pwrites!=L*L || owrites!=L*D || vwrites!=L*D || actwrites!=L*D || hiddenwrites!=L*F || ywrites!=L*D)
       $fatal(1,"Count mismatch launches=%0d QKV=%0d Score=%0d P=%0d PV=%0d Vwrites=%0d",launches,writes,scorewrites,pwrites,owrites,vwrites);
    for(i=0;i<L;i=i+1)begin
       for(j=0;j<L;j=j+1)begin
@@ -280,7 +284,169 @@ module tb_transformer_block;
        if(hm[bank*DEPTH+addr]!==hidden_expected[i*F+j]) $fatal(1,"Hidden bank mismatch");
      end
    end
+ end
+ endtask
+ task check_idle;
+ input integer expected_error;
+ begin
+   if(busy!==0 || traffic!==0 || dbg_gemm_start!==0 || error!==expected_error[0])
+     $fatal(1,"Unexpected idle traffic/status busy=%b traffic=%b error=%b",busy,traffic,error);
+ end
+ endtask
+ task finish_job;
+ begin
+   await_done;
+   verify_job;
    $display("PASS TRANSFORMER BLOCK case=%0s L=%0d D=%0d F=%0d GEMM=%0d QKV=%0d SCORE=%0d P=%0d PV=%0d ACT=%0d HIDDEN=%0d FINAL=%0d cycles=%0d",case_dir,L,D,F,launches,writes,scorewrites,pwrites,owrites,actwrites,hiddenwrites,ywrites,cycles);
+   repeat(6)begin
+     @(negedge clk);
+     check_idle(0);
+     if(done!==0)$fatal(1,"Repeated DONE or queued busy-start job");
+   end
+   control_jobs=control_jobs+1;
+ end
+ endtask
+ task good_job;
+ begin
+   apply_config;clear_job;launch_job;finish_job;
+ end
+ endtask
+ // Called at a falling edge: assertion deliberately misses either clock edge.
+ task abort_job;
+ begin
+   #2;rst_n=0;start=0;
+   #1;
+   check_idle(0);
+   if(done!==0)$fatal(1,"DONE retained across async reset");
+   repeat(3)@(negedge clk);
+   clear_job;apply_config;expect_error=0;fault_mode=0;
+   rst_n=1;
+   repeat(3)begin
+     @(negedge clk);check_idle(0);
+     if(done!==0)$fatal(1,"Stale DONE after reset");
+   end
+ end
+ endtask
+ task invalid_job;
+ input integer which;
+ begin
+   apply_config;expect_error=1;
+   case(which)
+      0:cfg_seq_len=0;
+      1:cfg_seq_len=65;
+      2:cfg_dim=0;
+      3:cfg_dim=257;
+      4:cfg_hidden_dim=0;
+      5:cfg_hidden_dim=257;
+      6:cfg_scale_q16=0;
+      7:cfg_scale_q16=65537;
+      8:cfg_x_base=(1<<AW)-((L+3)/4)*D+1;
+      9:cfg_wq_base=(1<<AW)-((D+3)/4)*D+1;
+     10:cfg_wk_base=(1<<AW)-((D+3)/4)*D+1;
+     11:cfg_wv_base=(1<<AW)-((D+3)/4)*D+1;
+     12:cfg_q_base=(1<<AW)-L*D+1;
+     13:cfg_key_base=(1<<AW)-L*D+1;
+     14:cfg_v_base=(1<<AW)-L*D+1;
+     15:cfg_score_base=(1<<AW)-L*L+1;
+     16:cfg_w1_base=(1<<AW)-D*((F+3)/4)+1;
+     17:cfg_w2_base=(1<<AW)-F*((D+3)/4)+1;
+   endcase
+   @(negedge clk);start=1;
+   @(negedge clk);start=0;
+   check_idle(1);
+   if(done!==1)$fatal(1,"Missing invalid-config completion case=%0d",which);
+   apply_config; // Valid live config without start must NOT clear sticky error.
+   repeat(4)begin
+     @(negedge clk);check_idle(1);
+     if(done!==0)$fatal(1,"Invalid-config DONE not one cycle");
+   end
+   invalid_cases=invalid_cases+1;
+   good_job;
+ end
+ endtask
+ task reset_at;
+ input integer point;
+ integer t;
+ bit hit;
+ begin
+   apply_config;clear_job;launch_job;t=0;hit=0;
+   while(!hit && t<timeout)begin
+     @(negedge clk);t=t+1;
+     case(point)
+       0:hit=(dbg_phase==0 && dut.u_gemm.rsp_inflight===1 && (|x_rd_valid));
+       1:hit=(dbg_phase==0 && out_valid===1);
+       2:hit=(dbg_state==5 && score_rd_valid===1);
+       3:hit=(dbg_state==6 && p_wr_en===1);
+       4:hit=(dbg_phase==6 && y_wr_en===1);
+     endcase
+   end
+   if(!hit || busy!==1 || done!==0)$fatal(1,"Reset target never active point=%0d",point);
+   abort_job;reset_cases=reset_cases+1;good_job;
+ end
+ endtask
+ task run_control;
+ integer c,t;
+ begin
+   for(c=0;c<18;c=c+1)invalid_job(c);
+   // End exactly at the address-space limit: accepted, then reset before access.
+   apply_config;clear_job;cfg_q_base=(1<<AW)-L*D;
+   launch_job;abort_job;good_job;
+   // One busy-cycle pulse with every config group disturbed. Latched job wins.
+   apply_config;clear_job;launch_job;
+   t=0;
+   while(!(dbg_phase==1 && (|x_rd_en)) && t<timeout)begin @(negedge clk);t=t+1;end
+   if(t==timeout)$fatal(1,"Busy-start target missing");
+   cfg_seq_len=0;cfg_dim=0;cfg_hidden_dim=0;cfg_scale_q16=0;
+   cfg_shift_q=31;cfg_shift_key=31;cfg_shift_v=31;cfg_shift_attn=31;cfg_shift_hidden=31;
+   cfg_x_base='1;cfg_wq_base='1;cfg_wk_base='1;cfg_wv_base='1;
+   cfg_q_base='1;cfg_key_base='1;cfg_v_base='1;cfg_score_base='1;
+   cfg_w1_base='1;cfg_w2_base='1;start=1;
+   @(negedge clk);start=0;apply_config;
+   if(busy!==1 || done!==0 || error!==0)$fatal(1,"Busy start altered status");
+   finish_job;
+   for(c=0;c<5;c=c+1)reset_at(c);
+   // Missing required X response: runtime error completes; next start must recover.
+   apply_config;clear_job;fault_mode=1;fault_injected=0;expect_error=1;
+   launch_job;expect_error=1;await_done;
+   if(!fault_injected || error!==1 || busy!==0 || dbg_phase!==0)$fatal(1,"Memory fault did not complete with error");
+   repeat(4)begin
+     @(negedge clk);check_idle(1);
+     if(done!==0)$fatal(1,"Runtime error DONE not one cycle");
+   end
+   fault_mode=0;good_job;
+   $display("PASS TRANSFORMER_CONTROL invalid=%0d reset_points=%0d boundary_accept=1 busy_start=1 memerr_restart=1 complete_jobs=%0d",invalid_cases,reset_cases,control_jobs);
+ end
+ endtask
+ initial begin
+   control_mode=$test$plusargs("CONTROL");
+   if(!$value$plusargs("CASE=%s",case_dir))case_dir="vectors/demo";
+   fd=$fopen({case_dir,"/config.txt"},"r");
+   if(fd==0)$fatal(1,"Missing config file");
+   nread=$fscanf(fd,"%d %d %d %d %d %d %d %d %d %d %d %d",L,D,sh[0],sh[1],sh[2],xb,wb[0],wb[1],wb[2],yb[0],yb[1],yb[2]);
+   $fclose(fd);
+   if(nread!=12) $fatal(1,"Bad config");
+   fd=$fopen({case_dir,"/ffn_config.txt"},"r");
+   if(fd==0)$fatal(1,"Missing FFN config");
+   nread=$fscanf(fd,"%d %d %d %d %d",F,asft,hsft,w1base,w2base);
+   $fclose(fd);
+   if(nread!=5)$fatal(1,"Bad FFN config");
+   fd=$fopen({case_dir,"/softmax_scale.txt"},"r");
+   nread=$fscanf(fd,"%d",scale);$fclose(fd);
+   if(nread!=1) $fatal(1,"Bad softmax scale");
+   $readmemh({case_dir,"/x_sparse.hex"},xm);
+   $readmemh({case_dir,"/weights_sparse.hex"},wm);
+   $readmemh({case_dir,"/raw.hex"},raw_expected,0,3*L*D-1);
+   $readmemh({case_dir,"/out.hex"},out_expected,0,3*L*D-1);
+   $readmemh({case_dir,"/score.hex"},score_expected,0,L*L-1);
+   $readmemh({case_dir,"/prob.hex"},p_expected,0,L*L-1);
+   $readmemh({case_dir,"/pv.hex"},pv_expected,0,L*D-1);
+   $readmemh({case_dir,"/act.hex"},act_expected,0,L*D-1);
+   $readmemh({case_dir,"/hidden.hex"},hidden_expected,0,L*F-1);
+   $readmemh({case_dir,"/final.hex"},final_expected,0,L*D-1);
+   apply_config;clear_job;
+   repeat(4)@(negedge clk);rst_n=1;
+   if(control_mode)run_control;
+   else begin launch_job;finish_job;end
    $finish;
  end
 endmodule

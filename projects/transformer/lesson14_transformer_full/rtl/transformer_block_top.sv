@@ -292,7 +292,8 @@ module transformer_block_top #(parameter integer ADDR_W=18) (
          row_q<=0;issued_q<=0;received_q<=0;
       end else begin
          done<=0;
-         if(g_bad || g_memerr || sm_error) error<=1;
+         // IDLE/ISSUE may still see the previous GEMM's sticky flags until start clears them.
+         if(((state==WAIT_GEMM || state==DRAIN) && (g_bad || g_memerr)) || sm_error) error<=1;
          case(state)
            IDLE: if(start) begin
              error<=!cfg_ok;phase<=PH_Q;
