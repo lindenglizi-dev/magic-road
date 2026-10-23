@@ -1,0 +1,72 @@
+{
+  "schema_version": "occlusion-memory-v1",
+  "seed": 20261024,
+  "pairs": 100,
+  "sequences": 300,
+  "methods": {
+    "last_frame": "fixed color detector on the final image; absent color yields unknown",
+    "last_seen": "same detector, remembers the most recent visible color; reset per sequence",
+    "always_red": "constant guess; 50% on balanced seen cases, 0% on unknown cases"
+  },
+  "metrics": {
+    "last_frame": {
+      "seen_correct": 0,
+      "seen_total": 200,
+      "seen_accuracy": 0.0,
+      "unknown_correct": 100,
+      "unknown_total": 100,
+      "unknown_accuracy": 1.0,
+      "pairs_both_correct": 0,
+      "pairs_total": 100,
+      "pair_accuracy": 0.0,
+      "errors": 200
+    },
+    "last_seen": {
+      "seen_correct": 200,
+      "seen_total": 200,
+      "seen_accuracy": 1.0,
+      "unknown_correct": 100,
+      "unknown_total": 100,
+      "unknown_accuracy": 1.0,
+      "pairs_both_correct": 100,
+      "pairs_total": 100,
+      "pair_accuracy": 1.0,
+      "errors": 0
+    },
+    "always_red": {
+      "seen_correct": 100,
+      "seen_total": 200,
+      "seen_accuracy": 0.5,
+      "unknown_correct": 0,
+      "unknown_total": 100,
+      "unknown_accuracy": 0.0,
+      "pairs_both_correct": 0,
+      "pairs_total": 100,
+      "pair_accuracy": 0.0,
+      "errors": 200
+    }
+  },
+  "stimulus_checks": {
+    "first_frames_correct": 300,
+    "hidden_frames_without_color": 1203,
+    "hidden_frames_total": 1203,
+    "paired_hidden_segments_identical": 100,
+    "passed": true
+  },
+  "acceptance": {
+    "criterion": "stimulus checks pass; last_seen gets all seen, unknown and paired cases correct",
+    "passed": true
+  },
+  "scope": "hand-written rule baselines; no training, Nano Banana, learned memory or hardware measurement",
+  "manifest_sha256": "cbccfc3c3df31e02478649913687daca840b8c718ac527119bf736bb108eca44",
+  "predictions_sha256": "7444c906c32b8d4904bb7431efd4ebb584ee3b08d9143e3852c2a8d01eeced80",
+  "source_sha256": {
+    "occlusion_memory.py": "9656ad9c8373416ea99fe9a575900ee9d4f7c440d1e3446d64f3ab15d3e09960",
+    "tabletop.py": "834286b6dbf430e67346055dd7824925e1792e329ac699177da40e325f7ae0b3"
+  },
+  "versions": {
+    "python": "3.13.12",
+    "numpy": "2.4.6",
+    "pillow": "12.3.0"
+  }
+}
