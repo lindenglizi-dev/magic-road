@@ -44,6 +44,19 @@ def main():
         result['checks']['mac_compile']=run_case('mac_compile',['iverilog','-g2012','-s','tb_mac_smoke','-o',str(executable),str(PROJECT/'rtl/mac_array_4x4.sv'),str(BASE/'validation/tb_mac_smoke.sv')],PROJECT)
         if result['checks']['mac_compile']['status']=='PASS':
             result['checks']['mac_rtl']=run_case('mac_rtl',['vvp',str(executable)],PROJECT,'PASS MAC_SMOKE')
+        vectors=REPORTS/'gemm_unit_vectors'
+        result['checks']['gemm_vectors']=run_case('gemm_vectors',[sys.executable,str(BASE/'validation/gen_gemm_unit_vectors.py'),'--out-dir',str(vectors)],PROJECT,'PASS GEMM_VECTORS')
+        if result['checks']['gemm_vectors']['status']=='PASS':
+            executable=REPORTS/'tb_tiled_gemm.out'
+            result['checks']['gemm_compile']=run_case('gemm_compile',['iverilog','-g2012','-s','tb_tiled_gemm','-o',str(executable),str(PROJECT/'rtl/mac_array_4x4.sv'),str(PROJECT/'rtl/tiled_gemm_4x4_banked_compact.sv'),str(BASE/'validation/tb_tiled_gemm.sv')],PROJECT)
+            if result['checks']['gemm_compile']['status']=='PASS':
+                result['checks']['gemm_rtl']=run_case('gemm_rtl',['vvp',str(executable),f'+VECTORS={vectors}'],PROJECT,'PASS GEMM_UNIT')
+        result['checks']['softmax_vectors']=run_case('softmax_vectors',[sys.executable,str(BASE/'validation/gen_softmax_vectors.py')],PROJECT,'PASS SOFTMAX_VECTORS')
+        if result['checks']['softmax_vectors']['status']=='PASS':
+            executable=REPORTS/'tb_softmax_row.out'
+            result['checks']['softmax_compile']=run_case('softmax_compile',['iverilog','-g2012','-s','tb_softmax_row','-o',str(executable),str(PROJECT/'rtl/softmax_row_int32.sv'),str(BASE/'validation/tb_softmax_row.sv')],PROJECT)
+            if result['checks']['softmax_compile']['status']=='PASS':
+                result['checks']['softmax_rtl']=run_case('softmax_rtl',['vvp',str(executable),f'+VECTORS={REPORTS/"softmax_unit_vectors/cases.txt"}'],PROJECT,'PASS SOFTMAX_ROW')
         executable=REPORTS/'tb_transformer.out'
         compile_cmd=['iverilog','-g2012','-s','tb_transformer_block','-o',str(executable)] + rtl_sources + [str(PROJECT/'tb/tb_transformer_block.sv')]
         result['checks']['top_compile']=run_case('top_compile',compile_cmd,PROJECT)
@@ -51,7 +64,9 @@ def main():
             for case in CASES:
                 result['checks'][f'rtl_{case}']=run_case(f'rtl_{case}',['vvp',str(executable),f'+CASE=vectors/{case}'],PROJECT,f'PASS TRANSFORMER BLOCK case=vectors/{case}')
     statuses=[c.get('status') for c in result['checks'].values() if isinstance(c,dict)]
-    result['gate']='FAIL' if 'FAIL' in statuses else ('RTL_UNVERIFIED' if not any(k.startswith('rtl_demo') for k in result['checks']) else 'RTL_PASS')
+    required=('mac_rtl','gemm_rtl','softmax_rtl') + tuple(f'rtl_{case}' for case in CASES)
+    rtl_pass=all(result['checks'].get(name,{}).get('status')=='PASS' for name in required)
+    result['gate']='FAIL' if 'FAIL' in statuses else ('RTL_PASS' if rtl_pass else 'RTL_UNVERIFIED')
     (REPORTS/'summary.json').write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding='utf-8')
     print('\nFINAL GATE:',result['gate'],'(see reports/summary.json)')
     return 1 if result['gate']=='FAIL' or (args.strict and result['gate']!='RTL_PASS') else 0

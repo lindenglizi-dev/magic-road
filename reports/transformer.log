@@ -28,6 +28,45 @@ PASS 84 address assertions, single GEMM, Attention/FFN requant and independent S
 PASS MAC_SMOKE directed + 120 random/stall beats
 C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\validation\tb_mac_smoke.sv:49: $finish called at 1286000 (1ps)
 
+== gemm_vectors ==
+PASS GEMM_VECTORS cases=10 numeric=8 fault=2 out=C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\reports\gemm_unit_vectors
+
+== gemm_compile ==
+(empty output)
+
+== gemm_rtl ==
+PASS GEMM_NUMERIC case=long_k M=5 N=7 K=256 transposed=0 writes=35 cycles=1599
+PASS GEMM_NUMERIC case=long_k_transposed M=5 N=7 K=256 transposed=1 writes=35 cycles=1599
+PASS GEMM_FAULT case=missing_a missing=1 flagged=1 numeric=NOT_CHECKED
+PASS GEMM_NUMERIC case=recover_a M=4 N=4 K=4 transposed=1 writes=16 cycles=29
+PASS GEMM_FAULT case=missing_b missing=2 flagged=1 numeric=NOT_CHECKED
+PASS GEMM_NUMERIC case=recover_b M=1 N=1 K=1 transposed=0 writes=1 cycles=14
+PASS GEMM_UNIT cases=10 numeric=8 elements=174 faults=2 reset_count=1
+C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\validation\tb_tiled_gemm.sv:175: $finish called at 37610000 (1ps)
+
+== softmax_vectors ==
+extreme_pair_min_scale: len=2 scale=1 sum_u8=255
+equal_pair: len=2 scale=65536 sum_u8=256
+equal_max_row: len=64 scale=65536 sum_u8=256
+bounded_full_scale: len=64 scale=65536 sum_u8=255
+bounded_min_scale: len=64 scale=1 sum_u8=252
+lut_clamp_boundary: len=64 scale=4096 sum_u8=248
+mixed_extremes: len=64 scale=65536 sum_u8=256
+PASS SOFTMAX_VECTORS cases=9 lut_entries=129 path=C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\reports\softmax_unit_vectors\cases.txt
+
+== softmax_compile ==
+(empty output)
+
+== softmax_rtl ==
+Softmax case=4 len=64 scale=65536 PASS
+Softmax case=5 len=64 scale=65536 PASS
+Softmax case=6 len=64 scale=1 PASS
+Softmax case=7 len=64 scale=4096 PASS
+Softmax case=8 len=64 scale=65536 PASS
+Softmax case=9 len=64 scale=65536 PASS
+PASS SOFTMAX_ROW rows=10 outputs=391 stalls=1175 bubbles=899 invalid_starts=4 reset_restart=1
+C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\validation\tb_softmax_row.sv:193: $finish called at 69506000 (1ps)
+
 == top_compile ==
 (empty output)
 
