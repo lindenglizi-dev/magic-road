@@ -1,0 +1,85 @@
+{
+  "gate": "RTL_PASS",
+  "generated_utc": "2026-10-23T14:36:32.116449+00:00",
+  "scope": "Standalone IP with Croc-compatible type stub; no CPU/SoC/PPA proof",
+  "steps": [
+    {
+      "name": "static",
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "D:\\Python313\\python.exe",
+        "scripts/check_structure.py"
+      ],
+      "log": "reports\\static.log"
+    },
+    {
+      "name": "protocol_model",
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "D:\\Python313\\python.exe",
+        "reference/obi_reference.py"
+      ],
+      "log": "reports\\protocol_model.log"
+    },
+    {
+      "name": "obi_gemm_compile",
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.EXE",
+        "-g2012",
+        "-s",
+        "tb_croc_gemm_obi",
+        "-o",
+        "reports/obi_gemm.vvp",
+        "tb/croc_pkg_stub.sv",
+        "rtl/mac_array_4x4.sv",
+        "rtl/gemm_mmio_4x4.sv",
+        "rtl/croc_gemm_obi.sv",
+        "tb/tb_croc_gemm_obi.sv"
+      ],
+      "log": "reports\\obi_gemm_compile.log"
+    },
+    {
+      "name": "obi_gemm",
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "E:\\project\\qiansai\\.tools\\iverilog\\bin\\vvp.EXE",
+        "reports/obi_gemm.vvp"
+      ],
+      "log": "reports\\obi_gemm.log"
+    },
+    {
+      "name": "stress_compile",
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "E:\\project\\qiansai\\.tools\\iverilog\\bin\\iverilog.EXE",
+        "-g2012",
+        "-s",
+        "tb_croc_gemm_obi_stress",
+        "-o",
+        "reports/stress.vvp",
+        "tb/croc_pkg_stub.sv",
+        "rtl/mac_array_4x4.sv",
+        "rtl/gemm_mmio_4x4.sv",
+        "rtl/croc_gemm_obi.sv",
+        "tb/tb_croc_gemm_obi_stress.sv"
+      ],
+      "log": "reports\\stress_compile.log"
+    },
+    {
+      "name": "stress",
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "E:\\project\\qiansai\\.tools\\iverilog\\bin\\vvp.EXE",
+        "reports/stress.vvp"
+      ],
+      "log": "reports\\stress.log"
+    }
+  ]
+}

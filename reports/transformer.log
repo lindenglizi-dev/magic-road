@@ -1,0 +1,50 @@
+
+== reference ==
+PASS demo: L=2,D=4,F=6, checked output arrays
+PASS edge_5x7: L=5,D=7,F=9, checked output arrays
+PASS random_00: L=1,D=9,F=5, checked output arrays
+PASS sat_1x1: L=1,D=1,F=3, checked output arrays
+PASS Python end-to-end, signed quantization, bank layout, one GEMM: 573 values
+
+== contracts ==
+top ports 92 missing TB name mentions [] (declarations NOT checked)
+sparse memory PASS demo X/three weights
+sparse memory PASS edge_5x7 X/three weights
+sparse memory PASS random_00 X/three weights
+sparse memory PASS sat_1x1 X/three weights
+PASS source-level structural and memory-image checks (NOT SV compiler)
+
+== check_contracts ==
+PASS demo: L=2 D=4, GEMM5 outputs = 8, bank contracts checked
+PASS edge_5x7: L=5 D=7, GEMM5 outputs = 35, bank contracts checked
+PASS random_00: L=1 D=9, GEMM5 outputs = 9, bank contracts checked
+PASS sat_1x1: L=1 D=1, GEMM5 outputs = 1, bank contracts checked
+PASS 84 address assertions, single GEMM, Attention/FFN requant and independent Softmax verified (Python / source-level only)
+
+== mac_compile ==
+(empty output)
+
+== mac_rtl ==
+PASS MAC_SMOKE directed + 120 random/stall beats
+C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\validation\tb_mac_smoke.sv:49: $finish called at 1286000 (1ps)
+
+== top_compile ==
+(empty output)
+
+== rtl_demo ==
+PASS TRANSFORMER BLOCK case=vectors/demo L=2 D=4 F=6 GEMM=7 QKV=24 SCORE=4 P=4 PV=8 ACT=8 HIDDEN=12 FINAL=8 cycles=244
+C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\lesson14_transformer_full\tb\tb_transformer_block.sv:284: $finish called at 2480000 (1ps)
+
+== rtl_edge_5x7 ==
+PASS TRANSFORMER BLOCK case=vectors/edge_5x7 L=5 D=7 F=9 GEMM=7 QKV=105 SCORE=25 P=25 PV=35 ACT=35 HIDDEN=45 FINAL=35 cycles=1178
+C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\lesson14_transformer_full\tb\tb_transformer_block.sv:284: $finish called at 11820000 (1ps)
+
+== rtl_random_00 ==
+PASS TRANSFORMER BLOCK case=vectors/random_00 L=1 D=9 F=5 GEMM=7 QKV=27 SCORE=1 P=1 PV=9 ACT=9 HIDDEN=5 FINAL=9 cycles=486
+C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\lesson14_transformer_full\tb\tb_transformer_block.sv:284: $finish called at 4900000 (1ps)
+
+== rtl_sat_1x1 ==
+PASS TRANSFORMER BLOCK case=vectors/sat_1x1 L=1 D=1 F=3 GEMM=7 QKV=3 SCORE=1 P=1 PV=1 ACT=1 HIDDEN=3 FINAL=1 cycles=139
+C:\Users\lenovo\Documents\ChatGPT\magic_road\projects\transformer\lesson14_transformer_full\tb\tb_transformer_block.sv:284: $finish called at 1430000 (1ps)
+
+FINAL GATE: RTL_PASS (see reports/summary.json)

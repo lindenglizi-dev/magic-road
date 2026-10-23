@@ -1,0 +1,16 @@
+--- old/reference/check_contracts.py
++++ new/reference/check_contracts.py
+@@ -38,9 +38,10 @@
+                checks+=1
+        print(f'PASS {name}: L={l} D={d}, GEMM5 outputs = {l*d}, bank contracts checked')
+     # One and only one GEMM instance in full top.
+-    rtl=(root/'rtl'/'full_attention_top.sv').read_text()
++    rtl=(root/'rtl'/'transformer_block_top.sv').read_text()
+     assert rtl.count('u_gemm (')==1
+     assert rtl.count('u_softmax(')==1
+-    assert rtl.count('u_requant(')==1
+-    print(f'PASS {checks} address assertions, single GEMM and independent Softmax verified (Python / source-level only)')
++    assert rtl.count('u_attn_requant (')==1
++    assert rtl.count('u_ffn_requant (')==1
++    print(f'PASS {checks} address assertions, single GEMM, Attention/FFN requant and independent Softmax verified (Python / source-level only)')
+ if __name__=='__main__': main()

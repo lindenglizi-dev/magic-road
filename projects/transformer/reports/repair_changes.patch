@@ -1,0 +1,118 @@
+--- before/lesson14_transformer_full/rtl/tiled_gemm_4x4_banked_compact.sv
++++ after/lesson14_transformer_full/rtl/tiled_gemm_4x4_banked_compact.sv
+@@ -70,8 +70,9 @@
+     logic [1:0] mac_k;
+     logic [1:0] bank_occupied, bank_ready;
+ 
+-    logic signed [7:0] a_buf [0:1][0:15];
+-    logic signed [7:0] b_buf [0:1][0:15];
++    // Flat address = 16*bank + tile offset; preserve both ping-pong buffers.
++    logic signed [7:0] a_buf [0:31];
++    logic signed [7:0] b_buf [0:31];
+     logic       rsp_inflight;
+     logic [1:0] rsp_tag;
+     logic       rsp_bank;
+@@ -117,8 +118,8 @@
+     genvar g;
+     generate
+         for (g=0; g<4; g=g+1) begin : gen_feeder
+-            assign a_vec[8*g +: 8] = a_buf[next_mac_bank][4*g + mac_k];
+-            assign b_vec[8*g +: 8] = b_buf[next_mac_bank][4*mac_k + g];
++            assign a_vec[8*g +: 8] = a_buf[16*next_mac_bank + 4*g + mac_k];
++            assign b_vec[8*g +: 8] = b_buf[16*next_mac_bank + 4*mac_k + g];
+         end
+     endgenerate
+     mac_array_4x4 u_mac_array (
+@@ -173,8 +174,8 @@
+             cycles_wait_data <= 0;
+             for (b=0; b<2; b=b+1)
+                 for (j=0; j<16; j=j+1) begin
+-                    a_buf[b][j] <= 0;
+-                    b_buf[b][j] <= 0;
++                    a_buf[16*b + j] <= 0;
++                    b_buf[16*b + j] <= 0;
+                 end
+         end else begin
+             done <= 1'b0;
+@@ -197,13 +198,13 @@
+                 for (r=0; r<4; r=r+1) begin
+                     if (rsp_a_needed[r]) begin
+                         if (a_rd_valid[r])
+-                            a_buf[rsp_bank][4*r + rsp_tag] <= $signed(a_rd_data[8*r +: 8]);
++                            a_buf[16*rsp_bank + 4*r + rsp_tag] <= $signed(a_rd_data[8*r +: 8]);
+                         else
+                             mem_protocol_error <= 1'b1;
+                     end
+                     if (rsp_b_needed[r]) begin
+                         if (b_rd_valid[r])
+-                            b_buf[rsp_bank][4*rsp_tag + r] <= $signed(b_rd_data[8*r +: 8]);
++                            b_buf[16*rsp_bank + 4*rsp_tag + r] <= $signed(b_rd_data[8*r +: 8]);
+                         else
+                             mem_protocol_error <= 1'b1;
+                     end
+@@ -271,8 +272,8 @@
+                             rsp_b_needed <= b_rd_en;
+                             rsp_inflight <= 1'b1;
+                             for (r=0; r<4; r=r+1) begin
+-                                if (!a_rd_en[r]) a_buf[ld_bank][4*r+ld_idx] <= 8'sd0;
+-                                if (!b_rd_en[r]) b_buf[ld_bank][4*ld_idx+r] <= 8'sd0;
++                                if (!a_rd_en[r]) a_buf[16*ld_bank+4*r+ld_idx] <= 8'sd0;
++                                if (!b_rd_en[r]) b_buf[16*ld_bank+4*ld_idx+r] <= 8'sd0;
+                             end
+                             if (ld_idx == 2'd3)
+                                 ld_state <= LD_DRAIN;
+--- before/lesson14_transformer_full/tb/tb_transformer_block.sv
++++ after/lesson14_transformer_full/tb/tb_transformer_block.sv
+@@ -13,6 +13,7 @@
+  wire busy,done,error;
+  wire [3:0] x_rd_en,w_rd_en,q_wr_en,key_wr_en,v_wr_en;
+  wire [4*AW-1:0] x_rd_addr,w_rd_addr,q_wr_addr,key_wr_addr,v_wr_addr;
++ wire [31:0] q_wr_data,key_wr_data,v_wr_data;
+  logic [31:0] x_rd_data=0,w_rd_data=0;
+  logic [3:0] x_rd_valid=0,w_rd_valid=0;
+  wire [3:0] q_rd_en,key_rd_en,v_rd_en,p_rd_en,act_rd_en,hidden_rd_en;
+@@ -258,6 +259,9 @@
+          if(pm[bank*DEPTH+addr]!==p_expected[i*L+j]) $fatal(1,"P bank mismatch i=%0d j=%0d",i,j);
+       end
+       for(j=0;j<D;j=j+1)begin
++         bank=i%4;addr=(i/4)*D+j;
++         if(qm[bank*DEPTH+addr]!==out_expected[i*D+j]) $fatal(1,"Q bank mismatch i=%0d j=%0d",i,j);
++         if(km[bank*DEPTH+addr]!==out_expected[L*D+i*D+j]) $fatal(1,"Key bank mismatch i=%0d j=%0d",i,j);
+          bank=j%4;addr=i*((D+3)/4)+j/4;
+          if(vm[bank*DEPTH+addr]!==out_expected[2*L*D+i*D+j]) $fatal(1,"V bank mismatch i=%0d j=%0d",i,j);
+       end
+--- before/lesson14_transformer_full/reference/static_contracts.py
++++ after/lesson14_transformer_full/reference/static_contracts.py
+@@ -14,11 +14,12 @@
+   for tok in line.split(','):
+    name=tok.strip().strip(',')
+    if re.fullmatch(r'[a-zA-Z_]\w*',name):ports.add(name)
+-# Ensure TB declares every top-level port and does not implicitly generate nets from .*.
++# Check name presence only: comments/uses also match, so this cannot prove
++# declarations or widths. Actual elaboration of the TB's .* is authoritative.
+ missing=[]
+ for name in sorted(ports):
+  if not re.search(r'\b'+re.escape(name)+r'\b',tb):missing.append(name)
+-print('top ports',len(ports),'missing tb matching names',missing)
++print('top ports',len(ports),'missing TB name mentions',missing,'(declarations NOT checked)')
+ assert not missing
+ # Upper block instance should be unique; common gemm instantiation unchanged.
+ assert sv.count('u_gemm (')==1
+--- before/lesson14_transformer_full/reference/verify_full_block.py
++++ after/lesson14_transformer_full/reference/verify_full_block.py
+@@ -17,7 +17,14 @@
+         z=np.load(path/"reference.npz")
+         L,D=z["X"].shape
+         F,ats,hs,w1b,w2b=map(int,(path/"ffn_config.txt").read_text().split())
+-        qkv=z["out"].astype(np.int32)
++        shifts=list(map(int,(path/'config.txt').read_text().split()))[2:5]
++        raw=z["X"].astype(np.int32)@z["W"].astype(np.int32)
++        qkv=np.stack([np.clip(raw[i]>>shifts[i],-128,127) for i in range(3)])
++        np.testing.assert_array_equal(raw,z['raw'])
++        np.testing.assert_array_equal(qkv,z['out'])
++        np.testing.assert_array_equal(read_signed(path/'raw.hex',32,(3,L,D)),raw)
++        np.testing.assert_array_equal(read_signed(path/'out.hex',8,(3,L,D)),qkv)
++        count+=raw.size+qkv.size
+         score=qkv[0]@qkv[1].T
+         p=np.minimum(127,(np.array([softmax_fixed(row,scale_for_dim(D)) for row in score])+1)//2)
+         o=p@qkv[2]
