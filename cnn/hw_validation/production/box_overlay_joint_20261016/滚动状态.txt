@@ -1,0 +1,13 @@
+第七批C8：真正64框与AGE连续视频叠加
+当前：两个RTL已冻结；最终013948_bce47e15单次18/18整帧实际厂商模型回归通过，共16,588,800像素/49,766,400 RGB字节逐项一致；旧失败日志保留，物理与严格交付仍未通过。
+范围：仅box_overlay_joint_20261016/；work/roadyolo，不提交推送。
+结构：原三表active唯一异步读口 -> 每行消隐5拍/框串行扫描 -> 1280×18bit行端点图 -> 活动区两类前缀/点事件 -> 原AGE -> 等延迟2拍视频输出。
+目标：64框320拍扫描＋首尾<=330拍，正常行消隐370拍；SOF全清1280项用垂直消隐39970拍，不混入正常行预算。
+真实NMS已RNE并将源整数像素<<8，画框端不再次舍入。person绿优先vehicle青；AGE白字最后优先。
+17整帧15,667,200像素direct/event/RGB一致是CPU证据。实际HEAD112→56lane ROM→解码/NMS→publisher→三表→新框层/旧AGE的7框整帧逐字节一致，年龄由实际time snapshot提供。
+64框扫描320拍；DEfall到line_ready被观察为323拍；冷启动清图加扫描1601拍。官方VTC+mixer实测普通消隐370拍、SOF到首像素消费39971拍；功能拍数不等于物理时序签核。
+回归工具问题：ModelSim十进制plusarg把UINT64_MAX读成00000000ffffffff，已独立复现并仅改TB使用HEX；unknown_age通过。共享work库曾产生vopt-6锁警告，仅将各case工作库隔离后完整重跑通过，未放宽警告检查或改DUT。厂商INIT_FILE已知警告继续保留，不称零警告。
+有效画面期间随机完整64框表到达，pending等待下一消隐SOF切换的最终同TB补充014013_10a83d51通过；变化原图/两拍同步/实时撤框与清图、准备迟到、非法count65协议补充均通过。
+23,040bit行状态理想360Slice只是容量推算；含深度mux/控制/AGE的<=600Slice及0新增ERAM/DSP目标均未映射。C8不运行TD。
+严格gate_attempt3：renderer450 errors/0 strict warnings；wrapper102 errors/5 strict warnings；compile/profile通过，其余原八门状态见原始报告。ModelSim通过不覆盖这些失败。格式项单列，不为本批做无关格式重写。
+不训练、不改生产、不新增DDR/slotcredit/视频接口、不生成位流、不上板/Flash、不新增例外、不改冻结五算术核。

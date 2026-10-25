@@ -1,0 +1,113 @@
+{
+  "modules": [
+    {
+      "name": "road_frontend_load_sequence",
+      "feature": "frontend_loop",
+      "rtl_path": "road_frontend_load_sequence.v",
+      "description": "固定阶段与计数器产生原命令头，窄ROM保存数值。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "100MHz计算时钟",
+            "description": "100MHz计算时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "低有效异步复位",
+            "description": "低有效异步复位"
+          },
+          {
+            "name": "i_fetch",
+            "direction": "input",
+            "width": 1,
+            "role": "锁存当前命令",
+            "description": "锁存当前命令"
+          },
+          {
+            "name": "i_advance",
+            "direction": "input",
+            "width": 1,
+            "role": "已完成命令推进",
+            "description": "已完成命令推进"
+          },
+          {
+            "name": "o_command",
+            "direction": "output",
+            "width": 64,
+            "role": "稳定命令返回",
+            "description": "稳定命令返回"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "CNN100MHz"
+      },
+      "reset": {
+        "assertion": "异步低有效复位清零阶段、计数和命令输出",
+        "release": "上游同步释放；重新从1024项装表开始"
+      },
+      "behavior": [
+        "i_fetch上升沿锁存当前命令；i_advance上升沿推进一项；两者不得同拍。",
+        "输出在非FETCH期间保持，推进阶段不修改已经返回的命令。",
+        "固定十六个Stem tile和四个down2 tile；6092条命令顺序与原程序逐位一致。",
+        "RGB零扩展，参数32位原样；SiLU符号扩展；像素第九位保留padding kind。"
+      ],
+      "constraints": [
+        "Read-only ROM initialization is checked separately from board readback.",
+        "No new timing exceptions for mailbox; existing bounded display CDC retained.",
+        "TEST_ONLY coefficients, no deployed-model precision or full CNN FPS claim."
+      ],
+      "corner_cases": [
+        "阶段边界、ROM首末项、512拍停顿、参数中途复位、最终END保持"
+      ],
+      "verification_cases": [
+        "原程序逐字比较17704次、13例数值及故障周期一致、双时钟集成一致"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "fetch_hold",
+          "title": "同步取数与命令完成推进",
+          "scenario": "advance_hold",
+          "description": "FETCH沿返回当前命令；等待期间保持；ADVANCE只推进游标，下一FETCH才换返回。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "fetch",
+                "wave": "010...10"
+              },
+              {
+                "name": "advance",
+                "wave": "0...10.."
+              },
+              {
+                "name": "command",
+                "wave": "x=....=.",
+                "data": [
+                  "wordN",
+                  "wordN+1"
+                ]
+              },
+              {
+                "name": "cursor",
+                "wave": "=....=..",
+                "data": [
+                  "N",
+                  "N+1"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

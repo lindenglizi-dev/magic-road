@@ -1,0 +1,104 @@
+{
+  "name": "feature_sppf",
+  "modules": [
+    {
+      "name": "tb_feature_sppf_client",
+      "rtl_path": "tests/tb_feature_sppf_client.v",
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "verification_completion",
+            "description": "所有当前场景检查完成"
+          }
+        ]
+      },
+      "behavior": [
+        "一个客户及唯一旧算术owner，顺序执行CSP4再SPPF，跨块保留真实写回内存",
+        "只注入CSP4初始CPU源，SPPF从真实CSP4输出读取，不预填SPPF中间值",
+        "卷积acc/pre/SiLU/post和池化signed max逐项核对，四路concat逐字节核验",
+        "实际参数/读/核/写/屏障反压、pool中共同复位重跑及检查器负例分列"
+      ],
+      "constraints": [
+        "固定图非任意引擎，核心端口/II/数值/复位不改",
+        "CSP2 Cin12尾mask0f，CSP4物理尾tile仅两行有效，禁止y18/y19写",
+        "同实例顺序运行不等于down3/down4已接入或连续CNN",
+        "4ERAM为容量组织目标，未实际映射/综合/物理时序",
+        "100M是整机1FPS目标，不是本组件已证明整机帧率"
+      ],
+      "corner_cases": [
+        "忙时block/start扰动，跨块缓存完全覆盖，随机背压保持payload",
+        "非法块、错误参数block、错误屏障block与真实acc负例",
+        "共同复位、SiLU重装、CSP4尾行与CSP2尾通道",
+        "池化负数/极值及逻辑pad=-128区别于物理尾padding0",
+        "池化长写背压及共同复位"
+      ],
+      "verification_cases": [
+        "同实例真实CSP4写回结果供SPPF读取，全部conv和pool逐项对拍",
+        "正常、随机、pool中共同复位后完整重跑、长写反压、实际pool检查器负例"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "select",
+          "title": "固定块只在启动握手锁存",
+          "scenario": "selection",
+          "description": "中间省略全幅计算；done仍busy，返回idle后才接受下一块",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p..|......"
+              },
+              {
+                "name": "start_accept",
+                "wave": "010|000010"
+              },
+              {
+                "name": "input_block",
+                "wave": "==.|=...=.",
+                "data": [
+                  "2",
+                  "3",
+                  "15",
+                  "3"
+                ]
+              },
+              {
+                "name": "locked_block",
+                "wave": ".=.|....=.",
+                "data": [
+                  "2",
+                  "3"
+                ]
+              },
+              {
+                "name": "busy",
+                "wave": "0.1|110.1."
+              },
+              {
+                "name": "done",
+                "wave": "0..|010..."
+              },
+              {
+                "name": "start_ready",
+                "wave": "1.0|001.0."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

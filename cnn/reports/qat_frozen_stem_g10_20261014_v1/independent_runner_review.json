@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "role": "independent_frozen_stem_runner_review",
+  "reviewed_at": "2026-10-14",
+  "repository": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "branch": "work/roadyolo",
+  "scope": "Read-only review of the isolated frozen-Stem ten-update QAT control wrapper, its unit test, inherited base-runner paths, prospective cache/source/protocol closure, checkpoint/export invariants, watchdog launch, and generic development17 evaluator compatibility. The reviewer did not start the CPU integration gate, initialize CUDA, use a GPU, train, evaluate, or modify production source.",
+  "verdict": {
+    "fresh_execute_path": "PASS_FOR_COORDINATOR_OWNED_CPU_GATE",
+    "unresolved_execution_blockers": 0,
+    "formal_acceptance": false,
+    "summary": "No unresolved blocker was found for the single fresh execute() path. The wrapper changes only the optimizer/clipping parameter set by freezing stem.conv weight and bias; inherited state_dict/named_parameters, replay, cache, SGD hyperparameters, source FP32 checkpoint, maxabs package, watchdog, checkpoint/resume, and export paths remain intact. The one review finding about weak semantic binding of preparatory JSON artifacts was fixed before the coordinator started the CPU gate."
+  },
+  "review_findings": [
+    {
+      "id": "FROZEN-STEM-RUNNER-001",
+      "severity": "P2",
+      "status": "fixed_before_CPU_gate",
+      "files": [
+        "cnn/hw_validation/production/train_qat_frozen_stem.py:46",
+        "cnn/hw_validation/production/train_qat_frozen_stem.py:52"
+      ],
+      "finding": "The first reviewed version accepted the prior decision using only update count/continue_training and accepted the gradient inspection using only optimizer_updates/finite_gradients. A stale or substituted JSON artifact could therefore be hashed into the new identity without proving it belonged to the intended rejected QAT run and unchanged base inputs.",
+      "current_resolution": "prepare() now requires the exact prior experiment id, rejected development17 status, selected FP32 checkpoint hash, complete inspection identity, complete base protocol, and exact source closure including the inspection script. The final wrapper identity additionally binds hashes of both JSON artifacts.",
+      "execution_decision": "The coordinator-owned CPU gate was started only after this fix, so its identity is based on the corrected source."
+    }
+  ],
+  "positive_checks": [
+    "FrozenStemQAT.parameters() filters only tensors whose requires_grad is false; make_model() marks only stem.conv weight and bias false. The inherited named_parameters() and state_dict() keep all 134 parameters while parameters() yields the 132 trainable parameters (train_qat_frozen_stem.py:25-39).",
+    "The inherited update path obtains gradients, divides by the update-wide foreground count, clips, steps, and clears gradients only through model.parameters(); therefore the frozen Stem is excluded from gradient validation, clipping, SGD, weight decay, and momentum state while the other 132 parameters follow the unchanged base algorithm (train_qat.py:105-148).",
+    "The wrapper update snapshots both Stem tensors before every update, checks exact equality afterward, requires no gradient and no optimizer state for either tensor, and records per-update evidence (train_qat_frozen_stem.py:73-83).",
+    "Checkpointing still uses the inherited full state_dict(), so both frozen tensors remain in update_0000 through update_0010 and in any resume checkpoint. Completion validates all ten candidate states against the frozen replay cursor and compares each Stem tensor bit-exactly with update_0000 (train_qat.py:151-157; train_qat_frozen_stem.py:121-131).",
+    "Completion also requires every history row to contain frozen_stem_unchanged, binds last.pt to the worker event, requires export parity, and compares every exported INT8/INT32 field of stem.conv with the original maxabs package (train_qat_frozen_stem.py:121-142).",
+    "install() redirects the inherited base OUT, RUN, CPU gate, prepare, model factory, and update callback in the worker process. execute() launches the wrapper module itself, so the subprocess receives the same process-local adapter instead of silently running the unfrozen base module (train_qat_frozen_stem.py:86-89, 107-108, 166-178).",
+    "The fresh path refuses an existing run or execution directory, is planned for exactly ten updates and 220 presentations, retains the 100-update overall cap and 75 C/30-minute protection settings, and declares no automatic retry or continuation (train_qat_frozen_stem.py:92-112).",
+    "The wrapper copies only the previously passed cache receipt and verifies its exact hash; inherited prepare() then independently opens and validates that cache against the frozen dataset snapshot and pinned cache index (train_qat_frozen_stem.py:167-173; train_qat.py:42-55).",
+    "The new protocol changes only its name plus explicit frozen layer/fields and prior-update metadata. The starting FP32 checkpoint, maxabs package graph/scales/payload, dataset/content, replay schedule, cache identities, optimizer hyperparameters, microbatch 2 accumulation, and ten 22-sample orders remain inherited from the hash-pinned base runner.",
+    "The generic evaluator permits the wrapper's additional identity and protocol fields, requires the completed candidate identity in the export manifest, and consumes the corrected integration_check_v2 resume gate. Its fixed purpose string remains acceptable because experiment identity and frozen protocol are nested and compared exactly (evaluate_qat.py:41-122, 166-180)."
+  ],
+  "source_sha256": {
+    "cnn/hw_validation/production/train_qat_frozen_stem.py": "6b23307d050c34e524ce86c27dccea2f72bcb2cbd1cf9c174f0094b2659ab795",
+    "cnn/hw_validation/production/test_qat_frozen_stem.py": "e352370d976c5ea5d73dabc6d506ea84f162c6d5b5c694becc42c559ab92eafe",
+    "cnn/hw_validation/production/train_qat.py": "33086b5725c84ce687b91e869ee954befd4bb910d8a50101a3012d334921ae35",
+    "cnn/hw_validation/production/qat_exact.py": "2c03d9eef2378ee1304e0fe0fe607fd8411f5eb7486058d6f1fb07d6f768821c",
+    "cnn/hw_validation/production/evaluate_qat.py": "c68406af54f8398c5c3774be69a064adec85c886d66f6951eaf0c8301da6dd08",
+    "cnn/hw_validation/production/inspect_qat_gradients.py": "03ebdbf8e49a9d21465a663794358913b14e623519498d5da2cbc90fd5381b35",
+    "cnn/reports/qat_frozen_stem_g10_20261014_v1/gradient_inspection.json": "b61edc0a2d37d92e2233a0165308559e2bf219bfb758c154e01a10e9bf2ca8d1",
+    "cnn/reports/qat_g10_20261013_v1/decision.json": "28f065df36b0cf5338a10436fab5096757a0bc993fb33b0a34fbb4bc7035be0a",
+    "cnn/reports/qat_g10_20261013_v1/cache_receipt.json": "0dacdeef4084edde6a2146412ce926a9a4e55eecaf292aff113ea4508654c7eb"
+  },
+  "verification": {
+    "performed": [
+      "Confirmed repository E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision and branch work/roadyolo; unrelated dirty-worktree content was left untouched.",
+      "Independently ran test_qat_frozen_stem with CUDA hidden and bytecode disabled after the preparation-binding fix: 1 test passed in 3.718 seconds.",
+      "The test instantiated the real package-backed model and verified 132 yielded trainable parameters versus 134 inherited named parameters, exact Stem preservation across clip plus SGD, no Stem gradients, and no Stem optimizer state.",
+      "Ran a CPU-only static evaluator contract probe using a ten-update frozen-Stem-shaped checkpoint identity and manifest; _validate_checkpoint and _validate_candidate both accepted the added identity/protocol fields.",
+      "Confirmed the base train_qat.py SHA256 remains the required 33086b5725c84ce687b91e869ee954befd4bb910d8a50101a3012d334921ae35."
+    ],
+    "not_performed": [
+      "No CUDA API, GPU check, GPU training, or development17 evaluation was run by this reviewer.",
+      "No duplicate CPU integration gate was run; the coordinator owns the in-progress full two-update continuity/resume gate.",
+      "No checkpoint, package, cache, model weight, or production source was modified by this reviewer.",
+      "This pre-execution review does not claim model accuracy, deployment acceptance, or FPGA evidence."
+    ]
+  },
+  "remaining_risks": [
+    "The full CPU continuity/resume gate, GPU UUID/forward/gradient gate, protected ten-update run, per-checkpoint Stem audit, export parity, and development17 diagnostic evaluation remain future evidence at this review point.",
+    "The worker GO handshake is inherited and procedural rather than cryptographically authenticated; only execute() through run_protected() is authorized, and direct worker invocation remains outside the approved path."
+  ]
+}

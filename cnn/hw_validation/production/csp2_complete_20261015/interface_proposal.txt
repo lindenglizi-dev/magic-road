@@ -1,0 +1,54 @@
+完整CSP2：外围接口提案与缓存生命周期
+日期：2026-10-15；只供C7/C8审阅，不代表已改动共享owner/真实DDR/ROM协议。
+
+替代对象
+road_csp_complete_client 替代旧 road_csp_tile_integrated 内固定首残差的任务/取数/缓存调度部分。
+不替代 road_csp_first_probe 的五级写回或五个冻结算术核；不把旧顶层连同另一套MAC并排合入。
+候选client内算术实例数=0。功能仿真仅在TB中实例化一套原包装与核。
+
+连接唯一算术owner所需信号（全部100MHz同域）
+请求：valid/ready、first/last、input_mask8、activation64、weight192、bias96、output_mask3、tags48、addresses96、pre_multiplier96、pre_shift18、post_multiplier32、post_shift6、residual1、bypass24。
+返回：output_valid/ready、tag16、address32、data8、sum signed9、fault1。
+这些载荷位宽及数学意义与有效旧包装一致；原核内部接口、II、signed33归约、INT32末组检查、三路原子故障、RNE与SiLU均不改动。
+新owner wrapper外提包装属于待批准适配差异；本候选没有修改C7任何owner文件。
+owner在本CSP任务结束前不得切换模型/表/数值契约，当前层屏障和最后真实写完成之前不切换到其它客户。
+
+参数读取提案
+请求valid/ready + layer3/channel5/group2/window3。
+响应valid/ready + 同一组身份 + weight192 + parameter248 + error。
+parameter布局：bias[95:0]，三路pre multiplier[191:96]，三路6bit pre shift[209:192]，post multiplier[241:210]，post shift[247:242]。
+包仍为原OIHW/uint8 shift；参数reader须先验证完整uint8移位范围0..62再压到6bit，非负signed32乘数不能截掉符号位伪造合法值。
+DW三路复制同一通道参数，按空间并集映射权重；PW三路对应连续输出通道。首组与后续组参数必须相同。
+请求等待ready时身份保持；响应只在等待该请求时消费；响应身份不符/错误/组间量化参数漂移粘滞拒绝。
+本批TB从同一冻结包字段模拟该服务，不实现第二个ROM reader；C7可把现reader/prefetch映射到上述请求。
+
+逻辑内存提案
+单一未完成逻辑字节读：request valid/ready/address32；response valid/ready/address32/data8/error。
+写：valid/ready/address32/data8/sum9；只在共同接受沿更新阶段存储。
+层屏障：valid + layer3，外部ready携同layer，含义必须是本阶段此前写已可供后续读，而非AW/W接受或任意固定延时。
+屏障是有条件接口，不是当前PAXI已具备的提交证据。C8若暂缺可见性保证，只能继续受控端点联调，禁止据此发布生产READY。
+逻辑字节到native地址只由C8唯一边界转换，本client不换算、也不另分配52–64MiB。
+
+缓存与存储生命周期
+本功能候选以受控外部阶段存储代替原固定192字节片上DW缓存，明确尚不是低等待部署调度。
+source down2.pw 0x035B4000：完整221184字节；上半12通道旁路一直保留到末端融合的最后一次源读响应被消费。
+DW0 0x035EA000：第一残差真实6x6区域（图边裁剪）；其实际输出全部写接受并经阶段屏障确认后PW0读取。
+residual0/PW0 alias 0x03605000：保留到DW1及PW1旁路读全部响应消费；不能在DW1取数后立即释放，因为PW1还要读原残差。
+DW1 0x03620000：第二4x4区域，阶段屏障后PW1读取。
+residual1/PW1 alias 0x0363B000：保留到fuse三组输入全部读取和消费，原始未加残差PW输出不先写入。
+fuse 0x03656000：4x4x24最终结果；最终层屏障完成后该tile才完成。
+concat为读视图：输入0..11来自source前12通道，12..23来自residual1；不会额外写完整concat张量。
+固定图仍不启用全网liveness复用。跨tile共享中间地址只在先前任务退休/可见且服务无未完成请求后才可重算相同值。
+
+可观察完成与取消
+每个任务最后真实写接受 -> flag_task_done寄存脉冲 -> 任务推进。
+每层最后任务退休 -> o_barrier_valid -> 匹配层的真实可见性确认 -> 下一层。
+末层屏障确认 -> o_done单拍 -> 空闲。copy/accept/retire/visible不能互换。
+source和各缓存的最后读事件可在read response valid&&ready及其地址、当前阶段/输出组轨迹观察；当前不单独输出生产槽释放许可。
+复位为所有参与者共同异步断言；服务必须撤销旧response和所有未完成请求，释放规则沿既有顶层同步释放。取消/错误后busy保持、fault粘滞，不声称实现独立CNN取消排空。
+同拍故障或取消优先阻止新写；不能确认归属的非法结果不对外提交。此前已合法接受的旧写保留，不回滚伪造计数。
+
+性能与实现边界
+逐字节串行读取、每组参数服务和阶段屏障是最小功能实现，有明确等待上限问题；不把它称为最终5FPS调度。
+整合时可由唯一DDR服务复用16B缓存/突发读取，C7复用其权重驻留机制；不为优化在本目录另建DMA或更改MAC II。
+源闭包与本地仿真命令由run.py和frozen候选记录。TD本批不启动；实际单owner联合顶层与真实I/O约束由C7选定后统一实现。

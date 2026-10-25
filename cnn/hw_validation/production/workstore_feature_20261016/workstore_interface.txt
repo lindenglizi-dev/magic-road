@@ -1,0 +1,21 @@
+WIF1 准确接口与厂商模型验证；2026-10-16；实现所有权C4，C2只消费。
+模块 road_feature_workstore，单100MHz，i_clk/i_rstn（共同低有效复位）。
+byte请求：i_byte_req_valid / o_byte_req_ready / i_byte_req_write / i_byte_req_addr[11:0] / i_byte_req_data[7:0]。
+byte响应：o_byte_rsp_valid / i_byte_rsp_ready / o_byte_rsp_data[7:0] / o_byte_rsp_error。
+weight请求：i_weight_req_valid / o_weight_req_ready / i_weight_req_write / i_weight_req_group[4:0] / i_weight_req_data[191:0]。
+weight响应：o_weight_rsp_valid / i_weight_rsp_ready / o_weight_rsp_data[191:0] / o_weight_rsp_error。
+o_fault：任一越界接受后粘滞，直到共同复位；错误仍完成响应，不静默丢请求。
+byte合法0..3071；weight合法0..23。非法接受不触碰RAM，返回error/data0。
+每通道最多一个未退休，允许旧响应接受同拍接收新请求；两通道可并行。
+响应在真实native读取得/所有写word提交后出现；写响应data0。valid&&!ready保持payload。
+同通道请求序列化，避免读写碰撞。复位取消旧valid、不复位RAM内容；消费者用前完整覆盖，不依赖初值。
+候选组织：byte两块2048×8，地址bit11选bank；weight两块512×40并行80bit/group三word，最后word高48bit0。
+实际RTL：rtl/road_feature_workstore.v，SHA256 0d9f78544ce6e726a8ff042d7be0f5a2aee7d717bfbde0495a98a78dea25eb1c。
+四实例均SP/NOREG、IMPLEMENT=20K、CLKMODE=ASYNC；A口单读/写、B口停用；INIT/FILL NONE。
+厂商模型真实case0/case1及检查器负例case99通过，storage_frozen保留；未作物理映射通过声明。
+K0为请求握手沿：byte K1实际native访问、K2后响应valid；weight K1/K2/K3访问、K4后完整响应valid。
+上述byte2周期、weight4周期由同一封存TB实际端点观察确认（native_endpoint_observation_attempt3/receipt.json），不是仅由源码推断。
+ready持续1时byte最早K3、weight最早K5消费旧响应并同拍接受新请求；两通道独立，不要求消费者固定等待几拍。
+reset释放首个上升沿置内部running，随后才开放ready；不得把这一沿当请求接受。部分写不回滚，取消后必须重新完整覆盖。
+RTL真实4ERAM映射与集成资源仍待本批诊断综合，不用模型功能通过替代资源或100MHz时序证据。
+全系统owner仲裁不在本仓内；切任务前两通道响应必须排空且权重写已确认。

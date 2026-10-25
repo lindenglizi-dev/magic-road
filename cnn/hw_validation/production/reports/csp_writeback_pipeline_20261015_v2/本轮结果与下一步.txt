@@ -1,0 +1,43 @@
+五级写回RTL候选：本轮结果与下一步
+日期：2026-10-15；分支work/roadyolo；仅本地保存。
+
+一、实际完成
+在独立csp_writeback_pipeline目录实现M比较捕获、S旁路/地址选择、A signed9加法、C上下界标志、W三路固定预留槽。
+首组冻结上下文；seen与外部写提交分开。PP接收不受外部写ready反压，收齐即关闭PP ready。未知tag、重复tag、rawmode、非INT8符号扩展和收齐后额外valid粘滞取消。
+按最低剩余lane发布，只有最后实际外部写握手释放owner。同步坏token允许同拍旧合法写完成；边沿前core fault立即阻止提交。共同复位取消所有有效位并要求核心重新装表。
+保留旧基线，冻结五个算术核、模型权重和生产顶层均未更改。没有训练、综合、布局布线、位流、板卡或Flash操作。
+
+二、本轮实际验证
+ModelSim编译0 error/0 warning。原17项真实核心回归全部通过。
+真实回归仍逐项检查acc/pre/SiLU/post；残差中间值检查移到实际C级，外部输出仍检查sum、data、tag、address及背压保持。没有为配合流水跳过检查。
+独立写回边界trace共534084拍，逐拍与已封存Python模型一致：65536组INT8残差输入对；166个冻结任务各正常/随机背压；7种mask；15种到达排列；10种各级reset/external fault取消；9个故障场景；两个同tag复用任务。
+trace强制MAC/PP边界，只证明写回合同；17项真实核心回归不使用这些新增force。两类证据不能混淆。
+额外负例改变首拍expected-ready，真实仿真检查器在cycle0捕获不一致，未误报通过；详见negative_receipt.json及run/trace_negative.log。
+哈希在运行前后及封存时复核。final_checks.json列出数量、真实源码闭包及边界。独立只读复核未发现写回功能阻断，结论另存independent_review.txt。
+
+三、实际周期
+普通160任务：7167→7807拍，增加640拍，即每任务4拍。
+输入气泡/随机背压case1：7802→8429；长背压case2：7679→8319。
+6任务饱和检查：271→295拍，增加24拍。
+其他有完整周期的用例见cycle_comparison.json。
+7807现在是候选RTL局部测量，不再仅是模型推算；仍不包含整网、真实DDR、图像缩放或NMS，不能换算整网FPS。随机测试受LFSR相位影响，不作为同一stall轨迹优化对照。
+
+四、严格门禁与已知限制
+对最终候选与五个真实冻结核心源执行了严格门禁source_closure_gate.json：2640 errors、5 strict warnings，delivery_ready=false。
+八项矩阵：compile passed；ast/readability/comment/naming/profile failed；testbench/toolchain not_requested。这里的not_requested是该静态工具未采集外部证据；上面的ModelSim实际执行记录另行保留。
+该数量包括完整五核源码，不能与旧单包装324条直接比较、当成本轮新增2640个功能错误。wrapper_findings.json单列包装发现。
+组合控制与源锥检查仍未收口；$signed解析、风格/命名、厂商RAM边界和规范化器的空case解析问题保留。没有添加假接口、放宽规则或声称物理时序通过。
+readable-verilog-generator要求“Generated deliverables must pass the formatter-backed gate with zero errors and zero strict warnings.” 当前仅可作为功能验证候选，严格交付仍被阻断。
+规范化失败没有覆盖实际仿真通过的源。三个模块均已生成同名规格和SVG周期图；规格结构与wrapper/trace接口可核对，历史TB的task输入被规格提取器误识别为模块端口的问题单独保留，未伪造通过。
+首次v1因运行器未创建run目录而未启动仿真；修复后独立v2通过，v1失败现场保留。早期before_format_gate不能替代最终source_closure_gate。
+
+五、下一批具体工作
+固定集成输入见integration_sources.json。已复制选定的调度器和DW缓存快照，避免混用其他线路仍在修改的文件。联合实例只允许共享一套24MAC及量化核。
+先处理与接入有关的控制/源闭包阻塞，并确定实际task_done导出；再把调度器、halo/参数取数、DW缓存和本候选接成单start硬件顶层。
+DW实际写接受驱动缓存，PW从当前tile缓存响应取数；task_done必须绑定最后有效输出真实写接受。缓存重复使用不能靠重置整个计算核和重新装表。
+通过条件：TB只供应源数据、存储端背压与检查；不替代任务发射、DW→PW存储或任务完成；全400个冻结输出与中间值、地址/标识一致，给出联合端点实测周期。
+当前没有整网、真实DDR、资源或setup/hold新通过记录。QAT-G10仍是精度未达标联调基线。
+
+主要证据入口
+status.json、final_checks.json、case_receipts.json、trace_coverage.json、negative_receipt.json、cycle_comparison.json、input_binding.json、integration_sources.json、source_closure_gate.json。
+可执行入口：cnn/hw_validation/production/run_csp_writeback_pipeline.py；规格动作spec、冻结动作prepare、仿真动作execute。每次新候选必须指定新的--out目录，保留旧失败现场。

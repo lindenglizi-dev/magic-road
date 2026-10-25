@@ -1,0 +1,270 @@
+{
+  "feature": "road_rom_two_client_arbiter",
+  "name": "road_rom_two_client_arbiter",
+  "rtl_path": "rtl/road_rom_two_client_arbiter.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "input",
+        "width": 1,
+        "role": "clk",
+        "clock_domain": "i_clk",
+        "description": "统一100MHz上升沿时钟"
+      },
+      {
+        "name": "i_rstn",
+        "direction": "input",
+        "width": 1,
+        "role": "rstn",
+        "clock_domain": "i_clk",
+        "description": "共同低有效异步复位，本地两级同步释放"
+      },
+      {
+        "name": "i_param_request_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "param_request_valid",
+        "clock_domain": "i_clk",
+        "description": "param_request_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_param_request_addr",
+        "direction": "input",
+        "width": 13,
+        "role": "param_request_addr",
+        "clock_domain": "i_clk",
+        "description": "param_request_addr：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_param_response_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "param_response_ready",
+        "clock_domain": "i_clk",
+        "description": "param_response_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_lut_request_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_request_valid",
+        "clock_domain": "i_clk",
+        "description": "lut_request_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_lut_request_addr",
+        "direction": "input",
+        "width": 13,
+        "role": "lut_request_addr",
+        "clock_domain": "i_clk",
+        "description": "lut_request_addr：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_lut_response_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_response_ready",
+        "clock_domain": "i_clk",
+        "description": "lut_response_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_rom_request_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "rom_request_ready",
+        "clock_domain": "i_clk",
+        "description": "现有reader允许锁定一个13位物理词地址"
+      },
+      {
+        "name": "i_rom_response_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "rom_response_valid",
+        "clock_domain": "i_clk",
+        "description": "reader完整160位响应有效，不携带标签"
+      },
+      {
+        "name": "i_rom_response_data",
+        "direction": "input",
+        "width": 160,
+        "role": "rom_response_data",
+        "clock_domain": "i_clk",
+        "description": "低8位对应物理词第0字节的160位载荷"
+      },
+      {
+        "name": "i_rom_fault",
+        "direction": "input",
+        "width": 1,
+        "role": "rom_fault",
+        "clock_domain": "i_clk",
+        "description": "reader粘滞故障，只由共同复位清除"
+      },
+      {
+        "name": "o_param_request_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "param_request_ready",
+        "clock_domain": "i_clk",
+        "description": "param_request_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_param_response_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "param_response_valid",
+        "clock_domain": "i_clk",
+        "description": "param_response_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_param_response_data",
+        "direction": "output",
+        "width": 160,
+        "role": "param_response_data",
+        "clock_domain": "i_clk",
+        "description": "param_response_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_lut_request_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_request_ready",
+        "clock_domain": "i_clk",
+        "description": "lut_request_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_lut_response_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_response_valid",
+        "clock_domain": "i_clk",
+        "description": "lut_response_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_lut_response_data",
+        "direction": "output",
+        "width": 160,
+        "role": "lut_response_data",
+        "clock_domain": "i_clk",
+        "description": "lut_response_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_rom_request_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "rom_request_valid",
+        "clock_domain": "i_clk",
+        "description": "唯一ROM读口请求有效，等待ready时词地址保持"
+      },
+      {
+        "name": "o_rom_request_addr",
+        "direction": "output",
+        "width": 13,
+        "role": "rom_request_addr",
+        "clock_domain": "i_clk",
+        "description": "20字节物理词号，合法0至7167"
+      },
+      {
+        "name": "o_rom_response_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "rom_response_ready",
+        "clock_domain": "i_clk",
+        "description": "消费当前ROM读响应；取消排空也必须握手"
+      },
+      {
+        "name": "o_fault",
+        "direction": "output",
+        "width": 1,
+        "role": "fault",
+        "clock_domain": "i_clk",
+        "description": "本组件故障状态，不得发布为成功表"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "local_sync_two_flops_or_owner_gating"
+  },
+  "parameters": {},
+  "behavior": [
+    "One client valid&&ready latches owner and addr13 into single transaction slot; a registered ROM request is forwarded next cycle. Admission is distinct from physical reader acceptance.",
+    "Only owner response valid&&ready releases transaction; reader return payload/valid routed only to owner. No OR ready, no broadcast return.",
+    "Initial preference parameter client; after each admitted request preference switches to other owner. Sole requester wins regardless of preference. At most one other admitted request can bypass a continuously pending client, conditional on eventual physical ready/return and owner-ready.",
+    "No arbiter cancel port. Existing LUT service drains logical ROM transaction accepted by arbiter, including queued-before-physical-read. Arbiter never clears owner on cancellation.",
+    "Sticky global fault on reader fault or illegal FSM; owner not falsely retired. Original prefetch has no ROM fault input: expose global fault and require common reset; do not fabricate a successful response."
+  ],
+  "constraints": [
+    "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+    "不改变冻结算术核/数值，不复制公共存储"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "both continuous requesters alternate",
+    "single requester without starvation",
+    "owner held while response backpressured",
+    "nonowner ready cannot retire",
+    "request address stable",
+    "true down2 parameters and SiLU versus frozen manifest",
+    "dynamic sigmoid1024/exp256 while prefetch active",
+    "random client sink backpressure",
+    "LUT cancel before admission and after admission late return",
+    "new token isolation",
+    "common reset during ownership/response"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "客户端接受和物理reader接受分拍；图省略reader实际等待。owner响应保持到消费才允许下一客户，不能以非owner ready释放。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p........."
+          },
+          {
+            "name": "param_req_valid",
+            "wave": "01......0."
+          },
+          {
+            "name": "lut_req_valid",
+            "wave": "01......0."
+          },
+          {
+            "name": "client_accept",
+            "wave": "010.....10"
+          },
+          {
+            "name": "owner",
+            "wave": "=.......=.",
+            "data": [
+              "PARAM",
+              "LUT"
+            ]
+          },
+          {
+            "name": "rom_req_valid",
+            "wave": "0.10.....1"
+          },
+          {
+            "name": "owner_rsp_valid",
+            "wave": "0....1..0."
+          },
+          {
+            "name": "owner_rsp_ready",
+            "wave": "0......10."
+          }
+        ]
+      }
+    }
+  ]
+}

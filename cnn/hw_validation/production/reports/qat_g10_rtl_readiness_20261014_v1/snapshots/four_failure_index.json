@@ -1,0 +1,36 @@
+{
+  "functional_failures_unresolved": [],
+  "physical_attempts": [
+    {
+      "directory": "physical",
+      "result": "TOOL_CRASH",
+      "returncode": 3221225477,
+      "code": "0xC0000005",
+      "stage": "placement, congestion/pseudo-net processing",
+      "evidence": ["td.log", "td.command.json", "minidump-20261014-222658.dmp"],
+      "interpretation": "Access violation; not a timing result or proven RTL fault"
+    },
+    {
+      "directory": "physical_attempt2",
+      "result": "INVALID_TIMING_COVERAGE",
+      "coverage_percent": 2.43,
+      "clock_summary_empty": true,
+      "operation": "Resume gate.db with flow.thread=1",
+      "evidence": ["all_endpoints.timing", "td.log", "resume_origin.json", "resumed_parameters.rpt"],
+      "interpretation": "Placement and routing completed, but source PLL clock derivation was not restored; positive slack is not accepted"
+    },
+    {
+      "directory": "physical_attempt3",
+      "result": "TOOL_CRASH",
+      "operation": "Fresh complete elaboration/synthesis/place/route, flow.thread=1, same RTL and original SDC",
+      "interpretation": "Flow table showed thread=1 before synthesis but actual placer still ran 24 threads and crashed at the same pseudo-net stage; next candidate reapplies the setting immediately before placement"
+    }
+  ],
+  "strict_delivery_ready": false,
+  "initial_rtl_gate": {"errors": 779, "strict_warnings": 20},
+  "full_gate": {"rtl_errors": 779, "rtl_strict_warnings": 20, "tests_errors": 469, "tests_strict_warnings": 0},
+  "tool_invocation_issues": [
+    "Dependency preflight first ran outside the Git/AGENTS project root; rerun from new validation directory passed",
+    "Interface extraction initially invoked workflow CLI instead of registered external_interface_stubs; registered tool then succeeded"
+  ]
+}

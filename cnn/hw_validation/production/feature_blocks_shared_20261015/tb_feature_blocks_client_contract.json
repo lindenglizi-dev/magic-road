@@ -1,0 +1,105 @@
+{
+  "name": "feature_blocks",
+  "modules": [
+    {
+      "name": "tb_feature_blocks_client",
+      "rtl_path": "tests/tb_feature_blocks_client.v",
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "verification_completion",
+            "description": "所有当前场景检查完成"
+          }
+        ]
+      },
+      "behavior": [
+        "start握手锁存固定块2/3/4，busy期间不得切换，非法选择故障拒绝",
+        "一个FSM、3072B工作缓存、24项权重bank，复用唯一外部算术owner",
+        "CSP2五阶段、CSP3/4七阶段，全幅整层可见性后推进",
+        "参数响应和屏障必须匹配锁存block_id，读返回匹配单在途地址",
+        "开始块清行缓存valid，工作缓存不reset但每个使用项先完整覆盖",
+        "共同复位清控制且重新装SiLU；不证明独立取消排空"
+      ],
+      "constraints": [
+        "固定图非任意引擎，核心端口/II/数值/复位不改",
+        "CSP2 Cin12尾mask0f，CSP4物理尾tile仅两行有效，禁止y18/y19写",
+        "同实例顺序运行不等于down3/down4已接入或连续CNN",
+        "4ERAM为容量组织目标，未实际映射/综合/物理时序",
+        "100M是整机1FPS目标，不是本组件已证明整机帧率"
+      ],
+      "corner_cases": [
+        "忙时block/start扰动，跨块缓存完全覆盖，随机背压保持payload",
+        "非法块、错误参数block、错误屏障block与真实acc负例",
+        "共同复位、SiLU重装、CSP4尾行与CSP2尾通道"
+      ],
+      "verification_cases": [
+        "同实例2->3->4全幅数值及地址逐项一致",
+        "正常/随机/复位完整序列和归属拒绝",
+        "阶段/状态/端点周期互斥核验，CPU来源与RTL计算分开"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "select",
+          "title": "固定块只在启动握手锁存",
+          "scenario": "selection",
+          "description": "中间省略全幅计算；done仍busy，返回idle后才接受下一块",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p..|......"
+              },
+              {
+                "name": "start_accept",
+                "wave": "010|000010"
+              },
+              {
+                "name": "input_block",
+                "wave": "==.|=...=.",
+                "data": [
+                  "2",
+                  "3",
+                  "15",
+                  "3"
+                ]
+              },
+              {
+                "name": "locked_block",
+                "wave": ".=.|....=.",
+                "data": [
+                  "2",
+                  "3"
+                ]
+              },
+              {
+                "name": "busy",
+                "wave": "0.1|110.1."
+              },
+              {
+                "name": "done",
+                "wave": "0..|010..."
+              },
+              {
+                "name": "start_ready",
+                "wave": "1.0|001.0."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

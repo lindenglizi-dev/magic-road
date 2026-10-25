@@ -1,0 +1,580 @@
+{
+  "name": "csp_layer",
+  "modules": [
+    {
+      "name": "road_csp_layer_client",
+      "rtl_path": "rtl/road_csp_layer_client.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "与算术owner同域100MHz"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "共同异步复位，服务同时撤销旧响应"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "ready时启动一次完整72乘128任务"
+          },
+          {
+            "name": "i_cancel",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "取消后故障占有至共同复位"
+          },
+          {
+            "name": "i_table_loaded",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "外部owner已装入同包SiLU表"
+          },
+          {
+            "name": "o_start_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "空闲、无故障且表有效"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "包含完成拍和故障占有"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "末阶段可见性确认后单拍完成"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "信任边界错误粘滞指示"
+          },
+          {
+            "name": "o_layer",
+            "direction": "output",
+            "width": 3,
+            "role": "native",
+            "description": "当前五阶段编号"
+          },
+          {
+            "name": "o_tile_y",
+            "direction": "output",
+            "width": 7,
+            "role": "native",
+            "description": "当前四行块起点诊断"
+          },
+          {
+            "name": "o_tile_x",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "当前四列块起点诊断"
+          },
+          {
+            "name": "o_parameter_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "当前参数分片请求有效"
+          },
+          {
+            "name": "o_parameter_channel",
+            "direction": "output",
+            "width": 5,
+            "role": "native",
+            "description": "DW通道或PW输出三通道起点"
+          },
+          {
+            "name": "o_parameter_group",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "八输入归约组编号"
+          },
+          {
+            "name": "o_parameter_window",
+            "direction": "output",
+            "width": 3,
+            "role": "native",
+            "description": "DW窗口并集宽度，PW为零"
+          },
+          {
+            "name": "i_parameter_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "参数请求被服务接受"
+          },
+          {
+            "name": "i_parameter_response_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "参数响应保持至ready"
+          },
+          {
+            "name": "o_parameter_response_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "只消费当前未完成请求"
+          },
+          {
+            "name": "i_parameter_response_layer",
+            "direction": "input",
+            "width": 3,
+            "role": "native",
+            "description": "参数响应阶段身份"
+          },
+          {
+            "name": "i_parameter_response_channel",
+            "direction": "input",
+            "width": 5,
+            "role": "native",
+            "description": "参数响应输出通道身份"
+          },
+          {
+            "name": "i_parameter_response_group",
+            "direction": "input",
+            "width": 2,
+            "role": "native",
+            "description": "参数响应归约组身份"
+          },
+          {
+            "name": "i_parameter_response_window",
+            "direction": "input",
+            "width": 3,
+            "role": "native",
+            "description": "参数响应DW窗口形态"
+          },
+          {
+            "name": "i_parameter_weight",
+            "direction": "input",
+            "width": 192,
+            "role": "native",
+            "description": "三路八输入权重"
+          },
+          {
+            "name": "i_parameter_data",
+            "direction": "input",
+            "width": 248,
+            "role": "native",
+            "description": "bias及动态量化字段"
+          },
+          {
+            "name": "i_parameter_error",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "参数服务显式错误"
+          },
+          {
+            "name": "o_read_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "单个16字节行请求有效"
+          },
+          {
+            "name": "o_read_address",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "十六字节对齐逻辑地址"
+          },
+          {
+            "name": "i_read_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "行请求被内存服务接受"
+          },
+          {
+            "name": "i_read_response_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "行响应保持至ready"
+          },
+          {
+            "name": "o_read_response_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "只消费当前未完成行请求"
+          },
+          {
+            "name": "i_read_response_address",
+            "direction": "input",
+            "width": 32,
+            "role": "native",
+            "description": "必须匹配请求的对齐地址"
+          },
+          {
+            "name": "i_read_response_data",
+            "direction": "input",
+            "width": 128,
+            "role": "native",
+            "description": "低字节对应地址偏移零"
+          },
+          {
+            "name": "i_read_error",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "内存服务显式读错误"
+          },
+          {
+            "name": "o_write_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "合法核结果写请求"
+          },
+          {
+            "name": "o_write_address",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "完整冻结图字节地址"
+          },
+          {
+            "name": "o_write_data",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "最终饱和INT8结果"
+          },
+          {
+            "name": "o_write_sum",
+            "direction": "output",
+            "width": 9,
+            "role": "native",
+            "description": "饱和前signed9残差和"
+          },
+          {
+            "name": "i_write_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "外部写服务接受"
+          },
+          {
+            "name": "o_barrier_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "当前整层全部写接受后的屏障"
+          },
+          {
+            "name": "i_barrier_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "此层此前写已经可读"
+          },
+          {
+            "name": "i_barrier_layer",
+            "direction": "input",
+            "width": 3,
+            "role": "native",
+            "description": "屏障确认所属阶段"
+          },
+          {
+            "name": "o_core_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "原算术核输入组有效"
+          },
+          {
+            "name": "i_core_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "原算术核输入组接受"
+          },
+          {
+            "name": "o_core_first",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "当前任务首归约组"
+          },
+          {
+            "name": "o_core_last",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "当前任务末归约组"
+          },
+          {
+            "name": "o_core_input_mask",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "当前八输入有效掩码"
+          },
+          {
+            "name": "o_core_activation",
+            "direction": "output",
+            "width": 64,
+            "role": "native",
+            "description": "串行拼装的八个INT8输入"
+          },
+          {
+            "name": "o_core_weight",
+            "direction": "output",
+            "width": 192,
+            "role": "native",
+            "description": "驻留参数分片"
+          },
+          {
+            "name": "o_core_bias",
+            "direction": "output",
+            "width": 96,
+            "role": "native",
+            "description": "三路首组偏置"
+          },
+          {
+            "name": "o_core_output_mask",
+            "direction": "output",
+            "width": 3,
+            "role": "native",
+            "description": "DW尾空间任务只启用lane零"
+          },
+          {
+            "name": "o_core_tags",
+            "direction": "output",
+            "width": 48,
+            "role": "native",
+            "description": "固定三路任务身份"
+          },
+          {
+            "name": "o_core_addresses",
+            "direction": "output",
+            "width": 96,
+            "role": "native",
+            "description": "三路完整写地址"
+          },
+          {
+            "name": "o_core_pre_multiplier",
+            "direction": "output",
+            "width": 96,
+            "role": "native",
+            "description": "三路动态前乘数"
+          },
+          {
+            "name": "o_core_pre_shift",
+            "direction": "output",
+            "width": 18,
+            "role": "native",
+            "description": "三路六位前移位"
+          },
+          {
+            "name": "o_core_post_multiplier",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "当前层共享后乘数"
+          },
+          {
+            "name": "o_core_post_shift",
+            "direction": "output",
+            "width": 6,
+            "role": "native",
+            "description": "当前层共享后移位"
+          },
+          {
+            "name": "o_core_residual",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "两个PW残差阶段使能"
+          },
+          {
+            "name": "o_core_bypass",
+            "direction": "output",
+            "width": 24,
+            "role": "native",
+            "description": "三路真实旁路值"
+          },
+          {
+            "name": "i_core_output_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "原五级写回结果有效"
+          },
+          {
+            "name": "o_core_output_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "核结果和外部写原子接受"
+          },
+          {
+            "name": "i_core_output_tag",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "原核返回任务lane"
+          },
+          {
+            "name": "i_core_output_address",
+            "direction": "input",
+            "width": 32,
+            "role": "native",
+            "description": "原核返回完整地址"
+          },
+          {
+            "name": "i_core_output_data",
+            "direction": "input",
+            "width": 8,
+            "role": "native",
+            "description": "原核返回sat8数据"
+          },
+          {
+            "name": "i_core_output_sum",
+            "direction": "input",
+            "width": 9,
+            "role": "native",
+            "description": "原核返回signed9和"
+          },
+          {
+            "name": "i_core_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "原核错误保持原语义"
+          }
+        ]
+      },
+      "behavior": [
+        "一帧五阶段顺序全幅遍历，每个逻辑输出计算和写入一次",
+        "4x4输出tile，DW真实6x6输入；只有真实图像外补零",
+        "16B对齐逻辑读取与完整tile输入复用；当前输出组权重驻留",
+        "原核首末组、三路输出及signed9残差饱和完全保留",
+        "最后真实写、任务退休、整层写可见性屏障和done分别观察",
+        "共同复位取消所有端点并重新装表；不声称独立取消排空"
+      ],
+      "constraints": [
+        "无私有MAC；不更改真实PAXI；仅受控逻辑端点",
+        "缓存4ERAM只是容量目标，未综合/布局布线",
+        "8M首轮预算不是已达标结论；局部周期不证明整网1FPS或2FPS",
+        "graph字节地址只在唯一外部DDR边界转换一次"
+      ],
+      "corner_cases": [
+        "四边padding、DW尾一路、PW12输入尾四lane",
+        "随机请求/返回/核授予/写反压及载荷稳定",
+        "未可见中间值禁止读取；最后阶段屏障确认前不完成",
+        "错误读/参数身份拒绝，故意黄金acc错误必须失败"
+      ],
+      "verification_cases": [
+        "同真实图acc/pre/SiLU/post/sum/地址逐项检查663552值",
+        "正常全幅、随机反压全幅、共同复位再跑全幅",
+        "协议拒绝与检查器负例"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "layer",
+          "title": "完整层可见性和下一层读取",
+          "scenario": "barrier",
+          "description": "中间省略所有tile；ready表示受控服务写可见，不是固定等待",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..|......."
+              },
+              {
+                "name": "last_write_accept",
+                "wave": "010|......."
+              },
+              {
+                "name": "task_retired",
+                "wave": "001|0......"
+              },
+              {
+                "name": "layer_barrier_valid",
+                "wave": "0..|0111100"
+              },
+              {
+                "name": "layer_visible_ready",
+                "wave": "0..|0000100"
+              },
+              {
+                "name": "next_layer_prefetch",
+                "wave": "0..|0000010"
+              }
+            ]
+          }
+        },
+        {
+          "id": "read",
+          "title": "16B单一未完成读取",
+          "scenario": "read",
+          "description": "请求/返回独立反压；地址为逻辑字节且16B对齐",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p........"
+              },
+              {
+                "name": "read_valid",
+                "wave": "0110....."
+              },
+              {
+                "name": "read_ready",
+                "wave": "0010....."
+              },
+              {
+                "name": "response_valid",
+                "wave": "0...110.."
+              },
+              {
+                "name": "response_ready",
+                "wave": "0....10.."
+              },
+              {
+                "name": "cached_byte_use",
+                "wave": "0.....110"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

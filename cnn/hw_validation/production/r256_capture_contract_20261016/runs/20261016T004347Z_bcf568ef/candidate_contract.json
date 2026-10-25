@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "OFFLINE_CANDIDATE_CONTRACT_NOT_DEPLOYMENT_PACKAGE",
+  "candidate_tag": "RoadYOLO-S4-256-H48",
+  "baseline_preserved": "RoadYOLO-S4-512",
+  "purpose": "zero_training_resolution_comparison_and_address_reference",
+  "source_image": {"width": 1280, "height": 720, "format": "RGB888"},
+  "input_tensor": {"width": 256, "height": 144, "channels": 3, "layout": "NHWC", "dtype": "uint8", "bytes": 110592},
+  "resize": {"ratio_numerator": 1, "ratio_denominator": 5, "method": "area_5x5_sum", "divisor": 25, "rounding": "nearest_even_once", "source": "original_720p_not_rounded_512_cache"},
+  "stem_input": {"transform": "pixel_minus_128_once", "dtype": "int8"},
+  "network": {"conv_count": 67, "silu_count": 61, "conv_weights": 113100, "channels_unchanged": true, "analytic_MAC_per_frame": 53616384, "max_logical_feature_bytes": 147456},
+  "heads": [
+    {"stride": 4, "width": 64, "height": 36, "positions": 2304, "first_cell_id": 0},
+    {"stride": 8, "width": 32, "height": 18, "positions": 576, "first_cell_id": 2304},
+    {"stride": 16, "width": 16, "height": 9, "positions": 144, "first_cell_id": 2880}
+  ],
+  "prediction": {"positions": 3024, "last_cell_id": 3023, "channels": 7, "dtype": "int16", "bytes": 42336, "order": ["tx", "ty", "tw", "th", "objectness", "person_logit", "vehicle_logit"]},
+  "feature_storage": {"layout": "tile4x4_hwc", "allocation": "recompute_with_physical_padding_not_old_size_divided_by_four", "deepest_height": 9, "deepest_last_tile_valid_rows": 1},
+  "coordinate_restore": {"numerator": 5, "denominator": 1, "rounding": "nearest_even_once", "source_width": 1280, "source_height": 720, "box_convention": "half_open"},
+  "postprocess": {"classes": ["person", "vehicle"], "topk_per_class": 128, "nms_iou": "1/2", "max_boxes_per_class": 32, "max_boxes_total": 64, "threshold_source": "same_frozen_baseline_thresholds_for_initial_comparison"},
+  "input_slots": {"count": 2, "base_addresses": "retain_verified_baseline_allocation_no_relocation", "ready_requires": "actual_complete_write_visibility", "release_requires": "matching_last_input_read_response_consumed_and_no_inflight"},
+  "display": {"live_video_unchanged": true, "frame_boundary_table_switch": true, "age_limit_ms": 2000, "show_age": true, "age_source": "capture_timestamp_not_compute_completion"},
+  "arithmetic": {"MAC_lanes": 24, "internal_accumulator": "signed33", "final_accumulator": "int32_checked", "rounding": "nearest_even", "activation": "existing_shared_SiLU", "II_change_authorized": false},
+  "identity": {"wire_model_id": null, "wire_resize_id": null, "owner": "C7", "deployment_publication_authorized": false},
+  "budget": {"clock_Hz": 100000000, "target_detection_FPS": 1, "whole_frame_cycles_target": 100000000, "core_cycles_margin_goal_not_acceptance": 80000000, "DSP_hard_limit": 40, "ERAM_hard_limit": 108, "Slice_hard_limit": 21216},
+  "this_batch": {"training_authorized": false, "recalibration_authorized": false, "H24_authorized": false, "production_change_authorized": false, "bitstream_authorized": false, "board_Flash_authorized": false, "timing_exception_authorized": false, "C4_diagnostic_synthesis_runs_max": 1, "place_route_authorized": false}
+}

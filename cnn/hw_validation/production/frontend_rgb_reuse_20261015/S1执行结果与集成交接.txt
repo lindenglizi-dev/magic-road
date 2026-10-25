@@ -1,0 +1,80 @@
+S1 RGB同像素地址复用：执行结果与C7集成交接
+2026-10-15；本批属于IM1的M1组件收敛，不是M2整链或M3物理完成。
+
+结论
+功能候选已实现并通过原8例及新增2例，完整前三层同向量正常端点17252079→15848967拍，减少1403112拍（约8.13%）。
+只有RGB映射bin下降；DDR读/写次数、算术中间值、宏命令、核接口/II/数值均保持。没有减少DDR读，也没有声称整网达5FPS。
+新候选物理资源及时序未运行；实际顶层闭包/初始化/原约束已准备，交协调统一安排一次，不使用旧壳资源代替新候选。
+
+交接入口（所有内容在本目录，未提交或推送）
+唯一修改RTL：rtl/road_stem_ddr_sequence.v
+SHA256：50c803465badfe9b57a34cc803d1d30d85830d9ba00191be756b480b9f748214
+替代旧对象：../reports/frontend_ddr_full_20261015/rtl/road_stem_ddr_sequence.v
+原始差异：source_diff.json；仅8行功能逻辑，3处执行改动（条件、HALO自环、握手后lane+1）。
+接口与功能/自检分类：接口与功能自检边界.txt；修改前清单：交接清单.txt。
+回归：verification/suite_manifest.json、TEST_REPORT.md及各case receipt/log；Python参考：reference_s1.json。
+源码/向量冻结与最终收据：frozen.json、frozen_check.json、artifact_hashes.json、comparison.json。
+新规格与周期图：rtl/spec/frontend_rgb_reuse/road_stem_ddr_sequence_spec.md及同目录waveforms/。
+物理输入：implementation/road_stem_ddr_board_top.al、source_hashes.json、原board/DDR SDC及build.tcl；排期命令见physical_preparation.json。
+
+功能改动
+R或G当前真实装载接受，若非padding、channel<2、cache有效/tag相等、lane<15，直接留HALO并lane+1。
+R14→G15直接；G15→B0跨词回原MAP/ROW/ADDRESS/CACHE，发真实cache miss读。
+R15→G0先跨词回原流程；G0→B1再直接。B结束后原通道/像素游标推进不变。
+背压、共同复位、last优先级、fault闭锁、每tile缓存失效保持。真实子核原本支持连续装载，未改算术II。
+所有其他RTL、8个复用核、mailbox、板壳、层加载器与输入向量均不变。
+
+实际回归（ModelSim2020.4，编译0 error/0 warning；原厂ERAM运行2 warning保留）
+normal                         15848967，PASS
+random request/response        16311442，PASS
+512-cycle DDR request stall    15849479，PASS
+4处共同复位后完整恢复           15848967，PASS（只计最后完整一代）
+response error                 error7@144425，PASS
+dropped response               error9@644423，PASS
+post-PASS DDR fault            error1@15848967，PASS
+first read全beat取反            error4@149828，PASS（故障提前退出不用于加速对比）
+真实Stem消费者257拍反压         15849224，PASS（恰好正常+257）
+同反压位置复位后完整恢复         15848967，PASS（取消前缀不混入最后一代）
+每个完整成功case：78336写接受响应、97564读返回、221184 PW字节、1306368 halo值，acc/pre/SiLU/post各958464项一致。
+定向编号RGB在x1/y0为17/0/7，中心化INT8字节91/80/87；与完整halo检查一起通过，没有依赖最终量化输出掩盖通道错误。
+实际快速推进350778次，lane15跨词fallback20672次；R14/G15/B0和R15/G0/B1各10336像素。
+长core_load反压在真实子核o_load_ready及内部flag_load_accept同时施加并验证接受为0，不是只把父级ready强拉低而让子核继续写。
+独立只读审查未发现新增语义问题，见独立审查.txt。
+
+同口径互斥周期（正常）
+类别                  旧               S1              节约
+初始化                1                1               0
+完整输入填充          138240           138240          0
+表与参数              2158             2158            0
+RGB halo映射/取数     3004788          1601676         1403112
+Stem核运行            10914048         10914048        0
+Stem导出/检查/写       776448           776448          0
+DW halo映射/取数      1117948          1117948         0
+DW/PW核运行           972288           972288          0
+PW导出/检查/写        290880           290880          0
+外层控制              35280            35280           0
+总计                  17252079         15848967        1403112
+350778次复用各跳过4个映射状态，与实际差值完全一致。核心/写回占用不相加重复计时。
+RGB读仍51357、DW读46207，总97564；写仍27648输入+36864 Stem+13824 PW=78336。
+random案例使用相同种子/规则，但随周期采样的具体背压序列会因状态周转变化而不同；8.13%收益只取确定性normal同端点，不把随机差值当精确理论收益。
+
+门禁及物理限制
+原RTL严格门912 errors/20 warnings；新RTL914/20。新增2项分别是VG060注释列对齐和COMMENT_COMMENT_PLACEMENT，不是两处新算术错误；未顺便重排原文件。
+旧compile/ast/readability/comment/naming/profile失败仍保留，testbench/toolchain为not_requested；实际外部ModelSim十例收据单列，不伪造严格门通过。
+TB严格门153 errors/0 warnings，均为COMMENT_COMMENT_PLACEMENT；compile/ast/readability/naming/profile通过，comment失败，testbench/toolchain未请求。不能把其诊断数量与RTL或旧不同对象相加解释为硬件错误增加。
+readable-python-generator、readable-script-generator缺失限制保留；本批Python实际语法/执行及规定WaveDrom规格通过，不声称缺失技能门禁通过。
+新的判断逻辑可能改变关键路径，减少周期不保证setup变好。100MHz、Slow/Fast、DSP/ERAM端点及未约束范围需要本候选实际TD再裁决。
+原15794Slice/30DSP/13ERAM、setup+0.037ns属于旧完整前三层基线，绝不作为S1资源/时序。
+本批不启动TD、不生成位流、不操作板/Flash、不训练、不改生产工程或其它聊天目录。
+
+给总集成的关键约束
+当前写response只是mailbox已接受AW/W；不能改名visible/commit，不可据此发布生产输入READY或释放别的master仍会读取的bank。
+接口完全兼容现固定三层诊断，但并未新增外部layer/tile/epoch描述符；不是直接可插任意图的多客户DMA。
+byte→native只允许一次；现sequence已经生成native，mailbox不再转换。布局/地址范围及各退休事件详见接口与功能自检边界.txt。
+图案源/golden/TEST已分类交接，尚未机械删除；ST_PATTERN与ST_EXPORT_CHECK同时有功能地址登记，不能整状态盲删。
+真实参数仍为旧TEST_ONLY，不能与CSP/深PW的另一包直接拼接旧PASS。M2须使用唯一共同包重新生成参考。
+
+下一步
+由协调安排一次本candidate的实际顶层TD流程；命令在候选目录执行：D:/Python313/python.exe -B -X utf8 run.py physical。
+C7接入唯一共享核/图执行器时使用本S1取数规则及明确的真实握手；C9协议差距由C8在批准后唯一实施，不新增第二桥。
+15848967拍仍占20M整网预算79.24%，只剩4151033拍；Stem窗口仍10914048拍。应由协调结合CSP/深PW实测决定下一项核周转或图调度优化，不能把本次8.13%当作整网速度达标。

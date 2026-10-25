@@ -1,0 +1,69 @@
+{
+  "date_local": "2026-10-13",
+  "status": "AI_resolution_and_candidate_exclusion_not_GT_freeze",
+  "inspection": {
+    "method": "24 campus far-region RAW/draft paired crops, full RAW X01/X11/X13/X25/X43/X49/F056 and signed PETS550; full draft overlays X01-X04; prior findings retained without claiming exhaustive new visual review",
+    "human_review": false,
+    "source_labels_changed": false,
+    "scope": "Only the explicitly resolved region indices and modified box below are new positive AI conclusions. Unlisted image regions are not certified complete."
+  },
+  "resolved_region_basis": "Campus X07/X09/X10/X12/X13/X14/X16-X23 listed vehicle hints align with the pale bench/step and handrails, sometimes overlapping existing person's visible limbs (e.g. X12 o6). They do not establish an independent vehicle. This does not declare the entire rectangle background: existing person labels and new person holds remain. These hints were already withheld from positive vehicle labels; this closes only their independent-vehicle doubt, not all frame labels.",
+  "resolved_regions": {
+    "VIRAT_S_010204_05_000856_000890_f0000163": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000209": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000233": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000279": [1, 2],
+    "VIRAT_S_010204_05_000856_000890_f0000303": [1],
+    "VIRAT_S_010204_05_000856_000890_f0000326": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000373": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000396": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000419": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000443": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000466": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000489": [0],
+    "VIRAT_S_010204_05_000856_000890_f0000513": [1],
+    "VIRAT_S_010204_05_000856_000890_f0000536": [0]
+  },
+  "label_changes": {
+    "VIRAT_S_010204_05_000856_000890_f0000023": [
+      {"target_id": "o6", "action": "M", "class": "person", "bbox": [106, 273, 129, 318], "reason": "AI full RAW: tighten the visible dark-clothed person at the left flowerbed; original box included a broad plant margin and hidden lower-body area. Draft only, no human signature inherited."}
+    ],
+    "VIRAT_S_010204_05_000856_000890_f0000163": [
+      {"target_id": "ai_closure_blue_person", "action": "N", "class": "person", "bbox": [284, 218, 307, 253], "reason": "AI RAW enlarged crop: a separate blue-clothed person is visible at the steps behind/right of the far group; existing source o10/o12 boxes are elsewhere. Add visible-person draft; not inferred from a vehicle hint, not human GT."}
+    ]
+  },
+  "additional_holds": {
+    "VIRAT_S_010204_05_000856_000890_f0000023": [
+      {"bbox": [835, 485, 920, 560], "reason": "Original ignore o8 lies at the backpack/arm and foreground-person boundary. Full RAW crop does not establish a separate target. Retain semantic uncertainty; do not silently delete it or declare it background."}
+    ],
+    "VIRAT_S_010204_05_000856_000890_f0000349": [
+      {"bbox": [200, 215, 235, 270], "reason": "RAW enlarged crop: o10/o11/o12 overlap the far white-backpack/blue-clothed people. Empty old uncertain list did not prove these are distinct people. Exclude frame until multiplicity and per-person extent are resolved."}
+    ],
+    "VIRAT_S_010204_05_000856_000890_f0000209": [
+      {"bbox": [258, 210, 290, 255], "reason": "After rejecting the vehicle interpretation, RAW still contains a moving blue-clothed person beside the steps. Existing far-source boxes do not establish complete per-person extent; keep a person coverage hold, not background."}
+    ]
+  },
+  "exclusion_policy": {
+    "construction_dev": "All 47 VIRAT050000 development drafts withdrawn from this experiment: broad unresolved tree-occlusion/vehicle-class extent and unfinished full-frame labels. Not selected by student accuracy; source files retained.",
+    "holds": "Any unresolved supervision region excludes the entire frame from this experiment, not a new mask or ignore. Keep raw labels and prior user edits.",
+    "MIO": "15 signed images retained separately, but not admitted to a strict frozen-camera manifest because physical camera IDs remain unknown. Entire MIO family remains train-only; unknown IDs do not mean proven leakage.",
+    "unsigned": "No teacher/AI draft is promoted into human GT, even when no explicit holds remain.",
+    "stress_and_blind": "Original stress6 and unsigned2 remain outside this 192 pool; no blind/reserve assets decoded or parsed."
+  },
+  "blockers": [
+    "156 of 192 candidate images were new unsigned AI drafts; resolving some uncertainty does not create human-complete labels.",
+    "Existing main reviewed development is only 5 images: A1/C4, person14/vehicle63/ignore2, not a reliable A-domain G100 selection set.",
+    "After unresolved-region and unknown-camera exclusions, signed train candidates are only EPFL10 with few people and one synchronized recording family; not the planned reliable road adaptation pilot.",
+    "Historical/physical camera exclusion has not been fully certified; conservative family reservation is not a full camera proof.",
+    "Frozen scope forbids silently increasing the user's review workload. Any new review/source allocation or smaller diagnostic-only experiment needs a specific consolidated decision."
+  ],
+  "visual_cases": [
+    {"key": "X01_visible_extent_and_ignore", "image_id": "VIRAT_S_010204_05_000856_000890_f0000023", "finding": "左侧花坛人物范围已收紧为AI草稿；o8语义仍不明，因此本帧不进训练。原人工审核记录不受影响。"},
+    {"key": "X07_facility_not_vehicle", "image_id": "VIRAT_S_010204_05_000856_000890_f0000163", "finding": "车辆疑点实际对应座椅/扶手，关闭该项；同时补画台阶旁独立蓝衣行人。整帧仍为未签署AI草稿，不自动成为GT。"},
+    {"key": "X12_remaining_person_overlap", "image_id": "VIRAT_S_010204_05_000856_000890_f0000279", "finding": "两个设施疑点已关闭；远端人体局部与来源框重叠关系仍未可靠核实，整帧排除，不当背景。"},
+    {"key": "X15_new_duplicate_suspect", "image_id": "VIRAT_S_010204_05_000856_000890_f0000349", "finding": "新增登记远端o10/o11/o12重复嫌疑。旧待定列表为空不等于全帧完整，因此不入训练。"},
+    {"key": "F056_construction_dev_excluded", "image_id": "VIRAT_S_050000_12_001591_001619_f0000033", "finding": "施工直路机位47张整体移出本次主开发候选；树遮挡、施工设备和车体范围未闭合。未删原图、未改变验收目标。"},
+    {"key": "X25_parking_far_pending", "image_id": "VIRAT_S_040000_00_000063_000085_f0000034", "finding": "远端两个来源不确定区域仍无法确定可见范围；本机位有24张受影响（含6张旧审核记录），只保留记录，不加回用户删除的人。"},
+    {"key": "PETS550_review_preserved", "image_id": "pets09_s2l1_f000550", "finding": "保留已审核A开发图：6人/2车。但只有这1张A开发图，不足以证明A场景泛化。"}
+  ]
+}

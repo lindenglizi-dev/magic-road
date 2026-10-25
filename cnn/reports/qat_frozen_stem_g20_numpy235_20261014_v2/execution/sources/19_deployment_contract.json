@@ -1,0 +1,80 @@
+{
+  "schema_version": 2,
+  "name": "RoadYOLO-S4-512",
+  "status": "hardware_contract_not_trained_integer_model",
+  "clock_hz": 100000000,
+  "input": {"shape_hwc": [288, 512, 3], "dtype": "uint8", "convolution_input": "pixel - 128", "byte_order": "RGB"},
+  "activation": {"dtype": "int8", "zero_point": 0, "scale": "per_tensor"},
+  "weight": {"dtype": "int8", "zero_point": 0, "scale": "per_output_channel", "order": "OIHW"},
+  "accumulation": {
+    "internal_bits": 33,
+    "bias_dtype": "int32",
+    "final_dtype": "int32",
+    "overflow": "check final reduction including bias; fault without publishing any result",
+    "partial_overflow": "do not fault solely because a partial sum temporarily exceeds int32"
+  },
+  "requantization": {
+    "multiplier": "nonnegative int32",
+    "shift_range": [0, 62],
+    "product": "signed int64 exact",
+    "rounding": "nearest_even",
+    "overflow": "saturate; never wrap",
+    "per_channel": "int32 accumulator to int16 Q7.8 before SiLU or directly to raw prediction",
+    "per_silu_layer": "int16 SiLU result to int8 output"
+  },
+  "silu": {
+    "input_output": "int16 Q7.8",
+    "table_entries": 1024,
+    "address": "round_nearest_even(input / 4) + 512",
+    "lower_tail": "input <= -2048: zero",
+    "upper_tail": "input >= 2048: identity",
+    "rounded_endpoint": "address == 1024: shared silu_upper constant"
+  },
+  "residual": "post-SiLU and post-requantization int8 operands with identical scales; signed 9-bit addition then int8 saturation",
+  "concat": "virtual channel views; identical activation scales required, otherwise export must fail",
+  "operator_padding": {"convolution": 0, "maxpool": -128, "note": "operator halo outside logical image differs from unused physical tile padding, which is zero"},
+  "prediction": {
+    "dtype": "int16",
+    "scale": "1/256",
+    "strides": [4, 8, 16],
+    "fields": ["tx", "ty", "tw", "th", "objectness", "person_logit", "vehicle_logit"],
+    "logical_bytes": 169344,
+    "tw_th_clip_q8": [-1024, 896]
+  },
+  "numeric_package": {
+    "byte_order": "little",
+    "payload_bytes": 140522,
+    "physical_bytes": 143360,
+    "physical_word_bytes": 20,
+    "groups": 14,
+    "words_per_group": 512,
+    "per_layer_fields": ["weights_int8", "bias_int32", "pre_multiplier_int32_per_channel", "pre_shift_uint8_per_channel", "post_multiplier_int32_per_tensor_if_silu", "post_shift_uint8_per_tensor_if_silu"],
+    "shared_tables": ["silu_int16_1024", "sigmoid_uint16_1024", "exp_uint16_256"]
+  },
+  "ddr": {
+    "address_unit": "logical byte; vendor conversion not yet validated",
+    "input_bases": [54525952, 55050240],
+    "input_slot_bytes": 524288,
+    "input_payload_bytes": 442368,
+    "feature_start": 55574528,
+    "feature_end_exclusive": 67108864,
+    "allocation_alignment": 4096,
+    "tile": [4, 4],
+    "layout": "tile-major, local HWC, actual channels not padded to eight; padded edge pixels zero",
+    "ownership": "unique storage per convolution and pool; no in-place reuse",
+    "integration_gate": "capacity, byte/address conversion, video nonoverlap, read owner and write visibility must all be proven"
+  },
+  "postprocess": {
+    "top_k_per_class": 128,
+    "boxes_per_class": 32,
+    "score": "RNE(objectness_uint16 * class_uint16 / 65536)",
+    "tie_order": "score descending, cell ID ascending; strides 4/8/16 then row-major",
+    "nms": "same class only; suppress strictly when 3 * intersection > area_a + area_b",
+    "network_coordinates": "clipped half-open Q8",
+    "source_coordinates": "one RNE(network_q8 * 5 / 512), clip to source; interface Q12.8 stores integer source pixels shifted left eight",
+    "thresholds": "not frozen until validation; no production threshold default"
+  },
+  "display": {"table_entries": 64, "switch": "HDMI SOF only after complete pending table", "max_age_ticks": 50000000},
+  "resource_targets_not_measurements": {"dsp": 38, "eram": 107, "slice_limit": 21216},
+  "release_gates": ["integer export with aligned scales", "Python RTL exact comparison", "strict module gates", "TD resource and setup hold", "DDR vendor semantics", "full-network cycle model", "board continuous 30 minutes and >=5 FPS", "independent accuracy evaluation"]
+}

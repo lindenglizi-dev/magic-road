@@ -1,0 +1,16 @@
+新应用接口审查；只限本客户端，不替代八门/真实仿真。
+
+WIF1 byte/weight没有身份字段，客户端各状态只准单未决；请求被接受后进入专属WAIT，完整响应消费后才发下个。C4返回可变延迟/反压，不使用timeout自动退休。
+填仓每字节等实际write response，权重每192bit组等全部word完成response；ST_TASK_SETUP前所有使用范围均已覆盖。DW逐通道81B，PW每tile16*Cin；本client无私有tile/weight数组。
+源内存只有单未决128bit对齐行，响应全地址比对；行寄存器仅16B，跨任务不继承valid。逻辑padding不读源，DW输入halo覆盖9x9，H18最后两行不生成输出。
+DW9x9按通道存仓，三点同通道窗口使用union3x7，21样本拆8/8/5；末点union3x3拆8/1。PW Cin24/48拆3/6组，全部无效输入槽清零。
+reg_fill_index10位承载0..768；reg_slot/group5位承载首批0..5，未推广到任意Cin。行2bit0..3，pixel4bit0..15；最末项不再推进至非法空间点。
+当前每个任务最多21DW或48PW有效乘积，低于原signed33核192乘积上限。偏置同组保持但仅first生效；末组原核仍做INT32检查，不修改核行为。
+参数quant248首槽锁存，后续槽全部一致；身份layer/channel/window/group均匹配，正乘数与shift0..62检查后使用。DW tail仍广播同通道quant但output_mask只lane0。
+最后MAC组接受后才进入输出WAIT，tag只允许0..2、有效mask、未写过与完整地址同时核验。核输出valid+本端ready与外部写valid+ready同拍；末路真实消费才推进。
+任务结束先等外部barrier身份匹配再done。这里屏障是受控逻辑端点，不是已实现PAXI write_visible，不能用request ready当DDR已可读。
+共同reset异步断言、客户端两级释放；所有服务须共同reset取消本地未决，工作仓内容不reset。cancel/fault不排空也不释放owner，只保持busy直到共同reset，不允许新任务跨越未退休响应。
+输出fixed层/行/列均从start握手锁存，不随外部空闲字段变化。ST_FINISH后回IDLE时WIF两个通道、源读、参数、算术输出均已退休；实际外部owner仲裁仍由系统负责。
+
+静态失败不能全部归为格式。gates/explicit_process.json还包含VG145/146组合来源/运算预算、组合默认重赋值、多个目标过程等，物理深度与资源未签核；不运行TD，不以代表tilePASS推断1FPS。
+首批使用现成CSP arithmetic应用owner只支持INT8。head cls2/reg5必须另接原dynamic post的activate=0/INT16输出应用封装并验证，不允许用当前INT8接口截断预测。

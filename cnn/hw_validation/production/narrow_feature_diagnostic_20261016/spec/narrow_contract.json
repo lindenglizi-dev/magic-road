@@ -1,0 +1,68 @@
+{
+  "name": "narrow_feature_diagnostic",
+  "modules": [{
+    "name": "road_narrow_feature_top",
+    "rtl_path": "rtl/road_narrow_feature_top.v",
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_mhz": 100},
+    "reset": {"name": "i_rstn", "active": "low", "synchronous": false},
+    "interfaces": {"ports": [
+      {"name":"i_clk","direction":"input","width":1,"role":"native","description":"唯一100MHz计算与主机时钟"},
+      {"name":"i_rstn","direction":"input","width":1,"role":"native","description":"共同异步低复位清除部分包并要求重新装表"},
+      {"name":"i_rx_valid","direction":"input","width":1,"role":"native","description":"主机当前16位输入字有效，等待ready保持"},
+      {"name":"i_rx_data","direction":"input","width":16,"role":"native","description":"固定命令头及低字优先载荷，填充必须零"},
+      {"name":"o_rx_ready","direction":"output","width":1,"role":"native","description":"当前输入字接受许可，表项绑定真实表ready"},
+      {"name":"o_tx_valid","direction":"output","width":1,"role":"native","description":"当前导出字有效；故障或取消允许终止包"},
+      {"name":"o_tx_data","direction":"output","width":16,"role":"native","description":"当前包头或载荷，正常背压期间逐位稳定"},
+      {"name":"i_tx_ready","direction":"input","width":1,"role":"native","description":"主机接受当前导出字"},
+      {"name":"o_busy","direction":"output","width":1,"role":"native","description":"冻结客户真实busy，非窄口包忙"},
+      {"name":"o_done","direction":"output","width":1,"role":"native","description":"冻结客户末层真实屏障完成脉冲"},
+      {"name":"o_fault","direction":"output","width":1,"role":"native","description":"壳非法包与冻结客户存储算术故障合并"},
+      {"name":"o_table_loaded","direction":"output","width":1,"role":"native","description":"唯一实际SiLU表全部1024项有效"}
+    ]},
+    "behavior": [
+      "requirements: 42个展开I/O位，冻结512向量与算术/客户/唯一WIF1/四native存储保持，实例core_Inst",
+      "codegen_plan: Python先定义固定包；独立三过程RX/TX状态机；464位单响应保持和64位导出快照；无完整权重ROM或图像缓存",
+      "RX8000紧跟1024个有符号16位表项，从实际地址0至1023；表项不进入额外缓存",
+      "RX8001加block_id一字；完整且填充合法、实际start_ready时触发；忙或表未全装时消费并忽略",
+      "RX8002无载荷：取消并由原客户粘滞故障到共同复位；当前包可终止",
+      "RX8100十一载荷字：address32/data128/error1；RX8101二十九字：identity22/weight192/data248/error1；RX8102一字：block4/layer3",
+      "所有载荷低16位优先。响应包仅在相应完整请求TX之后允许；全部高填充位验证零；整包在APPLY保持至实际response_ready",
+      "TXA100两载荷字address32；TXA101两载荷字identity22；TXA102四载荷字address32/data8/sum9；TXA103一载荷字identity7",
+      "TX固定read/parameter/write/barrier优先级；只有末载荷字valid与ready握手才向原请求端送ready；一拍GAP阻止重复捕获",
+      "barrier完整请求发送后挂起；完整主机确认身份交原客户校验，主机须保证此前写真实可读；没有假write_visible",
+      "reset共同取消收发与挂起；表loaded撤销且重新完整装表才启动；正常背压保持TX逐字稳定"
+    ],
+    "constraints": [
+      "时钟域与实际冻结计算链相同，不新增CDC、时序例外或算术延迟",
+      "无56ERAM完整模型ROM，资源结果不得宣称整机装下",
+      "transport计时独立于preload/core/export，窄口周期不得作为core吞吐或网络FPS",
+      "1025接受RX字完成装表；参数请求3TX字与响应30RX字；读请求3TX字与响应12RX字；真实写5TX字；屏障2TX字及2RX字；另加capture/GAP/APPLY等待"
+    ],
+    "corner_cases": [
+      "busy/early start消费忽略；未知头、非零填充及未期望响应粘滞故障",
+      "在表项、载荷和TX任意字中复位，丢弃部分包且重新装表",
+      "TX任意字背压，数据和有效保持；故障或取消例外允许终止",
+      "参数、读地址和屏障身份错误完整交原客户检查；不替换或截断动态数值"
+    ],
+    "verification_cases": [
+      "reference.py自检所有固定包边界位、长度、填充及192/248位参数回环",
+      "窄口驱动原正常/尾组/错误身份/反压/复位向量，逐项实际地址与结果对拍",
+      "真实厂商RAM模型与冻结源闭包编译仿真；所有八门原始失败保留",
+      "功能风险定位后由协调者单次诊断综合，核对展开I/O、映射完成和保留路径"
+    ],
+    "timing_diagrams": [{
+      "id": "packet",
+      "title": "完整真实写包在末字退休",
+      "scenario": "write_stall",
+      "description": "H为A102，载荷依次低地址、高地址、data及低sum、高sum；背压期间不移位，最后共同握手才i_write_ready；随后GAP。",
+      "wavejson": {"signal": [
+        {"name":"i_clk","wave":"p........."},
+        {"name":"o_tx_valid","wave":"01......0."},
+        {"name":"i_tx_ready","wave":"011.01...."},
+        {"name":"o_tx_data","wave":"x=.=.=..=x","data":["H","W0","W1","W2","W3"]},
+        {"name":"i_write_ready","wave":"0......10."},
+        {"name":"gap","wave":"0.......10"}
+      ]}
+    }]
+  }]
+}

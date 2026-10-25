@@ -1,0 +1,61 @@
+C8 seventh batch read-only integration inventory — 2026-10-16
+Project: E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision
+Branch: work/roadyolo
+Owner: inventory.txt / inventory.json only.
+Skills: readable-verilog-generator analyze route and ponytail for minimal existing-asset reuse.
+No RTL, simulator, TD, production, training, bitstream, board or Flash actions.
+Current hashes and every table port width are in inventory.json.
+
+1. Stable true-ROM C9 fixture
+Reuse cnn/hw_validation/production/result_publish_joint_20261015/verification/tb_road_result_publish_joint.v and run_vendor_rom.ps1.
+Current TB6055ec6ce099f18dc8e8e9eecfa3d8be821490bb93fd20f3f8bae6f53e410d7e and runner428ae96c86678086b5fdfd45a6fc722dd88ac9cb5a199cb451e5cc87f566f95e match supplementary frozen run20261015_234212_068_637d4424.
+Original run231535 remains FAIL; accept only its21 PASS items plus corrected run23342810 PASS, then2342122 supplemental. This is not one31/31 run. Separate publisher reference33scenes/500cycles is not ROM coverage.
+Compile closure:7 files in C9 rtl/ (candidate RAM, decode/topK, LUT service, NMS, publisher, table CDC, time snapshot); vendor_rom/rtl/{road_numeric_rom_reader.v,road_yolo_numeric_rom_group.v}; vendor_rom/vendor/{ph1p_logic_eram.v,ph1p_phy_gsr.v}; new TB; existing AGE separately.
+Use +define+USE_VENDOR_ROM, work.PH1P_PHY_GSR plus actual TB top, and simulation working-directory artifacts/ containing56 lane.dath files and manifest. Do not substitute controlled physical_words fallback.
+Current61 physically reused vendor subset files all match source_receipt SHA records;56 lanes exist; actual manifest93a05a97f78489fabd511909367be0f8b676680c01e5f74a21d571a88f82ff2b. The receipt describes a wider original package; missing unused wider-receipt keys are not required local fixture files.
+Correct real_image fixture at postprocess_golden_2fps_20261015/artifacts/real_image:
+- heads_cell_order_112.hex:12096 words; SHA2fe18d831eba985796ad8735b1774b97c55c580f71f9c4e9a29a7e602f3a154f.
+- result_table_97.hex:7 results,2person+5vehicle; SHAc5cd21644f6e3bd16fb19726839b20f18c4affa59e33e88062f895e883d3c96c.
+- final.json decoded golden, SHA4e139e132e7e181dc5be0d6256fd9aeed53a9995a617b10fa5b4054b6c2e7141.
+Use saved heads through actual reader→LUT→decode/topK→NMS→publisher→three tables. Injected geometry tests are separately labelled, not CNN demonstration.
+True7 measured start→NMSdone1577513source cycles; meta next cycle; source100MHz,destination average75MHz. Original fixture SOF is periodic first-active proxy, not full official VTC; replace with aligned blank SOF in new video TB.
+
+2. Existing FINAL97 and metadata
+FINAL97: label[0]=person0/vehicle1; score[16:1]; x0[36:17],y0[56:37],x1[76:57],y1[96:77].
+Each20bit coordinate contains integer source pixel<<8. Integer extraction: x0[36:25],y0[56:45],x1[76:65],y1[96:85].
+NMS already RNE(networkQ8*5/512); renderer must not repeat scaling/rounding.
+Use half-open [x0,x1)×[y0,y1),1px edge at x0/x1-1/y0/y1-1. Skip collapsed/empty geometry only for drawing; preserve source count/table. Tiny1×1 remains one pixel.
+Legacy colors are person00ff00 and vehicle00ffff. Seventh-batch task does not explicitly name overlap winner; freeze the selected winner in new contract. Old four-track implementation chooses lowest matching track index.
+Metadata265: epoch[31:0],task[63:32],source_frame[95:64],model[127:96],count[134:128],status[136:135],capture[200:137],completion[264:201].
+ModelB35D4A66; payloadb35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145 remains PTQ diagnostic, no QAT/accuracy claim.
+
+3. Table timing and permission
+road_detection_table_cdc has source97×64 plus destinationA/B97×64: exactly existing three full tables. One active asynchronous read; i_dst_read_index6→o_dst_entry97 has no handshake or registered latency.
+Read zero mask is internal nonempty/count only, NOT draw_valid. Stale/model-invalid rows may remain readable, so all output painting must use live table.draw_valid.
+Source entry advances only valid&&ready. Meta requires !entry_valid, count<=64 and matching accepted count. Sealed payload holds until copy_ack/common reset. Unsealed abort clears partial; sealed abort reports error.
+Destination request2FF→detection→one metadata-wait edge→copy. Metadata-capture edge starts busy; next edge first entry; one per enabled edge. Last entry creates pending and toggles ack. copy_enable stalls only copy. Count0 goes straight pending/ack.
+SOF uses pre-edge pending flag; pending created same edge does not switch until future SOF. Active bank/count/metadata switch NBA and remain stable until nextSOF. Do not sample old table as newly active on switch edge; scan after it. o_dst_update pulses one destination cycle.
+o_dst_active_valid means complete table present, including empty. draw_valid additionally requires nonempty, valid time, sameepoch/model,status0,capture<=completion<=now,and65bit(now-capture+4)<=2000 for new instance.
+2000 permitted,2001 rejected. Age isUINT64_MAX for absent/time-invalid/epoch mismatch/time-order invalid/overflow. Model/status mismatch alone disables draw but does not turn known age intoINVALID.
+Entry/metadata/livevalid/age outputs are combinational. Pending/busy reflect state; update/error/ack are registered pulses. Common reset async asserts and releases through2local edges; earliest handshake edge3. RAM contents not reset.
+
+4. Official pixel timing
+cnn/template/design_top_wrapper.v:797-836 selects1280×720,1650×750,HS1390..1429,VS vcnt>725 && <=730. Nominal75MHz;1237500cycles/frame=16.5ms.
+uivtc increments vcnt at oldhcnt1279, not finalhcnt1649. Exactly1280DE-high samples then370DE-low samples per active-line boundary; last-high→next-first-high edge distance371periods. Blank budget370clocks=4.933333us.
+VTC outputs VS/HS1register,DE/user/last2registers. mixer VS/HS/DE/RGB each3registers; normalRGB S_data_1d→S_data_2d→O_hdmi_data. Source-side VTC VS andDE differ1stage; do not assume same hcnt phase.
+Derived, not simulated: rawVSrise atvcnt726,hcnt1280→raw nextframeDErise39970periods; outputVSrise→outputDErise39971 becauseVTCDE adds1extra stage. Mixer equal3stages preserves difference.
+Derive blank SOF at mixer output: mixerVS && !registered_previous_mixerVS. It is consumed one edge after outputVStransition, leaving39970periods to firstoutputDEtransition. Share it with table and box.
+If AGE follows box, delaySOF by exactly boxvideo latency. AGE then locks newtable age on nextblank edge, preserving eleven fixedcells x16..147,y16..31; one extra registeredvideo stage. Live draw permission stays independent of displayed text.
+Insertion: mixer S_hdmi_out_* at833..836→newbox→existingAGE→hdmi_tx at848..854. RGB/VS/HS/DE equal latency; no pixel backpressure. No production edits.
+
+5. Available distributed RAM, inspection only
+E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/sim_release/ph1p contains PH1P_LOGIC_DRAM64X8,DRAM32X16,genericDRAM and ratio variants.
+DRAM64X8 ports: raddr6,waddr6,di8,wclk,wrst,we,rdo8. Asyncread; wrapper visibly instantiates8PH1P_PHY_MSLICE + PH1P_PHY_DRAMHARDCON; files ph1p_phy_mslice.v and ph1p_phy_dramhardcon.v exist.
+wrst active-high; vendor GSR/done controls release and model uses delayed write pulse. Do not assume contentsclear, initializedstate, same-address collision semantics or zero-delayphysicalwrite. GenericDRAM also supports optionalregisteredrdoq.
+Small per-line endpoint map can target these distributed primitives for0ERAM/0DSP intent. This does not establish actualSlice budget or timing. Map capacity/clear-valid rules/collisions/throughput must be explicit and simulated, actualmapping laterC7.
+No TD executable or vendor simulation launched here; filelisting/rg/hash only.
+
+6. Evidence boundary
+Read-only inventory gates compile/ast/readability/comment/naming/profile/testbench/toolchain allNOT_RUN.
+Existing C9 compile/comment/profile PASS,ast/readability/naming FAIL in its report; historical strict failures and vendorINIT_FILE boundswarnings preserved. Functional simulation cannot override strict gates.
+No new physicalresource, setup/hold,CDC/MTBF,67-layer throughput, DDR-writevisibility, camera-framecredit, modelaccuracy or boardclaim.

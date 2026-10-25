@@ -1,0 +1,84 @@
+{
+  "review": "static_gradient_and_loss_review",
+  "reviewed_at_local_date": "2026-10-14",
+  "status": "MATERIAL_SURROGATE_MISMATCH_RISKS_FOUND_NO_STATIC_ACCUMULATION_OR_RESUME_DEFECT",
+  "scope": {
+    "read_only": true,
+    "model_or_training_executed": false,
+    "gpu_accessed": false,
+    "source_modified": false,
+    "authorized_boundary": "training-graph diagnosis only; no new recipe and no additional updates"
+  },
+  "source_sha256": {
+    "cnn/hw_validation/production/qat_exact.py": "2c03d9eef2378ee1304e0fe0fe607fd8411f5eb7486058d6f1fb07d6f768821c",
+    "cnn/hw_validation/production/train_qat.py": "33086b5725c84ce687b91e869ee954befd4bb910d8a50101a3012d334921ae35",
+    "cnn/hw_validation/production/train_qat_frozen_stem_continue.py": "8b5833d51154f5bd37317f000d5218578ed637f53d07a2d26914aa0e55a6b778",
+    "cnn/loss.py": "8bc33d05abd15c00af35627e550d815212387ab6ddc3074f4f023fc9dd09cf79",
+    "cnn/hw_validation/production/test_qat_exact.py": "12c63814b6cd27c84011758a62ef6abe60427789352055c056707a4067ab3447",
+    "cnn/hw_validation/production/test_train_qat.py": "416ee57b29cc4d6cda78dc80286b26a9414529cbed0973ef07ff6addf39cb222"
+  },
+  "forward_vs_backward": {
+    "forward": "The graph obtains integer-reference captures and _ExactSTE returns exact.clone(), so the observable forward value is the deployed integer value dequantized to float.",
+    "backward": "The exact branch receives no gradient; all gradients follow the local floating surrogate. Forward bit-exactness therefore does not imply an exact, deployment-derived, or validated gradient.",
+    "evidence": [
+      "cnn/hw_validation/production/qat_exact.py:39-46",
+      "cnn/hw_validation/production/qat_exact.py:177-202"
+    ]
+  },
+  "findings": [
+    {
+      "id": "G1_CLIP_BLIND_STE",
+      "classification": "proved_gradient_semantics_mismatch",
+      "severity": "material_risk",
+      "evidence": "cnn/hw_validation/production/qat_exact.py:34-36",
+      "detail": "_ste_quantize is value + (quantized - value).detach(), so its local derivative with respect to value is 1 everywhere, including values clipped at INT8, INT16, or INT32 limits. The deployed quantizer is flat outside those limits. Saturated weights, biases, and activations can therefore carry gradient as though clipping did not exist.",
+      "boundary": "This is a proven backward mismatch, not a forward-bit-exact failure and not by itself proof that it caused the observed G20 same17 drift."
+    },
+    {
+      "id": "G2_EXACT_VALUE_SURROGATE_JACOBIAN",
+      "classification": "proved_gradient_semantics_mismatch",
+      "severity": "material_risk",
+      "evidence": [
+        "cnn/hw_validation/production/qat_exact.py:39-46",
+        "cnn/hw_validation/production/qat_exact.py:195-202"
+      ],
+      "detail": "_ExactSTE discards the exact branch derivative and passes the incoming gradient only to the surrogate. At INT8 convolution nodes, the backward path uses continuous F.silu on the exact-corrected Q7.8 preactivation plus the clip-blind quantizer identity Jacobian, while deployment uses discrete integer requantization/activation. Existing forward parity can mask this difference completely.",
+      "boundary": "This is an intentional surrogate construction, but its gradient quality is unvalidated by bit-exact capture tests."
+    },
+    {
+      "id": "G3_SURROGATE_EXPORT_CODE_PATHS",
+      "classification": "source_proven_unmeasured_mismatch_risk",
+      "severity": "targeted_check_needed",
+      "evidence": [
+        "cnn/hw_validation/production/qat_exact.py:109-128",
+        "cnn/hw_validation/production/qat_exact.py:185-197"
+      ],
+      "detail": "Export/reference codes are formed after converting parameters and scales to NumPy float64 and applying np.rint; the differentiable convolution path casts the stored float64 scale to the parameter dtype and applies torch.round. Near half-step boundaries, float32 and float64 division can select different local codes. _ExactSTE restores the exact forward value, but input and parameter Jacobians still come from the surrogate convolution weights.",
+      "boundary": "No current code disagreement was measured in this read-only review; this is a concrete precision-boundary risk, not a claimed observed defect."
+    }
+  ],
+  "no_defect_found": [
+    {
+      "area": "22_sample_microbatch_accumulation",
+      "evidence": [
+        "cnn/hw_validation/production/train_qat.py:118-145",
+        "cnn/loss.py:222-232"
+      ],
+      "reason": "For microbatch i, YOLOXLoss returns N_i/max(F_i,1). Multiplying by max(F_i,1), summing backward numerators, then dividing accumulated gradients by max(sum_i F_i,1) reconstructs the full 22-sample normalization, including zero-foreground microbatches. Gradient clipping is applied only after this reconstruction."
+    },
+    {
+      "area": "continuation_restore",
+      "evidence": [
+        "cnn/hw_validation/production/train_qat_frozen_stem_continue.py:159-177",
+        "cnn/hw_validation/production/train_qat_frozen_stem_continue.py:225-234"
+      ],
+      "reason": "The continuation strictly validates the state before loading model and optimizer, restores RNG, rejects frozen Stem optimizer entry, and maps only global updates 11..20 onto the existing 1..10 schedule. This can reproduce the same surrogate trajectory exactly; it does not validate that the surrogate is faithful to the deployed integer function."
+    }
+  ],
+  "minimal_verification": {
+    "name": "single_microbatch_no_step_gradient_audit",
+    "proposal": "On one fixed existing training microbatch, disable optimizer.step and preserve identical exact-forward hashes. Run backward once with the current STE and once with a diagnostic clamp-aware STE whose local derivative is zero only where the pre-clamp code is outside range. Report per-layer saturation fraction, gradient norm and cosine similarity, and assert that Torch surrogate weight/bias integer codes equal integer_parameters() codes. This single no-update diagnostic separates clip-blind gradient effects from forward parity without authorizing a new training recipe.",
+    "pass_interpretation": "Small saturation-weighted gradient and exact code equality reduce these specific risks; a material norm/cosine change or any code mismatch identifies a concrete layer to investigate before proposing any recipe change."
+  },
+  "decision": "The static review supports further bounded training-graph diagnosis only. It does not authorize a surrogate change or additional QAT updates, and the G20 same17 regression cannot be causally assigned to G1-G3 without the proposed diagnostic."
+}

@@ -1,0 +1,20 @@
+{
+  "task_classes": ["generate", "validate"],
+  "date": "2026-10-13",
+  "scope": "Independent board DDR diagnostic; no CNN/video DDR client or production changes",
+  "module": "road_ddr_selftest",
+  "clock": "Original DDR IP dhi_clk, approximately 133.33 MHz; no crossing in request/compare path",
+  "reset": "Asynchronous assertion, synchronized top-level release; board reset restarts the entire original DDR IP, not only the requester",
+  "traffic": "Two rounds; four raw PAXI addresses 0/8/16/24; write all, then read reverse order; at most one address/data pair or read in flight",
+  "data": "128-bit little-endian distinct per-byte patterns, second round complemented",
+  "write_mask": "16'h0000; IPUG035 1.4 printed page30 defines PAXI high-active masking, unlike AXI WSTRB. Consistent with existing PH1P source; board readback still pending",
+  "address_units": "IPUG035 table3-5: current 16-bit DDR maps byte_address=PAXI_address*2; native stride8 spans16bytes. Actual 52-64MiB reservation and full capacity remain untested",
+  "handshake": "Offer AW/W together, retire each only on its own ready; payload stable while stalled; AR/R counted separately; require one-beat RLAST",
+  "write_visibility": "The first diagnostic reads after both AW/W were accepted, without invented delay or B response. Successful comparisons are observations for this sequence, not a general write barrier or tensor READY contract.",
+  "failure": "Latched first address, expected 128-bit word, actual 128-bit word and error class; no retry or automatic change of mask/address convention",
+  "board": "HX1P35A, PH1P35MDG324 speed 3, KEY4/C7; reuse existing HDMI TEST display; JTAG SRAM only after validation",
+  "verification": ["Reference vectors", "AW and W independent stalls", "Read/address stalls", "Immediate and delayed read response", "Mismatch", "Missing RLAST", "Timeout", "Unexpected return", "Reset in write/read and recovery"],
+  "public_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"],
+  "full_chip_simulation": "Still unavailable without supported DDR2 device model; controlled endpoint tests must be labeled protocol-only",
+  "excluded": ["Production tensor READY", "Unproven multi-client ordering", "Camera/video framebuffer", "Training", "Flash", "Additional timing exceptions", "DDR internal circuit reconstruction"]
+}

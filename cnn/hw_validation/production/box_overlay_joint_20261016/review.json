@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "role": "read_only_semantic_review",
+  "date": "2026-10-16",
+  "branch": "work/roadyolo",
+  "status": "NO_CONFIRMED_RTL_SEMANTIC_DEFECT_PHYSICAL_AND_STRICT_GATES_OPEN",
+  "owned_files": ["review.txt", "review.json"],
+  "source_edits": false,
+  "simulator_or_td_run_by_reviewer": false,
+  "source_sha256": {
+    "rtl/road_box_line_overlay.v": "49de207e581973a88cc2934082600ba45edbee861a54a4d40bd9b35feee5af79",
+    "rtl/road_box_age_overlay.v": "d81dbc9d9dbc9a1df2adc29cbfbb7174f70051559618de0079aa097f93eddace",
+    "../source_sof_identity_20261015/rtl/road_age_overlay.v": "d24c7ca135fb362e2cb1c63eae6068f5a1660dd2ba564f50640774260ca5a502"
+  },
+  "independent_frozen_check": {"checked": 86, "changed": []},
+  "confirmed_rtl_defects": [],
+  "semantic_checks": {
+    "single_active_table_async_read_no_extra_final97_table": "PASS_REVIEW",
+    "integer_shift8_no_second_rounding": "PASS_REVIEW",
+    "half_open_geometry_clipping_fractional_skip": "PASS_REVIEW_AND_PIXEL_EVIDENCE",
+    "native_dram_read_states_no_write_write_dummy_xor1": "PASS_REVIEW_AND_PROTOCOL_EVIDENCE",
+    "all_used_and_dummy_addresses_below1280": "PASS_REVIEW_AND_PROTOCOL_EVIDENCE",
+    "runtime_reset_and_sof_clear_poisoned_storage": "PASS_PROTOCOL_EVIDENCE",
+    "signed9_prefix_range_zero_through64": "PASS_REVIEW_AND_OVERLAP_PIXEL_EVIDENCE",
+    "count65_fault_no_clamp_no_paint": "PASS_PROTOCOL_EVIDENCE",
+    "clear_previous_x_and_defall_last_x": "PASS_REVIEW_AND_PIXEL_EVIDENCE",
+    "frame_row_and_late_prepare_never_midrow_paint": "PASS_REVIEW_AND_PROTOCOL_EVIDENCE",
+    "two_aligned_video_registers_and_delayed_sof": "PASS_REVIEW_AND_CHANGING_RGB_EVIDENCE",
+    "live_invalid_preserves_white_age_restores_delayed_raw": "PASS_REVIEW_AND_CHANGING_RGB_EVIDENCE"
+  },
+  "functional_evidence": {
+    "final_index": {"receipt": "verification/summary.json", "status": "PASS_FUNCTIONAL_MODELSIM", "frames": 18, "active_pixels": 16588800, "rgb_bytes": 49766400, "source_unchanged": true, "tools_unchanged": true, "unexpected_warnings": []},
+    "real7": {
+      "receipt": "verification/runs/20261016_013948_bce47e15/summary.json",
+      "status": "PASS", "heads": 12096, "final97_results": 7,
+      "rom_requests": 27349, "source_cycles_bench_convention": 1577512,
+      "exact_active_pixels": 921600, "age_source": "actual_time_snapshot_age20"
+    },
+    "named_fullframes": {
+      "status": "PASS_18_OF_18_FINAL_RUN",
+      "final_receipt": "verification/runs/20261016_013948_bce47e15/summary.json",
+      "final_case_count": 18,
+      "exact_active_pixels": 16588800,
+      "source_unchanged": true,
+      "original_failed_receipt": "verification/runs/20261016_011902_38d808a8/summary.json",
+      "original_passed_cases": 14,
+      "supplement_receipt": "verification/runs/20261016_013046_fa32e8d2/summary.json",
+      "supplement_passed_cases": ["unknown_age", "live_withdraw"],
+      "extra_live_time_invalid_fullframe": "PASS",
+      "preserved_failed_runs": ["20261016_011322_c3d4b84e", "20261016_011902_38d808a8", "20261016_013321_b9bb4bc0"]
+    },
+    "randomized_table_arrival": {"receipt": "verification/runs/20261016_014013_10a83d51/summary.json", "status": "PASS", "source_unchanged": true, "pending_row": 345, "pending_x": 1170, "exact_active_pixels": 921600},
+    "changing_rgb_delay": {"receipt": "verification/runs/20261016_012603_64ee4efe/summary.json", "status": "PASS", "video_registers": 2, "normal_prepare_samples": 323},
+    "protocol": {"receipt": "verification/runs/20261016_013948_bce47e15/summary.json", "status": "PASS", "cold_clear_plus_prepare_cycles": 1601},
+    "official_raster": {"receipt": "timing_probe/attempt_attempt2/receipt.json", "status": "PASS", "normal_blank_samples": 370, "sof_to_de_transition_periods": 39970, "sof_to_pixel_consumption_periods": 39971},
+    "vendor_init_file_bounds_warning": "UNRESOLVED_PRESERVED_NO_UNEXPECTED_WARNINGS_IN_INSPECTED_RECEIPTS",
+    "known_vendor_init_bounds_counts": {"per_fresh_joint_optimization": 114, "main_18frame_total": 2052, "direct_native_dram_protocol": 2}
+  },
+  "cycle_budget": {"scan_cycles_per_entry": 5, "max_entries": 64, "scan_cycles": 320, "normal_line_overhead_samples": 3, "normal_total_samples": 323, "conservative_budget": 330, "official_blank_samples": 370, "cold_clear_prepare_measured": 1601, "official_sof_to_de_transition_periods": 39970},
+  "manual_sequential_state_bits": {
+    "renderer": {"counters": 48, "fsm": 4, "endpoint_prefix_de": 63, "outputs_status": 45, "total": 160},
+    "wrapper_raw_rgb_shadow": 48,
+    "frozen_age": {"coordinates": 21, "digits_flags": 19, "outputs": 27, "total": 67},
+    "combined_total": 275,
+    "new_beyond_frozen_age": 208,
+    "qualification": "nominal sequential widths only; combinational regs excluded; synthesis may optimize/recode"
+  },
+  "physical_resource_intent_not_measurement": {
+    "line_event_bits": 23040,
+    "ideal_storage_bits_per_slice": 64,
+    "ideal_capacity_slice_lower_bound": 360,
+    "slice_management_target": 600,
+    "new_dsp_intent": 0,
+    "new_eram_intent": 0,
+    "actual_slice_dsp_eram": "PENDING_TD",
+    "setup_hold_75mhz": "PENDING_TD",
+    "risk": "bank read mux, write decode, control and AGE may exceed600Slice; capacity lower bound is not mapped resource evidence"
+  },
+  "raw_static_gate": {
+    "directory": "gate_attempt3",
+    "renderer": {"compile": "passed", "ast": "failed", "readability": "failed", "comment": "passed", "naming": "failed", "profile": "passed", "testbench": "not_requested", "toolchain": "not_requested", "errors": 450, "strict_warnings": 0},
+    "wrapper": {"compile": "passed", "ast": "failed", "readability": "failed", "comment": "failed", "naming": "failed", "profile": "passed", "testbench": "not_requested", "toolchain": "not_requested", "errors": 102, "strict_warnings": 5},
+    "qualification": "raw gate unchanged; external simulation separately evidenced; no strict-delivery pass"
+  },
+  "remaining": ["strict deliverable gate", "actual TD resource/setup/hold", "whole67-layer DDR accuracy and board acceptance"],
+  "recommended_rtl_fixes": []
+}

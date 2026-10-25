@@ -1,0 +1,14 @@
+{
+  "module": "road_standard_tile_client",
+  "phase": "fixed31_standard_layers",
+  "base": "../../extended/rtl/road_standard_tile_client.v retained read-only",
+  "interfaces_changed_at_application_only": ["tile_y7 for S4 y68", "write_data16 plus write_int16 flag", "core_output_data16 plus core_output_int16", "core_activate"],
+  "unchanged": ["all five arithmetic kernel ports/II/numeric/reset", "C4 WIF1 widths and one-outstanding semantics", "unique arithmetic/workstore owner", "parameter identity layer/channel/window/group and quant248", "no private tile/weight/full-prediction arrays"],
+  "fixed_graph": "31 listed standard convolutions only: DSDown8+lateral2+head21; fixed case not arbitrary network engine",
+  "dw_stride1": "one channel6x6=36 bytes; three adjacent points union15 groups8/7, tail9 groups8/1; four weight slots; stride2 unchanged81B/union21",
+  "raw_heads": "six cls2/reg5 INT16_Q7.8 outputs; pre-only i_activate0; no nonexistent post fields; tail channel mask3; output address two-byte aligned",
+  "masked_lanes": "output masks handle Cout2 and5; invalid output no write; bias/pre invalid lanes0; only first group applies bias",
+  "source_views": "head2/3/4 stems consume concat07/09/11 split-left plus fused-residual-right physical storage alias, no concat tensor allocation",
+  "scope": "single output4x4 tile all channels, not full-layer/prefix/67graph sequencer; logical memory write is an atomic1/2-byte application transaction, not new real DDR protocol",
+  "verification": ["31 fixed layer selected tiles", "raw16 not truncated", "SiLU/post bypass", "tail channels and H18 rows", "H72 y68 and W128 x124", "all metadata/handshake/backpressure/reset", "no physical mapping/FPS/accuracy claim"]
+}

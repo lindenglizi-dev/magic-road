@@ -1,0 +1,64 @@
+{
+  "identity": {
+    "module": "road_source_sof_identity",
+    "parameters": {"MIRROR_TIMEOUT_CYCLES": 120000},
+    "ports": {
+      "i_time_clk": 1, "i_camera_clk": 1, "i_rstn": 1,
+      "i_time_now_ms": 64, "i_time_tick": 1, "i_time_epoch": 32,
+      "i_camera_sof": 1, "i_capture_credit": 1,
+      "o_frame_admit": 1, "o_admit_epoch": 32, "o_admit_frame_id": 32,
+      "o_admit_capture_ms": 64, "o_source_frame_id": 32,
+      "o_mirror_ms": 64, "o_mirror_epoch": 32, "o_mirror_valid": 1,
+      "o_event_busy": 1, "o_frame_skip": 1, "o_wrap_fault": 1,
+      "o_desc_valid": 1, "i_desc_ready": 1, "o_desc_payload": 128
+    }
+  },
+  "overlay": {
+    "module": "road_age_overlay",
+    "ports": {
+      "i_clk": 1, "i_rstn": 1, "i_sof": 1, "i_vsync": 1,
+      "i_hsync": 1, "i_de": 1, "i_rgb": 24,
+      "i_age_upper_ms": 64, "i_table_draw_valid": 1,
+      "o_vsync": 1, "o_hsync": 1, "o_de": 1, "o_rgb": 24,
+      "o_draw_permit": 1
+    }
+  },
+  "descriptor_layout": {"epoch": [127, 96], "source_frame_id": [95, 64], "capture_ms": [63, 0]},
+  "clock_contract": {
+    "time_hz": 100000000, "camera_nominal_hz": 60000000, "hdmi_hz": 75000000,
+    "camera_clock_is_measured": false,
+    "single_absolute_counter": "frozen road_time_snapshot.o_src_now_ms",
+    "epoch": "stable for each coordinated reset interval; never hot-switch"
+  },
+  "admission": [
+    "All rising physical AWB SOFs count, even when credit/busy/time prevents capture.",
+    "Arm only after observing SOF low after local reset release; high during reset never creates a phantom frame.",
+    "o_frame_admit is combinational BEFORE the actual source SOF sampling edge; valid does not gate SOF.",
+    "At that same edge the capture owner consumes qualified admit fields and reserves a pre-existing FREE slot.",
+    "No mirror arriving on the SOF edge is eligible until a subsequent SOF.",
+    "No credit, stale mirror, outstanding event or frame counter wrap skips the whole frame. No pixel backpressure.",
+    "The physical frame counter saturates on wrap and sticky fault blocks further admission until coordinated reset with a new epoch."
+  ],
+  "cdc": [
+    "Independent held96 time request/ack and held128 source event request/ack; no dynamic bus synchronizer or asynchronous FIFO.",
+    "Source freezes each payload before toggle, holds through two-stage returned ack. Destination two-stage request plus one stable capture wait.",
+    "Descriptor ack occurs only after i_desc_ready && o_desc_valid at 100MHz; output payload is stable while stalled.",
+    "Mirror valid expires on the 120001st camera edge without a completed new snapshot; common reset cancels all old events.",
+    "The source stamp is an already completed old mirror, so source lag increases age rather than decreases it.",
+    "Continuous configured clocks imply mirror publication lag about 1ms plus CDC. On time-clock freeze watchdog is about 2ms in camera time; camera-clock stop also stops watchdog, so bounded freshness after clock loss requires common reset."
+  ],
+  "overlay_contract": [
+    "Reuse fixed 5x7 row-bitmaps and one-clock RGB/VS/HS/DE output register, not a general text engine.",
+    "Eleven 12x16 cells at x16..147,y16..31: AGE xxxx ms, or AGE_INVALID. Numeric ages 0..9999 only; UINT64_MAX and larger values display INVALID, never 0.",
+    "Latch the current table age on the first blanking edge AFTER i_sof, so a table active-bank switch on i_sof is visible. i_sof must be in blanking; first active pixel must follow that latch edge.",
+    "Latched text/digits remain stable for the rest of the frame; o_draw_permit always equals live i_table_draw_valid AND reset, not the latched age.",
+    "A normal empty table can still show its known age while draw permission is zero. An expired known age can be displayed, but cannot re-enable boxes.",
+    "Existing table computes conservative snapshot-capture+4ms. New demo table instances use approved2000ms; old500ms baseline remains untouched."
+  ],
+  "boundaries": [
+    "Actual admission credit/slot association and full pixel DMA are NOT connected by an identity event.",
+    "No production integration, TD, physical CDC/MTBF/bundled timing signoff, bitstream or board proof in this batch.",
+    "The descriptor contains source identity/time only; task_id, model_id and slot metadata are owned by the application scheduler.",
+    "No independent hot reset or real DDR late-return drain is proved."
+  ]
+}

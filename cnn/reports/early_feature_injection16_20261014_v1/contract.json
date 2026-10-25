@@ -1,0 +1,21 @@
+{
+  "targets": [
+    "stem.conv",
+    "down2.pw.conv",
+    "csp2.out.conv"
+  ],
+  "max_training_images": 16,
+  "original_scales_unchanged": true,
+  "one_tensor_at_a_time": true,
+  "unchanged_injection_preflight": "first actual image, all three target tensors, exact final-head parity",
+  "fixed_score": 0.5,
+  "floor_uint16": 3276,
+  "TopK": 128,
+  "NMS": "strict IoU>.5",
+  "max_boxes_per_class": 32,
+  "continuation_gate": "both AP50 strictly improve; both TP>=control and FP<=control at .5; both new/replay class AP50 do not decrease; otherwise stop this branch",
+  "formal_acceptance": false,
+  "deployment_candidate": false,
+  "training_updates": 0,
+  "caveat": "ideal injection still has original-scale rounding/clipping; failure does not exonerate a layer"
+}

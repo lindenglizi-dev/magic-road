@@ -1,0 +1,232 @@
+{
+  "modules": [
+    {
+      "name": "road_csp_dw_cache",
+      "feature": "csp_cache",
+      "rtl_path": "road_csp_dw_cache.v",
+      "description": "固定首残差DW→PW八bank缓存，不含DDR或算术",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "100MHz同域时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "共同异步取消，释放由现顶层保证",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "DW实际结果写请求，保持到接受",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_index",
+            "direction": "input",
+            "width": 8,
+            "role": "native",
+            "description": "DW局部HWC索引0..191，非法索引被接受后置错但不写内存",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_data",
+            "direction": "input",
+            "width": 8,
+            "role": "native",
+            "description": "真实DW INT8输出",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_write_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "采集阶段且健康时允许写",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "全部192个不同地址已被接收",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_write_count",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "唯一有效写计数0..192",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "重复/越界写粘滞故障，共同复位清除",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "PW组读请求，保持到ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_pixel",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "4×4局部pixel索引",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_group",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "0=通道0..7；1=通道8..11及四零lane",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_read_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "完整采集且响应槽可容纳才接受",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "PW操作数端真实接受",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "读响应一槽，反压保持",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 64,
+            "role": "native",
+            "description": "8个低字节优先INT8",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_mask",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "ff或0f，末组四零lane",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_pixel",
+            "direction": "output",
+            "width": 4,
+            "role": "native",
+            "description": "与载荷同步的pixel",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_group",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "与载荷同步的组号",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "parameters": [],
+      "behavior": [
+        "采集阶段只写不读，全部192个唯一结果到齐后只读不写。",
+        "每读请求一个上升沿后产生64bit注册响应；一槽可同拍出入。",
+        "reset清有效位/计数/响应，不清RAM；恢复后必须完整重写，禁止旧响应泄漏。"
+      ],
+      "constraints": [
+        "仅4×4×12单tile；跨tile复用必须共同复位，本轮不引入epoch/DMA协议。",
+        "256物理字节中仅192有效；写读阶段互斥，不依赖同址碰撞或上电内容。"
+      ],
+      "corner_cases": [
+        "最后一字节、索引191/192/255、重复写、请求/响应停顿、复位中断。"
+      ],
+      "verification_cases": [
+        "32组数据对拍、随机写序、长响应反压、未满不读、故障及复位；17项真实计算回归。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "read",
+          "scenario": "read",
+          "title": "完整采集后注册读取及响应保持",
+          "description": "最后一字节写入之后开放读，接受读的上升沿后产生响应；停顿时数据和元数据保持。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "loaded",
+                "wave": "01....."
+              },
+              {
+                "name": "read_valid",
+                "wave": "0.10..."
+              },
+              {
+                "name": "output_valid",
+                "wave": "0..1..0"
+              },
+              {
+                "name": "output_ready",
+                "wave": "0....1."
+              },
+              {
+                "name": "output_data",
+                "wave": "x..=..x",
+                "data": [
+                  "held group"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

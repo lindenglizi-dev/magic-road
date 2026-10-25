@@ -1,0 +1,49 @@
+{
+  "module": "road_paxi_mailbox",
+  "task_classes": [
+    "generate",
+    "validate"
+  ],
+  "clock_domains": {
+    "source": "i_clk, 100 MHz",
+    "ddr": "i_ddr_clk, approximately 133.33 MHz"
+  },
+  "reset": "i_rstn and i_ddr_rstn are asynchronous-assert, synchronous-release resets derived from one common raw reset. Asserting or restarting only one domain is forbidden.",
+  "ownership": "Exactly one request from source acceptance through source response consumption; no slot reuse.",
+  "request_cdc": "Source holds write/address/data from i_req_valid&&o_req_ready until response consumption. req_toggle_src crosses req_toggle_meta_ddr and req_toggle_sync_ddr; the DDR domain copies the stable bus when it differs from req_toggle_seen_ddr.",
+  "response_cdc": "DDR holds data/error from rsp_toggle_ddr publication until rsp_ack_sync_ddr matches. rsp_toggle_ddr crosses rsp_toggle_meta_src and rsp_toggle_sync_src; source copies once and holds o_rsp_* until i_rsp_ready.",
+  "paxi": "AW is held until accepted. W is first offered on the immediately following DDR cycle and held until accepted; W is never allowed to precede AW. A write response means only that both were accepted. AR can be accepted on the same DDR edge as the sole R beat. WSTRB is 16'h0000 and WLAST remains asserted with WVALID.",
+  "address": "Native PAXI [0x1a00000,0x2000000), aligned to a native stride of 8.",
+  "errors": {
+    "bit0": "address range or alignment",
+    "bit1": "PHY unavailable after request ownership",
+    "bit2": "accepted read return missing RLAST",
+    "bit3": "unexpected R or endpoint timeout"
+  },
+  "fault": "Sticky until the common reset clears both domains; no retry.",
+  "timeout": "C_TIMEOUT defaults to 27'h7ffffff and is overrideable only for verification.",
+  "public_gates": [
+    "compile",
+    "ast",
+    "readability",
+    "comment",
+    "naming",
+    "profile",
+    "testbench",
+    "toolchain"
+  ],
+  "verification_cases": [
+    "normal",
+    "split_aw_w",
+    "random_stalls",
+    "long_response_backpressure",
+    "ar_same_edge",
+    "bad_rlast",
+    "unsolicited_r",
+    "phy_lost",
+    "timeout",
+    "common_reset_positions",
+    "no_stale_response",
+    "asynchronous_clock_conservation"
+  ]
+}

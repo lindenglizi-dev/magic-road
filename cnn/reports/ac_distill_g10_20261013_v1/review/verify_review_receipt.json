@@ -1,0 +1,92 @@
+{
+  "status": "passed_pre_execution_review",
+  "role": "verify_review",
+  "scope": "teacher cache, mixed replay manifest, distill replay patch, runner contract and recovery guards",
+  "reviewed_source_sha256": {
+    "cnn/train.py": "d833b8de13c42fc081bd996b3c1fe3f3b9b02ce3a65024a602a8d1c6a5e5dc5b",
+    "cnn/test_distill_replay.py": "b5ea02129ba4d46a4c2cb7ad05af5bf291004f081b60bbf5baff258371fcc6cd",
+    "cnn/reports/ac_distill_g10_20261013_v1/run.py": "7c93450268e1422028383d84508deec2aee41b84ba238e925c7c168d9f1b959d"
+  },
+  "bindings": {
+    "dataset_sha256": "5b25180c25d1f3835ea5248b107f19d2fc39cfac166500c45c87c2dfde08fd59",
+    "dataset_content_sha256": "eca6648b1a7a1feb16b4ab0dde84f5620084b53d19474a7cf07fbb7a66c9330c",
+    "teacher_cache_sha256": "37c2edfcf416167c3c230a079aa7c4ff33e067fe0a37bcff15ee4ea318595927",
+    "initializer_sha256": "17c3cd644bd80a5f66e24eb3f510126fbb5db5bbb302e39250d78d339b6e5d42",
+    "supervised_control_checkpoint_sha256": "e7e6a0f514b39417451ff90cec32e7f5adc862136bdf3adeac988c4d454fa262"
+  },
+  "key_isolation": {
+    "train_keys": 86,
+    "unique_train_keys": 86,
+    "validation_keys": 17,
+    "train_validation_overlap": 0,
+    "cache_coverage": "exact_train_86_of_86"
+  },
+  "ground_truth_supervision": {
+    "train_images": 86,
+    "train_boxes": 3113,
+    "train_ignore_boxes": 258,
+    "new_images": 22,
+    "new_boxes": 209,
+    "replay_images": 64,
+    "replay_boxes": 2904,
+    "finding": "YOLOXLoss remains unchanged and consumes manifest GT; distillation is additive and requires same-class GT support while masking ignore regions"
+  },
+  "sampling_fairness": {
+    "windows": 10,
+    "invalid_windows": 0,
+    "new_per_window": 11,
+    "replay_per_window": 11,
+    "new_presentations": 110,
+    "replay_presentations": 110,
+    "new_per_image_min_max": [5, 5],
+    "replay_per_image_min_max": [1, 2]
+  },
+  "actual_cache_loss_probe": {
+    "device": "cpu",
+    "threads": 2,
+    "model_forward_or_training_run": false,
+    "sample_keys": ["epfl_c5_o040", "epfl_c2_o160"],
+    "sample_gt_boxes": [5, 9],
+    "distill_loss": 5.462429523468018,
+    "student_gradient_abs_sum": 4.507926940917969,
+    "finite": true
+  },
+  "patch_review": {
+    "teacher_keys_captured_before_replay_wrapper": true,
+    "distill_replay_allowed_only_with_frozen_bn_and_no_mosaic": true,
+    "supervised_math_changed": false,
+    "teacher_cache_and_sampling_hashes_in_resume_protocol": true,
+    "exact_resume_and_changed_protocol_rejection_test_present": true
+  },
+  "runner_review": {
+    "same_e7_dataset_sampling_and_update_budget_as_control": true,
+    "phase": "distill",
+    "planned_optimizer_updates": 10,
+    "temperature_stop_c": 75,
+    "hard_seconds": 1800,
+    "automatic_retry": false,
+    "automatic_continuation": false,
+    "source_closure_includes_direct_imports": true,
+    "post_run_e7_cache_and_source_immutability_are_hard_gates": true
+  },
+  "launcher_correction_review": {
+    "attempt1_status": "failed_no_retry_before_GO",
+    "attempt1_training_started": false,
+    "attempt1_run_directory_created": false,
+    "attempt1_reason": "venv Windows launcher Popen PID differed from the real interpreter PID; strict ownership check rejected it",
+    "fix": "training command uses sys._base_executable with the existing worker_environment; PID ownership checks remain unchanged",
+    "attempt2_receipt_directory": "execution_attempt2",
+    "popen_pid": 38556,
+    "reported_child_pid": 38556,
+    "torch_import": "2.7.1+cu126",
+    "launcher_pid_check_sha256": "755b3afe93e0219df27e0222960a5032e8ac43873fa64630f463d381483335be",
+    "cpu_tests_sha256": "a126eda5b032127f74d93fa5a8b302cdfadffac37e6c593794977c9be1ec43fb",
+    "cpu_preflight_sha256": "cb366eed0a3207001e1cc7665dce6c000fb3bd5fe98c2bb6cb87d5712309af1c",
+    "training_contract_sha256": "eecc47ff382880800501b9f3f4cfc50c36ef764f22936bc634ab8010a4d5ff36",
+    "attempt1_report_sha256": "32a25b2a5acc87ee32e8ca2f57756dc31c5b4e06eb311b0220b5e5883b498a0b",
+    "final_cpu_checks": "5_of_5_passed",
+    "final_validate_only_exit_code": 0
+  },
+  "must_fix_findings_open": [],
+  "evidence_boundary": "This receipt authorizes only the bounded comparison pre-execution path. It does not rerun teacher inference, numerically compare every cached head, execute GPU training, or establish an accuracy gain."
+}

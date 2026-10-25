@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "review_role": "review",
+  "reviewed_at_utc": "2026-10-13T11:02:20.1679796Z",
+  "scope": "Read-only review of train-only aligned-component histogram-MSE calibration, package integrity, source identity, and the single frozen 17-image development evaluation. No training, GPU, QAT, RTL, production, or board work.",
+  "result": "IMPLEMENTATION_AND_PACKAGE_INTEGRITY_PASS_MSE_CANDIDATE_REJECTED",
+  "artifact": "cnn/reports/replay_g10_mse_20261013_v1",
+  "implementation_review": {
+    "train_only_scale_selection": true,
+    "validation_used_for_scale_selection": false,
+    "aligned_component_scales_enforced_by_package_loader": true,
+    "views_not_double_counted": true,
+    "material_contributors": ["conv", "maxpool", "residual_view"],
+    "histogram_bins": 16384,
+    "candidate_scale_ratios": 65,
+    "candidate_ratio_range": [0.0625, 1.0],
+    "selected_components": 45,
+    "selected_at_search_floor": 0,
+    "maximum_reported_histogram_clipped_fraction": 0.0000878990363910422,
+    "histogram_mse_assessment": "Per-bin count, sum, and squared-sum accumulation is correct. The MSE is exact for the reconstruction assigned to each histogram bin; only candidate quantizer-boundary assignment is approximated by the bin centre, as documented.",
+    "targeted_unit_test": {
+      "command": "python -m unittest -v cnn.hw_validation.production.test_calibrate_mse",
+      "tests": 1,
+      "passed": true
+    }
+  },
+  "findings": [
+    {
+      "severity": "P2",
+      "location": "cnn/hw_validation/production/calibrate_mse.py:145-174",
+      "title": "Baseline checkpoint and evaluation protocol are not checked before computing deltas",
+      "detail": "The runner checks validation image content and later truth/ignore equality, but does not fail closed on baseline checkpoint_sha256, metric protocol, or postprocess_contract before subtracting baseline AP50. The completed artifact happens to match on all three, so its reported deltas are valid; a future changed baseline could silently produce a cross-protocol delta. Compare these fields with CHECKPOINT_HASH and the hard-coded postprocess settings before evaluation."
+    },
+    {
+      "severity": "P3",
+      "location": "cnn/hw_validation/production/calibrate_mse.py:48",
+      "title": "Reported clipped fraction uses endpoint thresholds, not actual RNE clipping thresholds",
+      "detail": "The diagnostic counts centres below -128*scale or above 127*scale, while clipping after nearest-even starts beyond the -128.5/+127.5 quantizer boundaries, with tie behavior at the endpoints. This overstates clipping slightly and does not affect candidate MSE or scale selection. Rename it endpoint_fraction or calculate clipping from rounded integer codes."
+    },
+    {
+      "severity": "evidence_gap",
+      "location": "cnn/hw_validation/production/calibrate_mse.py:117-123",
+      "title": "The MSE unit-test source is not included in package provenance",
+      "detail": "calibrate_mse.py is added to provenance, but test_calibrate_mse.py is not. This review records the test source SHA-256 separately; include it in future validation receipts if the 14-test claim is part of the frozen evidence."
+    }
+  ],
+  "actual_run_identity": {
+    "checkpoint_sha256": "e7e6a0f514b39417451ff90cec32e7f5adc862136bdf3adeac988c4d454fa262",
+    "previous_manifest_sha256": "64ad4e3284c4fdf90fa9f9ddc468db00159c46b152a13d440753030a979624f9",
+    "calibration_sha256": "c49672db2376dddadf30f94e0e3852ba65bb08140a99b206b1ecc53f542ae31d",
+    "quantization_sha256": "905bdd42f62d1c5006193af2aeb54439b85a557d9e8d03f7971e45c818cadb16",
+    "train_error_comparison_sha256": "703192bc717db6861f683a532856c6ebe0380a3ed632bb0460a40689b1b61cd9",
+    "development17_sha256": "c9ba894fee24705709099f7e65ea73b53314ca70bd10301a69151585e8731e2c",
+    "status_sha256": "584527764c09e967061936bf7d02a4f091715a959411facce2806929e98881c9",
+    "calibrate_mse_source_sha256": "b8057dd405250a127c9b2626075f4e257a09f9013c64d806ce819e07f4cf9bd5",
+    "test_calibrate_mse_source_sha256": "aa6374a0f58c6bbb94d673a7a3c21ab3bc6bae2713076138087dca62d3d4e02c",
+    "manifest_provenance_source_count": 13,
+    "manifest_provenance_source_failures": 0
+  },
+  "data_protocol": {
+    "calibration_split": "train",
+    "calibration_images": 86,
+    "calibration_selection_matches_previous": true,
+    "calibration_manifest_sha256_match": true,
+    "calibration_content_sha256_match": true,
+    "development_images": 17,
+    "validation_manifest_sha256_match": true,
+    "validation_content_sha256_match": true,
+    "truth_matches_baseline": true,
+    "ignores_match_baseline": true,
+    "checkpoint_matches_baseline": true,
+    "metrics_protocol": "road_greedy_101point_ap_v1",
+    "metrics_protocol_matches_baseline": true,
+    "postprocess_contract_matches_baseline": true,
+    "calibration_validation_image_overlap": 0,
+    "calibration_validation_scene_overlap": 0,
+    "calibration_scene_count": 46,
+    "validation_scene_count": 3
+  },
+  "package": {
+    "canonical_schema2_integrity_pass": true,
+    "schema_errors": [],
+    "manifest_sha256": "e4abf2939ead68151b2164f347deb93d6d723955e0401d7d454cda9fec877adb",
+    "payload_sha256": "ce8ac031ea7d3372d009dbba6448c8d06502e7080f174a65da6c2192c077f0f8",
+    "physical_sha256": "95d5e43206b233cef69e0e6809f8091bb3b66a8127aefd9606ce1c105150e103",
+    "physical_crc32": "4e392508",
+    "segments": 393,
+    "segment_failures": 0,
+    "lane_files": 56,
+    "lane_failures": 0,
+    "words_lines": 7168,
+    "words_reconstruct_physical": true,
+    "loaded_convolution_layers": 67,
+    "identity_matches_status": true,
+    "identity_matches_development17": true,
+    "acceptance_eligible": false,
+    "trust_boundary": "Integrity and reproducibility only, not authentication. Consumers must pin the externally recorded manifest digest."
+  },
+  "numeric_result": {
+    "first_four_train_images": {
+      "stem_normalized_rmse_mean_before": 0.08762306694285275,
+      "stem_normalized_rmse_mean_after": 0.07476060338620041,
+      "down2_dw_normalized_rmse_mean_before": 0.4406599233828744,
+      "down2_dw_normalized_rmse_mean_after": 0.17506537291374652,
+      "down2_pw_normalized_rmse_mean_before": 0.7464373501475936,
+      "down2_pw_normalized_rmse_mean_after": 0.4180198085321728,
+      "head_s4_normalized_rmse_mean_before": 0.3981109498815561,
+      "head_s4_normalized_rmse_mean_after": 0.6422757431082096,
+      "head_s8_normalized_rmse_mean_before": 0.5819706972343854,
+      "head_s8_normalized_rmse_mean_after": 1.0360360713067576,
+      "head_s16_normalized_rmse_mean_before": 0.29136077653108733,
+      "head_s16_normalized_rmse_mean_after": 0.7533305042491283
+    },
+    "development17": {
+      "person_ap50": 0.0,
+      "vehicle_ap50": 0.0,
+      "person_ap50_delta_pp_vs_fp32": -47.495254916323745,
+      "vehicle_ap50_delta_pp_vs_fp32": -50.81552124143437,
+      "mean_ap50_drop_pp": 49.15538807887906
+    },
+    "conclusion": "The MSE calibration improves the first three inspected train layers but worsens all three raw heads and yields zero AP50 for both classes under the unchanged development protocol. It is correctly rejected as diagnostic-only and must not be deployed."
+  },
+  "not_covered": [
+    "The concurrent QAT implementation was not reviewed.",
+    "No training, GPU, Python-to-RTL comparison, RTL edit, synthesis, timing, bitstream, board, Flash, or continuous-video test was performed."
+  ]
+}

@@ -1,0 +1,64 @@
+road_feature_blocks_client design contract
+
+Scope: stage-one CSP2/CSP3/CSP4, work/roadyolo, local candidate. Old clients read-only.
+Control: ../reference/control_contract.json; selector_report.json status PASS (CPU_CONTROL_ONLY).
+graph SHA256 2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738.
+payload SHA256 b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145.
+physical package SHA256 bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417.
+
+One 100MHz owner, FSM, byte cache, weight bank, external old arithmetic engine.
+Only IDLE start_valid/start_ready latches block_id. Ignore busy start/live ID.
+block_id held through FINISH/idle until next accepted start or common reset.
+Parameter request and barrier owner=o_block_id. Response carries block/layer/channel/group/window.
+Parameter response handshake checks all identity, error and quantization stability.
+Barrier handshake checks block/layer and only then advances. Core tags remain lane0/1/2.
+Final barrier -> FINISH one cycle(done1,busy1,ready0) -> IDLE.
+Illegal accepted ID or wrong identity -> sticky FAULT busy1, no request traffic until reset.
+Priority common reset > fault > matching handshake > held state.
+No frame ID added here; upper task owner serializes complete tasks.
+
+Frozen addresses (hex):
+block2 source035b4000; stages035ea000 03605000 03620000 0363b000 03656000.
+block3 source0369a000; stages036b5000 036c3000 036d1000 036df000 036ed000 036fb000 03709000.
+block4 source0372c000; stages0373b000 03743000 0374b000 03753000 0375b000 03763000 0376b000.
+Stage0 DW source upper half, later DW preceding residual.
+Residual PW preceding DW + prior residual bypass (stage1=source upper half).
+Out source lower half + final residual. Split parent retained to last out read.
+Each residual bypass retained to its PW last read. No new tensor liveness reuse.
+tile byte address=base+(((y/4)*(W/4)+x/4)*16+(y%4)*4+x%4)*C+c.
+Fixed block ID case uses constant shape/divisors/strides for prefetch/task/cache indexes.
+CSP2 out stage4 is not DW; Cin12 PW groups8+4, tailmask0f.
+CSP4 y16 tile only rows16/17; never writes18/19. Halo and physical tail prefetch pad0.
+
+Logical memory: single in-flight aligned16 read, address32bit, data128bit, exact response full address.
+Response valid remains held to ready. Line valid cleared on accepted start and layer transition.
+Core/write atomically retire matching nonduplicate enabled lane when writer ready.
+BARRIER after all actual layer writes; ready explicitly promises read visibility, not request issuance.
+No real DDR/AXI/PAXI timing assumed; no timeout-based completion or independent cancel drain guarantee.
+
+Storage: reg_tile_cache[0:3071] byte=3072B; reg_weight_bank[0:23]192bit=576B;
+reg_parameter248bit=31B; reg_line_data128bit=16B; total3695B excluding control/metadata/activation.
+One task process owns all storage. PREFETCH one byte write or CACHE_ACTIVATION one byte read
+or CACHE_BYPASS one byte read, states mutually exclusive. Arrays never reset.
+DW fills36*half=432/864/1728B; residual fills32*half=384/768/1536B; out fills16*full=384/768/1536B.
+All consumed bytes overwritten before issue. Weights all consumed slots overwritten before group.
+DW4slots; half PW2/3/6slots; out PW3/6/12slots. Reserved unused slots never consumed.
+3072B/24slot reserves approved future PAN maximum, not implemented SPPF/PAN support.
+4ERAM raw10240B target; inference, mapping, ports, Slice/DSP/ERAM/timing UNKNOWN.
+
+Cycle ownership: IDLE wait; TILE_SETUP1; PREFETCH1byte/cycle with READ/READ_WAIT on miss;
+PARAMETER/PARAMETER_WAIT fragments; TASK_SETUP1; CACHE_ACTIVATION1/4/7/8 according to group;
+CACHE_BYPASS3 residual first-group only; SEND wait; WRITE_WAIT wait legal lanes;
+RETIRE1 registered final-write receipt; ADVANCE1; BARRIER wait; FINISH1; FAULT until reset.
+Original endpoint cadence preserved; no new pipeline stage. State counters exclusive,
+pipeline activity overlap must not be added to state occupancy. Actual totals root-owned.
+
+Common asynchronous-low reset clears state/identity/control/linevalid, upstream releases synchronously.
+Service cancels outstanding responses, arithmetic engine resets and reloads SiLU. Arrays not reset.
+No independent hot-reset/late-response claim; fault retains ownership until common reset.
+No training, production changes, TD, bitstream, board/Flash, timing exceptions, commit/push.
+CPU-generated CSP3/4 source crosses missing down3/down4; sequence2->3->4 is not continuous CNN.
+Root owns ModelSim/full numeric/negative/request/cycle checks. Static failures are retained separately.
+Final gate static_gate_final.json/md: compile passed, ast/readability/comment/naming/profile failed;
+testbench/toolchain not_requested, delivery_ready=false, errors1309, strict_warnings0.
+Initial failed gate static_gate.json/md retained errors1317. No simulator or TD run by this RTL role.

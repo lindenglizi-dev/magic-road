@@ -1,0 +1,22 @@
+2026-10-14：Stem→DDR→相邻四个down2 tile
+
+已完成：
+- 前版用户报告三次复位回绿、保持10分钟稳定，已另存board_test_20261014_stem_ddr/board_result.json。
+- 新候选在独立目录生成；8个内部核和PAXI mailbox不改。
+- Python整数参考通过：6092条命令、16个Stem tile、256唯一写字、四halo共289读、1536输出字节。
+- 真实算术+两时钟mailbox联调通过：正常125824周期，随机停顿128083周期。
+- 完整端口规格和周期图已生成。
+- 初始严格RTL门禁：779 errors、20 strict warnings，未通过；包括继承的解析/格式/命名/注释问题，不能视为779个计算错误。不改门槛。
+
+独立回归已完成：13/13，通过4096 Stem、1024 DW、1536 PW各阶段核对；acc/pre/SiLU/post合计26624项。六个晚复位位置均恢复。
+已停止物理重跑：最后physical_attempt5（实际1线程、默认medium时序优化、完整时钟）仍在同一Stage2.5.6 pseudo_nets处access violation。
+当前状态BLOCKED_TD_PLACEMENT_ACCESS_VIOLATION：本候选没有有效时序、位流或板测。功能成果已冻结，完整CNN/摄像头并发/正式精度/FPS仍未覆盖。
+
+本轮只改外层计数/索引、四halo调度和诊断ROM，不改变内核II或数值行为。读取可重复，写地址每启动只写一次，不新增通用DDR提交屏障或槽位复用。
+前版冻结文件未覆盖，先前严格失败记录保留。
+
+已定位的工具调用问题：首次依赖预检从E:/project/qiansai运行，无法定位工程根；改从当前工程验证子目录运行后required_ok=True。一次外部接口提取用错CLI入口；随后使用注册的scripts.python.quality.external_interface_stubs extract成功。均不是RTL功能修复。
+
+物理失败均保留，详见failure_index.json：首次24线程布局access violation；导入gate.db恢复虽完成布线，但派生时钟丢失、覆盖率2.43%，作废而不采用正裕量；完整流程提前设置thread=1后实际布局日志仍为24线程，再次崩溃。随后综合后设置实际1线程仍崩溃，改默认medium也同点崩溃。已排除单纯线程数/高优化强度的解释，停止随机调参。
+程序ROM的gate格式和attempt2实际route格式全量524288bit、45组bank mux及四个负例通过；attempt2只用于网表结构/初始化核查，仍不是有效时序或板测。
+结论和后续单变量候选见阶段报告.txt、下一步执行计划.txt。你无需重新下载旧位流；已有单tile板测通过记录保留。

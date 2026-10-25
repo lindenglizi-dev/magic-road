@@ -1,0 +1,24 @@
+Stem → DDR → down2：本次临时上板操作
+
+这次不是旧EXTENDED地址测试。新文件运行4个真实Stem tile，把1024字节结果写入DDR再读出，完成一个down2 DW/PW小块，比较384字节最终结果。
+仅使用PROGRAM_SRAM；不要选择Flash、Create Flash File、PROGRAM_FLASH。暂时不用摄像头。
+
+1. 保持此前供电、JTAG、HDMI1连接。BitWriter设备PH1P35MDG324，模式PROGRAM_SRAM，速度5MHz。
+2. 从下载列表移除旧任务项（不删除磁盘文件），添加下面唯一文件：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/stem_ddr_down2_once_20261014/diagnostic_bitgen/HX1P35A_C7_STEM_DDR_DOWN2.bit
+3. 确认文件名末尾为STEM_DDR_DOWN2.bit，不是DDR_EXTENDED.bit或DDR_DIAG.bit，再点击Run。
+4. 等待下载和初始化。应出现绿色背景、左上TEST、右上蓝色明暗心跳。顶部状态条自动轮换；外观与旧版相似，必须核对文件名。
+5. 按K4（此前已确认C7复位键）再释放。短暂黑屏正常；等恢复绿色后再做下一次，共三次。
+6. 第三次恢复后保持10分钟，确认无红屏、花屏、心跳停止。绿色保持不是持续反复访问DDR，算术/DDR测试每次复位只跑一次。
+7. 回传：下载列表截图；“三次复位是否全部绿色、10分钟是否稳定”的文字。若方便，拍清整个顶部状态条及心跳的至少5秒视频，可解码实际等待/周期。
+
+异常处理：
+若红屏，不反复刷写或调整参数；拍完整屏幕和至少5秒顶部条视频，说明刚加载/第几次复位/保持阶段。等待10秒仍不绿、持续黑屏或心跳停止也如此反馈。无论旧版是否通过，本版失败都记为未通过。
+
+需要恢复时，仍用PROGRAM_SRAM加载此前已确认三次复位和10分钟稳定的文件：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ddr_extended_board_20261013/diagnostic_bitgen_attempt2/HX1P35A_C7_DDR_EXTENDED.bit
+
+新位流SHA256：9666925f857bf78f53db9cfd02430f57a11ca4d7b99582c43c70128c35179c80
+新位流大小：1789544字节。
+
+注意：本版为TEST_ONLY计算/存储验证，不是识别演示，没有真实训练参数、摄像头检测框或完整CNN；不需要你现在补标注数据。

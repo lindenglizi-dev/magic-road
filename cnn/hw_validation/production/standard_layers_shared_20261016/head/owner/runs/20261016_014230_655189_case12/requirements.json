@@ -1,0 +1,14 @@
+{
+  "module": "road_standard_arithmetic_owner",
+  "task_class": ["generate", "validate"],
+  "scope": "one task metadata owner around the original five frozen arithmetic kernels; no residual, private operand arrays or new arithmetic",
+  "clock": "100MHz common clock; all kernels share i_rstn; asynchronous assertion with two-edge owner admission gate",
+  "input": "first valid/ready locks output_mask/tags/addresses/pre/post/activate. Only input operands/lane_mask/last vary in subsequent groups. MAC bias acts only on first. Malformed first sequence or input_fault is sticky fatal.",
+  "identity": "active tags must be unique; each output must match exactly one remaining active tag, type must equal !activate; activated output must be signed INT8 extended to INT16",
+  "retirement": "MAC result transfers exactly once in ACC; owner remains busy through all DPP latency/backpressure until last output valid&&ready; any fault stays busy until common reset",
+  "table": "only IDLE and original DPP readiness permit table transfer; table_loaded is original DPP status; table load wins over new IDLE input",
+  "numeric": "signed INT8 products, frozen signed33 accumulation/INT32 last check, exact INT64 RNE/sat16 pre; activate=1 frozen SiLU/post/sat8, activate=0 pre-only raw INT16",
+  "verification": ["real frozen MAC/DPP/requant/round/SiLU and vendor RAM", "original 1024-word SiLU table", "mask1/3/7 and both modes", "multi-group tail mask, bias once", "locked mode/tag/address/quant disturbed after first", "output backpressure and last-lane ownership", "reset in GROUP/ACC/OUTPUT", "wrong tag, duplicate output, wrong type/sign extension, malformed input and MAC overflow"],
+  "public_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"],
+  "not_claimed": ["TD", "physical resource/timing", "full layer or full graph", "DDR", "board", "accuracy", "training", "production delivery"]
+}

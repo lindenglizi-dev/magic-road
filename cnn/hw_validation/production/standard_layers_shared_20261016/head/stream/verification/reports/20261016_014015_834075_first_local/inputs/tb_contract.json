@@ -1,0 +1,102 @@
+{
+  "name": "head_cell_stream_verification",
+  "modules": [
+    {
+      "name": "tb_head_cell_stream",
+      "rtl_path": "tb_head_cell_stream.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "verification_completion",
+            "description": "当前独立案例的实际比较通过后才置位"
+          }
+        ]
+      },
+      "behavior": [
+        "读取冻结六平面物理128位行镜像，不用expected cell驱动源响应",
+        "实际请求逐个对齐独立字段地址，缓存复制每字段也逐个核对原graph地址",
+        "实际12096输出cell完整112位/id/token/model对拍，保留随机长反压",
+        "末源读消费、最末cell消费和done分别记录，取消与错误持busy直到共同reset"
+      ],
+      "constraints": [
+        "数组仅属于行为读服务和独立golden，不是DUT预测RAM或实际DDR",
+        "不更改DUT、冻结golden、五核，不做综合或物理映射"
+      ],
+      "corner_cases": [
+        "未committed不得准入、首握手后身份扰动、S4/S8/S16边界、H18末两行",
+        "请求pending、取消造成response-held、cell-held共同reset",
+        "错响应地址/error、取消持owner、真实checker一位负例"
+      ],
+      "verification_cases": [
+        "full12096_random",
+        "uncommitted",
+        "identity",
+        "cancel_request",
+        "reset_request",
+        "reset_response_held",
+        "reset_cell_held",
+        "wrong_address",
+        "read_error",
+        "cancel_cell",
+        "checker_negative"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "retirement",
+          "title": "最后读响应与最后cell分别退休",
+          "scenario": "read-cell-retirement",
+          "description": "协议示意不规定内部时延；读响应先消费，cell可以长时间保持；最后cell消费后才done。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..........."
+              },
+              {
+                "name": "read_valid",
+                "wave": "01..0......."
+              },
+              {
+                "name": "read_ready",
+                "wave": "0..10......."
+              },
+              {
+                "name": "rsp_valid",
+                "wave": "0....10....."
+              },
+              {
+                "name": "rsp_ready",
+                "wave": "0....10....."
+              },
+              {
+                "name": "cell_valid",
+                "wave": "0......1..0."
+              },
+              {
+                "name": "cell_ready",
+                "wave": "0........10."
+              },
+              {
+                "name": "done",
+                "wave": "0.........10"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

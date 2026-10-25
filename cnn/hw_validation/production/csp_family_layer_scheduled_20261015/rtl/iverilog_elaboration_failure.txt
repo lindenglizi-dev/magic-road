@@ -1,0 +1,39 @@
+RoadYOLO CSP family client local Icarus elaboration failure
+Date: 2026-10-15
+Status: TOOLCHAIN FAILED; this is not compile-pass evidence.
+
+Tool
+----
+path: E:/project/qiansai/.tools/iverilog/bin/iverilog.exe
+version: Icarus Verilog 12.0 devel, s20150603-1539-g2693dd32b
+sha256: 803b8844af2cc8ed70b5f08b07ffa749901280e81339617ca3e72cbbb852bd2b
+
+Input
+-----
+path: cnn/hw_validation/production/csp_family_layer_scheduled_20261015/rtl/road_csp_family_client.v
+sha256: 72f39ec1a571283861b117c552183d8c4485af4a4ea8524c1772f41cb25af6e9
+
+Exact command
+-------------
+E:/project/qiansai/.tools/iverilog/bin/iverilog.exe -g2005 -Wall -s road_csp_family_client -P road_csp_family_client.C_FAMILY=3 -o E:/project/qiansai/family_compile_check.vvp E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/csp_family_layer_scheduled_20261015/rtl/road_csp_family_client.v
+
+Exit
+----
+decimal: -1073741819
+hex: 0xC0000005
+temporary output: absent after command cleanup
+
+Complete emitted diagnostics
+----------------------------
+road_csp_family_client.v:437: warning: @* is sensitive to all 12 words in array 'reg_weight_bank'.
+road_csp_family_client.v:439: warning: @* is sensitive to all 12 words in array 'reg_weight_bank'.
+road_csp_family_client.v:440: warning: @* is sensitive to all 12 words in array 'reg_weight_bank'.
+
+Boundary
+--------
+The process crashed during elaboration of the requested unpacked weight bank
+and large dynamically indexed byte cache. It emitted no Verilog syntax error.
+This run does not establish compile, simulation, synthesis, resource, timing
+or physical RAM mapping. The authorized primary ModelSim flow must decide RTL
+compile and behavior. The two compile-time family probes are alternatives,
+not evidence that both caches coexist or fit a shared four-ERAM mapping.

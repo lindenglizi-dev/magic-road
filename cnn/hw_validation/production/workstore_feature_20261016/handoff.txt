@@ -1,0 +1,72 @@
+第七批 C4：唯一物理工作仓接入与同向量回归
+日期：2026-10-16；work/roadyolo；仅本地，不提交/推送。
+
+一、范围与资格
+独占目录workstore_feature_20261016，旧CSP/SPPF交付只读。
+当前实际交付是WIF1工作仓、新feature客户端和直接接线诊断top；不是完整67层、DDR、视频或板卡闭环。
+模型包payload b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+资格保持TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED，不把文件名或逐层对拍当精度/QAT验收。
+未训练、未改生产、未生成位流、未上板/Flash、未新增时序例外。
+
+二、实际工作仓与端口
+准确端口/时序见workstore_interface.txt；C4拥有实现，C2只消费，不复制工作仓。
+RTL SHA256 0d9f78544ce6e726a8ff042d7be0f5a2aee7d717bfbde0495a98a78dea25eb1c。
+四个显式SP/NOREG PH1P_LOGIC_ERAM：byte两块2048×8；weight两块512×40并行为80bit。
+3072B byte合法；weight24组，每组三word，word2={48'd0,高32bit}。有效权重576B，连同尾填充占720B。
+每通道一个未退休，可旧响应退休同拍接新请求，两通道独立。完成响应必须晚于实际native提交/取得。
+非法byte>=3072或group>=24不产生native CE/WE，完成error/data0并置粘滞fault。
+reset只取消控制/valid，不复位RAM、不回滚已提交word；重新开始必须完整覆盖所有要读的byte/weight。
+所有B口停用，单SP A口不同时读写；两个byte bank及weight实例独立，未使用内容不当有效结果。
+FORCE_KEEP及四个源码实例不是实际4ERAM映射通过证据，实际类型/数量由本批一次TD诊断另报。
+
+三、已实测的native模型证据
+storage_frozen的case0/1/99实际通过，负例命中真实读结果比较Fatal。
+case0：byte接受/退休14/14、weight54/54；native byte12、weight156；尾word零填充24组。
+case1：byte32/30/取消2、weight152/150/取消2；native30/446；零填充72组，共同reset4次，两通道各400拍持有。
+同一封存TB的端点观察native_endpoint_observation_attempt3：8个byte响应、42个weight响应。
+K0请求握手→byte K1实际访问、K2后valid；weight K1/K2/K3实际访问、K4后valid。响应反压及同拍退休接受另由完整cases验证。
+300个10ns间隔采样在上升沿后2ns进行；观察不是额外完整通过case或独立RAM探针。
+前两次观察命令失败保留：Tcl含空格参数误拆、-lib误用路径；均未加载DUT。修为独立.do和复制已编译work库后通过，不改RTL。
+Python参考12648项覆盖全部逻辑地址/组号及位行走；是逻辑参考，不代替native和TD。
+
+四、实际客户端接入
+新client SHA256 9447d5a76293f2a588c970c96a2d27b43cb2ff2987a838699cb2033089cd3fcf。
+移除reg_tile_cache[0:3071]、reg_weight_bank[0:23]；只保留当前192bit权重/激活/小参数寄存。
+18个对称WIF1端口，旧状态0..19保留，新增20..27等待/权重读写状态。
+byte预取写确认后才能前进；参数写确认后才能计算；读响应取得后才拼装操作数/池化样本，当前权重保持至核接受。
+不假设消费者固定等2或4拍；只按valid&&ready退休，错误响应转粘滞故障。
+算术五文件、原wrapper、核端口/II/数值/复位不变。start握手锁存块身份，busy扰动不切任务。
+实际top只有一个client、一个仓、一个冻结算术owner，数据接口外露防止用常量替代计算路径；真实编译及端口展开已通过。
+诊断top是逻辑服务接口，不是板级引脚顶层；1ns展开不是功能对拍，更不是100MHz时序通过。
+
+五、周期与功能口径
+正常原CSP2→3→4序列：97,886,234干净周期；sequence97,886,248，额外14。
+分块CSP2 39,526,362；CSP3 33,644,504；CSP4 24,715,368。
+旧array版相同向量干净43,343,642；新增加54,542,592周期。主要区别是真实同步仓等待，不是训练模型变化。
+正常CSP4→SPPF：43,479,134干净周期；sequence43,479,143，额外9。
+其中SPPF18,763,766周期，对照旧6,322,166；CSP4输出和SPPF中间结果全部来自DUT实际写回/屏障可见性。
+CSP2/3/4与SPPF分段相加116,650,000周期=100MHz下1.1665秒，仅为已测局部片段相加，不是连续完整骨干或整网FPS。
+down3/down4仍缺真实跨块生产者，本线不得CPU补洞冒充连续CNN。当前局部已超过整网100M预算，1FPS未达标。
+同一模型/向量、同一起止点比较；不换计时窗口、不得把取消前缀计入完整运行、不得把重叠事件相加成周期。
+最终功能发布要求：storage3cases＋CSP7cases＋SPPF5cases共15目录；CSP正常/随机/复位9个完整块，SPPF4链8个完整块，共17。
+当且仅当finalize.py核验全部实际完成日志、源/工具/数据哈希、28态/阶段/端点、真实负例及语义审查后，functional_ready.json才允许一次诊断综合。
+随机、复位、长反压和实际全部最终数值以cycle_ledger.json/final_checks.json为准；本文不提前把未完成case记为通过。
+
+六、严格门禁和语义边界
+全闭包严格门实测6680 errors/26 warnings，失败原件保留；不能用ModelSim通过清除八门失败。
+工作仓单模块两次453→448 errors；client旧1477→新1564 errors；旧/新报告保留，不做整库格式重写。
+原语静态解析失败继发的驱动/时钟诊断与真实厂商编译/运行分列；不加假驱动、不降规则。
+实际可达范围：byte<=3071、weight组<=23、native地址<=71；phase只0..4；无进位丢失。
+原地址decoder先完整默认赋值再局部修正的阻塞组合过程保持，没有新增跨周期组合反馈。
+新等待/组合来源预算/格式项未严格闭合，100MHz setup/hold及板级时序仍未测。
+同目录semantic_review.json绑定实际源和未解释高置信语义风险列表；风险未核清不得推进诊断综合。
+Python/脚本配套严格技能未安装，只记实际自检/运行证据，不冒称配套严格通过。
+规格渲染曾因sandbox路径解析、合同缺constraints和stdout编码失败，均保留失败日志/原输入；最终registered规格及周期图已生成。
+
+七、后续与禁止误报
+先收口本次真实存储与一次诊断综合，另报实际ERAM/DSP/Slice及数据路径保留，不做PnR/位流。
+RAM等待优化优先考虑byte/weight独立访问重叠、响应退休同拍发后继请求；任何收益须实现后同向量/同端点再测，理论不能记为已加速。
+之后接lateral4/nearest/fuse3_td，再lateral3/nearest/fuse2_td；PAN每块仅reduce PW→DW→PW残差，不额外加out.conv。
+底部down3_bu/down4_bu由C2推进，缺失不得CPU预填冒充连续。
+硬限21216Slice/40DSP/108ERAM；管理19000/38/107不变。新演示2000ms＋AGE由其他线接入，旧500ms正式基线只读。
+本功能封存文件不倒改为综合通过；后续诊断综合结果位于synthesis/与独立物理交接文件。

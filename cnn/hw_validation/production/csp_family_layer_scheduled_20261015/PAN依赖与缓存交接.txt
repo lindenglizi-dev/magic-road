@@ -1,0 +1,64 @@
+固定CSP3/CSP4与PAN后续接线边界
+日期：2026-10-15；只读图依据graph.json SHA256：
+2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738
+
+一、当前证明与阻碍
+本批road_csp_family_client只接受编译常量C_FAMILY=3或4。每次TB只有一个客户、一个既有算术owner。
+这证明两种固定图形状分别可执行，不证明同一bitstream能顺序运行两者并共用缓存。
+直接例化两个客户会各自产生reg_tile_cache、reg_weight_bank与控制寄存器；只综合一种选项则不能运行另一种。
+当前缓存是内部数组，无外部共享RAM端口。后续必须由协调者确定单一存储owner及固定任务选择边界，不能把本批当作物理共享实现。
+不复制MAC、SiLU或完整ROM；本文件不授权改变既有核心端口、II、数值、复位或真实DDR协议。
+
+二、局部缓存容量和端口
+reg_tile_cache：1728B；最大DW为6x6x48=1728B；PW输入与旁路或融合输入最大1536B，互斥复用而非相加。
+reg_weight_bank：12x192bit=288B；量化参数31B；16B读行缓存；数据总计2063B，不含控制/tag/激活/元数据寄存器。
+4ERAM原始容量目标10240B，只是容量比较；没有综合/布局布线，不证明ERAM推断、Slice、DSP、端口时序或整机资源。
+ST_PREFETCH写一个字节，ST_CACHE_ACTIVATION或ST_CACHE_BYPASS读一个字节，三者互斥。
+缓存和权重数组不逐项复位；每次使用前完整覆盖所需项。单个tile完成后可覆盖本地缓存，不等于DDR生产者已可释放。
+源split父张量必须保留至最终融合最后一次读消费；前两次PW残差各保留至后一残差旁路读消费。
+fault/cancel保持占有直到共同复位。本批未证明独立取消后排空或晚返回回收。
+
+三、准确的下游生产者链
+csp4.out.conv -> SPPF -> lateral4/最近邻 + csp3.out.conv -> fuse3_td
+-> lateral3/最近邻 + csp2.out.conv -> fuse2_td
+-> down3_bu + 保留concat.05 -> fuse3_bu
+-> down4_bu + 保留sppf.out.conv -> fuse4_bu。
+
+SPPF：csp4.out.conv 0x0376B000，18x32x96；squeeze 0x0377A000，18x32x24。
+pool.00/.01/.02为0x0377E000/0x03782000/0x03786000，顺序5x5池化；concat.03按squeeze/pool00/pool01/pool02排列四段C24。
+sppf.out.conv 0x0378A000，18x32x96；lateral4.conv 0x03799000，18x32x48。
+
+fuse3_td：reduce逻辑C0..47来自nearest(lateral4)，坐标(y//2,x//2)；C48..95来自csp3.out.conv 0x03709000。
+reduce/DW/PW分别0x037A1000(C48)/0x037BC000(C24)/0x037CA000(C24)，空间36x64。
+concat.05 = reduce低C24 + PW残差alias；lateral3.conv 0x037D8000，36x64x24。
+
+fuse2_td：C0..23来自nearest(lateral3)，C24..47来自csp2.out.conv 0x03656000。
+reduce/DW/PW分别0x037E6000(C24)/0x0381C000(C12)/0x03837000(C12)，空间72x128。
+concat.07 = reduce低C12 + PW残差alias。
+
+fuse3_bu：C0..47来自down3_bu.pw.conv 0x03860000；C48..71来自fuse3_td.reduce低半0x037A1000；C72..95来自fuse3_td残差alias 0x037CA000。
+reduce/DW/PW分别0x0387B000(C48)/0x03896000(C24)/0x038A4000(C24)，空间36x64。
+concat.09 = reduce低C24 + PW残差alias。
+
+fuse4_bu：C0..95来自down4_bu.pw.conv 0x038BA000；C96..191来自保留的sppf.out.conv 0x0378A000。
+reduce/DW/PW分别0x038C9000(C96)/0x038D8000(C48)/0x038E0000(C48)，空间18x32。
+concat.11 = reduce低C48 + PW残差alias。
+
+长生命周期：concat.05同时供lateral3及后续fuse3_bu；concat.07供down3_bu与head2；concat.09供down4_bu与head3；concat.11供head4。
+sppf.out.conv同时供lateral4及后续fuse4_bu，不能用完lateral4就回收。
+以上均为graph逻辑字节地址，不是已验证的真实DDR原生地址换算。
+
+四、PAN不能直接套用当前七阶段客户的具体原因
+每个FusionCSP只有reduce PW、DW、PW残差三次实体卷积，完成后发布concat视图；没有额外out.conv。
+四个reduce输入组数为12/6/12/24；fuse4_bu需要group0..23，超过当前4bit group和12项权重bank。
+fuse2_td PW Cin12的第二组只有四个有效输入，mask=0x0f；当前客户PW默认每组八lane全有效。
+fuse4_bu reduce一个4x4输入tile需16x192=3072B，超过当前1728B缓存。它仍小于4ERAM原始容量，但扩容和映射须后续测量。
+需要多生产者concat、nearest读坐标映射、嵌套视图解析，以及固定PAN块参数身份；不能仅用局部stage0..2区分四个块。
+fuse4_bu仍保留最后tile仅两行有效、禁止y18/y19写回的规则。
+
+五、下一批最小可执行顺序（待协调者分配，不在本批实现）
+1. 决定固定任务选择与单一工作缓存owner；保留唯一算术核，先对两种CSP顺序切换及缓存覆盖做测试。
+2. 接down3/down4与已有CSP，检验真实生产者写可见性及末读生命周期；CPU输入不能替代该接线证明。
+3. 完成SPPF/nearest/多生产者视图参考，再按固定PAN三卷积块推进，不造任意图引擎。
+4. 逐块累计实际周期；未测的SPPF/PAN/head/DDR竞争全部UNKNOWN，不把独立周期相加称整网实测。
+5. 同一实际顶层再验证4ERAM映射、整机资源与时序；本批没有TD、位流或上板成果。

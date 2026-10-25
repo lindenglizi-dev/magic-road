@@ -1,0 +1,207 @@
+C8 完整前三层 DDR 协议差距交接
+日期：2026-10-15；性质：一次性只读审查；实现负责人：C8。
+
+一、先说尚未证明的三件事
+
+1. W 被接受，不等于后续读已经保证可见，也不等于控制器内部所有旧事务已经退休。
+2. 当前最终 PW 黄金比较发生在写 DDR 之前；没有从 PW DDR 区回读。因此 PASS 不能单独证明最终 PW 存储内容正确。
+3. 当前为独占 DDR、共同复位、故障闭锁的诊断链；没有独立取消、晚返回排空和多客户返回归属协议，不能原样升级为视频共享 DDR 服务。
+
+这三项是证据或适用范围的缺口，不是“已复现真实 DDR 算错”。本次未发现足以否定当前独占诊断链全部进展的确定性反例。
+不得因这些缺口另写第二套桥、扩大 CRC/DHI 探针，或用固定等待拍数伪造写完成。本报告只交接给 C8 / 总协调，不修改功能 RTL。
+
+二、对象、状态词与边界
+
+审查根目录 F：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/frontend_ddr_full_20261015
+以下 F/相对文件:行号均定位本次核实的文件版本。
+输出目录：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ddr_contract_handoff_20261015
+工作工程分支：work/roadyolo。未提交、未推送；未改旧文件、生产工程、门禁或时序例外。
+
+已证明：限定到列出的源码事实、现有收据或用户明确报告，绝不自动推广为整机通过。
+条件成立：当前实现可在明确前提下成立，但前提不得默认为其他客户/控制器也成立。
+缺证据：现有材料不足以作该项保证；不等于已经证明失败。
+
+本轮仅阅读源码、厂商材料和现有报告，核对哈希与日志；没有重跑仿真/TD，没有训练、上板、生成位流或写 Flash。
+独立复核代理也仅只读审查 mailbox、顶层和复位。未向其他聊天发送消息。
+
+三、当前实质进展，不能再按“四个 tile”描述
+
+【已证明：源码与现有受控端点回归】
+512×288×3 RGB 全量写入 → 2304 个 Stem tile → 576 个 DW/PW tile → 完整 PW 输出。
+Stem 为 3→16、3×3/s2；配对 DW 为 16 通道、3×3/s2；PW 为 16→24。
+输入 442,368 B，Stem 589,824 B，PW 221,184 B。
+每个完整成功用例：78,336 次 128-bit 写、97,564 次读、1,306,368 个 halo 值；acc/pre/SiLU/post 各核对 958,464 项。
+证据：F/rtl/road_frontend_layer_sequence.v:117-145、173-195；F/rtl/road_stem_ddr_sequence.v:164-165、346-378；F/verification/TEST_REPORT.md。
+
+【已证明：实际 TD 顶层包含 DDR2】
+F/rtl/road_stem_ddr_board_top.v:145-159 实例化真实 ddr2，物理 DDR 引脚接到顶层。
+:161-177 是 sequence → mailbox → 同一个 DDR2；HDMI 显示诊断状态，不是摄像头视频 DDR 并发。
+F/physical/road_stem_ddr_board_top.al:78-102、192 纳入上述 RTL 与 ddr2/ddr2.xml；F/physical/build.tcl:2-5 使用 PH1P35MDG324/-3 并展开该顶层。
+实际配置 F/physical/ddr2/ddr2.v:70-72、94-102：BA=2、ROW=13、COL=10，ROW_COL_BANK，MC_REORDER=NORMAL，native 地址 25 位、数据 128 位、mask 16 位。
+不能把“数值 TB 未实例化 DDR”误写成“实际综合工程没有 DDR”。
+
+【已证明：数值仿真和物理实现是不同证据】
+F/tests/tb_frontend_ddr_tensor.v:129-136 只直接实例化 sequence；:188-263 是受控内存端点。
+八个 case 各编译 11 份项目源码，以及 PH1P_PHY_GSR、PH1P_LOGIC_ERAM；没有编译 mailbox、板级 top 或 DDR 控制器/DRAM 模型。
+这证明全遍历、数值和该端点协议行为，不证明真实 DDR 延迟、RAW 顺序或复位后控制器队列清空。
+
+现有八项回归收据（本轮重读日志、核对源码哈希，未重新运行）：
+normal                  PASS，17,252,079 拍
+random_backpressure     PASS，17,714,841 拍
+stall_512               PASS，17,252,591 拍
+reset_cancel_recover    PASS，17,252,079 拍（只计最后恢复成功一代，不含四段取消前缀）
+response_error          预期闭锁 error7，144,425 拍
+dropped_response        预期闭锁 error9，644,423 拍
+post_pass_ddr_fault     完整成功后注入故障，预期 error1，17,252,079 拍
+corrupt_read_data       整个首读 beat 反相，预期 error4，150,308 拍
+故障提前结束不能当加速；此前仅翻 bit0 被量化消去的未检出记录仍保留，不能宣称任意数据损坏都能被黄金比较发现。
+
+现有完整顶层物理结果，均含 DDR/HDMI 诊断壳，不是完整 CNN：
+Slice 15,794；DSP 30；ERAM 13；PLB 2472/2652（93.21%）。
+最差 setup +0.037 ns、hold +0.020 ns、recovery +1.751 ns、removal +0.064 ns；STA coverage 98.42%。
+最差 setup 位于 DDR PHY 100→133.33 MHz 校准路径；最差 hold 位于 mailbox 地址保持寄存器到 DDR 域接收寄存器。
+仍有 23 个 no_input_delay、49 个 no_output_delay 对象；不能由已报告路径无违例推出全部外部接口签核。
+证据：F/comparison.json、F/physical/route.area、F/physical/check_timing.rpt、F/constraint_recheck/check_timing.rpt。
+本次不重复跑 TD；也不以该资源数代替将来的多客户服务、CSP 或整网资源。
+
+四、接口事件表：不得把三种“完成”合成一种
+
+事件                 当前实现及源码位置                                      判定 / 能说明什么
+源请求接受           mailbox:178、209-224，req_valid && req_ready              已证明：冻结地址/数据，唯一源槽 busy；不是 DDR 接受
+DDR 请求复制         mailbox:263-289，两级 toggle 同步后在 IDLE 复制          已证明：载荷保持握手结构；物理 CDC 保证受约束及实现范围限制
+AW 接受              mailbox:185-186、326-332，AWVALID && AWREADY              已证明：仅地址被接收；尚未完成写数据
+W 接受               mailbox:187-190、335-341，WVALID && WREADY               已证明：在 AW 后一拍提出单拍 W，WLAST=1
+写响应发布           mailbox:407-418，W 接受即产生成功响应                    已证明：含义是 AW/W accepted；不是 visible/retired
+AR 接受与预留        mailbox:193-205、344-352                                  条件成立：唯一逻辑在途，预留一个返回槽；支持 AR 接受同拍 R
+R 接受               mailbox:195、356-362、419-426                             已证明：接收 128-bit 单拍 R，检查 RLAST；无所属 R 触发故障
+源响应消费           mailbox:242-258，rsp_valid && rsp_ready                   已证明：响应在消费前保持，ack 跨回 DDR 域
+逻辑事务槽释放       mailbox:222-224、365-377                                 已证明：源忙位/DDR 状态按握手释放；不代表物理写队列已空
+消费者读可见         当前无单独事件，需匹配 IP 的 RAW/顺序保证                 缺证据：不能据写响应就发布通用输入槽 READY
+旧事务全部退休       当前无 drain_done/队列空事件                             缺证据：不能据逻辑空闲就独立取消后复用地址或槽
+共同硬复位           board_top:83-84、98-131、145-146、169-170                 条件成立：共同断言、分域两级释放；实际控制器排空语义仍需核实
+独立 CNN 取消        当前不存在此接口                                         缺证据：不能用单侧复位替代取消/排空协议
+
+表中 mailbox 指 F/rtl/road_paxi_mailbox.v；board_top 指 F/rtl/road_stem_ddr_board_top.v。
+“一个逻辑在途请求”不保证“控制器内至多一个未退休写”：W accepted 后逻辑响应已可释放，而控制器仍可能缓冲该写。
+sequence 的 i_commit_ready(1'b1)（F/rtl/road_stem_ddr_sequence.v:442）是算术结果提交接口，不是 DDR 写完成信号；不能把它误报为伪造 DDR barrier。
+
+五、按位置归类的差距与最小处理路径
+
+G1 / 高优先 / 缺证据：accepted → visible 的依据缺口。
+位置：F/rtl/road_paxi_mailbox.v:335-341、415-418；F/rtl/road_stem_ddr_sequence.v:203-208、324-339。
+当前写响应驱动地址/张量阶段前进；这对独占诊断是一项可实测假设，但正式数据发布需要 NORMAL 模式下匹配 IP 的先写后读保证。
+F/physical/ddr2/src/rtl/top/ph1p_ddrmc_top.v:339-341 的内部 BRESP/BVALID 未导出，BREADY=1；不能自行接出 B 就称“物理写完成”。
+最小处理：保留 accepted 语义；由 C8 在现有服务上采用厂商确认的顺序/屏障，不写第二桥，不固定等 N 拍。
+影响：输入槽 READY、Stem→DW、PW→CSP 读取和地址重用。真实 DDR 全帧测试可提供实例证据，不单独替代通用接口保证。
+
+G2 / 高优先 / 缺证据：受控端点提前落实写，排除了关键 RAW 反例。
+位置：F/tests/tb_frontend_ddr_tensor.v:208-230 在源请求接受时立即修改内存，:252-260 才延后返回响应。
+因此随机请求/响应背压没有验证“写 accepted 之后内存尚未对后续读可见”的情况。
+最小补证建议（由 C8 决定并实施）：沿用同一个端点，用一个受控延迟写效果负例把 accepted 和可见时刻分开，并断言当前服务是否依赖 RAW 保证；不要新建桥或另跑整套无关探针。
+逻辑反例：写 X 接受 → 成功回执 → 读 X 接受 → 若允许读绕过未生效写则读出旧 X。此为尚未排除的调度假设，不是已复现匹配厂商 IP 的错误。
+若厂商明确保证该场景 RAW 顺序，则应把该保证写入匹配端点合约，而非保留不允许的反例调度冒充硬件行为。
+
+G3 / 高优先 / 缺证据：最终 PW 写后无 DDR 消费者核验。
+位置：F/rtl/road_stem_ddr_sequence.v:229、317-322、329-339；F/tests/tb_frontend_ddr_tensor.v:215-245。
+黄金比较在输出组装后、写 DDR 前；读取地址只选 RGB 和 Stem，未读 PW 区。完整 PW 受控内存写值虽已检查，真实板端最终 PW 回读仍未覆盖。
+最小处理：下一消费者优先从现有 PW 区读取并逐项对拍，或在现有序列器加一次有限 PW 读回；二者选最贴近主线的一种，不增加 CRC 子工程。
+即使本版板上显示 PASS，也不能把“最终 PW 内容被读回验证”勾为通过。
+
+G4 / 条件成立：AW/W 的范围是匹配 PAXI，不是任意标准 AXI。
+位置：F/rtl/road_paxi_mailbox.v:184-190、326-341。
+常规无故障期间保持 VALID/载荷至 READY；AW 接受后一拍呈现 W，符合手册 AW 先行且 W 最多落后两拍的示例模式。
+仍需确认“两拍”限定首次呈现还是实际接受，以及 WREADY 长背压时允许的保持规则。不得据图示推广为任意 AW/W 乱序或任意控制器均可用。
+超时/PHY 故障分支会终止等待并撤销请求；这是 fail-stop 边界，不是正常背压期间的继续服务承诺。
+
+G5 / 已证明：当前全字 mask 与 native 地址一致；扩大接口时有明确新前提。
+位置：F/rtl/road_paxi_mailbox.v:98-100、188、200；F/rtl/road_stem_ddr_sequence.v:121-123、322、329、336-337。
+128-bit 完整写使用 16'h0000，高有效屏蔽，即 0=写入。不能用标准 AXI 常见“1=字节写使能”的解释接入。
+native=byte_address>>1；一个 16 B beat 的 native 步长为 8；mailbox 要求 native[2:0]=0。
+RGB byte[0x03400000,0x0346c000)，Stem byte[0x03500000,0x03590000)，PW byte[0x03600000,0x03636000)，三者互不重叠且位于 52–64 MiB 内。
+厂商 ROW_COL_BANK 映射为 row=native[24:12]、bank=native[4:3]、column={native[11:5],native[2:0]}，不能将 native 错当简单字节地址。
+最小集成规则：一张权威字节地址表；仅在一个边界转换一次；先在宽地址检查范围/长度，再截成 25 位 native，避免高位先被截掉后范围检查误通过。
+当前诊断三块互不重叠，不等于已经证明与生产视频环形 bank 不重叠；视频仍须单独核对。
+
+G6 / 条件成立：单客户的返回归属和容量预留。
+位置：F/rtl/road_paxi_mailbox.v:58-70、123、178、192-205、242-258、365-377。
+唯一 busy 请求、单拍结果保持和 ack 释放提供隐式 owner，AR 接受同拍返回已经处理；旧 C9 对早返回的缺口不能套在这个实现上。
+但 F/rtl/road_stem_ddr_sequence.v:131 的 reg_write_owner 只是 RGB/Stem/PW 张量写阶段，不是视频/CNN 客户 ID；toggle 是握手相位，不是可独立取消的持久 epoch。
+最小集成规则：在统一服务接受请求时锁存客户/代次并预留返回容量，直到消费或确认排空才释放；不得把两个客户的 PAXI 输出直接并联。
+
+G7 / 条件成立：共同硬复位；缺证据：独立取消与 late-return drain。
+位置：F/rtl/road_stem_ddr_board_top.v:83-84、98-131、145-146、169-170；F/rtl/road_paxi_mailbox.v:209-215、263-289、402-406。
+共同复位断言会取消本地旧事务，各域两级同步释放；释放不同拍不等于允许单侧独立复位。复位恢复后重新写输入、重新装表/参数。
+F/tests/tb_frontend_ddr_tensor.v:175-185、189-207、360-378 同时复位序列器和受控端点并清空模拟内存；真实 DRAM 不会因为该复位自动清零。
+因此该回归没有保留控制器旧队列来检验晚返回，也不能证明 DDR 继续运行时单独复位 CNN 安全。
+最小集成规则：独立取消只停止新事务；保持已呈现请求至接受；已接受读仍排空并按旧 owner/epoch 丢弃；写的重用屏障由真实退休/顺序保证定义。不得用清空本地 busy 代替排空。
+
+G8 / 条件成立：超时故障闭锁；不得视为不中断视频的恢复机制。
+位置：F/rtl/road_paxi_mailbox.v:327-341、356-377、389-399、430-445；F/rtl/road_stem_ddr_sequence.v:396-417。
+例如 AW 已接受而 W 超时，诊断会闭锁，但控制器可能仍保留未配完的写请求；当前没有 drain。读超时也没有清除控制器晚返回的证据。
+当前实验停止且只允许共同复位，因此不要为此新增通用取消框架；接视频前必须集中设计故障作用域，不能为 CNN 重试擅自复位仍承载视频的 DDR。
+
+六、需要厂商回答的精确问题（不是索取芯片内部电路）
+
+资料锚点：E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/doc/IPUG/IPUG034_PH1P_MIS_IP_Guide.pdf
+已核对表 2-9、2-10、2-17 及图 2-14～2-17（印刷页 13–14、18–19；PDF 页 17–18、22–23），以及本版生成控制器配置。
+通用 PH1A 手册不能单独代替这一 PH1P 生成版本的行为保证。无需晶体管/芯片内部电路结构。
+
+Q1【影响 READY、层间交接】TD 6.2.168.116、PH1P、MC_REORDER=NORMAL、128-bit PAXI 下，AW/W 都接受后再接受同地址 AR，是否保证返回新数据？跨 bank、连续多写、写转读时分别是否成立？请给正式顺序条款或对应受支持配置。
+Q2【影响覆盖/槽重用】有没有受支持的写可见或所有旧事务退休事件/屏障？生成封装未导出的 BVALID/BRESP 精确定义是什么？若只是入队或发命令，不能当全部退休。
+Q3【影响现有 AW→W】“W 最多晚两拍”是首次 WVALID 还是 WVALID&&WREADY？AW 接受后 WREADY 长时间低时，保持 WVALID/WDATA 是否合法？AWREADY 是否允许等待 WVALID 才产生？
+Q4【影响共同复位/恢复】sys_rst_n 与 ddrphy_rst_n 对已接受 AW、未配 W、已发 AR、待回 R 的清理保证是什么？重新 init_done/phy_ready 后是否可能出现旧 R？是否有必须等待的已定义条件（不是经验拍数）？
+Q5【影响未来多客户返回预留】RVALID 高且 RREADY 低时，RDATA/RLAST 是否保持直到接受？返回严格按 AR 顺序吗？多 outstanding 的支持范围和 burst/RLAST 约定是什么？
+若官方保证不存在或资料缺失，只暂停受影响的“生产通用 DDR 服务”结论；现有独占诊断和算子工作不必全部停工。
+匹配 DRAM 仿真模型用于端到端数据回读补证，不是当前继续推进的前置条件，更不能替代上面未写明的正式保证。
+
+补充现有 C9 限定证据：
+../ddr_real_handshake_20261013/analysis.json 在匹配真实 IP 的三个写例中记录 W→内部 B 为 1 个 DHI 周期，但 B 比 DDR 引脚 WRITE 早约 54.407～69.407 ns；未接 DRAM 模型，没有读数据通过结论。
+这足以否定“看到 B 就一定已到物理写命令”的解释，不能据此断言该 IP 同地址 RAW 失败，也不能把老桥缺口替换成 C8 当前实现状态。
+
+七、视频多客户接入时才需要的新工作，不在本次另写
+
+1. 继续单一 C8 DDR 服务入口；AW/W 在配对完成前归同一客户，读接受时保存 owner/epoch 并预留返回槽。
+2. 视频优先；CNN 连续授予至多 16 个规定传输单元后重新仲裁。先明确授予单位，不能把 AW 和 W 当两个可任意抢占的完整事务。
+3. 统一字节区域表覆盖视频、RGB 双槽、特征和后处理；验证地址转换、长度、容量末端与 bank 边界，复用前满足可见/退休契约。
+4. 输入 READY 的发布与最后写 accepted 分开；READING 的释放与最后输入读响应消费绑定；旧代次晚返不能污染新槽。
+5. 只对共享故障采用共同硬复位；CNN 取消与视频继续运行是新契约，需一次集中决定，不能把当前诊断 reset 当成已有实现。
+上述属于未来接入条件，不应倒算成当前专用诊断链“本来就应该有”的功能缺陷。
+
+八、周期与板测边界
+
+normal 的互斥外层周期：
+初始化 1；RGB 填充 138240；表/参数装载 2158；RGB halo 映射/读/装载 3004788；Stem 核窗口 10914048；Stem 导出/黄金比较/写 776448；DW halo 1117948；DW/PW 核窗口 972288；PW 导出/黄金比较/写 290880；外层控制 35280。
+总和 17,252,079；核心窗口合计 11,886,336，包含内部等待，不是纯 MAC 有效拍。
+100 MHz 下受控端点约 172.52 ms，已经占整网 5 FPS 的 20,000,000 拍预算 86.26%；不能换算成“整网已达 5.8 FPS”。真实 mailbox 跨域和 DDR 延迟不在这份端点周期中。
+本次只核实已有周期，未生成新测量，也未用故障早停或取消前缀消失宣称加速。
+
+旧四 tile：../stem_ddr_loop_20261015/board_baseline.json 顶层记录用户报告三次复位与 10 分钟稳定；只属于旧 TEST_ONLY 位流，SHA256=9b8dd66127b7ac88d1b065707689e3ce3d681c80f182556c1f8cd8a7058b3aa6。
+其嵌入的旧构建快照仍含 NOT_RUN，应理解为构建时状态，不能覆盖后来明确的用户报告，也不能冒充代理亲自测板。
+新完整前三层：F/status.json 的 board_status=NOT_RUN；已有诊断位流 SHA256=aff0dd4f46f70dbd460262fea32aebc887ae4c30dc01c7a4cb323d30aab925cb。本轮没有生成或加载它。
+旧四 tile 通过不迁移为新完整前三层通过；新完整前三层通过也不迁移为 67 层、真实模型、摄像头并发、NMS 或 P95/R85 通过。
+
+九、审查校验、严格门与交接停止点
+
+本轮当前哈希核对：comparison.json.source_hashes 的 158 项全部匹配；physical/source_hashes.json 的 158 项全部匹配。
+八份正式 receipt 各自 11 份编译项目源码全部匹配当前文件；各 simulation.log 末尾 PASS/预期故障记录与收据一致。
+实际 pr.db SHA256=a14fde21f5bb95b3a59de00556555bc6e55ce96412a86c52e93e6bf9cdc7b3e8，与现有物理报告一致。
+关键版本：
+rtl/road_paxi_mailbox.v                e59b4f0ed68728ce3a31123d5e10e9939672bd5fe0aaf5e0a6acb32660657bec
+rtl/road_stem_ddr_board_top.v          fdd9c9ca1f1a7acc8468328ed25dfa05b2f5e9ff588d66c780599f0820ba8e97
+rtl/road_stem_ddr_sequence.v           35c53bf5e1ee2e461df79d53c7f35535539c881c4c8bc35d25a24e57d6e8b156
+rtl/road_frontend_layer_sequence.v    bc78e0664b3bdf746848715c13e927bfc6dc750058eeb61a2e2d08f88bda4c08
+tests/tb_frontend_ddr_tensor.v        3da21f7f28b67a73bef4fbc97208723accf968e00315b07d37052c7e521a3bd5
+comparison.json                      4bc6f1c5144bd7ec71c273a8c4735f76fa20ee68170ef51a3a153313b425d7e2
+status.json                          0965556c8bdbcf49c23ca6a043bec4673e7da380041d2862f945917367a4acad
+verification/suite_manifest.json     eb9e1f40400665cf51b7ab53d07bfaa6528ab50048540ea979d4af15167eaf08
+官方 IPUG034 PDF                     340f0705979e2c8467171efbf586497be60adf71236dc99dc2c1fee7271a18ca
+
+已有严格状态原样保留：RTL 912 errors/20 strict warnings；TB 137 errors/0 strict warnings；strict_gate_pass=false。
+TB 现有门禁：compile/ast/readability/naming/profile=passed；comment=failed(137)；testbench/toolchain=not_requested。实际 ModelSim 收据单列，不篡改门禁状态。
+本次八门 compile、ast、readability、comment、naming、profile、testbench、toolchain 全部 NOT_RUN（纯只读审查，无新 RTL/TB）。不能把静态审查、既有功能回归或 TD 通过写成严格交付门全通过。
+写报告后复核：158 项源闭包仍全部匹配，0 项变化；comparison.json、status.json、suite_manifest.json 的哈希与写报告前一致。指定新目录仅新增本报告一份；未覆盖原基线。
+
+建议下一项交给 C8：在当前服务上为 PW→下一消费者建立真实 DDR 数据依赖，并补 accepted/visible 的最小契约证据；不得由本审查聊天分叉第二套实现。
+最终决定仍需区分“可以继续独占诊断”和“允许生产多客户接入”。本次仅完成有限差距交接；报告交付后待命，不自动重复巡检或继续修改。

@@ -1,0 +1,134 @@
+{
+  "modules": [
+    {
+      "name": "tb_ddr_real_handshake",
+      "feature": "vendor_paxi_observation",
+      "rtl_path": "tb_ddr_real_handshake.v",
+      "description": "Render protocol sketches; retain the canonical portless-TB limitation.",
+      "interfaces": {
+        "ports": []
+      },
+      "clock": {
+        "domains": "100 MHz reference; vendor-generated DHI and DDR clocks"
+      },
+      "reset": {
+        "assertion": "Hold sys_rst_n low for 2 us",
+        "release": "Release on falling ref_clk edge, wait for real PHY ready"
+      },
+      "behavior": [
+        "Three single-beat writes, one read, no memory data oracle."
+      ],
+      "constraints": [
+        "Portless simulation top; vendor sources and parameters unchanged.",
+        "B and command pins are observations, not commit guarantees."
+      ],
+      "corner_cases": [
+        "Separate AW/W acceptance; W gap 0/1/2; unknown read data."
+      ],
+      "verification_cases": [
+        "Request hold, owner conservation, bounded observation."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "gap0",
+          "title": "gap0",
+          "scenario": "gap0",
+          "description": "Schematic, not a measured trace",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "dhi_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "AWVALID",
+                "wave": "010....."
+              },
+              {
+                "name": "AWREADY",
+                "wave": "1......."
+              },
+              {
+                "name": "WVALID",
+                "wave": "010....."
+              },
+              {
+                "name": "WREADY",
+                "wave": "1......."
+              }
+            ],
+            "head": {
+              "text": "AW/W gap 0; illustrative ready-high case, not measured latency"
+            }
+          }
+        },
+        {
+          "id": "gap1",
+          "title": "gap1",
+          "scenario": "gap1",
+          "description": "Schematic, not a measured trace",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "dhi_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "AWVALID",
+                "wave": "010....."
+              },
+              {
+                "name": "AWREADY",
+                "wave": "1......."
+              },
+              {
+                "name": "WVALID",
+                "wave": "0.10...."
+              },
+              {
+                "name": "WREADY",
+                "wave": "1......."
+              }
+            ],
+            "head": {
+              "text": "AW/W gap 1; illustrative ready-high case, not measured latency"
+            }
+          }
+        },
+        {
+          "id": "gap2",
+          "title": "gap2",
+          "scenario": "gap2",
+          "description": "Schematic, not a measured trace",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "dhi_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "AWVALID",
+                "wave": "010....."
+              },
+              {
+                "name": "AWREADY",
+                "wave": "1......."
+              },
+              {
+                "name": "WVALID",
+                "wave": "0..10..."
+              },
+              {
+                "name": "WREADY",
+                "wave": "1......."
+              }
+            ],
+            "head": {
+              "text": "AW/W gap 2; illustrative ready-high case, not measured latency"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

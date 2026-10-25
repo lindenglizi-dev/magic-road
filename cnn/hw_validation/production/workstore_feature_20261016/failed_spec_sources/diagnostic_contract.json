@@ -1,0 +1,420 @@
+{
+  "name": "physical_workstore_diagnostic",
+  "modules": [
+    {
+      "name": "road_feature_workstore_top",
+      "rtl_path": "rtl/road_feature_workstore_top.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "������ownerͬ��100MHz"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "��ͬ�첽��λ������ͬʱ��������Ӧ"
+          },
+          {
+            "name": "i_block_id",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "��start��������Ĺ̶�����"
+          },
+          {
+            "name": "o_block_id",
+            "direction": "output",
+            "width": 4,
+            "role": "native",
+            "description": "��ǰ��������ֱ����һ��start����"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "readyʱ����һ�������̶�ͼ����"
+          },
+          {
+            "name": "i_cancel",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "ȡ�������ռ������ͬ��λ"
+          },
+          {
+            "name": "o_start_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "���С��޹����ұ���Ч"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "��������ĺ͹���ռ��"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "ĩ�׶οɼ���ȷ�Ϻ������"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "���α߽����ճ��ָʾ"
+          },
+          {
+            "name": "o_layer",
+            "direction": "output",
+            "width": 3,
+            "role": "native",
+            "description": "��ǰ���ڽ׶α��"
+          },
+          {
+            "name": "o_tile_y",
+            "direction": "output",
+            "width": 7,
+            "role": "native",
+            "description": "��ǰ���п�������"
+          },
+          {
+            "name": "o_tile_x",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "��ǰ���п�������"
+          },
+          {
+            "name": "o_parameter_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "��ǰ������Ƭ������Ч"
+          },
+          {
+            "name": "o_parameter_channel",
+            "direction": "output",
+            "width": 7,
+            "role": "native",
+            "description": "DWͨ����PW�����ͨ�����"
+          },
+          {
+            "name": "o_parameter_group",
+            "direction": "output",
+            "width": 5,
+            "role": "native",
+            "description": "�������Լ����"
+          },
+          {
+            "name": "o_parameter_window",
+            "direction": "output",
+            "width": 3,
+            "role": "native",
+            "description": "DW���ڲ������ȣ�PWΪ��"
+          },
+          {
+            "name": "i_parameter_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "�������󱻷������"
+          },
+          {
+            "name": "i_parameter_response_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "������Ӧ������ready"
+          },
+          {
+            "name": "o_parameter_response_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "ֻ���ѵ�ǰδ�������"
+          },
+          {
+            "name": "i_parameter_response_block_id",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "��Ӧ�������ڵ�ǰ�����"
+          },
+          {
+            "name": "i_parameter_response_layer",
+            "direction": "input",
+            "width": 3,
+            "role": "native",
+            "description": "������Ӧ�׶�����"
+          },
+          {
+            "name": "i_parameter_response_channel",
+            "direction": "input",
+            "width": 7,
+            "role": "native",
+            "description": "������Ӧ���ͨ������"
+          },
+          {
+            "name": "i_parameter_response_group",
+            "direction": "input",
+            "width": 5,
+            "role": "native",
+            "description": "������Ӧ��Լ������"
+          },
+          {
+            "name": "i_parameter_response_window",
+            "direction": "input",
+            "width": 3,
+            "role": "native",
+            "description": "������ӦDW������̬"
+          },
+          {
+            "name": "i_parameter_weight",
+            "direction": "input",
+            "width": 192,
+            "role": "native",
+            "description": "��·������Ȩ��"
+          },
+          {
+            "name": "i_parameter_data",
+            "direction": "input",
+            "width": 248,
+            "role": "native",
+            "description": "bias����̬�����ֶ�"
+          },
+          {
+            "name": "i_parameter_error",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "����������ʽ����"
+          },
+          {
+            "name": "o_read_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "����16�ֽ���������Ч"
+          },
+          {
+            "name": "o_read_address",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "ʮ���ֽڶ����߼���ַ"
+          },
+          {
+            "name": "i_read_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "�������ڴ�������"
+          },
+          {
+            "name": "i_read_response_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "����Ӧ������ready"
+          },
+          {
+            "name": "o_read_response_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "ֻ���ѵ�ǰδ���������"
+          },
+          {
+            "name": "i_read_response_address",
+            "direction": "input",
+            "width": 32,
+            "role": "native",
+            "description": "����ƥ������Ķ����ַ"
+          },
+          {
+            "name": "i_read_response_data",
+            "direction": "input",
+            "width": 128,
+            "role": "native",
+            "description": "���ֽڶ�Ӧ��ַƫ����"
+          },
+          {
+            "name": "i_read_error",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "�ڴ������ʽ������"
+          },
+          {
+            "name": "o_write_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "�Ϸ��˽��д����"
+          },
+          {
+            "name": "o_write_address",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "��������ͼ�ֽڵ�ַ"
+          },
+          {
+            "name": "o_write_data",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "���ձ���INT8���"
+          },
+          {
+            "name": "o_write_sum",
+            "direction": "output",
+            "width": 9,
+            "role": "native",
+            "description": "����ǰsigned9�в��"
+          },
+          {
+            "name": "i_write_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "�ⲿд�������"
+          },
+          {
+            "name": "o_barrier_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "��ǰ����ȫ��д���ܺ������"
+          },
+          {
+            "name": "i_barrier_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "�˲��ǰд�Ѿ��ɶ�"
+          },
+          {
+            "name": "i_barrier_block_id",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "���ϱ������ڵ�ǰ�����"
+          },
+          {
+            "name": "i_barrier_layer",
+            "direction": "input",
+            "width": 3,
+            "role": "native",
+            "description": "����ȷ�������׶�"
+          },
+          {
+            "name": "i_table_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "ԭownerװ����Ч"
+          },
+          {
+            "name": "i_table_addr",
+            "direction": "input",
+            "width": 10,
+            "role": "native",
+            "description": "����SiLU����ַ"
+          },
+          {
+            "name": "i_table_data",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "ͬ��Q7.8����"
+          },
+          {
+            "name": "o_table_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "ʵ�ʱ������"
+          },
+          {
+            "name": "o_table_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "1024����װ������"
+          }
+        ]
+      },
+      "behavior": [
+        "ʵ�ʹ̶�feature�ͻ���ΨһWIF1�ּ���������ownerֱ�ӽ���",
+        "ȫ�����ݽӿ���¶���޳������������������·��",
+        "��ͬreset��SiLU����װ����Ž����񣻹��Ϻϲ����ڸ�",
+        "������ۺϣ����ǰ弶���Ż���������"
+      ],
+      "corner_cases": [
+        "byte/weight��Ӧ�ȴ��ͱ�ѹ",
+        "��ͬ��λȡ������Ӧ�������������¸���",
+        "SPPF�ػ�������MAC"
+      ],
+      "verification_cases": [
+        "��ع�TB��ͬclient/workstore/coreԴ�հ��Ͷ˿�ӳ��",
+        "�ۺ�ӲRAM������·��ʵ�ʱ������"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "workstore",
+          "title": "������ʵ�ύ����Ӧ",
+          "scenario": "native_store",
+          "description": "���������Գ���ģ�Ͳ���Ϊ׼������II����",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......"
+              },
+              {
+                "name": "start",
+                "wave": "010...."
+              },
+              {
+                "name": "native_access",
+                "wave": "0..1..."
+              },
+              {
+                "name": "response",
+                "wave": "0...10."
+              },
+              {
+                "name": "core_valid",
+                "wave": "0.....1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

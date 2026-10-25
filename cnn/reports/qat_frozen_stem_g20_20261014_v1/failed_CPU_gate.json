@@ -1,0 +1,36 @@
+{
+  "report_date": "2026-10-14",
+  "status": "CPU_GATE_NOT_PASSED_PROCESS_EXITED_WITHOUT_DIAGNOSTIC",
+  "candidate_training_started": false,
+  "candidate_run_created": false,
+  "cuda_training_started": false,
+  "parent_checkpoint_modified": false,
+  "attempts": [
+    {
+      "command": "$env:CUDA_VISIBLE_DEVICES=''; $env:PYTHONDONTWRITEBYTECODE='1'; $env:OMP_NUM_THREADS='2'; $env:MKL_NUM_THREADS='2'; & 'E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe' -B -m cnn.hw_validation.production.train_qat_frozen_stem_continue check",
+      "exit_code": 1,
+      "observed": "Rejected before prepare/update because torch.cuda.is_available() remained true on Windows.",
+      "stderr_tail": "RuntimeError: CPU gate requires CUDA hidden",
+      "artifact_action": "The empty integration_check_v2 directory was removed after confirming it contained zero entries, before the later instruction to preserve failed artifacts."
+    },
+    {
+      "command": "$env:CUDA_VISIBLE_DEVICES='-1'; $env:PYTHONDONTWRITEBYTECODE='1'; $env:OMP_NUM_THREADS='2'; $env:MKL_NUM_THREADS='2'; & 'E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe' -B -m cnn.hw_validation.production.train_qat_frozen_stem_continue check",
+      "precheck": "torch.cuda.is_available()==False and torch.cuda.is_initialized()==False",
+      "exit_code": 1,
+      "last_stdout": "microbatch local update 1 (global update 11), samples_consumed=10, actual_update_samples=22",
+      "stderr_tail": "",
+      "observed": "Process exited without Python traceback before completing update 11. No cause is inferred from the available output.",
+      "artifact_action": "The second empty integration_check_v2 directory is preserved."
+    }
+  ],
+  "completed_source_tests": {
+    "command": "python -B -m unittest cnn.hw_validation.production.test_qat_frozen_stem_continue -v",
+    "tests_run": 2,
+    "passed": true,
+    "candidate_training_started": false
+  },
+  "source_sha256_at_failure": {
+    "cnn/hw_validation/production/train_qat_frozen_stem_continue.py": "2a41274d767df227658b7b141236abfd3ddc4f727be1db685e82f2293a6e2596",
+    "cnn/hw_validation/production/test_qat_frozen_stem_continue.py": "ccfe6de7957777999cdd55624635d5af8b49c59e1db8112d607d8a6ac2f3e9a0"
+  }
+}

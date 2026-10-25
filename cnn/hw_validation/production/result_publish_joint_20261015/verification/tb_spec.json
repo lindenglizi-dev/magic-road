@@ -1,0 +1,39 @@
+{
+  "modules": [{
+    "name": "tb_road_result_publish_joint",
+    "feature": "result_publish_joint",
+    "rtl_path": "tb_road_result_publish_joint.v",
+    "description": "Actual-ROM decode/TopK/NMS to SRIF1 publisher and source/pending/active table verification.",
+    "interfaces": {"protocol": "simulation only", "ports": []},
+    "parameters": [],
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {"name": "i_rstn", "active": "low", "synchronous": false, "values": "Common reset cancels head, candidate RAM, NMS, shared LUT, actual reader, publisher, table and time snapshot together."},
+    "behavior": [
+      "Streams all 12096 saved HEAD112 cells through the unchanged 56-lane PH1P true-G10 reader and shared LUT, internal candidate RAM, TopK and NMS.",
+      "NMS FINAL97 flows through the publisher into C8 source storage; no fourth functional result table exists. Golden testbench arrays compare every active bit and all metadata fields.",
+      "Accepted start freezes context; mutations during busy cannot change epoch/task/source_frame/model/capture. Completion is the same source time sampled on successful NMS done.",
+      "Source metadata acceptance, copy acknowledgement and normal destination SOF active events are separate timestamps. Their intervals are disjoint; internal waits are contained diagnostics.",
+      "Normal modes use actual 100MHz millisecond snapshot and template 75MHz SOF period. Controlled coherent time boundary mode explicitly does not measure real FPS."
+    ],
+    "constraints": [
+      "AGE_LIMIT_MS=2000 only in new candidate; existing 500 baseline remains unchanged.",
+      "No CNN inference, camera capture identity binding, DDR, synthesis, physical timing, deployment or board evidence is claimed.",
+      "Only a different completed source_frame_id counts as a new detection result; retaining active data is not an additional result."
+    ],
+    "corner_cases": ["empty, seven and64 outputs including6944 comparisons", "random and long output/meta/copy backpressure", "partial fault and abort; common reset; post-seal cancel ignored until copy_ack", "consecutive task/source identities", "raw age1996 and1997; unknown and lost time; one-second controlled identity updates"],
+    "verification_cases": ["Actual vendor ROM full numerical regression plus publisher/C8 all97-bit active and265-bit metadata checks.", "No simultaneous last-entry/metadata transfer, held metadata stable until ready, no half table, start blocked until copy_ack.", "Real snapshot loss watchdog and separate controlled coherent age/one-second group."],
+    "timing_diagrams": [{
+      "id": "publish", "title": "Complete result source to active", "scenario": "publish",
+      "description": "Last entry, NMS done, metadata acceptance, destination copy acknowledgement and later SOF active update occur in order.",
+      "wavejson": {"signal": [
+        {"name": "src_clk", "wave": "p........."},
+        {"name": "last_entry_accept", "wave": "010......."},
+        {"name": "nms_done", "wave": "0..10....."},
+        {"name": "metadata_valid", "wave": "0....110.."},
+        {"name": "metadata_ready", "wave": "0.....10.."},
+        {"name": "copy_ack", "wave": "0.......10"},
+        {"name": "SOF_active", "wave": "0........1"}
+      ]}
+    }]
+  }]
+}

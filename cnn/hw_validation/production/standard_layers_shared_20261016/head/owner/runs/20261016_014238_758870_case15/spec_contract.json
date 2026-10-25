@@ -1,0 +1,317 @@
+{
+  "name": "owner",
+  "modules": [
+    {
+      "name": "road_standard_arithmetic_owner",
+      "rtl_path": "rtl/road_standard_arithmetic_owner.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "同域100MHz时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "所有原核共同低有效异步复位"
+          },
+          {
+            "name": "i_table_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "空闲表项保持有效"
+          },
+          {
+            "name": "i_table_addr",
+            "direction": "input",
+            "width": 10,
+            "role": "native",
+            "description": "原表严格递增装载地址"
+          },
+          {
+            "name": "i_table_data",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "原模型有符号Q7.8表项"
+          },
+          {
+            "name": "i_input_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "八输入组保持到真实握手"
+          },
+          {
+            "name": "i_first",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "仅首组开启归约并锁存元数据"
+          },
+          {
+            "name": "i_last",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "当前组关闭归约"
+          },
+          {
+            "name": "i_lane_mask",
+            "direction": "input",
+            "width": 8,
+            "role": "native",
+            "description": "八输入槽使能"
+          },
+          {
+            "name": "i_activation_data",
+            "direction": "input",
+            "width": 64,
+            "role": "native",
+            "description": "低字节优先八个INT8"
+          },
+          {
+            "name": "i_weight_data",
+            "direction": "input",
+            "width": 192,
+            "role": "native",
+            "description": "三路各八个INT8权重"
+          },
+          {
+            "name": "i_bias_data",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "原MAC只在first使用三路INT32偏置"
+          },
+          {
+            "name": "i_output_mask",
+            "direction": "input",
+            "width": 3,
+            "role": "native",
+            "description": "首组锁存三路输出有效位"
+          },
+          {
+            "name": "i_tags",
+            "direction": "input",
+            "width": 48,
+            "role": "native",
+            "description": "首组锁存不透明输出身份"
+          },
+          {
+            "name": "i_addresses",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "首组锁存三路写地址"
+          },
+          {
+            "name": "i_pre_multipliers",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "首组锁存三路前乘数"
+          },
+          {
+            "name": "i_pre_shifts",
+            "direction": "input",
+            "width": 18,
+            "role": "native",
+            "description": "首组锁存三路前移位"
+          },
+          {
+            "name": "i_post_multiplier",
+            "direction": "input",
+            "width": 32,
+            "role": "native",
+            "description": "首组锁存共享后乘数"
+          },
+          {
+            "name": "i_post_shift",
+            "direction": "input",
+            "width": 6,
+            "role": "native",
+            "description": "首组锁存共享后移位"
+          },
+          {
+            "name": "i_activate",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "首组选择SiLU INT8或raw INT16"
+          },
+          {
+            "name": "i_input_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "任务错误转为保持故障"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "唯一写端实际退休许可"
+          },
+          {
+            "name": "o_table_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "空闲且原DPP接受表项"
+          },
+          {
+            "name": "o_table_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "原核完整表装载状态"
+          },
+          {
+            "name": "o_input_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "归约输入组接纳许可"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "匹配身份和类型的完整输出有效"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "激活符号扩展INT8或raw INT16"
+          },
+          {
+            "name": "o_output_int16",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "等于首组activate反值"
+          },
+          {
+            "name": "o_output_tag",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "与数据同生存期身份"
+          },
+          {
+            "name": "o_output_address",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "身份所选锁存写地址"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "元数据或核故障粘滞"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "首组到末输出退休或故障保持"
+          }
+        ]
+      },
+      "behavior": [
+        "单任务IDLE/GROUP/ACC/OUTPUT/FAULT三段状态机",
+        "首组锁存mask/tags/address/pre/post/activate，后续元数据变化忽略",
+        "ACC只向原DPP提交一次完整MAC结果",
+        "最后有效lane真实输出握手后才能解除busy；故障必须共同复位",
+        "输出直接采用原DPP保持槽，owner没有结果array或residual"
+      ],
+      "constraints": [
+        "原五核端口、II、复位、算术均不改",
+        "所有核同域共同reset；两拍owner准入释放，最早第三沿接收",
+        "每路最多192乘积/24组由现固定客户端保证",
+        "接口无帧号；外部调度负责完整任务身份与DDR可见性"
+      ],
+      "corner_cases": [
+        "mask1/3/7、opaque唯一tags、错误/重复身份与错误类型",
+        "激活输出必须INT8符号扩展；raw保留完整INT16",
+        "末输出背压不释放，table只在idle接受",
+        "reset取消原核和元数据，SiLU必须重新装满"
+      ],
+      "verification_cases": [
+        "整数参考逐MAC/pre/SiLU/post/final值",
+        "真实ModelSim原核和原SiLU1024表",
+        "多组bias一次、尾mask、首组锁存扰动",
+        "GROUP/ACC/OUTPUT共同复位和故障保持"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "retirement",
+          "title": "仅最后真实输出退休释放",
+          "scenario": "retirement",
+          "description": "省略原核计算拍，输出反压保持身份，MAC交接不释放owner",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..|......"
+              },
+              {
+                "name": "first_accept",
+                "wave": "010|000000"
+              },
+              {
+                "name": "mac_to_dpp",
+                "wave": "000|100000"
+              },
+              {
+                "name": "output_valid",
+                "wave": "000|011110"
+              },
+              {
+                "name": "output_ready",
+                "wave": "000|001010"
+              },
+              {
+                "name": "remaining",
+                "wave": ".=.|..=.=.",
+                "data": [
+                  "3",
+                  "2",
+                  "0"
+                ]
+              },
+              {
+                "name": "busy",
+                "wave": "0.1|111100"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

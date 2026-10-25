@@ -1,0 +1,12 @@
+任务分类：modify + validate；独立诊断候选，旧版不覆盖。
+目标：16个真实Stem tile覆盖左上16×16×16，经DDR传递给相邻2×2共四个down2 tile，核对1536字节PW输出。
+DDR：256个唯一128bit写字；四halo分别64/72/72/81个实际读字，共289。每次启动地址只写一次，允许多个消费者重读；不复用槽位、不新增提交屏障、不以固定等待代替可见性。
+输入：既有冻结TEST_ONLY RGB、权重、逐通道参数和1024项SiLU表。
+冻结：8个内部算术/调度核、原PAXI mailbox、接口II数值复位不变。
+外部调度变化：程序8192×64，Stem黄金/地址256项，四halo映射512×16，输出黄金2048×8；程序计数13位、黄金索引8位、W/R计数9位、总输出计数11位；单tile输出游标9位。
+启动：共同复位DDR和请求器；释放后重新装满1024项表。每个down2 tile重新完整装载halo后start，输出384字节完整导出后才下一个tile。
+显示：沿用256位冻结payload和SOF切换；W/R/输出字段加宽，常量标识由60缩为54位，物理I/O仍51。
+成功条件：Python全帧golden切片与tile值逐项一致；RTL acc/pre/SiLU/post和输出、地址、握手、计数均匹配。原13项回归与四tile跨时钟联调通过，实际顶层P&R时序及资源不过界才导出临时位流。
+严格门：compile/ast/readability/comment/naming/profile/testbench/toolchain真实状态独立记录，不以功能或物理诊断代替严格交付。
+不做：训练、生产顶层改动、Flash、自动连接开发板、内核优化、时序例外、通用DMA和CRC扩展。
+依赖限制：readable-python-generator、readable-script-generator当前未安装；保留缺项，不宣称对应严格门通过。使用既有Python/ModelSim/TD做范围内验证。

@@ -1,0 +1,40 @@
+{
+  "module": "road_shared_lut_service",
+  "task_class": ["generate", "validate"],
+  "clock_hz": 100000000,
+  "interface_family": "native",
+  "inputs": {
+    "i_clk": 1, "i_rstn": 1, "i_cancel": 1,
+    "i_lut_req_valid": 1, "i_lut_req_kind": 1, "i_lut_req_address": 10,
+    "i_lut_req_tag": 16, "i_lut_req_frame_token": 32, "i_lut_req_model_id": 32,
+    "i_lut_rsp_ready": 1, "i_rom_request_ready": 1, "i_rom_response_valid": 1,
+    "i_rom_response_data": 160, "i_rom_fault": 1
+  },
+  "outputs": {
+    "o_lut_req_ready": 1, "o_lut_rsp_valid": 1, "o_lut_rsp_kind": 1,
+    "o_lut_rsp_address": 10, "o_lut_rsp_tag": 16, "o_lut_rsp_frame_token": 32,
+    "o_lut_rsp_model_id": 32, "o_lut_rsp_data": 16, "o_lut_rsp_error": 1,
+    "o_rom_request_valid": 1, "o_rom_request_addr": 13, "o_rom_response_ready": 1,
+    "o_fault": 1
+  },
+  "model_id": "0xB35D4A66",
+  "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "parameters": {"C_SIGMOID_BYTE_OFFSET": 137962, "C_EXP_BYTE_OFFSET": 140010},
+  "parameter_use": "Defaults must match frozen manifest; odd test-only relocation exercises crossing branch without duplicating production ROM",
+  "kind": {"sigmoid": 0, "exp": 1},
+  "entry_bits": 16,
+  "entry_endian": "little",
+  "counts": {"sigmoid": 1024, "exp": 256},
+  "mapping": "byte_offset=base+2*index; word=floor(byte_offset/20); lane=byte_offset%20; lane19 requires word+1 low byte",
+  "address_algorithm": "18-step unsigned restoring division by20, then registered location; no inferred multiplier or divider",
+  "rom_reader": "Read-only ROM-R1 road_numeric_rom_reader existing valid/ready, addr13, data160, sticky fault; no tag or cancel port",
+  "one_outstanding": true,
+  "response_identity": ["kind", "address", "tag", "frame_token", "model_id"],
+  "reset": "Common async assert with reader, 2FF sync release locally; reset valid/ownership only, no ROM/table copy",
+  "cancel": "Block LUT outputs/new requests immediately; accepted untagged ROM read must drain and discard before slot reuse. Reader is NOT reset by cancel. Cancel before second read suppresses it. ROM fault requires common reset.",
+  "faults": "Wrong model or exp index>=256 returns held error response with original identity and zero data, no ROM read. ROM fault returns error for owned request and sticky o_fault; cancellation discards owned response.",
+  "resource_targets_not_measured": {"added_eram": 0, "added_dsp": 0},
+  "verification": ["all1024sigmoid", "all256exp", "dynamic identities", "byte/lane/word boundaries", "odd relocation crossword", "request bubbles", "ROM request stalls", "delayed responses", "LUT response long hold", "cancel before ROM acceptance", "cancel while ROM pending and late response then restart", "cancel between crossword reads", "common reset during wait/response", "wrong model", "exp index256 and1023", "ROM fault"],
+  "boundary": "Controlled ROM endpoint tests only; C7 owns actual ROM-R1 arbitration/connection. No full-ROM duplication, no NMS/CNN/DDR/production changes.",
+  "public_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"]
+}

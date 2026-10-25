@@ -1,0 +1,7 @@
+{
+  "before": "8f6ccfe9348752994a83e8bd1995d65b1b4f4ec196179cf040d208a42dc0dc8e",
+  "after": "dbe6056ef93f231e192afd287264fd3173329401d8b57ba29a497dc7875970b5",
+  "sync_chain_attributes": 6,
+  "equal_after_removing_only_attributes_and_whitespace": true,
+  "diff": "--- \n+++ \n@@ -61,16 +61,16 @@\n \n \t//--------------寄存器信号--------------//\n \t//异步取消与本地释放\n-\treg [1:0]reg_time_release = 0;          // 时间域复位释放的两级移位\n-\treg [1:0]reg_camera_release = 0;        // 摄像头域复位释放的两级移位\n+\t(* ASYNC_REG = \"TRUE\" *) reg [1:0]reg_time_release = 0; // 时间域复位释放的两级移位\n+\t(* ASYNC_REG = \"TRUE\" *) reg [1:0]reg_camera_release = 0; // 摄像头域复位释放的两级移位\n \n \t//保持总线与控制同步链\n \treg [95:0]reg_time_payload = 0;         // 发布后保持到镜像完成回执返回\n \treg [127:0]reg_event_payload = 0;       // 接纳边沿冻结，消费回执返回前不改写\n-\treg [1:0]reg_time_request_sync = 0;     // 时间请求进入摄像头域的两级同步\n-\treg [1:0]reg_time_acknowledge_sync = 0; // 镜像完成回执进入时间域的两级同步\n-\treg [1:0]reg_event_request_sync = 0;    // 接纳事件请求进入时间域的两级同步\n-\treg [1:0]reg_event_acknowledge_sync = 0; // 消费回执进入摄像头域的两级同步\n+\t(* ASYNC_REG = \"TRUE\" *) reg [1:0]reg_time_request_sync = 0; // 时间请求进入摄像头域的两级同步\n+\t(* ASYNC_REG = \"TRUE\" *) reg [1:0]reg_time_acknowledge_sync = 0; // 镜像完成回执进入时间域的两级同步\n+\t(* ASYNC_REG = \"TRUE\" *) reg [1:0]reg_event_request_sync = 0; // 接纳事件请求进入时间域的两级同步\n+\t(* ASYNC_REG = \"TRUE\" *) reg [1:0]reg_event_acknowledge_sync = 0; // 消费回执进入摄像头域的两级同步\n \treg reg_previous_sof = 0;              // 去除持续高电平的重复帧边沿\n \n \t//---------------标志信号---------------//\n"
+}

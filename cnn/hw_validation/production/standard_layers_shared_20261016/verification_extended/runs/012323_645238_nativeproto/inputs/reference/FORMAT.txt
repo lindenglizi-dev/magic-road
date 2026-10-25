@@ -1,0 +1,57 @@
+Extended fixed-layer reference, 2026-10-16
+
+This directory imports and reuses ../reference/generate_reference.py without
+modifying its frozen files. All original MAC/task/parameter/WIF packed formats
+are defined by ../reference/FORMAT.txt. IDs here are46/55/64/65/73/74, six
+layers and five representative tiles each. The global parameter table has840
+rows. Cin96 PW uses1536B and12 weight slots, within3072B and24x192bits.
+
+Input provenance is explicit in tasks.json layers[].input_source and each
+layer's input_source.json. layer46 consumes the hash-checked existing CPU real
+road sppf.out.conv.post.npy. Missing PAN producers for layers55/64/73 are
+deterministic synthetic INT8 inputs using:
+((y*37+x*19+c*53+layer_id*11+(y*x)%251)%256)-128.
+layers65/74 consume this reference's synthetic-derived DW output, retaining
+synthetic=true. Every layer has continuous_prefix=false. This is real frozen
+G10 arithmetic, never proof of an actual continuous hardware producer chain.
+
+The three concat inputs are virtual views with two real backing allocations:
+55 concat.05: first24 channels from fuse3_td.reduce.conv, base58331136/C48;
+   last24 from fused residual storage fuse3_td.block.pw.conv, base58499072/C24.
+64 concat.07: first12 from fuse2_td.reduce.conv, base58613760/C24;
+   last12 from fused residual storage fuse2_td.block.pw.conv, base58945536/C12.
+73 concat.09: first24 from fuse3_bu.reduce.conv, base59224064/C48;
+   last24 from fused residual storage fuse3_bu.block.pw.conv, base59392000/C24.
+Names, bases and channel counts are verified from graph source views rather
+than converted into a fabricated contiguous concat allocation. Every input
+byte is independently mapped by the original graph.resolve_byte_address and
+the existing family source_views/physical_address code, and must agree.
+The right branch is already-fused storage by graph contract: this reference
+does not add a residual to the controlled input. Actual production of these
+fused branch values remains the feature/C4 client's writeback responsibility.
+
+input_hwc8.hex remains a logical tensor. input_physical40.hex instead scatters
+all logical source bytes into actual graph backing allocations: each line is
+address32<<8 | byte8. Every allocated byte is emitted, including unused left
+parent channels and physical padding explicitly filled0. This is a testbench
+memory image, not proposed private hardware storage.
+input_lines160.hex packs address32<<128 | line128, with sixteen little-endian
+bytes. It gives one record per aligned128-bit source response line and is
+convenient for the controlled memorylogical service.
+input_backing_ranges.json lists each actual allocation and source view. A read
+must be16-byte aligned, and its entire16-byte interval must be inside one
+allocation. Unused parent right-half channels and physical tail rows are legal
+stored0; reads outside declared allocations must error rather than silently
+return0. Thus a source line may include unselected channels without reading
+beyond an allocated tensor. Logical convolution padding remains local0 and
+does not issue an external read.
+
+PW inputs are filled once per tile and reused across output channel groups.
+DW uses81B per channel and weight slots0..4. H18 bottom tiles emit only two
+valid rows. Quant248 remains identical across all slices for one channel group,
+including window3 DW tail; task mask suppresses unused output lanes. Compare
+addresses only on active lanes, since inactive DUT addresses may retain the
+formula while the golden uses0 placeholders.
+
+Reproduce, CPU only with existing NumPy:
+python cnn/hw_validation/production/standard_layers_shared_20261016/reference_extended/generate_extended.py

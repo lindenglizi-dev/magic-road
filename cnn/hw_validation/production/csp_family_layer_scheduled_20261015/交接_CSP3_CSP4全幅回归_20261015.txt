@@ -1,0 +1,98 @@
+RoadYOLO C4：CSP3/CSP4固定图全幅功能交接
+日期：2026-10-15；分支work/roadyolo；仅本地保存，无提交/推送。
+承接第四批1FPS合同及第五批ROM真实模型接入合同；本批未实现PAN、未运行TD。
+
+一、实际完成状态
+选择候选：frozen_attempt3/；最终状态CSP3_CSP4_FUNCTION_PASS_NOT_DEPLOYMENT。
+16组ModelSim执行：14组正常/预期故障，2组实际检查器负例；6次完整七阶段运行。
+CSP3每次442368项，CSP4每次221184项；acc/pre/SiLU/post逐项对拍，残差sum/output/地址及物理padding另查。
+正常、随机反压、共同复位重新装表后重跑均通过；CSP4 y18/19物理padding不写。
+故障覆盖：错误读响应地址、错误参数layer、错误核输出地址、错误整层可见性屏障；检查器注入acc错误必须失败。
+未测的其它故障组合、所有可能时序、独立域取消晚返回与真实DDR恢复不能据此算通过。
+复位用例的全幅周期只计复位后干净重跑；复位前已放弃的部分任务和重装LUT不包含在该计时内。
+
+二、首次失败根因与修正影响
+frozen/family3_case0/：第一DW阶段通过，在stage1输出第0项失败，实际ff(-1)，错误参考04(+4)。
+原CPU execute_family先把current更新为DW输出，再错误地用它做PW残差旁路；这是图边连接错误，不是RTL尺度、RNE、alias或权重错误。
+正确旁路是DW之前的branch输入：stage1=split高半，stage3=上一残差，stage5=再上一残差。
+reference_attempt2/改用graph命名的write_transform.bypass及nonconv残差，不改算术核心、模型参数、量化、RTL或TB。
+18次CPU卷积全幅标量对拍仍通过；另加6处图残差独立重建和原错误旁路负例。原错误在六处均被拒绝。
+CSP3输入不变，输出改变；CSP4 CPU上游由修正CSP3传播，因此输入/输出均更新，未复用旧错误CSP4输入。
+原reference/与frozen/冻结文件均保留并复核哈希。根run.py仅因选择reference_attempt2发生明确修订；旧frozen/run.py仍保持原版，不伪称根runner未变。
+frozen_attempt2/记录沙箱内ModelSim启动WinError623，未执行仿真；新frozen_attempt3使用已获许可的本地执行解决工具启动限制，不冒充RTL修复。
+原参考清单eca01072a35a12d09cb5ee46c30f4efc527cc4440d5d31330f8a7bd79edd1587保留；该参考已被本次图残差缺陷否定，旧PASS标签不可继续使用。
+新参考清单030a74d8a1d0d6a29d05980cc4c20f6589340b336f0f7c58216496d401d6de12。
+
+三、周期端点和逐层账本
+100MHz；从start接受到末层写可见性屏障后done采样。LUT预装不计入；受控逻辑存储服务不是实际DDR。
+                       CSP3             CSP4
+正常                 14,712,536       9,204,840 拍
+随机反压             15,288,430       9,592,241 拍
+复位后干净重跑       14,712,536       9,204,840 拍
+正常等效时间         147.12536        92.04840 ms
+
+正常各阶段0..6：
+CSP3：1938866,1632529,1928881,1625617,1928881,1625617,4032145。
+CSP4：972354,1078313,972353,1078313,972353,1078313,3052841。
+每次完整run：七阶段周期和=17状态周期和=端点accounted；互斥分类在cycle_ledger.json逐run发布。
+正常分类：
+                         CSP3            CSP4
+输入预取                 1158240          600648
+参数预取                  328320          249600
+tile/任务准备             176112           87832
+局部操作数串行拼装       4257792         3677184
+已接受核组                552960          470016
+核组准入等待                   0               0
+算术流水与输出退休窗口   7888896         3944448
+注册退休/推进             350208          175104
+整层可见性屏障                 7               7
+其它控制                       1               1
+“算术流水与输出退休窗口”包含真实计算和写出等待，不等于纯空闲；不得与组接受时间重叠重复相加。
+
+四、精确任务与接口交接
+正常与随机反压的已接受请求次数相同：
+CSP3：57104个16B读、65664参数记录、175104任务、552960核组、442368逻辑写、7屏障。
+CSP4：24588个16B读、49920参数记录、87552任务、470016核组、221184逻辑写、7屏障。
+逐层精确次数见rtl/design_contract.txt、reference_attempt2/family_contract.json与冻结tb_contract.json，相互核验。
+真实端口列表与位宽见frozen_attempt3/rtl/road_csp_family_client.v及spec/road_csp_family_client_spec.md。
+外围参数layer3bit、channel7bit、group4bit、window3bit；核心64bit激活/192bit权重/96bit偏置等接口保持原样。
+读：逻辑byte地址32bit，16B对齐，单在途，返回128bit+匹配地址/error，valid payload保持到ready。
+参数：本地stage0..6、channel起点、group0..11、window0/3/5；返回192bit权重与248bit偏置/量化记录。
+写：byte输出及signed9残差诊断，核输出退休与外部写接收原子一致；整层末次真实写后等待同layer可见性屏障。
+done不代替真实存储写可见性；该屏障目前由TB受控服务提供。
+冻结功能源清单integration_sources.json为六个复用文件加一个新客户；TB只实例化一个旧算术owner。
+
+五、资源与后续依赖（重要限制）
+2063B局部数据容量预算、单字节缓存端口和DDR旁路生命周期见PAN依赖与缓存交接.txt。
+4ERAM仍为公共工作仓容量目标，不是已映射4ERAM。本批C_FAMILY为编译选项；两个实例会复制内部缓存，单个编译选项不能运行另一族。
+physical_shared_cache_integrated=false；需要协调者决定单一工作缓存owner及固定任务切换后再做同一bitstream集成，不能直接并排复制。
+PAN确切依赖、nearest坐标、三卷积FusionCSP无out.conv、fuse4_bu输入3072B、group0..23与Cin12尾mask等差异均已列清，未实现通用引擎。
+
+六、速度预算边界
+当前1FPS整机100M拍是目标，不是已通过；500ms显示过期未变。
+若仅条件相加历史前三层15848967、CSP2正常19426266及本次CSP3/CSP4正常，得到59192609拍；随机CSP2/CSP3/CSP4条件和60939393拍。
+这是独立夹具的容量规划，未实际串联；仍缺down3/down4、SPPF、PAN、检测头、真实ROM/DDR竞争、后处理和采集发布等。
+故不得用该条件和计算“整网已1FPS”；其它未测图周期UNKNOWN。CSP2原8M未达记录不改，不为本批追8M修改核/II。
+
+七、质量门禁与资格
+ModelSim每次vlog编译0错误/0警告；elaboration仍12警告：旧包装9个未连接诊断输出、1个连接数量汇总、厂商INIT越界2个，完整原日志保留。
+严格门禁原/修正候选均3363 errors/5 strict warnings，未通过：
+compile/ast/readability/comment/naming/profile/testbench=failed；toolchain=not_requested。
+这里的静态compile门禁与实际ModelSim编译是不同证据，不能相互覆盖；没有隐藏或压低门禁数字。
+readable-verilog-generator规格与周期图已生成；依赖/readiness实际状态保留在dependency/，未宣称远端执行或严格交付就绪。
+伴随Python/script严格技能未安装，本批仅有已运行的Python自检，不宣称通过不存在的技能门禁。
+payload固定b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145；physical包bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417。
+仍沿包内TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED资格标记；目录名含qat不构成部署QAT验收。
+本批并未接真实ROM reader。第五批C2的旧测试包绑定问题不能由本批CPU正确包替代解决，本批不切包也不修改C2。
+未训练、未精度评估、未改生产、未综合/布局布线、未生成位流、未上板/Flash、未加时序例外。
+
+八、可复查文件与执行
+delivery_manifest.json：最终六份汇总/交接产物的SHA256及finalizer/input_binding身份；复查时据此核对，不把无哈希的衍生汇总当独立证据。
+final_checks.json/status.json：最终结果、日志与源绑定、失败保留、八门实际状态。
+cycle_ledger.json：六次全幅七层/17状态/互斥周期。
+integration_sources.json：稳定功能源清单与未接入边界。
+frozen_attempt3/input_binding.json：源/工具/参数包/参考快照以及旧CSP2源绑定；所有项目均复核。
+reference_attempt2/manifest.json：263个产物与73个源/包依赖；CPU不初始化CUDA。
+finalize.py --self-check：正例及篡改读次数负例；finalize.py --name frozen_attempt3只复查现有证据，不重新仿真。
+各仿真目录已有commands.json、compile.log、simulation.log、receipt.json/status.json，禁止在同目录覆盖重跑。
+已有稳定交付供C7读取；本批不向其它聊天发送消息、不自行TD或扩大范围。

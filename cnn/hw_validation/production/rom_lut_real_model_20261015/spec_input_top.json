@@ -1,0 +1,243 @@
+{
+  "feature": "road_real_model_lut_top",
+  "name": "road_real_model_lut_top",
+  "rtl_path": "rtl/road_real_model_lut_top.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "input",
+        "width": 1,
+        "role": "clk",
+        "clock_domain": "i_clk",
+        "description": "统一100MHz上升沿时钟"
+      },
+      {
+        "name": "i_rstn",
+        "direction": "input",
+        "width": 1,
+        "role": "rstn",
+        "clock_domain": "i_clk",
+        "description": "共同低有效异步复位，本地两级同步释放"
+      },
+      {
+        "name": "i_cancel",
+        "direction": "input",
+        "width": 1,
+        "role": "cancel",
+        "clock_domain": "i_clk",
+        "description": "取消当前查表，已接受的ROM读必须排空后再接新任务"
+      },
+      {
+        "name": "i_lut_req_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_req_valid",
+        "clock_domain": "i_clk",
+        "description": "查表请求有效，等待ready时所有请求字段保持"
+      },
+      {
+        "name": "i_lut_req_kind",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_req_kind",
+        "clock_domain": "i_clk",
+        "description": "0为sigmoid，1为exp"
+      },
+      {
+        "name": "i_lut_req_address",
+        "direction": "input",
+        "width": 10,
+        "role": "lut_req_address",
+        "clock_domain": "i_clk",
+        "description": "表内索引；exp只允许0至255"
+      },
+      {
+        "name": "i_lut_req_tag",
+        "direction": "input",
+        "width": 16,
+        "role": "lut_req_tag",
+        "clock_domain": "i_clk",
+        "description": "16位请求标签，响应原样回显"
+      },
+      {
+        "name": "i_lut_req_frame_token",
+        "direction": "input",
+        "width": 32,
+        "role": "lut_req_frame_token",
+        "clock_domain": "i_clk",
+        "description": "请求源帧任务标识，响应回显"
+      },
+      {
+        "name": "i_lut_req_model_id",
+        "direction": "input",
+        "width": 32,
+        "role": "lut_req_model_id",
+        "clock_domain": "i_clk",
+        "description": "绑定完整模型payload的32位模型标识"
+      },
+      {
+        "name": "i_lut_rsp_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_rsp_ready",
+        "clock_domain": "i_clk",
+        "description": "本拍允许消费一次完整查表响应"
+      },
+      {
+        "name": "o_lut_req_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_req_ready",
+        "clock_domain": "i_clk",
+        "description": "空闲且无旧ROM在途时允许一次查表传输"
+      },
+      {
+        "name": "o_lut_rsp_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_rsp_valid",
+        "clock_domain": "i_clk",
+        "description": "查表完整响应有效，等ready时身份与数据保持"
+      },
+      {
+        "name": "o_lut_rsp_kind",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_rsp_kind",
+        "clock_domain": "i_clk",
+        "description": "回显已接受请求的表类别"
+      },
+      {
+        "name": "o_lut_rsp_address",
+        "direction": "output",
+        "width": 10,
+        "role": "lut_rsp_address",
+        "clock_domain": "i_clk",
+        "description": "回显已接受请求的原索引"
+      },
+      {
+        "name": "o_lut_rsp_tag",
+        "direction": "output",
+        "width": 16,
+        "role": "lut_rsp_tag",
+        "clock_domain": "i_clk",
+        "description": "回显已接受请求的16位标签"
+      },
+      {
+        "name": "o_lut_rsp_frame_token",
+        "direction": "output",
+        "width": 32,
+        "role": "lut_rsp_frame_token",
+        "clock_domain": "i_clk",
+        "description": "回显源帧标识，禁止旧响应串入新任务"
+      },
+      {
+        "name": "o_lut_rsp_model_id",
+        "direction": "output",
+        "width": 32,
+        "role": "lut_rsp_model_id",
+        "clock_domain": "i_clk",
+        "description": "回显请求模型标识"
+      },
+      {
+        "name": "o_lut_rsp_data",
+        "direction": "output",
+        "width": 16,
+        "role": "lut_rsp_data",
+        "clock_domain": "i_clk",
+        "description": "从冻结小端ROM字节提取的UINT16值"
+      },
+      {
+        "name": "o_lut_rsp_error",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_rsp_error",
+        "clock_domain": "i_clk",
+        "description": "范围/模型/ROM错误，错误数据为零"
+      },
+      {
+        "name": "o_fault",
+        "direction": "output",
+        "width": 1,
+        "role": "fault",
+        "clock_domain": "i_clk",
+        "description": "本组件故障状态，不得发布为成功表"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "local_sync_two_flops_or_owner_gating"
+  },
+  "parameters": {},
+  "behavior": [
+    "一个冻结ROM-R1 reader连接一个冻结共享LUT服务；无额外缓存、时钟、参数变换或流水。",
+    "reader的14组/56lane只加载G10初始化；i_cancel只进入服务，绝不当作reader复位。",
+    "真实reader接受后等待原cnt_wait7；服务保持动态身份、跨词聚合和取消排空合同。"
+  ],
+  "constraints": [
+    "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+    "不改变冻结算术核/数值，不复制公共存储"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "7168 complete160bitword matches",
+    "143360 physicalbytes",
+    "14group edges",
+    "last payload byte140521",
+    "zero padding2838",
+    "full sigmoid1024/exp256",
+    "backpressure hold",
+    "cancel old response drain/restart",
+    "common reset",
+    "bad model/exp range no ROM read"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "动态请求握手示意，省略18步地址定位和reader固定等待；不是按图格数换算实际总时延。反压时身份/数值保持。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p..........."
+          },
+          {
+            "name": "lut_req_valid",
+            "wave": "010........."
+          },
+          {
+            "name": "lut_req_ready",
+            "wave": "01.0........"
+          },
+          {
+            "name": "rom_req_valid",
+            "wave": "0....10....."
+          },
+          {
+            "name": "rom_rsp_valid",
+            "wave": "0.......10.."
+          },
+          {
+            "name": "lut_rsp_valid",
+            "wave": "0........1.0"
+          },
+          {
+            "name": "lut_rsp_ready",
+            "wave": "0.........10"
+          }
+        ]
+      }
+    }
+  ]
+}

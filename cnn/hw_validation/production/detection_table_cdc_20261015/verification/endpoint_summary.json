@@ -1,0 +1,50 @@
+{
+  "measurement_rule": "Intervals are measured from the real DUT handshake/status endpoints in their own clock domains; independent intervals are not summed.",
+  "preload": {
+    "clock_domain": "source_100MHz",
+    "start": "first i_src_entry_valid && o_src_entry_ready sampled source edge",
+    "end": "64th adjacent accepted source edge",
+    "accepted_entries": 64,
+    "source_clocks": 64,
+    "receipt": "table_abort_errors_20261015_215347_878185/receipt.json"
+  },
+  "copy": {
+    "clock_domain": "destination_74.996250MHz_simulated",
+    "start": "o_dst_copy_busy assertion after stable metadata capture",
+    "end": "o_dst_copy_busy withdrawal on final accepted copy",
+    "unstalled_64_entry_clocks": 64,
+    "stalled_33_entry_clocks_including_512_disabled_clocks": 545,
+    "integrated_blocked_copy_clocks": 74994,
+    "ack_endpoint": "o_src_copy_ack after synchronized destination final-copy acknowledgement",
+    "metadata_check": "all 265 bits compared after SOF activation; source payload remains sealed until ack",
+    "receipts": [
+      "table_counts_random_20261015_215306_942028/receipt.json",
+      "table_stall_pending_sof_20261015_215322_042949/receipt.json",
+      "time_table_integrated_20261015_215400_224809/receipt.json"
+    ]
+  },
+  "pending_to_sof": {
+    "clock_domain": "destination_74.996250MHz_simulated",
+    "controlled_pending_full_hold_clocks": 200,
+    "same_cycle_last_copy_plus_sof_bypass": false,
+    "active_change_endpoint": "o_dst_update only on a later i_dst_sof with pending already complete",
+    "receipt": "table_stall_pending_sof_20261015_215322_042949/receipt.json"
+  },
+  "time_cdc": {
+    "source_tick_clocks": 100000,
+    "request_to_destination_update_clocks_min": 4,
+    "request_to_destination_update_clocks_max": 4,
+    "source_busy_roundtrip_clocks_min": 6,
+    "source_busy_roundtrip_clocks_max": 7,
+    "watchdog_withdrawal_destination_clocks": 150001,
+    "receipts": [
+      "time_multims_20261015_215416_202287/receipt.json",
+      "time_watchdog_recovery_20261015_215430_617995/receipt.json"
+    ]
+  },
+  "metadata_reference": {
+    "format": "SRIF1_265",
+    "vectors_sha256": "6e315d73e51f036a7fb797d134f71a21767f9afdec21b350b0173f5219954b50",
+    "contract_sha256": "bcf4dfc3aff0fe59cfcf09dd11b874ab6dc20d9577a56ac8df1db04cf77e0957"
+  }
+}

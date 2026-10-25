@@ -1,0 +1,153 @@
+{
+  "status": "PASS_reference_only",
+  "contract": {
+    "vector_fields": [
+      "op",
+      "byte_addr",
+      "mask16",
+      "write_data128",
+      "expected_read128",
+      "slot_index"
+    ],
+    "op": {
+      "0": "valid_read",
+      "1": "valid_write",
+      "2": "invalid_read",
+      "3": "invalid_write"
+    },
+    "mask_bit_1": "preserve byte lane",
+    "byte_lane_order": "little endian; lane 0 is write_data128[7:0]",
+    "invalid_request": "must be rejected without memory access"
+  },
+  "counts": {
+    "address_slots_total_including_invalid": 217,
+    "valid_address_slots": 194,
+    "invalid_address_slots": 23,
+    "vectors": 1102,
+    "valid_reads": 528,
+    "valid_writes": 528,
+    "invalid_reads": 23,
+    "invalid_writes": 23,
+    "alias_rounds": 2,
+    "alias_round_writes": 388,
+    "alias_round_reverse_reads": 388,
+    "mask_write_read_pairs": 140
+  },
+  "alias_round_details": [
+    {
+      "round": 0,
+      "writes": 194,
+      "reverse_reads": 194,
+      "data_relation": "sha256-derived"
+    },
+    {
+      "round": 1,
+      "writes": 194,
+      "reverse_reads": 194,
+      "data_relation": "bitwise complement of round 0"
+    }
+  ],
+  "mask_lane_coverage": {
+    "critical_addresses": [
+      "0x03400000",
+      "0x03480000",
+      "0x03500000",
+      "0x03fffff0"
+    ],
+    "write_data_relation": "each new byte lane equals old byte lane XOR 0xff",
+    "all_new_bytes_differ_from_old": true,
+    "special_case_counts": {
+      "alternating_even": 4,
+      "alternating_odd": 4,
+      "full_mask": 4,
+      "single_mask": 64,
+      "single_open": 64
+    },
+    "masked_write_occurrences_per_lane": [
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72,
+      72
+    ],
+    "enabled_write_occurrences_per_lane": [
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68
+    ],
+    "single_open_lanes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "single_masked_lanes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "source_sha256": {
+    "cnn/hw_validation/production/reports/ddr_offline_boundaries_20261013/reference.py": "0751244a40bf50d2716ce772598bd490c290a834dba6f62cfff7c76e2e2d831a",
+    "cnn/hw_validation/production/graph_artifacts/graph.json": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738",
+    "cnn/hw_validation/ddr/paxi_single_outstanding_bridge.v": "364920d2e1d2c006c62f07a91cb8cda95033b9f17cdfeb7cbaac4cb293b4bd5f",
+    "user_source/hdl_source/ph1p35_ddr/ddr2/ddr2.v": "99910fcd06d61b728c4333f8eb15dd07b61db32af197ad3871995283461fe29e",
+    "user_source/hdl_source/video_in.v": "811f5261715885023fddbd1f556e0c04db6b8523a9d68167482d237069c7898d",
+    "user_source/hdl_source/video_out.v": "1bd84f808d9a9d67909d6aa2b4ab99680061c704d485f84a41401f5e19c30617"
+  },
+  "generated_sha256": {
+    "vectors.txt": "b52e0a32953b08ac0b007b5d98f89efe623177294da283f714ba393b04da63b1",
+    "addresses.hex": "8e002cd88f677b852a7ea58af7d0b0359d2b11ce53399725eb2606fe6f87bc6f",
+    "address_audit.json": "fe9b692e911a16a350cde36c4ebad74a7a944b6c68c4b08aa918f8fdd5f9b9ef"
+  },
+  "boundary": "Static source-derived address/mask audit only; not DDR simulation, RAW ordering, capacity measurement, timing closure, bitstream, Flash, or board evidence."
+}

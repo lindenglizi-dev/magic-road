@@ -1,0 +1,7 @@
+第七批独立只读审阅发现P2：缓存身份后出现双槽同epoch/frame仍可claim。
+原RTL SHA f02f73da34dc3cd29ccc7f86aa2fa3f12999218c40b507a98d7d8a181e6ac923。
+原ModelSim verification/runs/20261016_010709_283_ed622af4/summary.json为PASS2/2，但该集合没有覆盖此负例，因此不能用PASS抹掉已证明缺陷。
+复现：先slot0非FREE、frame10/epoch3合法保存身份；随后slot1被贴同epoch/frame，slot0 READY且未再送identity。旧模型/RTLeligible只看本槽与缓存吻合，进入CLAIM并claim_valid=1。
+根因：唯一性只在incoming入队检查；已缓存后的slot状态变化未被检查。
+最小修正：两个槽当前都非FREE/非QUARANTINE且epoch/frame相等时，运行时unique guard阻止选择/claim；已claim且未读完则同一owner guard进入FAULT。只诊断，不选一个“看似正确”槽，不释放任何槽。
+保留原RTL/门报告在retained_before_unique_guard/；参考模型/规范独立保留原件。新增迟到重复键负例后重跑同一协议及实际ROM小链；不改冻结核/接口/II/数值/复位，也不放宽检查。

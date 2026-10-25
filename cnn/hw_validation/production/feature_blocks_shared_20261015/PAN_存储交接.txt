@@ -1,0 +1,33 @@
+第六批C4：单一工作仓与PAN实际断点
+
+本阶段源级组织
+唯一FSM持有锁存block_id；reg_tile_cache[0:3071]为3072x8 byte阵列，reg_weight_bank[0:23]为24x192bit阵列。
+同一个byte口由PREFETCH写、CACHE_ACTIVATION读、CACHE_BYPASS读互斥占用；没有为2/3/4分配独立缓存。
+权重bank只存当前输出组的归约权重。声明4608bit，参数248bit(31B)，读行128bit(16B)，合计3695B数据，不含控制/tag/拼装寄存器。
+源级array不会自动等于ERAM，也不能当免费寄存器；实际FF/LUT/ERAM由同一真实顶层综合决定。
+当前三个块的实际使用上界仍DW1728B、残差PW/fuse1536B；3072B与24权重槽是批准给fuse4_bu的最大预留，未提前声称实现该块。
+
+4ERAM目标的具体映射候选（未实现、未测量）
+既有生产gray_frame_bank_ram使用PH1P_LOGIC_ERAM DATA_WIDTH=8、ADDR_WIDTH=11、DEPTH=2048；只读作为已有模式参考，不修改生产。
+工作byte缓存可考虑两块2048x8：bank=逻辑addr[11]，local=addr[10:0]；bank1只用1024个字节，其余物理空间不用。
+这是2ERAM工作存储组织提议，不是已实例化/已映射证明；同步原生读延迟必须在客户端明确安排后逐项回归，不能直接替换异步array而称等价。
+权重bank当前为宽array，192bit单次选择，暂不承诺占0ERAM或一定只用寄存器。若改ERAM，必须解决宽口/读延迟/串行装配且仍遵守公用4ERAM总目标。
+不能以3695B<10240B就说端口/映射/时序通过；更不能并排三个客户然后把缓存按时间复用从资源账里扣掉。
+SPPF新增pool也必须复用该仓：8x8x24=1536B halo和16x96=1536B PW输入分时使用，不再加私有池化RAM。
+
+生命周期/归属
+start只锁存一次owner；busy不能转移。每tile预取覆盖所有随后读取项，权重组完整覆盖后才issue；数组不reset。
+source split父张量保留至末融合最后读消费，residual0/1保留至后一次PW旁路最后读消费；DDR张量寿命与本地缓存覆盖时机不同。
+参数返回block/layer/channel/group/window、屏障block/layer与锁存owner匹配；单16B在途读返回地址必须一致。
+fault/cancel粘滞保持至共同reset。该组件没有证明独立域重置、晚DDR返回排空、读槽释放或真实write_visible服务。
+
+后续固定图与断点
+SPPF：csp4.out -> squeeze -> pool00 -> pool01 -> pool02 -> concat(squeeze,p00,p01,p02) -> out。
+SPPF逻辑算法pad=-128；物理尾tile0只代表无效存储槽，禁止作为in-range逻辑像素。SPPF输入可由本候选CSP4真实写回供给，须独立实际链仿真证明。
+上行：lateral4/nearest与csp3.out -> fuse3_td；lateral3/nearest与csp2.out -> fuse2_td。
+每个FusionCSP为reduce PW -> DW -> PW残差 -> concat视图，只有三卷积，无out.conv。
+精确graph节点/shape/base/参数segments/多生产者和nearest地址映射在reference/sppf/pan_dependency_spec.json；这是规格，不是PAN计算通过。
+concat.05须同时保留供lateral3和后续fuse3_bu；concat.07供down3_bu和head2；concat.09供down4_bu和head3；sppf.out供lateral4和后续fuse4_bu。
+底部两PAN依赖down3_bu/down4_bu实际生产者，现仍未实现；禁止用CPU输入补洞后声称连续链。
+fuse4_bu reduce Cin192：24组、group5bit、输入tile3072B、最多24x192bit权重；fuse2_td PW Cin12尾mask0f；S16输出尾tile仅两行。
+形状地址固定case，除数保持常量；不引入任意图engine。所有未测层、DDR竞争、整网周期及物理资源均UNKNOWN。

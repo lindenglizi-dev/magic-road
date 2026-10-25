@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "role": "independent_runtime_mitigation_review",
+  "reviewed_at": "2026-10-14",
+  "repository": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "branch": "work/roadyolo",
+  "scope": "Read-only source review of the v3 single-thread CPU continuity-gate mitigation. No test, Python process, CPU gate, GPU operation, training, evaluator, environment modification, or dependency operation was run by this reviewer.",
+  "verdict": {
+    "minimal_diff": "PASS",
+    "technical_blocker_to_one_controlled_CPU_gate": false,
+    "GPU_or_training_ready": false,
+    "formal_acceptance": false,
+    "summary": "The v3 change is a technically valid, narrowly scoped runtime mitigation experiment. It changes only the fresh artifact identity and CPU-gate thread count/evidence while leaving the GPU worker at two Torch threads and preserving the training numerical recipe. A full v3 continuity/resume pass remains mandatory before the already authorized GPU continuation may start."
+  },
+  "reviewed_sources": {
+    "cnn/hw_validation/production/train_qat_frozen_stem_continue.py": "c7b5a19ade2e502a7773883f4eb343ada7354ddf285759561739ceccba75ebc6",
+    "cnn/hw_validation/production/test_qat_frozen_stem_continue.py": "ccfe6de7957777999cdd55624635d5af8b49c59e1db8112d607d8a6ac2f3e9a0",
+    "cnn/hw_validation/production/evaluate_qat_continuation.py": "67ede098df65c31726cb131f503fda97c27ffbe2dd6871b3ece8f12eec852986",
+    "parent_checkpoint_sha256": "f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd"
+  },
+  "v2_to_v3_diff": {
+    "verified_with_no_index_source_comparison": true,
+    "changes": [
+      "OUT changed from qat_frozen_stem_g20_20261014_v2 to qat_frozen_stem_g20_20261014_v3.",
+      "RUN changed from qat_frozen_stem_g20_20261014_v2 to qat_frozen_stem_g20_20261014_v3.",
+      "experiment_id changed from qat_frozen_stem_g20_20261014_v2 to qat_frozen_stem_g20_20261014_v3.",
+      "The protocol adds cpu_resume_check_threads=1, so the mitigation is identity-bound.",
+      "cpu_check changes torch.set_num_threads(2) to torch.set_num_threads(1).",
+      "CPU_resume_check.json records the observed torch.get_num_threads() value as cpu_threads."
+    ],
+    "unchanged": [
+      "Parent checkpoint and ancestry binding.",
+      "FP32 source, maxabs package, activation and weight scales.",
+      "Frozen Stem model factory and 132-parameter optimizer state.",
+      "SGD learning rate, momentum, weight decay, gradient normalization and clipping.",
+      "Microbatch size 2, 22 samples per update, replay data and global update 11-20 schedule.",
+      "Checkpoint/RNG/history validation and exact continuous-versus-resumed comparison.",
+      "GPU worker torch.set_num_threads(2), deterministic algorithms, AMP/TF32 settings, UUID gate, watchdog, 75 C stop and no automatic retry."
+    ]
+  },
+  "technical_assessment": {
+    "CPU_gate_meaning": "With one Torch CPU thread, the gate still executes real updates 11 and 12 on both the continuous and restore paths and requires exact model, optimizer, RNG, cursor and history equality. It remains a valid checkpoint-continuity gate for the declared CPU-gate environment.",
+    "training_recipe_separation": "The CPU thread count is evidence metadata, not a GPU optimizer or data change. worker() explicitly resets Torch threads to 2 in its separate process before preparation and the protected GPU path.",
+    "evaluator_binding": "evaluate_qat_continuation.py additionally requires gate.cpu_threads to equal training_protocol.cpu_resume_check_threads. This prevents a continuation evaluated under the v3 identity from silently reusing a differently threaded CPU gate.",
+    "failure_rule": "If the complete v3 CPU gate fails or terminates without a pass receipt, stop immediately and do not initialize CUDA or create the v3 candidate RUN.",
+    "success_rule": "Only a complete, identity-matched CPU_resume_check.json with cpu_threads=1, restored parent CPU RNG, four negative cases and exact continuous/resumed update 12 permits the already authorized protected GPU continuation to be considered."
+  },
+  "environment_boundary": {
+    "fixed_runtime": "The CPU gate may use the pinned base Python plus the existing venv PYTHONPATH and CUDA_VISIBLE_DEVICES=-1; these choices must be recorded with the gate logs.",
+    "GPU_process_requirement": "The later protected worker must not inherit CUDA_VISIBLE_DEVICES=-1 or CPU-only OMP/MKL thread constraints. It must expose the required GPU and actually apply torch.set_num_threads(2).",
+    "dependency_policy": "No same-byte NumPy overlay, version swap, new environment, or cache bypass is justified by this mitigation."
+  },
+  "causal_boundary": {
+    "known": "Earlier full CPU gates terminated with native access violations; the PID-bound Windows event named the NumPy generator extension, while staged probes and six fixed-microbatch trials passed.",
+    "not_claimed": [
+      "The underlying native corruption cause is identified.",
+      "NumPy 2.4.6 is defective.",
+      "The installed wheel files are damaged.",
+      "Torch CPU parallelism caused the crash.",
+      "A one-thread pass repairs the DLL/runtime root cause or guarantees future absence of native crashes."
+    ],
+    "allowed_wording_after_pass": "verified runtime mitigation for the complete CPU continuity/resume gate",
+    "disallowed_wording_after_pass": "confirmed DLL root-cause fix"
+  },
+  "current_observation": {
+    "v3_CPU_gate_report_root_exists": true,
+    "v3_candidate_RUN_existed_at_review": false,
+    "gate_status_not_polled_by_reviewer": true,
+    "reason": "The coordinator owns the already started gate; this report reviews only the frozen minimal source change."
+  }
+}

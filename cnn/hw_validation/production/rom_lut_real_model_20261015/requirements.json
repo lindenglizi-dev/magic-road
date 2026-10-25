@@ -1,0 +1,32 @@
+{
+  "task_class": ["generate", "validate"],
+  "module": "road_real_model_lut_top",
+  "clock_hz": 100000000,
+  "intent": "Single existing ROM-R1 reader with exact G10 initialization and frozen LUT service; wiring only",
+  "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "physical_sha256": "bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417",
+  "old_R1_payload_not_target": "66284020976ae8a6decd841403a27c09b04ce5bbf4c8c6e3073368d8832abd43",
+  "inputs": {
+    "i_clk": 1, "i_rstn": 1, "i_cancel": 1, "i_lut_req_valid": 1,
+    "i_lut_req_kind": 1, "i_lut_req_address": 10, "i_lut_req_tag": 16,
+    "i_lut_req_frame_token": 32, "i_lut_req_model_id": 32, "i_lut_rsp_ready": 1
+  },
+  "outputs": {
+    "o_lut_req_ready": 1, "o_lut_rsp_valid": 1, "o_lut_rsp_kind": 1,
+    "o_lut_rsp_address": 10, "o_lut_rsp_tag": 16, "o_lut_rsp_frame_token": 32,
+    "o_lut_rsp_model_id": 32, "o_lut_rsp_data": 16, "o_lut_rsp_error": 1, "o_fault": 1
+  },
+  "one_reader": true,
+  "rom_instance_count": {"reader": 1, "groups": 14, "PH1P_LOGIC_ERAM": 56},
+  "resources": "No added physical ROM/ERAM versus existing 14group layout; actual mapping/timing NOT_RUN",
+  "immutable_sources": {
+    "road_numeric_rom_reader.v": "d22a4ffec8e3b8536408a117865394c38b8999f7d9bb621ca5ca11e193c79421",
+    "road_yolo_numeric_rom_group.v": "05f1d9d70acaa9ff96265a24d2b359b09c97cca60a9ceb26e3839fc0b0aae5cb",
+    "road_shared_lut_service.v": "434110b3ee9116d759704e6a998060c988910060dde011542c4c9d3fe73a51ad"
+  },
+  "reset": "Same common i_rstn to unchanged reader and LUT service; service sync release unchanged; no cancel-derived reader reset",
+  "cancel": "Only service sees i_cancel; already accepted untagged reader response drains before another LUT request; no external DDR claim",
+  "latency": "Measure actual vendor ERAM + unchanged reader WAIT cnt7 + serial LUT locator; no wait shortening or R2",
+  "verification": ["7168 complete160bitword matches", "143360 physicalbytes", "14group edges", "last payload byte140521", "zero padding2838", "full sigmoid1024/exp256", "backpressure hold", "cancel old response drain/restart", "common reset", "bad model/exp range no ROM read"],
+  "scope": "New directory only; no training/production/TD/bitstream/board/Flash/constraint/core/II/numeric changes; real shared arbitration NOT_CONNECTED"
+}

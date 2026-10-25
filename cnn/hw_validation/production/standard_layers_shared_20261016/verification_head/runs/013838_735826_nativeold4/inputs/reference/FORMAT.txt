@@ -1,0 +1,88 @@
+Fixed four-layer reference interface, 2026-10-16
+
+IDs 12=down3.dw.conv, 13=down3.pw.conv, 26=down4.dw.conv, 27=down4.pw.conv.
+remaining31_index.json is a static descriptor index. Only these four layers
+are computed by this reference. No RTL, full network, DDR, RAM mapping,
+timing, deployment QAT, accuracy or board acceptance is implied.
+
+Source tensors are existing CPU real-road golden assets. down3 DW consumes
+model_handoff_20261015/artifacts/golden_prefix/csp2.out.conv.post.npy.
+down4 DW consumes csp_family_layer_scheduled_20261015/reference/csp3/npy/
+stage6_output.npy. DW outputs feed PW in this CPU reference. Both resulting
+PW full tensors must equal the earlier independently saved family source.npy.
+These CPU tensors do not remove missing actual hardware producer execution.
+
+tasks.json indexes layer and cases. Five tile origins per layer: four corners
+and one interior tile. Down4 bottom origins y16 have exactly two valid rows.
+No task is emitted for y18 or y19. Existing convolution padding uses zero;
+physical invalid byte slots are fully written zero before use.
+
+Per layer input_hwc8.hex and expected_hwc_{acc,pre,silu,post}.hex are ordinary
+HWC element order, one element per line, signed two's complement (8/32/16/16/8).
+They are not tile4x4 physical order. Use the frozen graph's logical byte mapping
+for DDR: base + ((((y/4)*ceil(W/4)+x/4)*16+(y%4)*4+x%4)*C+c).
+
+Per tile tasks.json lists tasks in execution order. DW loops channel, valid
+row, then local x=0 or3; x0 emits three adjacent outputs and x3 one. PW loops
+output channel base (0,3,...), valid row, x=0..3. Each task records group range,
+three lane addresses, acc/pre/silu/post, active mask and quant248.
+Packed task_acc/pre/silu/post/addresses hex are respectively 96/48/48/24/96bits,
+lane0 least significant. task_mask.hex is three active bits. Invalid lanes
+have zero expected values and addresses; an invalid address is never a write.
+The client may retain formula-derived addresses on inactive lanes; compare
+addresses only when the task mask enables that lane, rather than requiring
+inactive DUT address bits to equal the reference's zero placeholder.
+
+DW uses exactly 81 bytes for one channel halo (9x9). It fully overwrites byte
+addresses 0..80 before each channel. Three adjacent stride2 windows have
+row-major 3x7 union21, groups8/8/5 in weight slots0/1/2. Final single output
+has 3x3 union9, groups8/1 in slots3/4. Sparse weight rows map lane j's kernel
+column kx to union column2*j+kx. Last task mask1 suppresses lanes1/2.
+PW fully overwrites 16*Cin bytes, local pixel HWC order, once before the output
+channel loop, then reuses those inputs across output channel groups. Cin24
+uses three weight groups; Cin48 six. Both remain below3072B and24x192bits.
+
+group_activation64, group_weight192, group_first, group_last, group_mask and
+group_slot have one record per MAC group. Activation has eight signed bytes;
+weight has three rows of eight signed bytes, row0 low64. group_offsets96 is
+eight twelve-bit byte-store offsets, lowest input lane first; unused offsets
+are zero and masked off. group_acc99 is three signed33 partial accumulators,
+including bias exactly once at first group. Each last group must equal the
+task's INT32 accumulator. The generator checks signed33 bounds each group.
+
+parameter_requests22.hex fields, low to high: group5, window3, channel7,
+layer_id7. For DW window7 means union21 and window3 union9; PW window0.
+parameter_weight192.hex and parameter_quant248.hex share request line index.
+parameter_responses.json contains the same identities, slot, weight and quant.
+quant248: bias lane0/1/2 bits0/32/64; pre_multiplier lane0/1/2 bits96/128/160;
+pre_shift lane0/1/2 bits192/198/204, each6bits; post_multiplier bits210..241;
+post_shift bits242..247. DW duplicates channel parameters in all three lanes;
+the task output mask gates invalid lanes in the application wrapper.
+
+byte_writes20.hex and byte_reads20.hex are addr12<<8 | data8. On reads data8
+is the expected response, request data0. weight_writes197/reads197.hex are
+group5<<192 | data192. On reads data192 is expected response, request data0.
+All writes expect response0/error0. wif1_transactions.csv independently gives
+sequence, channel(byte/weight), write, address_or_group, request_hex,
+response_hex, error. Sequence is a conservative sequential retirement order,
+not a clock count or a native RAM latency assumption. Each transaction must
+retire before proceeding; implementation may overlap the independent channels
+without changing per-channel order, or use same-cycle consume+accept.
+No output DDR write is represented as a byte-workstore write.
+fill_source_addresses32.hex shares byte_writes20 line index and gives the
+logical input tensor source byte address; FFFFFFFF is convolution padding or
+an invalid physical tile slot, requiring zero without an external read.
+output_writes40.hex is logical output address32<<8 | post_data8, one entry per
+active lane, task then lane order. Invalid bottom rows are never emitted.
+
+Verification: every tile and channel compares the direct scalar cnn.integer.
+conv2d oracle with the reused exact conv_exact NumPy implementation. Separately
+sparse grouped task MACs reproduce each accumulator, and the original RNE,
+SiLU and post reference supplies intermediate expected values. Frozen G10 SiLU
+bytes must exactly equal the integer reference table. Closure binds graph,
+manifest, payload, producer tensors and their manifest, reference sources,
+Python executable, NumPy version and imported NumPy source/binary modules.
+artifact_manifest.json hashes generated products; it does not hash itself.
+
+Reproduce (CPU only, no new dependency):
+python cnn/hw_validation/production/standard_layers_shared_20261016/reference/generate_reference.py

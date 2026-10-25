@@ -1,0 +1,44 @@
+C9第七批：road_frame_ready_dispatch。新目录独占，work/roadyolo；普通子任务6.1-sol/high。
+沿第七批计划；不改旧源/核/II/数值/复位，不训练/TD/位流/上板/Flash/时序例外/提交推送/外部聊天消息。
+regular generate+validate：规格/周期图→Python语义→RTL→ModelSim实际功能与严格八门。脚本/Python专用技能未安装，不宣称其严格门通过。
+
+单100MHz边沿域；i_rstn共同异步断言，调用者供本域同步释放。旧slots同一i_clk，共同reset；不增加CDC或DMA。
+两个128位身份寄存器按物理slot0/1索引。无图像、权重、第四框表或任意任务队列。
+上游已安全跨域的C8身份为{epoch[127:96],frame[95:64],capture_ms[63:0]}。身份可早于READY，但对应槽必须已分配，metadata可见；READY也可先到。
+新身份按当前非FREE、非QUARANTINE槽的epoch/frame唯一匹配后存入对应空上下文。错epoch、无匹配、双槽同身份或重复已保存身份：消费后诊断，绝不覆盖原上下文/claim/发job。
+若对应槽上下文仍被旧任务占用但槽已释放并重新捕获新frame：identity_ready=0反压，直到旧任务退休清上下文；不增加第三上下文。
+CAPTURING/WAIT_VISIBLE有身份仍不能job。未拥有的QUARANTINE上下文可清除但不能释放该槽；FREE/READY/READING生命周期仍由旧slots拥有。
+只有READY且epoch/frame与已存身份匹配，才能选择任务。slot0/1用交替优先，另槽就绪可绕过尚未READY者。
+
+端口（未写宽度均1位，全部i_clk域）
+输入i_clk,i_rstn,i_epoch[31:0],i_model_id[31:0]（共同reset区间保持，不支持热换epoch/model）。
+输入i_identity_valid,i_identity_payload[127:0]；输出o_identity_ready。
+输入i_slot_free_mask[1:0],i_slot_ready_mask[1:0],i_slot_reading_mask[1:0],i_slot_quarantine_mask[1:0]。
+输入i_slot_epochs[63:0],i_slot_frame_ids[63:0],i_slot_timestamps[127:0]；slot0取低半，slot1取高半。
+输入i_claim_ready；输出o_claim_valid,o_claim_slot,o_claim_epoch[31:0],o_claim_frame_id[31:0]，接旧slots i_read_claim_*。
+输出o_job_valid,o_job_descriptor[224:0],o_job_timestamp_mismatch；输入i_job_ready。
+输入i_task_done,i_task_done_id[31:0]：共享计算任务完成，必须晚于实际job接受，按task匹配。
+输入i_last_read_valid,i_last_read_slot,i_last_read_epoch[31:0],i_last_read_frame_id[31:0]：实际最后输入响应已被消费、无在途或未来读取且服务允许复用的事实；不是请求发出或NNdone。
+输出o_last_read_consumed,o_release_slot,o_release_epoch[31:0],o_release_frame_id[31:0]，接旧slots释放输入；无ready返回。
+输出o_busy,o_error,o_task_wrap_fault；error为粘滞诊断，正常匹配事务仍可继续，不伪造释放。
+
+job225固定布局（仅此新应用接口，不改任何冻结算术端口）
+slot[0]、base[32:1]、epoch[64:33]、task_id[96:65]、source_frame_id[128:97]、model_id[160:129]、capture_ms[224:161]。
+base0=0x03400000/base1=0x03480000，两个512KiB输入槽，有效帧442368B；仍未证明真实DDR写可见服务。
+capture_ms始终取C8身份，不用slot诊断时间替代。选择任务时锁timestamp_mismatch，在job实际接受时TB/接收者可记录槽诊断时间和源身份时间，不要求二者相等。
+task_id从1开始，只在job_valid&&job_ready实际握手后递增，不是frame_id。FFFFFFFF最后任务允许一次，随后wrap_fault锁住新job至共同reset/新epoch及外部排空；不静默回卷。
+
+三段FSM正常IDLE→CLAIM→JOB→RUN→IDLE，另ST_FAULT只处理已claim所有权遭外部违约改变，保持占用至共同reset。taskwrap在IDLE就禁止选择/claim，不预占永远不能启动的槽。
+IDLE锁选slot、当前task_id、model与时间差异标志；上下文仍留对应身份寄存器，不复制第三条身份。
+CLAIM输出已锁slot/epoch/frame，valid保持至旧slots claim_ready。只有真实claim握手才进入JOB；claim之前取消/QUARANTINE可丢上下文且诊断，不能释放READY。
+JOB已拥有READING。job_valid独立于job_ready，全部225位及mismatch保持。只有实际job握手才递增task计数、进入RUN。
+RUN分别锁task_done和匹配最后读消费；last_read仅匹配当前slot/epoch/frame、预边沿READING且尚未释放才转发，错/早/重复事件只诊断，不FREE。
+NNdone先到仍保持READING；最后读先到允许slotFREE但仍保持本任务上下文至task_done。两条件都确认后下一拍退休清上下文并回IDLE。
+结果publisher copy_ack只释放结果source表，不接此模块释放端。实际共享计算owner与publisher启动许可由i_job_ready汇总，不在本模块复制publisher。
+没有局部cancel或伪造last_read的恢复。共同reset取消本地上下文/任务；真实DDR晚返回必须由上层先排空才能重用epoch/slot，这里不证明。
+错误身份/早错重复done或lastread诊断不自动释放输入，其他合法context可继续。JOB或RUN在last_read尚未接受前，必须检查slot仍READING且epoch/frame未变；违约则当拍禁止job/release，进入ST_FAULT，不撤claim或伪造释放，待共同协调reset。真实lastread接受后允许slotFREE并重捕获，不能把此后metadata变化当违约。冻结slots只有本dispatcher可claim/release。
+JOB握手同拍done/lastread算早到，只诊断不锁存；两者必须在RUN的有效边沿送来。身份还须epoch==i_epoch；双槽同身份即使只有一个READY也不能任选。
+
+验证：身份先/READY先、乱序READY、双槽、满槽跳帧、错误epoch/frame与重复身份、半帧/无write_visible、job/claim反压、早/错/重复最后读、NNdone不释放、copy_ack不释放、读完早于done后slot重捕获身份反压、共同reset、task极值明确状态注入。
+必须实例化旧road_capture_slots验证其实际READY/READING/FREE，而不以TB自造ready为唯一证据。再以既有后处理/publisher/三表承接真实job上下文，head输入及NN/最后读/可见性服务受控，不称摄像头闭环。
+给C7缺口：摄像头域FREE/无capture/scaler/DMA credit的安全CDC；原始SOF异常取消与合格admit新分配分离；同身份完整字节DMA/真正write_visible；DDR最后返回消费/排空。没有实现这些新服务。

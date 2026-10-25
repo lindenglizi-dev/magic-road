@@ -1,0 +1,253 @@
+{
+  "modules": [
+    {
+      "name": "road_stem_ddr_sequence",
+      "feature": "stem_ddr_down2_once",
+      "rtl_path": "road_stem_ddr_sequence.v",
+      "description": "四个实际Stem tile经DDR实读后装载down2，末端384字节逐项核对的一次性诊断。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "100MHz计算时钟",
+            "description": "100MHz计算时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "与整个DDR共同断言并在本域同步释放",
+            "description": "与整个DDR共同断言并在本域同步释放"
+          },
+          {
+            "name": "i_phy_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "已同步到本域的初始化许可",
+            "description": "已同步到本域的初始化许可"
+          },
+          {
+            "name": "i_ddr_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "邮箱的本域粘滞故障",
+            "description": "邮箱的本域粘滞故障"
+          },
+          {
+            "name": "i_req_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "邮箱可保管唯一请求",
+            "description": "邮箱可保管唯一请求"
+          },
+          {
+            "name": "i_rsp_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "完整响应已跨域冻结",
+            "description": "完整响应已跨域冻结"
+          },
+          {
+            "name": "i_rsp_data",
+            "direction": "input",
+            "width": 128,
+            "role": "实际DDR返回字",
+            "description": "实际DDR返回字"
+          },
+          {
+            "name": "i_rsp_error",
+            "direction": "input",
+            "width": 4,
+            "role": "写接受或读请求错误",
+            "description": "写接受或读请求错误"
+          },
+          {
+            "name": "o_req_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "载荷保持到本域接受",
+            "description": "载荷保持到本域接受"
+          },
+          {
+            "name": "o_req_write",
+            "direction": "output",
+            "width": 1,
+            "role": "写接受与读返回分型",
+            "description": "写接受与读返回分型"
+          },
+          {
+            "name": "o_req_addr",
+            "direction": "output",
+            "width": 25,
+            "role": "按冻结布局转换的native地址",
+            "description": "按冻结布局转换的native地址"
+          },
+          {
+            "name": "o_req_data",
+            "direction": "output",
+            "width": 128,
+            "role": "实际核导出打包的128位字",
+            "description": "实际核导出打包的128位字"
+          },
+          {
+            "name": "o_rsp_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "完整响应只消费一次",
+            "description": "完整响应只消费一次"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": 2,
+            "role": "零等待、一通过、二失败",
+            "description": "零等待、一通过、二失败"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 4,
+            "role": "首个失败类型",
+            "description": "首个失败类型"
+          },
+          {
+            "name": "o_phase",
+            "direction": "output",
+            "width": 5,
+            "role": "可观测调度状态",
+            "description": "可观测调度状态"
+          },
+          {
+            "name": "o_writes",
+            "direction": "output",
+            "width": 7,
+            "role": "已收到接受回执的唯一写字数",
+            "description": "已收到接受回执的唯一写字数"
+          },
+          {
+            "name": "o_reads",
+            "direction": "output",
+            "width": 7,
+            "role": "实际已消费的读响应数",
+            "description": "实际已消费的读响应数"
+          },
+          {
+            "name": "o_output_bytes",
+            "direction": "output",
+            "width": 9,
+            "role": "已核对的最终PW字节数",
+            "description": "已核对的最终PW字节数"
+          },
+          {
+            "name": "o_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "含初始化的端点总周期",
+            "description": "含初始化的端点总周期"
+          },
+          {
+            "name": "o_cycle_bins",
+            "direction": "output",
+            "width": 320,
+            "role": "十项互斥分类，低32位为初始化",
+            "description": "十项互斥分类，低32位为初始化"
+          },
+          {
+            "name": "o_address",
+            "direction": "output",
+            "width": 25,
+            "role": "当前读写的完整native地址",
+            "description": "当前读写的完整native地址"
+          },
+          {
+            "name": "o_expected",
+            "direction": "output",
+            "width": 128,
+            "role": "最近比较的完整期望字",
+            "description": "最近比较的完整期望字"
+          },
+          {
+            "name": "o_actual",
+            "direction": "output",
+            "width": 128,
+            "role": "最近比较的完整实读或导出字",
+            "description": "最近比较的完整实读或导出字"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "CNN100MHz; DDR133.33MHz; HDMI75/375MHz"
+      },
+      "reset": {
+        "assertion": "Entire DDR and arithmetic jointly asserted asynchronously",
+        "release": "Two-flop release in each domain, reload all 1024 SiLU entries before start"
+      },
+      "behavior": [
+        "3143条固定命令，4个Stem tile、64个唯一写字、64个真实读字、17像素补零、384输出字节。",
+        "Stem从原缓存读口导出并先比黄金，实际载荷写DDR；实读先比较，再逐字节装入1296字节halo。",
+        "写响应只表示AW/W接受；一次运行不复用地址或生产槽，不发布READY或通用提交。",
+        "端点周期分十项互斥统计；忙活动可并行，不能相加。",
+        "任何故障终止本轮，首错保持直到整个DDR共同复位。"
+      ],
+      "constraints": [
+        "Read-only ROM initialization is checked separately from board readback.",
+        "No new timing exceptions for mailbox; existing bounded display CDC retained.",
+        "TEST_ONLY coefficients, no deployed-model precision or full CNN FPS claim."
+      ],
+      "corner_cases": [
+        "Request/response stalls, wrong data, missing response, failure after PASS, reset in every phase."
+      ],
+      "verification_cases": [
+        "Independent controlled endpoint, actual frozen arithmetic, distinct PAXI mailbox regression, real integrated TD."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "once_handoff",
+          "title": "一次性交接顺序",
+          "scenario": "exclusive_once",
+          "description": "阶段顺序示意；不表示固定DDR返回延迟或写提交。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........"
+              },
+              {
+                "name": "phase",
+                "wave": "=========",
+                "data": [
+                  "TABLE",
+                  "STEM_LOAD",
+                  "STEM_RUN",
+                  "STEM_EXPORT",
+                  "WRITE_ACCEPT",
+                  "READ",
+                  "HALO_LOAD",
+                  "DW_PW",
+                  "PASS"
+                ]
+              },
+              {
+                "name": "req_valid",
+                "wave": "0...1.0.."
+              },
+              {
+                "name": "rsp_valid",
+                "wave": "0....1.0."
+              },
+              {
+                "name": "DDR_payload",
+                "wave": "x...=....",
+                "data": [
+                  "actual Stem/read data held"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

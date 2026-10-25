@@ -1,0 +1,19 @@
+{
+  "module": "road_standard_tile_client",
+  "task_class": ["generate", "validate"],
+  "phase": "backbone_down3_down4_representative_tiles",
+  "layer_ids": {"12": "down3.dw.conv", "13": "down3.pw.conv", "26": "down4.dw.conv", "27": "down4.pw.conv"},
+  "clock": "100MHz; common reset with workstore, arithmetic and external memory services",
+  "reset": "asynchronous assertion, two-edge synchronous release; earliest third edge admission; fault/cancel retains busy until common reset",
+  "job": "start valid/ready locks graph layer_id and aligned output tile_y/tile_x; executes all real channels of one 4x4 tile; H18 last tile only two rows",
+  "storage": "C4 WIF1 sole shared 3072-byte and 24x192-bit workstore; client has no private tile/weight arrays; one 128-bit source line and current operand/parameter registers only",
+  "dw": "one channel at a time covers 9x9 halo=81 bytes; adjacent output triple union3x7=21 bytes in 8/8/5 groups; fourth point 3x3=9 bytes in 8/1 groups; weight slots0..2 triple and3..4 tail",
+  "pw": "cover complete16*Cin tile including physical zero rows; load Cin/8 weight groups per three output channels and reuse across valid spatial points",
+  "parameters": "request layer_id7/channel7/window3/group5; matching response weight192+quant248; quant bias[95:0],pre_mul[191:96],pre_shift[209:192],post_mul[241:210],post_shift[247:242]; window7/3 DW,0 PW; same channel metadata identical across slices",
+  "memory": "single outstanding aligned128-bit source read; verify response address; writes are byte valid/ready; layer/tile barrier acknowledges all writes visible; no actual DDR completion claim",
+  "workstore": "exact WIF1 request/response; one outstanding per channel; writes wait completed response before use; read error/fault sticky; task may switch only after every response consumed",
+  "arithmetic": "external sole frozen24MAC+dynamic post+SiLU; signed33/RNE/INT8; no changes to five kernels, II, ports, reset, numeric semantics; bias applied only first group",
+  "not_done": ["physical4ERAM integration until C4 qualified delivery", "full-layer sequencer and CSP3/4 continuous chain", "remaining bottom-up/lateral/head execution", "head INT16/HWC7 assembly", "67-layer ROM runtime parameter service", "actual DDR/video/TD/board/accuracy/FPS acceptance"],
+  "verification": ["four layers real G10 parameter representative corner/interior tiles", "H18 tail row protection", "intermediate acc/pre/SiLU/post", "random source/parameter/WIF/core/write backpressure", "common reset outstanding read/write", "bad parameter identity and illegal tile/layer", "no private caches and stable stalled payloads"],
+  "public_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"]
+}

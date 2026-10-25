@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "role": "independent_review_supplement",
+  "reviewed_at": "2026-10-13",
+  "supplements": "independent_runner_review.json",
+  "scope": "Read-only follow-up review of the narrowly added checkpoint-kind and candidate-run path guards. No CUDA context, GPU training, or CPU integration gate was started or interrupted by this review.",
+  "verdict": {
+    "fresh_execute_path": "PASS_AFTER_REVIEW_FIXES",
+    "checkpoint_kind_guard": "PASS",
+    "candidate_path_guard": "PASS",
+    "formal_acceptance": false,
+    "summary": "The prior QAT-RUNNER-004 manual-resume finding is closed in the current source. Formal execution remains restricted by procedure to execute(); no authentication nonce was added or requested."
+  },
+  "resolved_finding": {
+    "id": "QAT-RUNNER-004",
+    "previous_status": "open_not_on_fresh_execute_path",
+    "current_status": "fixed",
+    "evidence": [
+      {
+        "file": "cnn/hw_validation/production/train_qat.py",
+        "lines": "173-184",
+        "check": "validate_state requires candidate to be exactly expected_candidate and formal_acceptance to be exactly false."
+      },
+      {
+        "file": "cnn/hw_validation/production/train_qat.py",
+        "lines": "191-197",
+        "check": "restore passes the expected candidate kind through before loading model, optimizer, or RNG state."
+      },
+      {
+        "file": "cnn/hw_validation/production/train_qat.py",
+        "lines": "216-217",
+        "check": "The CPU continuity gate uses the default expected_candidate=false for its non-candidate checkpoint."
+      },
+      {
+        "file": "cnn/hw_validation/production/train_qat.py",
+        "lines": "295-300",
+        "check": "A worker resume must resolve to a file directly under RUN and must validate as candidate=true. The CPU integration checkpoint is therefore rejected both by path and checkpoint kind."
+      },
+      {
+        "file": "cnn/hw_validation/production/train_qat.py",
+        "lines": "377-380",
+        "check": "Completion validation requires every saved update checkpoint to validate as candidate=true."
+      }
+    ]
+  },
+  "normalization_test": {
+    "file": "cnn/hw_validation/production/test_train_qat.py",
+    "lines": "26-59",
+    "coverage": "Compares microbatch=2 accumulation against one complete 22-sample YOLOXLoss update for reported loss, pre-clip gradient norm, and post-SGD parameters, with varying zero/one/two-box targets.",
+    "status": "passed_reported_by_coordinator",
+    "independent_rerun": false,
+    "note": "No durable test log was present in the reviewed report directory at supplement time; this supplement records the coordinator-reported pass and independently confirms the test logic and current source."
+  },
+  "source_change": {
+    "file": "cnn/hw_validation/production/train_qat.py",
+    "previous_review_sha256": "cc205662b82c5b75df692406a9ddd1dd426954506c909edf1e839a0110a4b8ca",
+    "current_sha256": "33086b5725c84ce687b91e869ee954befd4bb910d8a50101a3012d334921ae35",
+    "expected_difference": "Adds expected_candidate/formal_acceptance validation, candidate-run parent-path enforcement, and updated validate_state call sites."
+  },
+  "unchanged_reviewed_sources": {
+    "cnn/hw_validation/production/qat_exact.py": "2c03d9eef2378ee1304e0fe0fe607fd8411f5eb7486058d6f1fb07d6f768821c",
+    "cnn/hw_validation/production/evaluate_qat.py": "c68406af54f8398c5c3774be69a064adec85c886d66f6951eaf0c8301da6dd08",
+    "cnn/hw_validation/production/test_train_qat.py": "416ee57b29cc4d6cda78dc80286b26a9414529cbed0973ef07ff6addf39cb222"
+  },
+  "remaining_boundary": {
+    "status": "accepted_for_this_run",
+    "detail": "The worker GO handshake is not cryptographically authenticated. The authorized formal path is still execute() through run_protected(); direct worker invocation remains procedurally forbidden. This was not expanded because the coordinator explicitly kept the formal run on execute() and requested no nonce architecture."
+  },
+  "verification": {
+    "performed": [
+      "Inspected every validate_state and restore call site in train_qat.py.",
+      "Confirmed the resolved parent path must equal RUN before candidate restore.",
+      "Confirmed current and previous source SHA256 values differ as expected.",
+      "Parsed current train_qat.py and test_train_qat.py with Python ast: AST_OK 2."
+    ],
+    "not_performed": [
+      "No GPU or CUDA operation.",
+      "No training or optimizer update.",
+      "No duplicate CPU integration gate while the coordinator-owned gate was running.",
+      "No completed-candidate evaluator check; that remains for the ten-update artifact."
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+RoadYOLO 完赛部署就绪缺口（只读证据快照）
+检查时间：2026-10-13 16:19:54 +08:00
+分支/提交：work/roadyolo @ 46083305
+比赛/冻结：2026-10-25 比赛；2026-10-22 功能冻结
+
+结论先行
+
+当前不能称为“可部署整网”，也没有整机资源或 5 FPS 实测。已有资产足以继续，不是从零开始：24 路 signed33 MAC、RNE、动态重定标、共享 SiLU 已有局部数值回归；Stem→down2 DW→down2 PW 三个卷积已有完整张量/交接测试；装表、参数所有权和预取已有候选；小核自检和四地址 DDR 写读诊断均已有用户现场观察的板上通过证据。
+
+但现有报告仍明确缺：其余 64 个卷积与非卷积图控制、真模型 QAT/部署参数、整网 DDR DMA、FPGA decode/Top-K/NMS、摄像头到检测框显示闭环、整机布局布线、真实整帧周期和板测。按现有证据，不能承诺这些会在 10 月 22 日前全部完成。
+
+证据口径
+
+production/latest_report.json 仍指向 2026-10-05 的 blocked_no_hardware_release，已过时，不能代表 10 月 13 日状态。本报告直接读取最新 status/总结；未打开 blind、reserve、newtest，也未审查 RTL 源码或运行综合/训练。
+
+已完成到什么程度
+
+1. 算术核：24 路 MAC、signed33 累加、RNE、共享 SiLU、动态标量重定标都有候选和局部回归。边界：测试参数或确定性向量，不是真实 QAT 模型。
+
+2. 前三个卷积：Stem、down2 DW、down2 PW 的共享前端已跑完整张量。Stem 2304 tiles、down2 576 tiles、tensor mismatch=0。边界：冻结网络共 67 个卷积，报告明确剩余 64 个卷积和图控制未完成。
+
+3. 参数与控制：table-command isolation、动态参数和 parameter prefetch 已实现并通过功能回归。最新 parameter_prefetch 实际布局布线为 10088 Slice、30 DSP、4 ERAM，但只含前三层共享诊断前端；系数标记为 TEST_ONLY。内部 setup 仍有 1 个失败端点，WNS=-0.142ns，hold WNS=+0.054ns；外部接口和复位也未签核。
+
+4. 小核/HDMI 诊断：自主三用例 DW/PW 自检已有布局布线和 bitstream，SHA256=57e675018a96fb3e360733c84bc56bacf3cd29f4806843f2d39d77c09dd293c。生成时收据中的 board_tested=false 已被 2026-10-12 后续用户观察更新：绿色 TEST、3 次复位恢复、10 分钟显示稳定通过。该终态不持续重复计算，仍不是 CNN 模型位流或持续 FPS 证据；未写 Flash。
+
+5. DDR 诊断：原厂握手仿真本身仍没有存储器模型读回，memory_pass=false；但同一临时 DDR bitstream 已有更新的板测收据，不能再沿用生成阶段的 board_readback=NOT_RUN。board_result.json 登记 SMALL_RANGE_DDR_BOARD_SELFTEST_PASS：native 地址 0/8/16/24，两轮互补 128 位数据，共 8 写、8 读，覆盖 64B 独立地址、累计比较 128B；用户报告 3 次复位后均恢复绿色并保持 10 分钟，抽查视频约 33.13 秒。该测试完成后停在 PASS，不是持续 DDR 压力，也不证明地址进位、容量边界、掩码、52–64MiB 张量区、视频并发、整张量 DMA 或通用输入槽发布。
+
+逐项就绪判断
+
+- 完整 67 层：未就绪。当前只有 3/67 个卷积的共享前端证据；pool/residual/split/concat/nearest、其余 64 卷积、固定图 sequencer 均未闭合。
+- DDR：整网未就绪，但小范围板读回已通过。仍缺地址/掩码/容量扩展、非重复真实 CNN 张量往返、通用写可见性、整张量 DMA、完整特征图搬运和视频仲裁。
+- FPGA 后处理：未就绪。有动态重定标/SiLU 等算术原语；无真模型 INT16 头到 decode、阈值、Top-K、NMS、结果表的闭环。
+- 视频：未就绪。有官方 HDMI 与诊断显示 CDC；无摄像头→DDR→CNN→框表→overlay 的连续链路，无帧身份、丢帧和结果年龄实测。
+- 板测：诊断级已部分通过。小核自检及四地址 DDR 写读均有用户现场通过记录；完整 67 层模型、摄像头检测、整网 bitstream 和持续推理仍未上板。
+- 整机资源：未测。10088/30/4 是前三层共享前端；3922/0/5 是另一个 DDR+HDMI 诊断顶层；二者重叠且范围不同，不能相加冒充整机。
+- 5 FPS：未测。100MHz 下总预算为 20,000,000 拍/帧；前三个卷积正常核心已为 11,883,456 拍，带停顿为 14,573,305 拍，且尚未计其余 64 卷积、DDR、非卷积、decode/NMS 和视频。该数字只说明风险很高，不是整网 FPS。
+
+当前 FP32 候选
+
+replay-G10 权重：cnn/runs/ac_replay_g10_20261013_v1/last.pt
+SHA256：e7e6a0f514b39417451ff90cec32e7f5adc862136bdf3adeac988c4d454fa262
+
+它通过本轮四项开发数值门槛，但状态仍是 retained_not_promoted；分机位趋势不一致，正式验收=false。它只是 FP32 学生加软件定点后处理，不是 INT8/QAT，也不是 FPGA 参数包。是否采用它、回退 E7 或降低比赛验收底线，必须形成一次明确冻结决定；不能让两个候选继续并行漂移。
+
+从 replay-G10 到“可部署真模型”的最小必要事项
+
+1. 立即冻结唯一 FP32 检查点、验证来源、置信度/NMS/Top-K/最大框数和降低后的比赛验收底线。若 replay-G10 不升格，就明确回退 E7；不再开放式追加训练。
+
+2. 导出真正部署等价参数包：BN 折叠、逐输出通道权重 scale、INT32 bias、acc→Q7.8 的 pre/post 参数、精确 SiLU 表、SiLU→INT8、concat/residual 尺度对齐、INT16 预测头、tw/th 裁剪、全部饱和规则、67 层权重/图/manifest/hash。现有 TEST_ONLY 参数包不能代替。
+
+3. 用该包完成软件整数全图 golden：67 个卷积及全部非卷积节点逐层对拍；最终 decode/Top-K/NMS 和框上限也必须同硬件口径。只在量化损失需要恢复时做短 QAT/校准恢复。蒸馏不是当前关键路径；只有在模型冻结前的一次有界 A/B 明显优于基线才加入，不能阻塞部署。
+
+4. 补齐固定 67 层 RTL：其余 64 卷积、pool/residual/split/concat/nearest、固定图 sequencer、真参数装载和整张量逐层 bit-exact。若下一步需要读改 RTL，应启用 readable-verilog-generator 门禁；本次盘点没有读取 RTL 本体。
+
+5. 复用已通过的四地址 DDR 位流路线，下一步扩展地址进位、byte mask、规划张量首末块和容量边界，再做非重复真实 CNN 张量往返；之后才完成整张量 DMA、owner/commit/release 和视频/CNN 仲裁。64B/8 写/8 读通过不能自动成为通用写完成屏障。
+
+6. 完成 FPGA decode/阈值/Top-K/NMS/框表，并以 SOF 提交到 HDMI overlay，验证帧号和整帧冻结。
+
+7. 只对真正整机顶层报告资源、100MHz setup/hold、外部接口、整帧周期及主停顿原因。当前 H24 仍是唯一获批缩网备选，但必须先有精度与完整路径周期证据，不能因小前端慢就自动切换。
+
+8. 生成整网位流并上板：真实摄像头视频、有效检测 FPS、跳帧、结果年龄、30 分钟稳定性、冻结口径精度，以及赛题若要求的自主启动。没有这些，不能称完赛部署。
+
+10 月 22 日前的最小关键路径
+
+- 必须：唯一模型冻结、精确部署包、整数全图 golden、DDR 地址/掩码扩展与真实张量往返、是否能完成 67 层的诚实 go/no-go。
+- 若全图已经存在：必须马上做整机资源/时序/周期实测；没有整机实测就不能承诺 5 FPS。
+- 暂缓：蒸馏、通用加速器、全仓格式清理、额外网络搜索、非关键审计。
+- 诚实兜底：若 67 层、完整 DDR 张量环和整网板测未在冻结日前闭合，可保留已验证的小核与小范围 DDR 板上演示，但不能标为 RoadYOLO 整网完成。
+
+关键证据
+
+- cnn/hw_validation/production/reports/parameter_prefetch_20261013/status.json（2026-10-13 14:21）
+- cnn/hw_validation/production/reports/table_command_isolation_20261013/status.json（2026-10-13 13:36）
+- cnn/hw_validation/production/reports/ddr_real_handshake_20261013/status.json（2026-10-13 12:36）
+- cnn/hw_validation/production/reports/ddr_display_cdc_20261013/status.json（2026-10-13 10:08）
+- cnn/hw_validation/production/reports/ddr_board_selftest_20261013/status.json（2026-10-13 01:45）
+- cnn/hw_validation/production/reports/frontend_shared_core_20261011/status.json
+- cnn/hw_validation/production/reports/stem_down2_handoff_20261011/status.json
+- cnn/hw_validation/production/reports/down2_full_tensor_20261010/status.json
+- cnn/reports/ac_optimization_20261013_v1/decision.json（2026-10-13 14:30）
+- cnn/hw_validation/board_test_20261013_ddr/board_result.json（2026-10-13 14:22，SMALL_RANGE_DDR_BOARD_SELFTEST_PASS）
+- cnn/hw_validation/board_test_20261013_ddr/板测记录与下一步.txt
+- cnn/hw_validation/board_test_20261010/板测记录_20261012.txt
+- cnn/hw_validation/production/reports/placement_seed_20261013/status.json（检查时 RUNNING_ONE_SEED_DIAGNOSTIC，不是已通过）

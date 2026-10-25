@@ -1,0 +1,267 @@
+{
+  "modules": [
+    {
+      "name": "road_source_sof_identity",
+      "feature": "source_sof_identity",
+      "rtl_path": "road_source_sof_identity.v",
+      "description": "真实AWB源帧身份与单计时器镜像",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_time_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_time_clk",
+            "description": "i_time_clk"
+          },
+          {
+            "name": "i_camera_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_camera_clk",
+            "description": "i_camera_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn"
+          },
+          {
+            "name": "i_time_now_ms",
+            "direction": "input",
+            "width": 64,
+            "role": "i_time_now_ms",
+            "description": "i_time_now_ms"
+          },
+          {
+            "name": "i_time_tick",
+            "direction": "input",
+            "width": 1,
+            "role": "i_time_tick",
+            "description": "i_time_tick"
+          },
+          {
+            "name": "i_time_epoch",
+            "direction": "input",
+            "width": 32,
+            "role": "i_time_epoch",
+            "description": "i_time_epoch"
+          },
+          {
+            "name": "i_camera_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "i_camera_sof",
+            "description": "i_camera_sof"
+          },
+          {
+            "name": "i_capture_credit",
+            "direction": "input",
+            "width": 1,
+            "role": "i_capture_credit",
+            "description": "i_capture_credit"
+          },
+          {
+            "name": "o_frame_admit",
+            "direction": "output",
+            "width": 1,
+            "role": "o_frame_admit",
+            "description": "o_frame_admit"
+          },
+          {
+            "name": "o_admit_epoch",
+            "direction": "output",
+            "width": 32,
+            "role": "o_admit_epoch",
+            "description": "o_admit_epoch"
+          },
+          {
+            "name": "o_admit_frame_id",
+            "direction": "output",
+            "width": 32,
+            "role": "o_admit_frame_id",
+            "description": "o_admit_frame_id"
+          },
+          {
+            "name": "o_admit_capture_ms",
+            "direction": "output",
+            "width": 64,
+            "role": "o_admit_capture_ms",
+            "description": "o_admit_capture_ms"
+          },
+          {
+            "name": "o_source_frame_id",
+            "direction": "output",
+            "width": 32,
+            "role": "o_source_frame_id",
+            "description": "o_source_frame_id"
+          },
+          {
+            "name": "o_mirror_ms",
+            "direction": "output",
+            "width": 64,
+            "role": "o_mirror_ms",
+            "description": "o_mirror_ms"
+          },
+          {
+            "name": "o_mirror_epoch",
+            "direction": "output",
+            "width": 32,
+            "role": "o_mirror_epoch",
+            "description": "o_mirror_epoch"
+          },
+          {
+            "name": "o_mirror_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "o_mirror_valid",
+            "description": "o_mirror_valid"
+          },
+          {
+            "name": "o_event_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "o_event_busy",
+            "description": "o_event_busy"
+          },
+          {
+            "name": "o_frame_skip",
+            "direction": "output",
+            "width": 1,
+            "role": "o_frame_skip",
+            "description": "o_frame_skip"
+          },
+          {
+            "name": "o_wrap_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "o_wrap_fault",
+            "description": "o_wrap_fault"
+          },
+          {
+            "name": "o_desc_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "o_desc_valid",
+            "description": "o_desc_valid"
+          },
+          {
+            "name": "i_desc_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "i_desc_ready",
+            "description": "i_desc_ready"
+          },
+          {
+            "name": "o_desc_payload",
+            "direction": "output",
+            "width": 128,
+            "role": "o_desc_payload",
+            "description": "o_desc_payload"
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "MIRROR_TIMEOUT_CYCLES",
+          "default": 120000,
+          "description": "已配置摄像头域两毫秒失联计数，不是绝对计时器"
+        }
+      ],
+      "clock": {
+        "time_hz": 100000000,
+        "camera_nominal_hz": 60000000,
+        "hdmi_hz": 75000000,
+        "camera_clock_is_measured": false,
+        "single_absolute_counter": "frozen road_time_snapshot.o_src_now_ms",
+        "epoch": "stable for each coordinated reset interval; never hot-switch"
+      },
+      "reset": {
+        "assertion": "common asynchronous cancellation",
+        "release": "identity two local release edges; overlay uses supplied pixel-domain released reset"
+      },
+      "behavior": [
+        "All rising physical AWB SOFs count, even when credit/busy/time prevents capture.",
+        "Arm only after observing SOF low after local reset release; high during reset never creates a phantom frame.",
+        "o_frame_admit is combinational BEFORE the actual source SOF sampling edge; valid does not gate SOF.",
+        "At that same edge the capture owner consumes qualified admit fields and reserves a pre-existing FREE slot.",
+        "No mirror arriving on the SOF edge is eligible until a subsequent SOF.",
+        "No credit, stale mirror, outstanding event or frame counter wrap skips the whole frame. No pixel backpressure.",
+        "The physical frame counter saturates on wrap and sticky fault blocks further admission until coordinated reset with a new epoch.",
+        "Independent held96 time request/ack and held128 source event request/ack; no dynamic bus synchronizer or asynchronous FIFO.",
+        "Source freezes each payload before toggle, holds through two-stage returned ack. Destination two-stage request plus one stable capture wait.",
+        "Descriptor ack occurs only after i_desc_ready && o_desc_valid at 100MHz; output payload is stable while stalled.",
+        "Mirror valid expires on the 120001st camera edge without a completed new snapshot; common reset cancels all old events.",
+        "The source stamp is an already completed old mirror, so source lag increases age rather than decreases it.",
+        "Continuous configured clocks imply mirror publication lag about 1ms plus CDC. On time-clock freeze watchdog is about 2ms in camera time; camera-clock stop also stops watchdog, so bounded freshness after clock loss requires common reset."
+      ],
+      "constraints": [
+        "Actual admission credit/slot association and full pixel DMA are NOT connected by an identity event.",
+        "No production integration, TD, physical CDC/MTBF/bundled timing signoff, bitstream or board proof in this batch.",
+        "The descriptor contains source identity/time only; task_id, model_id and slot metadata are owned by the application scheduler.",
+        "No independent hot reset or real DDR late-return drain is proved."
+      ],
+      "corner_cases": [
+        "SOF during reset, no time, busy, no credit, long stall, common reset, unknown age"
+      ],
+      "verification_cases": [
+        "Python reference first",
+        "actual local ModelSim",
+        "strict eight gates kept separate"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "source_frame",
+          "title": "源帧接纳或帧边界年龄切换",
+          "scenario": "normal",
+          "description": "Digital waveform only; no physical CDC signoff.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "camera_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "mirror_valid",
+                "wave": "0..1......"
+              },
+              {
+                "name": "physical_sof",
+                "wave": "010.10..10"
+              },
+              {
+                "name": "frame_count",
+                "wave": "===.===.==",
+                "data": [
+                  "0",
+                  "1 skipped",
+                  "2 admitted",
+                  "2",
+                  "2",
+                  "3 skipped"
+                ]
+              },
+              {
+                "name": "admit",
+                "wave": "0...10...."
+              },
+              {
+                "name": "held_event",
+                "wave": "x...=.....",
+                "data": [
+                  "epoch,frame2,old time"
+                ]
+              },
+              {
+                "name": "event_busy",
+                "wave": "0...1....."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,783 @@
+[
+  {
+    "allocation": null,
+    "axis": "C",
+    "index": 3,
+    "inputs": [
+      "down2.pw.conv"
+    ],
+    "name": "split.00",
+    "op": "split_view",
+    "outputs": [
+      {
+        "channel_offset": 0,
+        "channels": 12,
+        "output": "split.00.0",
+        "shape_hwc": [
+          36,
+          64,
+          12
+        ]
+      },
+      {
+        "channel_offset": 12,
+        "channels": 12,
+        "output": "split.00.1",
+        "shape_hwc": [
+          36,
+          64,
+          12
+        ]
+      }
+    ],
+    "address_mapping": "recurse(source,y,x,channel_offset+c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 6,
+    "inputs": [
+      "split.00.1",
+      "csp2.blocks.0.pw.conv"
+    ],
+    "name": "residual.00",
+    "op": "residual_view",
+    "output": "residual.00",
+    "shape_hwc": [
+      36,
+      64,
+      12
+    ],
+    "storage_alias": "csp2.blocks.0.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 9,
+    "inputs": [
+      "residual.00",
+      "csp2.blocks.1.pw.conv"
+    ],
+    "name": "residual.01",
+    "op": "residual_view",
+    "output": "residual.01",
+    "shape_hwc": [
+      36,
+      64,
+      12
+    ],
+    "storage_alias": "csp2.blocks.1.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 10,
+    "inputs": [
+      "split.00.0",
+      "residual.01"
+    ],
+    "name": "concat.00",
+    "op": "concat_view",
+    "output": "concat.00",
+    "shape_hwc": [
+      36,
+      64,
+      24
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "axis": "C",
+    "index": 14,
+    "inputs": [
+      "down3.pw.conv"
+    ],
+    "name": "split.01",
+    "op": "split_view",
+    "outputs": [
+      {
+        "channel_offset": 0,
+        "channels": 24,
+        "output": "split.01.0",
+        "shape_hwc": [
+          18,
+          32,
+          24
+        ]
+      },
+      {
+        "channel_offset": 24,
+        "channels": 24,
+        "output": "split.01.1",
+        "shape_hwc": [
+          18,
+          32,
+          24
+        ]
+      }
+    ],
+    "address_mapping": "recurse(source,y,x,channel_offset+c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 17,
+    "inputs": [
+      "split.01.1",
+      "csp3.blocks.0.pw.conv"
+    ],
+    "name": "residual.02",
+    "op": "residual_view",
+    "output": "residual.02",
+    "shape_hwc": [
+      18,
+      32,
+      24
+    ],
+    "storage_alias": "csp3.blocks.0.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 20,
+    "inputs": [
+      "residual.02",
+      "csp3.blocks.1.pw.conv"
+    ],
+    "name": "residual.03",
+    "op": "residual_view",
+    "output": "residual.03",
+    "shape_hwc": [
+      18,
+      32,
+      24
+    ],
+    "storage_alias": "csp3.blocks.1.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 23,
+    "inputs": [
+      "residual.03",
+      "csp3.blocks.2.pw.conv"
+    ],
+    "name": "residual.04",
+    "op": "residual_view",
+    "output": "residual.04",
+    "shape_hwc": [
+      18,
+      32,
+      24
+    ],
+    "storage_alias": "csp3.blocks.2.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 24,
+    "inputs": [
+      "split.01.0",
+      "residual.04"
+    ],
+    "name": "concat.01",
+    "op": "concat_view",
+    "output": "concat.01",
+    "shape_hwc": [
+      18,
+      32,
+      48
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "axis": "C",
+    "index": 28,
+    "inputs": [
+      "down4.pw.conv"
+    ],
+    "name": "split.02",
+    "op": "split_view",
+    "outputs": [
+      {
+        "channel_offset": 0,
+        "channels": 48,
+        "output": "split.02.0",
+        "shape_hwc": [
+          9,
+          16,
+          48
+        ]
+      },
+      {
+        "channel_offset": 48,
+        "channels": 48,
+        "output": "split.02.1",
+        "shape_hwc": [
+          9,
+          16,
+          48
+        ]
+      }
+    ],
+    "address_mapping": "recurse(source,y,x,channel_offset+c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 31,
+    "inputs": [
+      "split.02.1",
+      "csp4.blocks.0.pw.conv"
+    ],
+    "name": "residual.05",
+    "op": "residual_view",
+    "output": "residual.05",
+    "shape_hwc": [
+      9,
+      16,
+      48
+    ],
+    "storage_alias": "csp4.blocks.0.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 34,
+    "inputs": [
+      "residual.05",
+      "csp4.blocks.1.pw.conv"
+    ],
+    "name": "residual.06",
+    "op": "residual_view",
+    "output": "residual.06",
+    "shape_hwc": [
+      9,
+      16,
+      48
+    ],
+    "storage_alias": "csp4.blocks.1.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 37,
+    "inputs": [
+      "residual.06",
+      "csp4.blocks.2.pw.conv"
+    ],
+    "name": "residual.07",
+    "op": "residual_view",
+    "output": "residual.07",
+    "shape_hwc": [
+      9,
+      16,
+      48
+    ],
+    "storage_alias": "csp4.blocks.2.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 38,
+    "inputs": [
+      "split.02.0",
+      "residual.07"
+    ],
+    "name": "concat.02",
+    "op": "concat_view",
+    "output": "concat.02",
+    "shape_hwc": [
+      9,
+      16,
+      96
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 44,
+    "inputs": [
+      "sppf.squeeze.conv",
+      "pool.00",
+      "pool.01",
+      "pool.02"
+    ],
+    "name": "concat.03",
+    "op": "concat_view",
+    "output": "concat.03",
+    "shape_hwc": [
+      9,
+      16,
+      96
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 47,
+    "inputs": [
+      "lateral4.conv"
+    ],
+    "name": "upsample.00",
+    "op": "nearest_view",
+    "output": "upsample.00",
+    "scale": [
+      2,
+      2
+    ],
+    "shape_hwc": [
+      18,
+      32,
+      48
+    ],
+    "source_index": {
+      "x": "x//2",
+      "y": "y//2"
+    },
+    "address_mapping": "recurse(source,y//scale_y,x//scale_x,c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 48,
+    "inputs": [
+      "upsample.00",
+      "csp3.out.conv"
+    ],
+    "name": "concat.04",
+    "op": "concat_view",
+    "output": "concat.04",
+    "shape_hwc": [
+      18,
+      32,
+      96
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "axis": "C",
+    "index": 50,
+    "inputs": [
+      "fuse3_td.reduce.conv"
+    ],
+    "name": "split.03",
+    "op": "split_view",
+    "outputs": [
+      {
+        "channel_offset": 0,
+        "channels": 24,
+        "output": "split.03.0",
+        "shape_hwc": [
+          18,
+          32,
+          24
+        ]
+      },
+      {
+        "channel_offset": 24,
+        "channels": 24,
+        "output": "split.03.1",
+        "shape_hwc": [
+          18,
+          32,
+          24
+        ]
+      }
+    ],
+    "address_mapping": "recurse(source,y,x,channel_offset+c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 53,
+    "inputs": [
+      "split.03.1",
+      "fuse3_td.block.pw.conv"
+    ],
+    "name": "residual.08",
+    "op": "residual_view",
+    "output": "residual.08",
+    "shape_hwc": [
+      18,
+      32,
+      24
+    ],
+    "storage_alias": "fuse3_td.block.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 54,
+    "inputs": [
+      "split.03.0",
+      "residual.08"
+    ],
+    "name": "concat.05",
+    "op": "concat_view",
+    "output": "concat.05",
+    "shape_hwc": [
+      18,
+      32,
+      48
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 56,
+    "inputs": [
+      "lateral3.conv"
+    ],
+    "name": "upsample.01",
+    "op": "nearest_view",
+    "output": "upsample.01",
+    "scale": [
+      2,
+      2
+    ],
+    "shape_hwc": [
+      36,
+      64,
+      24
+    ],
+    "source_index": {
+      "x": "x//2",
+      "y": "y//2"
+    },
+    "address_mapping": "recurse(source,y//scale_y,x//scale_x,c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 57,
+    "inputs": [
+      "upsample.01",
+      "csp2.out.conv"
+    ],
+    "name": "concat.06",
+    "op": "concat_view",
+    "output": "concat.06",
+    "shape_hwc": [
+      36,
+      64,
+      48
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "axis": "C",
+    "index": 59,
+    "inputs": [
+      "fuse2_td.reduce.conv"
+    ],
+    "name": "split.04",
+    "op": "split_view",
+    "outputs": [
+      {
+        "channel_offset": 0,
+        "channels": 12,
+        "output": "split.04.0",
+        "shape_hwc": [
+          36,
+          64,
+          12
+        ]
+      },
+      {
+        "channel_offset": 12,
+        "channels": 12,
+        "output": "split.04.1",
+        "shape_hwc": [
+          36,
+          64,
+          12
+        ]
+      }
+    ],
+    "address_mapping": "recurse(source,y,x,channel_offset+c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 62,
+    "inputs": [
+      "split.04.1",
+      "fuse2_td.block.pw.conv"
+    ],
+    "name": "residual.09",
+    "op": "residual_view",
+    "output": "residual.09",
+    "shape_hwc": [
+      36,
+      64,
+      12
+    ],
+    "storage_alias": "fuse2_td.block.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 63,
+    "inputs": [
+      "split.04.0",
+      "residual.09"
+    ],
+    "name": "concat.07",
+    "op": "concat_view",
+    "output": "concat.07",
+    "shape_hwc": [
+      36,
+      64,
+      24
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 66,
+    "inputs": [
+      "down3_bu.pw.conv",
+      "concat.05"
+    ],
+    "name": "concat.08",
+    "op": "concat_view",
+    "output": "concat.08",
+    "shape_hwc": [
+      18,
+      32,
+      96
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "axis": "C",
+    "index": 68,
+    "inputs": [
+      "fuse3_bu.reduce.conv"
+    ],
+    "name": "split.05",
+    "op": "split_view",
+    "outputs": [
+      {
+        "channel_offset": 0,
+        "channels": 24,
+        "output": "split.05.0",
+        "shape_hwc": [
+          18,
+          32,
+          24
+        ]
+      },
+      {
+        "channel_offset": 24,
+        "channels": 24,
+        "output": "split.05.1",
+        "shape_hwc": [
+          18,
+          32,
+          24
+        ]
+      }
+    ],
+    "address_mapping": "recurse(source,y,x,channel_offset+c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 71,
+    "inputs": [
+      "split.05.1",
+      "fuse3_bu.block.pw.conv"
+    ],
+    "name": "residual.10",
+    "op": "residual_view",
+    "output": "residual.10",
+    "shape_hwc": [
+      18,
+      32,
+      24
+    ],
+    "storage_alias": "fuse3_bu.block.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 72,
+    "inputs": [
+      "split.05.0",
+      "residual.10"
+    ],
+    "name": "concat.09",
+    "op": "concat_view",
+    "output": "concat.09",
+    "shape_hwc": [
+      18,
+      32,
+      48
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 75,
+    "inputs": [
+      "down4_bu.pw.conv",
+      "sppf.out.conv"
+    ],
+    "name": "concat.10",
+    "op": "concat_view",
+    "output": "concat.10",
+    "shape_hwc": [
+      9,
+      16,
+      192
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "axis": "C",
+    "index": 77,
+    "inputs": [
+      "fuse4_bu.reduce.conv"
+    ],
+    "name": "split.06",
+    "op": "split_view",
+    "outputs": [
+      {
+        "channel_offset": 0,
+        "channels": 48,
+        "output": "split.06.0",
+        "shape_hwc": [
+          9,
+          16,
+          48
+        ]
+      },
+      {
+        "channel_offset": 48,
+        "channels": 48,
+        "output": "split.06.1",
+        "shape_hwc": [
+          9,
+          16,
+          48
+        ]
+      }
+    ],
+    "address_mapping": "recurse(source,y,x,channel_offset+c)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 80,
+    "inputs": [
+      "split.06.1",
+      "fuse4_bu.block.pw.conv"
+    ],
+    "name": "residual.11",
+    "op": "residual_view",
+    "output": "residual.11",
+    "shape_hwc": [
+      9,
+      16,
+      48
+    ],
+    "storage_alias": "fuse4_bu.block.pw.conv",
+    "address_mapping": "recurse(branch_storage_alias,y,x,c); branch write_transform reads bypass before sat8"
+  },
+  {
+    "allocation": null,
+    "dtype": "int8",
+    "index": 81,
+    "inputs": [
+      "split.06.0",
+      "residual.11"
+    ],
+    "name": "concat.11",
+    "op": "concat_view",
+    "output": "concat.11",
+    "shape_hwc": [
+      9,
+      16,
+      96
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int16_q7_8",
+    "index": 89,
+    "inputs": [
+      "head2.reg_out",
+      "head2.cls_out"
+    ],
+    "name": "concat.12",
+    "op": "concat_view",
+    "output": "concat.12",
+    "shape_hwc": [
+      36,
+      64,
+      7
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int16_q7_8",
+    "index": 97,
+    "inputs": [
+      "head3.reg_out",
+      "head3.cls_out"
+    ],
+    "name": "concat.13",
+    "op": "concat_view",
+    "output": "concat.13",
+    "shape_hwc": [
+      18,
+      32,
+      7
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  },
+  {
+    "allocation": null,
+    "dtype": "int16_q7_8",
+    "index": 105,
+    "inputs": [
+      "head4.reg_out",
+      "head4.cls_out"
+    ],
+    "name": "concat.14",
+    "op": "concat_view",
+    "output": "concat.14",
+    "shape_hwc": [
+      9,
+      16,
+      7
+    ],
+    "address_mapping": "select channel segment; recurse(segment_source,y,x,c-segment_offset)"
+  }
+]

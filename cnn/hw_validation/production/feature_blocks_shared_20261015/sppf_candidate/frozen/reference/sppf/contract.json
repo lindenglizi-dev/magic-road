@@ -1,0 +1,258 @@
+{
+  "status": "TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED",
+  "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "source": "csp4/npy/stage6_output.npy",
+  "nodes": [
+    {
+      "name": "sppf.squeeze.conv",
+      "op": "conv",
+      "inputs": [
+        "csp4.out.conv"
+      ],
+      "output": "sppf.squeeze.conv",
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 2304,
+      "macs": 1327104,
+      "dtype": "int8",
+      "storage": {
+        "base": 58171392,
+        "raw_bytes": 15360,
+        "allocated_bytes": 16384,
+        "end": 58187776,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 40
+    },
+    {
+      "name": "pool.00",
+      "op": "maxpool",
+      "inputs": [
+        "sppf.squeeze.conv"
+      ],
+      "output": "pool.00",
+      "input_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "kernel": [
+        5,
+        5
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        2,
+        2
+      ],
+      "operator_padding_value": -128,
+      "dtype": "int8",
+      "storage": {
+        "base": 58187776,
+        "raw_bytes": 15360,
+        "allocated_bytes": 16384,
+        "end": 58204160,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 41
+    },
+    {
+      "name": "pool.01",
+      "op": "maxpool",
+      "inputs": [
+        "pool.00"
+      ],
+      "output": "pool.01",
+      "input_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "kernel": [
+        5,
+        5
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        2,
+        2
+      ],
+      "operator_padding_value": -128,
+      "dtype": "int8",
+      "storage": {
+        "base": 58204160,
+        "raw_bytes": 15360,
+        "allocated_bytes": 16384,
+        "end": 58220544,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 42
+    },
+    {
+      "name": "pool.02",
+      "op": "maxpool",
+      "inputs": [
+        "pool.01"
+      ],
+      "output": "pool.02",
+      "input_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        24
+      ],
+      "kernel": [
+        5,
+        5
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        2,
+        2
+      ],
+      "operator_padding_value": -128,
+      "dtype": "int8",
+      "storage": {
+        "base": 58220544,
+        "raw_bytes": 15360,
+        "allocated_bytes": 16384,
+        "end": 58236928,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 43
+    },
+    {
+      "name": "concat.03",
+      "op": "concat_view",
+      "inputs": [
+        "sppf.squeeze.conv",
+        "pool.00",
+        "pool.01",
+        "pool.02"
+      ],
+      "output": "concat.03",
+      "shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "dtype": "int8",
+      "allocation": null,
+      "index": 44
+    },
+    {
+      "name": "sppf.out.conv",
+      "op": "conv",
+      "inputs": [
+        "concat.03"
+      ],
+      "output": "sppf.out.conv",
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 9216,
+      "macs": 5308416,
+      "dtype": "int8",
+      "storage": {
+        "base": 58236928,
+        "raw_bytes": 61440,
+        "allocated_bytes": 61440,
+        "end": 58298368,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 96,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 45
+    }
+  ],
+  "concat_order": [
+    "sppf.squeeze.conv",
+    "pool.00",
+    "pool.01",
+    "pool.02"
+  ],
+  "pool_padding": -128,
+  "physical_tile_invalid_fill": 0,
+  "full_scalar_conv_checked": 2,
+  "pool_full_scalar_checked": 3,
+  "boundary": "CPU-only SPPF from corrected frozen CSP4; no continuous RTL prefix"
+}

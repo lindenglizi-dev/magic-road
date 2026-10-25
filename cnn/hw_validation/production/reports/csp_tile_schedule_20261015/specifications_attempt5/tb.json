@@ -1,0 +1,85 @@
+{
+  "modules": [
+    {
+      "name": "tb_csp_tile_schedule",
+      "feature": "csp_schedule_test",
+      "rtl_path": "tb_csp_tile_schedule.v",
+      "description": "固定调度顺序及握手自检，不执行算术或DDR",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "o_test_done",
+            "direction": "output",
+            "width": 1,
+            "role": "test_complete",
+            "description": "全部自检通过后置位",
+            "clock_domain": "clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000,
+        "internal": true
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false,
+        "internal": true
+      },
+      "parameters": [],
+      "behavior": [
+        "逐组与Python冻结描述符比较；故障和复位不得泄漏旧任务。"
+      ],
+      "constraints": [
+        "仅仿真，不替代算术回归或物理检查。"
+      ],
+      "corner_cases": [
+        "DW末点、阶段切换、最终PW、任意反压、WAIT复位、早到done。"
+      ],
+      "verification_cases": [
+        "320组逐项同冻结mac_tasks；随机ready/完成延迟、长反压、逐状态复位、故障。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "task",
+          "scenario": "task",
+          "title": "双组及完整结果提交后推进",
+          "description": "两次group握手后等待task_done；背压不改变当前描述符。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "group_valid",
+                "wave": "01..0.1."
+              },
+              {
+                "name": "group_ready",
+                "wave": "01.10..."
+              },
+              {
+                "name": "group",
+                "wave": "x=..=x=.",
+                "data": [
+                  "first",
+                  "last",
+                  "next first"
+                ]
+              },
+              {
+                "name": "task_done",
+                "wave": "0....10."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "record_date": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "status": "SMALL_RANGE_DDR_BOARD_SELFTEST_PASS",
+  "board": "HX1P35A V1.0",
+  "device": "PH1P35MDG324",
+  "programming_mode": "PROGRAM_SRAM",
+  "bitstream": {
+    "path": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ddr_display_cdc_20261013/diagnostic_bitgen_attempt2/HX1P35A_C7_DDR_DIAG.bit",
+    "sha256": "9250eadc204e53da4bf4d211dc7d662c3937c251b49433875be869e2a0b3ffdc",
+    "local_file_hash_verified": true,
+    "selection_evidence": "User states full file path; programmer screenshot shows matching suffix, device and SRAM mode"
+  },
+  "user_observation": {
+    "reset_count": 3,
+    "green_after_each_reset": true,
+    "stable_minutes": 10,
+    "statement": "复位三次仍为绿色，且10分钟稳定"
+  },
+  "reviewed_evidence": {
+    "video": "board_video.mp4",
+    "video_sha256": "8ccdf4d2c9622bdcaf1eeed0199e6ce1dba298c622405e836b6390f02d3818a6",
+    "video_frames": 994,
+    "video_fps": 30.0,
+    "video_duration_seconds_approx": 33.133333,
+    "reviewed_frame_times_seconds": [0, 5, 10, 15, 20, 25, 30, 33],
+    "visual_observation": "Green TEST display and diagnostic band are visible; sampled video also shows temporary blank display around manual board interaction, followed by restored green TEST",
+    "programmer_screenshot": "programmer.png",
+    "programmer_screenshot_sha256": "485c52a537151a665032a77aecfd4362e95de00d7c9838efbc994a85215fa439",
+    "ten_minute_evidence": "USER_REPORTED; attached video is about 33 seconds",
+    "reset_count_evidence": "USER_REPORTED; sampled video supports reset and recovery behavior",
+    "diagnostic_band_numeric_decode": "NOT_PERFORMED"
+  },
+  "test_scope_per_run": {
+    "native_addresses": [0, 8, 16, 24],
+    "data_patterns": "Two complementary rounds of distinct 128-bit words",
+    "writes_expected": 8,
+    "reads_expected": 8,
+    "unique_test_bytes": 64,
+    "compared_bytes": 128,
+    "pass_basis": "RTL PASS/green status after full comparisons, observed on board; counters not independently decoded from video",
+    "continuous_ddr_stress": false
+  },
+  "still_unverified": [
+    "Full DDR capacity and address boundary behavior",
+    "Byte mask operation and sustained workload",
+    "General write-completion or input-slot READY barrier semantics",
+    "Video and CNN DMA concurrency",
+    "Whole-system timing signoff and strict RTL delivery gates",
+    "Full CNN throughput and model accuracy"
+  ],
+  "agent_programmed_hardware": false,
+  "historical_reports_modified": false,
+  "next_stage": "Reuse existing offline address/mask vectors for an independent board candidate, then verify a real CNN tensor round trip"
+}

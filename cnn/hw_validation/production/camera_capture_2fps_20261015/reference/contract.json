@@ -1,0 +1,230 @@
+{
+  "status": "PASS_CPU_REFERENCE_NOT_RTL_OR_BOARD",
+  "scope": "Exact 2/5 RGB arithmetic, lane mapping and bounded scheduling only; no training, GPU, RTL, TD, ERAM mapping, DDR, camera, board or bitstream",
+  "source": {
+    "shape_hwc": [
+      720,
+      1280,
+      3
+    ],
+    "awb96_words_per_line": 320,
+    "lane_order_earliest_to_latest": [
+      "95:72",
+      "71:48",
+      "47:24",
+      "23:0"
+    ],
+    "lane_fields": {
+      "R": "23:16",
+      "G": "15:8",
+      "B": "7:0"
+    }
+  },
+  "output": {
+    "shape_hwc": [
+      288,
+      512,
+      3
+    ],
+    "serial_reference_mask": "01",
+    "o_pixels": "bits7:0 R, 15:8 G, 23:16 B, bits47:24 zero",
+    "note": "interface permits two lanes, but bounded serial vertical reference emits one"
+  },
+  "arithmetic": {
+    "horizontal_weights": [
+      [
+        2,
+        2,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        2,
+        2
+      ]
+    ],
+    "horizontal_width_bits": 11,
+    "horizontal_max_allowed": 1275,
+    "vertical_weights": [
+      [
+        2,
+        2,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        2,
+        2
+      ]
+    ],
+    "vertical_width_bits": 13,
+    "vertical_max_allowed": 6375,
+    "rounding": "one final round-nearest-even divide by 25; integer numerator cannot tie; implemented as (sum+12)//25",
+    "forbidden": "no intermediate divide by 5"
+  },
+  "horizontal_schedule": {
+    "input_pixels_per_cycle": 4,
+    "phase_sequence": [
+      0,
+      4,
+      3,
+      2,
+      1
+    ],
+    "outputs_per_cycle": [
+      1,
+      2,
+      1,
+      2,
+      2
+    ],
+    "maximum_lanes": 2,
+    "repeats_per_line": 64,
+    "outputs_per_line": 512,
+    "masks": {
+      "one": "01",
+      "two": "11"
+    }
+  },
+  "serial_queue": {
+    "model": "enqueue 1/2 horizontal results, same cycle consume at most one including current arrivals, FIFO residue bounded",
+    "depth": 192,
+    "normal": {
+      "active_cycles": 320,
+      "blank_cycles": 480,
+      "line_interval": 800,
+      "max_queue": 192,
+      "level_after_last_active": 192,
+      "drain_cycles": 192,
+      "first_overflow_cycle": null,
+      "first_overflow_row": null,
+      "first_overflow_beat": null
+    },
+    "minimum_schedulable": {
+      "line_interval": 512,
+      "blank_cycles": 192
+    },
+    "no_line_idle": {
+      "line_interval": 320,
+      "max_queue": 138240,
+      "level_after_last_active": 138240,
+      "drain_cycles": 138240,
+      "first_overflow_cycle": 321,
+      "first_overflow_row": 1,
+      "first_overflow_beat": 1,
+      "expected": "OVERLOAD; first overflow on source row 1 beat 1"
+    }
+  },
+  "vertical_serial": {
+    "source_row_phases_producing_output": {
+      "2": "first output row",
+      "4": "second output row"
+    },
+    "pixels_per_output_cycle": 1,
+    "max_queue": 192,
+    "first_output_cycle": 1600,
+    "last_output_cycle": 575711,
+    "completion_cycles": 575712
+  },
+  "frames": [
+    {
+      "name": "frame0_numbered_bars",
+      "input_shape_hwc": [
+        720,
+        1280,
+        3
+      ],
+      "output_shape_hwc": [
+        288,
+        512,
+        3
+      ],
+      "input_rgb_bytes_sha256": "ae4a176fb7a5f830260dacd79a940a81047e977d743d2de31e1969b468a5a913",
+      "output_rgb_bytes_sha256": "5ffc5b48fdc54dbd75ded6171406cbb028528edad48a80a573c14dc6d6c13a84",
+      "awb96_file": "frame0_numbered_bars_awb96.hex",
+      "awb96_words": 230400,
+      "awb96_sha256": "5eaf75b7dccb91a2934dd998a145dd5bab50a16ff26deed07caeafae99f1abab",
+      "first_awb96_word": "000000000001000002000003",
+      "output_file": "frame0_numbered_bars_rgb48_serial.hex",
+      "output_words": 147456,
+      "output_sha256": "d9469bc2d2032469d663300f52961a500299b52dfeea89220e22f42aeb5cb563",
+      "first_output48_word": "000000010e00",
+      "horizontal_max": 1275,
+      "vertical_max": 6375
+    },
+    {
+      "name": "frame1_random_seed20261015",
+      "input_shape_hwc": [
+        720,
+        1280,
+        3
+      ],
+      "output_shape_hwc": [
+        288,
+        512,
+        3
+      ],
+      "input_rgb_bytes_sha256": "8cebd16e5ffd757a7d772cae2e1dc4614cbfeb94acbab2a80b75c67d2358b157",
+      "output_rgb_bytes_sha256": "7b4d43e4aaea86118ec821ee8f40926a1a552dd0c764df07ea5325807e29561c",
+      "awb96_file": "frame1_random_seed20261015_awb96.hex",
+      "awb96_words": 230400,
+      "awb96_sha256": "044ededcfc70c8413a3c9ac5345023b815817e2d28b088e5aa257c79f22f5d76",
+      "first_awb96_word": "b12266cc4862e84790bd1166",
+      "output_file": "frame1_random_seed20261015_rgb48_serial.hex",
+      "output_words": 147456,
+      "output_sha256": "235106e0521e6aed6491d773223bd73c681543c59be0a01ec2f7187e63303450",
+      "first_output48_word": "000000524b8f",
+      "horizontal_max": 1272,
+      "vertical_max": 5741
+    },
+    {
+      "name": "frame2_all255",
+      "input_shape_hwc": [
+        720,
+        1280,
+        3
+      ],
+      "output_shape_hwc": [
+        288,
+        512,
+        3
+      ],
+      "input_rgb_bytes_sha256": "690b027fa57a99a59540cc81a75f751a0074e0e49a13fc08134bacfebffc1321",
+      "output_rgb_bytes_sha256": "05cee4e08b431e15405ede17f74f3b6da563778652fcb974d4d987238e6e7a78",
+      "awb96_file": "frame2_all255_awb96.hex",
+      "awb96_words": 230400,
+      "awb96_sha256": "3474073a9c62c91e5a4ea36127e7d56a55670c95c14133f9ede1369e924e80c3",
+      "first_awb96_word": "ffffffffffffffffffffffff",
+      "output_file": "frame2_all255_rgb48_serial.hex",
+      "output_words": 147456,
+      "output_sha256": "68b0aae2a6b13607af222cd99c044cf531b1222497d9bd8fb26f43b6249900a9",
+      "first_output48_word": "000000ffffff",
+      "horizontal_max": 1275,
+      "vertical_max": 6375
+    }
+  ],
+  "hashes": {
+    "vectors": {
+      "frame0_numbered_bars_awb96.hex": "5eaf75b7dccb91a2934dd998a145dd5bab50a16ff26deed07caeafae99f1abab",
+      "frame0_numbered_bars_rgb48_serial.hex": "d9469bc2d2032469d663300f52961a500299b52dfeea89220e22f42aeb5cb563",
+      "frame1_random_seed20261015_awb96.hex": "044ededcfc70c8413a3c9ac5345023b815817e2d28b088e5aa257c79f22f5d76",
+      "frame1_random_seed20261015_rgb48_serial.hex": "235106e0521e6aed6491d773223bd73c681543c59be0a01ec2f7187e63303450",
+      "frame2_all255_awb96.hex": "3474073a9c62c91e5a4ea36127e7d56a55670c95c14133f9ede1369e924e80c3",
+      "frame2_all255_rgb48_serial.hex": "68b0aae2a6b13607af222cd99c044cf531b1222497d9bd8fb26f43b6249900a9",
+      "horizontal_schedule.csv": "4622cf5da9d4dce5082cd031e8d68922cbb4175c5bb7c8b077172f822ee7298c",
+      "vertical_row_schedule.csv": "e6d005d4d1a5d271fe03efc78a4da35eb16f5cf8ca2e1574cde87cb6e373dfad"
+    },
+    "requirements.txt": "8dd4ed814bbb73a229b4abcca3c622665a37dab1dbb46f2a2e4287c61c68e66a",
+    "interfaces.json": "f76a7a9b077a3c2a1838b0eed0bb8f6616cd64f02acbff4ddb45d465ebbc0c83",
+    "generate.py": "e8bb121815f20fb340c012c407499b74c53124d94302f795bc85a8d0fc42bfcd"
+  },
+  "evidence_boundary": "Functional CPU reference only; does not prove two-ERAM mapping, LUTRAM/Slice budget, camera timing, vendor RAM behavior, physical timing, real DDR visibility or 2 FPS board operation"
+}

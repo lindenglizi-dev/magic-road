@@ -1,0 +1,27 @@
+交付给后续统一集成：本批功能闭合，非生产交付通过。
+
+先读final_report.txt与gate_analysis.txt，再读verification/baseline_acceptance_coverage.json。
+代码rtl/road_result_publisher.v（c9b25968c51827f0a1856a5bcf5618c64742c04641629ac0c3ca4412847939f0）。
+接口spec/result_publish_joint/road_result_publisher_spec.md及publisher_spec.json；后者SHA785b633dbb3ea04e9ab67aa15f643bdf50c1c4ba26decdc555c149fdbeecf8e8。
+Python33项/500拍与全部13输出+状态/计数逐拍对拍通过，见reference/trace_runs/20261015_232123_100/result.json。
+
+验收覆盖：31项基线=protocol1（内部21场景）+真实ROM30。来源为231535 run中的21个实际PASS结果与233428 run中的10个PASS结果，功能RTL和工具哈希一致；231535整体FAIL未修改。
+额外补充234212 run的2/2实际ROM用例：META reset/recover、pending-full empty/empty。
+旧68项依赖在frozen_dependencies.json；运行check_frozen.py核对，不改旧源或重新冻结掩盖差异。
+
+冻结结构：只新增277位声明状态，无FINAL97数组；NMS直接流入原C8 source，复制到原pending/active。新实例2000ms，旧500ms只读。
+完成脉冲不是source退休。seal前abort；seal后只等copy_ack或共同reset。fault→ABORT寄存→pipeline_cancel，禁止直接组合反馈NMS fault。
+
+实际正常7框：start→NMS done1,577,513源拍，start→meta1,577,514拍，meta→ack180ns；这是后处理+发布，不是整网FPS。
+正常64框meta→ack930ns；pending满时第二空表meta→ack4.161590ms，source一直冻结。copywait计数不含pending等待，不能把0子计数说成无等待。
+所有数值须按run快照的时钟和观察定义解释；source100MHz、最终目标平均75MHz、SOF周期16.5ms，ack为publisher消费确认边沿。
+
+剩余硬阻点：严格门未闭合、资源/物理/CDC未签核、实际DDR写可见性和完整CNN未闭环。厂商INIT_FILE bounds警告仍 unresolved；固定模型为PTQ诊断包，不是QAT/精度通过。
+本批不生成或交付位流、不上板、不写Flash、不训练、不改生产，不新增时序例外。
+
+下一最小接续：
+1. C7在含本publisher和C8三表的实际统一顶层排期资源/时序，不复用旧壳数字替代。
+2. C8稳定128位身份描述符与同epoch/frame的完整READY输入槽配对，再补task/model/slot，不能用SOF事件ACK代替DDR写完成。
+3. 原始SOF用于异常取消，admit用于合格新分配，两者不可盲目替换。AWB SOF不与analysis_valid相与。
+4. 年龄文字需与表共享对齐mixer输出的消隐SOF，RGB/VS/HS/DE等延迟；本批首有效像素探针的相位不能直接照搬到AGE overlay。
+上述接续不是本批已经集成的内容。不要再扩展CRC探针或第二套缓存。

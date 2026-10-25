@@ -1,0 +1,72 @@
+{
+  "review": "independent_head_only_G5_v2_prelaunch_review",
+  "reviewed_at": "2026-10-14T19:15:00+08:00",
+  "scope": "read-only review of the v1-repaired to v2 metadata delta, retained real-CUDA checker regression, authorization and budget binding, and the completed v2 CPU resume gate; no Python, model execution, training, or GPU use by this reviewer",
+  "status": "PRELAUNCH_STATIC_AND_CPU_GATES_PASS_GPU_COMPLETION_NOT_CLAIMED",
+  "critical_findings": [],
+  "frozen_sources": {
+    "cnn/hw_validation/production/train_qat_head_only.py": "10981ed4e6545e7f9de30158b5d27b72e4c974d27e50861b11fe8328b9a374b2",
+    "cnn/hw_validation/production/test_train_qat_head_only.py": "cf08395df3aaddfcfe2a084292639a1ec416de5c03a7aa917f48c970d4888dce",
+    "cnn/hw_validation/production/evaluate_qat_head_only.py": "b394968c459365e7452c6d8198ca236270b0b8d3bfa1e2a24898f8697b8ed773",
+    "cnn/hw_validation/production/test_evaluate_qat_head_only.py": "88c35466f9cf7b89aa9d94f6c627bf208ed267cc2dde4cedaf65ec6ba75b4c6a"
+  },
+  "minimal_delta_from_repaired_v1": {
+    "repaired_v1_source_sha256": "73109eb8d1a9eb309f29522a00dfff8e25c4bf15e260a6b37834bf44bef13bb2",
+    "verified_changes_only": [
+      "OUT changed from cnn/reports/qat_head_only_g5_20261014_v1 to cnn/reports/qat_head_only_g5_20261014_v2",
+      "RUN changed from cnn/runs/qat_head_only_g5_20261014_v1 to cnn/runs/qat_head_only_g5_20261014_v2",
+      "authorization receipt SHA-256 changed to 9acc56e06bd5a2634e512c228cb80a101fa4e21c879133dfabe413e166ded5ef",
+      "PRIOR_GLOBAL_UPDATES changed from 30 to 31 to count v1's executed but uncommitted optimizer update; five newly authorized updates therefore end at global count 36",
+      "experiment_id changed from qat_head_only_g5_20261014_v1 to qat_head_only_g5_20261014_v2"
+    ],
+    "unchanged_numeric_and_model_logic": "The device-neutral exact-tensor helper and all training, sampling, loss, optimizer, quantization, freeze, checkpoint, watchdog, and export logic are byte-for-byte unchanged relative to the preserved repaired-v1 source outside the listed metadata lines."
+  },
+  "authorization_and_budget": {
+    "authorization_sha256": "9acc56e06bd5a2634e512c228cb80a101fa4e21c879133dfabe413e166ded5ef",
+    "failed_v1_executed_uncommitted_updates": 1,
+    "prior_global_qat_candidate_updates": 31,
+    "newly_authorized_optimizer_updates": 5,
+    "global_qat_candidate_updates_after_completion": 36,
+    "overall_cap": 100,
+    "failed_v1_used_as_parent": false,
+    "parent_checkpoint_sha256": "f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd",
+    "automatic_retry": false,
+    "automatic_continuation": false
+  },
+  "cuda_cpu_checker_repair": {
+    "source_helper": "Both tensors are detached and moved to CPU before atol=0, rtol=0, check_dtype=true comparison.",
+    "retained_real_cuda_regression_sha256": "ce007b4f39e794d4de77779082d15fa0c88ffe24524a582277ea9dcec57d7696",
+    "result": "The old CUDA-versus-CPU device failure was reproduced; the repaired full-state validator accepted all 92 unchanged frozen tensors and rejected wrong-value and wrong-dtype cases.",
+    "applicability": "The helper is unchanged between repaired v1 SHA-256 73109eb8... and frozen v2 SHA-256 10981ed4.... The regression performed no forward, backward, optimizer construction, or training update."
+  },
+  "cpu_resume_gate": {
+    "receipt": "cnn/reports/qat_head_only_g5_20261014_v2/integration_check_v1/CPU_resume_check.json",
+    "sha256": "acf0fae96354080217ce35ae58703c05e2166aa6a5f68661e2daa9a34ea45b2a",
+    "passed": true,
+    "cpu_threads": 2,
+    "pytorch_nvml_based_cuda_check": "1",
+    "continuous_local_updates": [1, 2],
+    "resumed_local_update": 2,
+    "resumed_second_update_exact": true,
+    "negative_cases": ["ancestry", "cursor", "frozen", "optimizer_name"],
+    "optimizer_updates_published": 0,
+    "candidate_training_started": false,
+    "cuda_initialized": false,
+    "identity_bindings": {
+      "experiment_id": "qat_head_only_g5_20261014_v2",
+      "authorization_receipt_sha256": "9acc56e06bd5a2634e512c228cb80a101fa4e21c879133dfabe413e166ded5ef",
+      "runner_sha256": "10981ed4e6545e7f9de30158b5d27b72e4c974d27e50861b11fe8328b9a374b2",
+      "test_sha256": "cf08395df3aaddfcfe2a084292639a1ec416de5c03a7aa917f48c970d4888dce",
+      "prior_global_qat_updates": 31,
+      "global_qat_updates_after_segment": 36
+    }
+  },
+  "static_contract_confirmation": [
+    "The parent remains frozen-Stem G10, not failed v1 or G20.",
+    "The branch still trains exactly 42 head parameter tensors and freezes/excludes 92 non-head tensors from the optimizer.",
+    "Five updates still consume exactly 22 samples each with the same replay schedule, microbatching, SGD hyperparameters, scales, and head-only clipping scope.",
+    "The worker still requires owned GO before CUDA initialization, uses the 75 C watchdog, and has no automatic retry or continuation.",
+    "The evaluator now derives prior and final budget checks from runner.PRIOR_GLOBAL_UPDATES and runner.GLOBAL_UPDATES rather than stale literal 35 values."
+  ],
+  "decision": "No static or CPU-gate blocker was found for the newly authorized, protected v2 five-update run. The previous v1 failure and its consumed update remain separately preserved and counted. This report authorizes no work beyond the user's stated five updates and makes no claim that GPU training, H1-H5 checkpoints, temperature telemetry, 181-node export parity, same-17 evaluation, or accuracy gates have completed."
+}

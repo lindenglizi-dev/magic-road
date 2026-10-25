@@ -1,0 +1,225 @@
+{
+  "modules": [
+    {
+      "name": "road_stem_ddr_board_top",
+      "feature": "stem_ddr_down2_once",
+      "rtl_path": "road_stem_ddr_board_top.v",
+      "description": "四个实际Stem tile经DDR实读后装载down2，末端384字节逐项核对的一次性诊断。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_sys_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "C4板载50MHz",
+            "description": "C4板载50MHz"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "C7按键同时复位DDR和测试器",
+            "description": "C7按键同时复位DDR和测试器"
+          },
+          {
+            "name": "o_tmds_blue_p",
+            "direction": "output",
+            "width": 1,
+            "role": "HDMI1蓝色正端",
+            "description": "HDMI1蓝色正端"
+          },
+          {
+            "name": "o_tmds_green_p",
+            "direction": "output",
+            "width": 1,
+            "role": "HDMI1绿色正端",
+            "description": "HDMI1绿色正端"
+          },
+          {
+            "name": "o_tmds_red_p",
+            "direction": "output",
+            "width": 1,
+            "role": "HDMI1红色正端",
+            "description": "HDMI1红色正端"
+          },
+          {
+            "name": "o_tmds_clock_p",
+            "direction": "output",
+            "width": 1,
+            "role": "HDMI1时钟正端",
+            "description": "HDMI1时钟正端"
+          },
+          {
+            "name": "ddr_ck_p",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂IP封装内DDR专用端口",
+            "description": "原厂IP封装内DDR专用端口"
+          },
+          {
+            "name": "ddr_ck_n",
+            "direction": "output",
+            "width": 1,
+            "role": "沿原厂IP固定物理位置",
+            "description": "沿原厂IP固定物理位置"
+          },
+          {
+            "name": "ddr_cke",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR时钟使能",
+            "description": "DDR时钟使能"
+          },
+          {
+            "name": "ddr_odt",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR终端控制",
+            "description": "DDR终端控制"
+          },
+          {
+            "name": "ddr_cs_n",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR片选",
+            "description": "DDR片选"
+          },
+          {
+            "name": "ddr_ras_n",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR行命令",
+            "description": "DDR行命令"
+          },
+          {
+            "name": "ddr_cas_n",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR列命令",
+            "description": "DDR列命令"
+          },
+          {
+            "name": "ddr_we_n",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR写命令",
+            "description": "DDR写命令"
+          },
+          {
+            "name": "ddr_ba",
+            "direction": "output",
+            "width": 2,
+            "role": "DDR bank地址",
+            "description": "DDR bank地址"
+          },
+          {
+            "name": "ddr_addr",
+            "direction": "output",
+            "width": 13,
+            "role": "DDR行列复用地址",
+            "description": "DDR行列复用地址"
+          },
+          {
+            "name": "ddr_dqs_p",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR双向差分选通",
+            "description": "DDR双向差分选通"
+          },
+          {
+            "name": "ddr_dqs_n",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR双向差分选通负端",
+            "description": "DDR双向差分选通负端"
+          },
+          {
+            "name": "ddr_dq",
+            "direction": "inout",
+            "width": 16,
+            "role": "DDR物理数据总线",
+            "description": "DDR物理数据总线"
+          },
+          {
+            "name": "ddr_dm",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR数据掩码物理端口",
+            "description": "DDR数据掩码物理端口"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "CNN100MHz; DDR133.33MHz; HDMI75/375MHz"
+      },
+      "reset": {
+        "assertion": "Entire DDR and arithmetic jointly asserted asynchronously",
+        "release": "Two-flop release in each domain, reload all 1024 SiLU entries before start"
+      },
+      "behavior": [
+        "3143条固定命令，4个Stem tile、64个唯一写字、64个真实读字、17像素补零、384输出字节。",
+        "Stem从原缓存读口导出并先比黄金，实际载荷写DDR；实读先比较，再逐字节装入1296字节halo。",
+        "写响应只表示AW/W接受；一次运行不复用地址或生产槽，不发布READY或通用提交。",
+        "端点周期分十项互斥统计；忙活动可并行，不能相加。",
+        "任何故障终止本轮，首错保持直到整个DDR共同复位。"
+      ],
+      "constraints": [
+        "Read-only ROM initialization is checked separately from board readback.",
+        "No new timing exceptions for mailbox; existing bounded display CDC retained.",
+        "TEST_ONLY coefficients, no deployed-model precision or full CNN FPS claim."
+      ],
+      "corner_cases": [
+        "Request/response stalls, wrong data, missing response, failure after PASS, reset in every phase."
+      ],
+      "verification_cases": [
+        "Independent controlled endpoint, actual frozen arithmetic, distinct PAXI mailbox regression, real integrated TD."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "once_handoff",
+          "title": "一次性交接顺序",
+          "scenario": "exclusive_once",
+          "description": "阶段顺序示意；不表示固定DDR返回延迟或写提交。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........"
+              },
+              {
+                "name": "phase",
+                "wave": "=========",
+                "data": [
+                  "TABLE",
+                  "STEM_LOAD",
+                  "STEM_RUN",
+                  "STEM_EXPORT",
+                  "WRITE_ACCEPT",
+                  "READ",
+                  "HALO_LOAD",
+                  "DW_PW",
+                  "PASS"
+                ]
+              },
+              {
+                "name": "req_valid",
+                "wave": "0...1.0.."
+              },
+              {
+                "name": "rsp_valid",
+                "wave": "0....1.0."
+              },
+              {
+                "name": "DDR_payload",
+                "wave": "x...=....",
+                "data": [
+                  "actual Stem/read data held"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

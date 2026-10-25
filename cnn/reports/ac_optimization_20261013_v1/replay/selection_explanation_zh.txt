@@ -1,0 +1,6 @@
+固定旧样本重放池：目标 64 张，实际 64 张，短缺 0 张。
+来源：原始 VisDrone2019-VID-train 的 train split；只采用合并收据中 127 张人工签署、已查看 RAW、六项检查通过且用户授权替换的图，明确排除 train_075，未使用 18,922 张未复核源标签。
+选择：seed=42，先按 scene 轮转覆盖，再按稳定 SHA256 顺序补足；共覆盖 44 个视频 scene。
+隔离：与当前 ac_g10 的 22 张 train、17 张 val（无 newtest）在像素 SHA256、绝对路径、scene、数据族上均无交集；当前数据族为 EPFL/PETS09/VIRAT，旧池为 VisDrone2019-VID-train。
+旧验证隔离：与固定 old256 的像素、路径、视频 sequence、uavNNNN 前缀均无交集；对全部原始 val 只核验了视频 sequence 与 uavNNNN 前缀无交集，未逐图比较其余像素或路径。其中 uavNNNN 只是从名称推导的保守家族代理，不能证明真实物理摄像机身份。
+证据边界：这些帧已有历史人工签署，但本轮没有重新逐图目视检查，因此只能称 reviewer-signed，不能声称 replay 专项视觉质量已再次验证。未加载模型、未训练、未用 GPU、未改标签、未改采样器或训练器。

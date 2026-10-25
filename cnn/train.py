@@ -320,7 +320,8 @@ def scheduled_lr(step: int, total_steps: int, warmup_steps: int, base_lr: float,
 
 
 def protocol_for(args: argparse.Namespace, optimizer_steps_per_epoch: int,
-                 teacher_sha256: str | None) -> dict[str, Any]:
+                 teacher_sha256: str | None, *,
+                 replay_sampling_sha256: str | None = None) -> dict[str, Any]:
     lr_schedule = getattr(args, "lr_schedule", "warmup_cosine")
     protocol = {
         "name": TRAINING_PROTOCOL,
@@ -358,6 +359,13 @@ def protocol_for(args: argparse.Namespace, optimizer_steps_per_epoch: int,
         })
     elif lr_schedule != "warmup_cosine":
         raise ValueError(f"unknown learning-rate schedule: {lr_schedule}")
+    if getattr(args, "freeze_bn", False):
+        # Omit the default to preserve existing resume protocol hashes.
+        protocol["batch_norm_policy"] = "frozen_running_stats_and_affine_v1"
+    if replay_sampling_sha256 is not None:
+        if not SHA256_RE.fullmatch(replay_sampling_sha256):
+            raise ValueError("invalid replay sampling SHA-256")
+        protocol["replay_sampling_sha256"] = replay_sampling_sha256
     return protocol
 
 
@@ -677,8 +685,18 @@ def validate_output_directory(output: Path, resume: Path | None) -> None:
         raise ValueError("resume checkpoint does not match output/last.pt")
 
 
+def set_training_mode(model: RoadYOLOS4, freeze_bn: bool = False) -> None:
+    """Reapply the opt-in BN policy after every train/eval transition."""
+    model.train()
+    if freeze_bn:
+        for module in model.modules():
+            if isinstance(module, torch.nn.BatchNorm2d):
+                module.eval()
+                module.requires_grad_(False)
+
+
 def evaluate_loss(model: RoadYOLOS4, loader: DataLoader, criterion: YOLOXLoss,
-                  device: torch.device, amp: bool) -> float:
+                  device: torch.device, amp: bool, *, freeze_bn: bool = False) -> float:
     model.eval()
     total, samples = 0.0, 0
     with torch.no_grad():
@@ -691,12 +709,13 @@ def evaluate_loss(model: RoadYOLOS4, loader: DataLoader, criterion: YOLOXLoss,
                 raise FloatingPointError("non-finite validation loss")
             total += loss * images.shape[0]
             samples += images.shape[0]
-    model.train()
+    set_training_mode(model, freeze_bn)
     return total / max(samples, 1)
 
 
 def train(args: argparse.Namespace) -> int:
     lr_schedule = getattr(args, "lr_schedule", "warmup_cosine")
+    freeze_bn = getattr(args, "freeze_bn", False)
     stop_after_epoch = getattr(args, "stop_after_epoch", 0)
     if not 0 <= stop_after_epoch <= args.epochs:
         raise ValueError("--stop-after-epoch must be 0 or a planned one-based epoch")
@@ -728,6 +747,20 @@ def train(args: argparse.Namespace) -> int:
                          cache_binding=cache_binding)
     train_data = make_frame_dataset(rows, "train", dataset_path, seed=args.seed, **cache_options)
     val_data = make_frame_dataset(rows, "val", dataset_path, **cache_options)
+    teacher_keys = ([row["teacher_key"] for row in train_data.rows]
+                    if args.phase == "distill" else None)
+    replay_sampling_sha256 = None
+    if "replay_sampling" in manifest:
+        if args.phase not in {"supervised", "distill"} or args.mosaic or not freeze_bn:
+            raise ValueError("replay requires supervised/distill training, frozen BN and no Mosaic")
+        if args.batch_size != 8 or args.accum_steps != 8:
+            raise ValueError("replay uses microbatch8/accum8 with a 22-sample epoch tail")
+        if __package__:
+            from .replay_sampling import ReplayWindow
+        else:
+            from replay_sampling import ReplayWindow
+        train_data = ReplayWindow(train_data, manifest["replay_sampling"], args.epochs)
+        replay_sampling_sha256 = train_data.sampling_sha256
     del manifest
 
     probe = RoadYOLOS4()
@@ -742,7 +775,7 @@ def train(args: argparse.Namespace) -> int:
             raise ValueError("distill teacher keys are per image; pass --no-mosaic")
         teacher = TeacherCache(args.teacher_cache, architecture_hash, dataset_hash,
                                dataset_content_sha256)
-        teacher.require_keys([row["teacher_key"] for row in train_data.rows])
+        teacher.require_keys(teacher_keys)
         teacher_sha256 = sha256(args.teacher_cache)
     elif args.teacher_cache is not None:
         raise ValueError("--teacher-cache is only valid in distill phase")
@@ -756,7 +789,8 @@ def train(args: argparse.Namespace) -> int:
     total_optimizer_steps = optimizer_steps_per_epoch * args.epochs
     warmup_steps = (0 if lr_schedule == "finetune_constant" else
                     min(total_optimizer_steps, optimizer_steps_per_epoch * WARMUP_EPOCHS))
-    training_protocol = protocol_for(args, optimizer_steps_per_epoch, teacher_sha256)
+    training_protocol = protocol_for(args, optimizer_steps_per_epoch, teacher_sha256,
+                                    replay_sampling_sha256=replay_sampling_sha256)
     output = args.output.resolve()
     validate_output_directory(output, args.resume)
 
@@ -823,7 +857,9 @@ def train(args: argparse.Namespace) -> int:
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA requested but unavailable; pass --device cpu explicitly for diagnostics")
     model = RoadYOLOS4().to(device)
-    optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum,
+    set_training_mode(model, freeze_bn)
+    optimizer = torch.optim.SGD((p for p in model.parameters() if p.requires_grad),
+                                lr=args.lr, momentum=args.momentum,
                                 weight_decay=args.weight_decay)
     amp = args.amp
     scaler = torch.amp.GradScaler("cuda", enabled=amp, init_scale=AMP_INIT_SCALE)
@@ -977,7 +1013,7 @@ def train(args: argparse.Namespace) -> int:
                 continue
 
             if stage == "train":
-                model.train()
+                set_training_mode(model, freeze_bn)
                 sampler = order[next_sample_cursor:]
                 loader = DataLoader(train_data, sampler=sampler, shuffle=False,
                                     generator=torch.Generator().manual_seed(args.seed + epoch),
@@ -1128,7 +1164,7 @@ def train(args: argparse.Namespace) -> int:
                         print(json.dumps(validation_progress), flush=True)
                         if requested_pause():
                             return paused()
-                model.train()
+                set_training_mode(model, freeze_bn)
                 if val_samples != len(val_data):
                     raise RuntimeError("validation loader ended before the validation cursor")
                 metric = {
@@ -1198,6 +1234,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--amp", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--mosaic", action=argparse.BooleanOptionalAction, default=True,
                         help="four full-frame tiles; automatically off for final 15 epochs")
+    parser.add_argument("--freeze-bn", action="store_true",
+                        help="freeze BatchNorm running statistics and affine parameters")
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--init-checkpoint", type=Path)
     parser.add_argument("--checkpoint-kind", choices=("diagnostic", "training"),

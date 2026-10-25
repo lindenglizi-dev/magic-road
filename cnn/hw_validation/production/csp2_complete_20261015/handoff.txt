@@ -1,0 +1,79 @@
+C4→C7：完整CSP2功能、真实道路输入和共享核外围交接
+日期：2026-10-15；工程work/roadyolo；全部新产物仅在本目录。
+最终状态：COMPLETE_CSP2_TILE_FUNCTION_HANDOFF_READY_NOT_DEPLOYMENT。
+
+一、本批实际完成
+从有效 csp_tile_integrated_20261015_v2 的冻结算术闭包承接，完成两个DW/PW半通道残差、split/concat视图及csp2.out.conv末端融合的外围功能候选。
+首残差6×6真实结果供第二残差4×4使用，只有全幅72×128图像外坐标补0。第二DW没有使用旧8×8未知区域的伪零邻域。
+新 road_csp_complete_client 内无私有MAC实例。仿真TB仅实例化一套原road_csp_first_probe及五个冻结算术文件；未修改这些文件、核接口、II或数值。
+不是整个128×72 CSP2的RTL遍历完成：已完整计算每个被测4×4目标块的五个卷积阶段，覆盖四角、四条非角边和内部。全幅CPU参考与单块RTL证据分开。
+
+唯一模型 payload：b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+保留 TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED，不因本批功能一致宣称精度或QAT验收。
+
+二、可集成路径与哈希
+根目录绝对路径：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/csp2_complete_20261015/
+选定功能源：frozen_attempt2/rtl/road_csp_complete_client.v
+SHA256：ba63560a4a7ac732a477c7dba7b01fcced5135c25b2a7f51d5de725b0447219c。
+实际TB：frozen_attempt2/tests/tb_csp_complete_client.v
+SHA256：480cfbe4dbe93ed4a48c6a2965add97d9f03b377a68f78f186296775fac98996。
+integration_sources.json：七个功能源的路径/哈希；其中六个reused只是测试闭包/共享owner参考，不把其私有核再次实例化到C7。
+interface_proposal.txt：原算术组/返回端口、248bit参数布局、逻辑读写/可见性屏障和缓存生命周期。
+spec/csp_complete_client/：通过规定write-spec渲染的同名接口说明、WaveJSON和SVG；TB复杂task被规格交叉检查器误读为module端口，未添加伪接口，TB周期说明采用明确的单完成端口契约生成，静态失败保留。
+run.py：可复现启动/封存/本地仿真入口，已修正ModelSim原生0码不能代表没有Fatal的问题。
+final_checks.json / status.json：最终聚合与边界；cycle_ledger.json：各阶段/状态实测互斥周期账。
+CSP3_CSP4_PAN形状适配交接.txt：冻结形状、尾两行、24组归约、PAN无额外out.conv以及最小复用差异。
+
+三、实际回归
+合成诊断输入28项协议/数值用例全部符合预期，包含19次完整块运行；每个成功run都逐项比较acc、pre、SiLU、post、signed9和、sat8输出及真实图地址。
+覆盖四角/四边/内部、DW尾空间路/PW尾四输入、参数/读/owner授予/输出反压、长停顿、两tile仅装表一次、五阶段共同复位重跑、取消、错读地址/读错误、参数错身份/读取错误/组间漂移、非法tag/重复写/错写地址、可见性屏障等待/错层。
+19次完整run各阶段输出累计28848个，每级acc/pre/SiLU/post分别对应同数；失败前缀另留原始日志，不计成加速或完整成功。
+检查器真实负例 NEGATIVE_ACC 触发明确Fatal；正确启动器对照正例验证结果为0、负例为1。ModelSim两者原生退出码均为0，已原样记录，未伪造原生非零。
+真实道路输入新增9个代表块全部通过，阶段输出累计13056个；没有训练或重算C2的卷积参考。
+真实来源为C2发布的VIRAT_S_000200_00_000100_000171_f0000637原图，SHA256 2aa54183d41253020bb1d51ea7a2ba93525d921cfb8948a7a65ac4f86cab7363。
+source由C2同包前三层完整CPU输出直接转换；真实源HEX SHA256 e86f01f63a070096a5bf4107df0e51bbcea9b97b3d4d73fba02662915e7fd039，不是合成源，也不是RTL前三层已与本client串成真实DDR闭环。
+321项原始输入（排除明确修正的启动器版本）、252项封存输入，以及真实图100项原始/67项封存输入复核无变化。两个实际使用的启动器快照分别保留哈希，未把改过的run.py冒充旧闭包未变。
+
+四、同口径端点周期（100MHz仿真时钟，非板测）
+窗口/场景            周期       输入组   任务   阶段输出  逻辑字节读  可见性确认
+四角                 89874      1144     508    1368      7800        5
+上/下非角边          95774      1184     528    1488      8568        5
+左/右非角边          97814      1232     552    1488      8568        5
+内部完整块           104966     1280     576    1632      9504        5
+随机反压             126577     1280     576    1632      9504        5
+长参数/读/owner/写停顿105734     1280     576    1632      9504        5
+屏障额外等待320拍    105286     1280     576    1632      9504        5
+合成与真实图同位置的正常周期相同，不表示数据相同；acc等均由各自完整参考核对。
+周期从start接受窗口到done采样，装表/CPU资产转换排除；done时busy仍保持，随后进入IDLE/ready已单独检查。
+1632为五个阶段的总写字节，不是最终框数或最终张量大小；内部块最终融合结果为384字节。
+
+真实内部块分层账：
+DW0：24194拍，2160读，288组，144任务，432输出。
+PW0+残差：25057拍，2160读，288组，144任务，432输出。
+DW1：14497拍，1152读，192组，96任务，192输出。
+PW1+残差：11137拍，960读，128组，64任务，192输出。
+fuse：30081拍，3072读，384组，128任务，384输出。
+五项合计104966；15个FSM互斥状态账亦逐run求和相同，不把重叠算术busy相加。
+受控byte端点固定响应计数和参数服务等待包含在此测量，真实DDR/ROM仲裁延迟未测。禁止将单块104966拍外推成整网FPS或直接与其它输入/窗口的预算拼加。
+
+五、失败、警告与未通过范围
+frozen/：CASE12已经完成数值run，但验证台漏打印最终PASS；启动器正确拒绝缺失收据，原失败保存。
+frozen_attempt2/verification/status.json：28项数值/协议均完成，检查器故意Fatal后仍得到ModelSim原生0码，旧退出码断言拒绝；此失败状态没有回写成PASS。
+最终final_checks.json聚合这28项完成收据和verification_exit_attempt3正反例；不掩盖前两次启动器库路径/完成端口采样试验的失败。
+verification_exit_attempt3旧收据字段actual_positive_cases_already_completed=28命名不严谨，实际含协议expected-fault用例；最终numeric_protocol_cases=28为准确口径，不称28个正例，不回写旧收据。
+最终原生Fatal/Error由启动器统一映射验证失败，退出码与真实文本同时保存；不是允许未知Fatal当预期负例。
+Windows受限进程ModelSim启动有WinError623 DLL重定位问题；授权本地执行后编译成功，未安装/更换工具。
+ModelSim vlog实际编译0error/0warning。首次vopt仍有12条历史警告：冻结包装未连接9个只读诊断输出及其组警告、2条厂商ERAM INIT_FILE范围警告；未静默抑制。
+严格公开门：compile/ast/readability/comment/naming/profile/testbench均failed，toolchain not_requested；3386errors、5strict warnings。TB formatter解析失败和新client always拆分/组合复杂度、命名注释等诊断保留。外部ModelSim通过不能清除此交付阻断。
+本批未做TD综合/布局布线，不能沿用旧首残差5396Slice/30DSP/1ERAM或+0.484/+0.021ns到完整CSP2。
+无私有MAC实例不等于已测DSP净增0；client地址组合算术/索引的资源及时序仍须由C7联合实现确认。
+没有真实DDR、ROM reader、唯一owner集成、全幅RTL、整网、后处理、视频/500ms时序、2FPS或板测证明。
+
+六、给C7的下一项最小接入动作
+先审阅interface_proposal，接已有唯一owner、同包参数reader/prefetch及C8受控服务。共享核外提包装/新的服务协议仍需明确边界决定；本目录没有改C7/C8源码。
+优先按层遍历并将中间张量留DDR，取4×4+真halo；不把当前逐字节功能client循环576次当最终速度路线，也不为CSP3/4新建10×10全支路常驻仓。
+以同一C2真实输入补完整前三层RTL→CSP2数据链，沿最后写退休和真实可见性屏障闭合，之后按形状差异清单推进CSP3/4/PAN。
+常规资源19000Slice/38DSP/107ERAM及硬限不变；本周2FPS只把整流程周期预算改为50M，不增加私有核/缓存额度，500ms过期保持。
+TD仅准备了哈希源闭包与适配条件，未为未选定的联合top生成伪可运行实现脚本；C7选定实际owner/top/约束后统一排队一次真实实现。
+本批推进IM1的M1组件功能与M2同包真实来源证据；M2的全幅DDR/owner链和M3物理验证仍由总协调推进。
+未提交、未推送、未训练、未生成位流、未操作板卡或Flash。

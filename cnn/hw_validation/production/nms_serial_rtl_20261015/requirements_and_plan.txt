@@ -1,0 +1,31 @@
+串行NMS独立候选；2026-10-15；create/write + validate。
+只读基线：PIF1共享RAM合同、postprocess_golden_2fps_20261015、cnn/integer.py。
+分支 work/roadyolo。仅本目录新增；不修改生产、冻结算术核、DDR或训练。
+
+模块 road_nms_serial，Verilog-2001，100MHz单时钟。无参数、无新增动态系数。
+输入 i_clk, i_rstn(异步低有效，共同接口同步释放), i_cancel(同域同步取消)。
+封存：i_sealed_valid/o_sealed_ready；i_frame_token[31:0], i_count_person[7:0], i_count_vehicle[7:0]。
+读请求：o_read_valid/i_read_ready；o_read_class, o_read_index[6:0]。
+读响应：i_response_valid/o_response_ready；i_response_class, i_response_index[6:0], i_response_data[159:0], i_response_error。
+结果：o_entry_valid/i_entry_ready；o_entry_data[96:0]。o_frame_token[31:0]跟随当前封存任务。
+状态：o_done单拍，o_fault粘滞直到复位或cancel，o_output_count[6:0]为已接受项数；仅done表示完整表。
+reset/cancel优先于任何握手。期间全部ready/valid/done为0。取消必须同时清服务端旧响应。
+fault清输出计数并要求接收方撤销本帧已收到的临时项；不能发布半表。无超时自恢复。
+一次只允许一个读在途；未接受请求/输出保持。响应仅在WAIT接收，核对class/index/data.class/error及槽范围。
+count>128故障；有效几何的反序坐标、越源网络边界或非零保留位为合同错误；geometry_valid=0跳过不补位。
+先person后vehicle；每类32个输出后停止读取该类剩余候选。输入已经按score降序/cell升序排序，NMS不重排。
+
+实现计划：
+1 Python直接复用现有整数参考，对所有冻结记录/最终表/每次抑制决定核对；另建6944比较最坏向量。
+2 三段FSM；保留当前和历史两条160bit记录，32个7bit索引，两类复用。不存完整第二候选表。
+3 唯一20拍移位加法器执行无符号20x20->40bit乘积，当前面积每候选算一次；旧框面积和交集每比较各一次。
+4 交集先min/max后截零差分。42bit比较3*intersection>area_current+area_previous，等号不抑制。
+5 四坐标分别shift-add乘5，单次RNE除512，像素整数再左移8。输出塌缩仍保留。
+6 不增加调试端口；TB层次读取乘法/比较/FSM，逐项核对中间面积及决定。
+7 真实ModelSim回归：冻结11组、解析边界、6944最坏比较；读请求/响应等待、输出长反压、错误身份/数据、部分表reset/cancel及恢复。
+8 生成伴随规格和WaveDrom；运行严格compile/ast/readability/comment/naming/profile/testbench/toolchain门禁，保留失败，不将功能通过视作交付全通过。
+
+周期口径：sealed握手后的首周期至done被采样为端点区间。每周期互斥计入请求等待、响应等待、输出等待、乘法占用、其他控制。
+局部候选载入在封存之前，不计入NMS；每次候选读含在NMS端点；条目导出握手也含在端点。外部任意背压无有限最坏延迟保证。
+2M是decode/TopK/NMS共同额度。整流程预算50M(2FPS)、备选100M(1FPS)，500ms失效不变。
+0新增DSP/0新增ERAM是设计目标，未经实际综合不能声明达成。本轮不运行重TD、不生成位流。

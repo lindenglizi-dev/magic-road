@@ -1,0 +1,50 @@
+--- frozen_four_tile/road_stem_ddr_sequence.v
++++ explicit_banks/road_stem_ddr_sequence.v
+@@ -83,12 +83,16 @@
+ 	localparam [4:0] ST_FAIL = 5'd24;
+ 
+ 	//-----------------存储信号-----------------//
+-	reg [63:0]reg_commands[0:8191]; // 固定程序，无运行时修改或跳转
++	reg [63:0]reg_commands_low[0:4095]; // 命令地址零至四千零九十五
++	reg [63:0]reg_commands_high[0:4095]; // 命令地址四千零九十六至八千一百九十一
+ 	reg [127:0]reg_stem_golden[0:255]; // 仅用于比较，不作为下层激活
+ 	reg [31:0]reg_addresses[0:255]; // 十六个实际tile的256个字地址，保留层行跨度
+ 	reg [15:0]reg_halo_map[0:511]; // 位八表示top/left补零，低八位为黄金字索引
+ 	reg [7:0]reg_output_golden[0:2047]; // 1536项有效PW输出与零填充
+-	reg [63:0]reg_command; // 同步ROM返回，整个命令执行时保持
++	(* syn_keep = 1 *) reg [63:0]reg_command_low; // 低bank同步返回，仅FETCH更新
++	(* syn_keep = 1 *) reg [63:0]reg_command_high; // 高bank同步返回，与低bank同沿
++	(* syn_keep = 1 *) reg flag_command_bank; // 与两个返回同拍锁存的选择位
++	wire [63:0]reg_command; // 稳定的原接口命令字，不增加取指拍
+ 	reg [127:0]reg_golden; // 同步读取的完整Stem比较字
+ 	reg [24:0]reg_address; // 与黄金字同索引的真实DDR地址
+ 	reg [15:0]reg_map; // 当前halo像素的映射记录
+@@ -156,6 +160,7 @@
+ 	                       cnt_bins[4],cnt_bins[3],cnt_bins[2],cnt_bins[1],cnt_bins[0]};
+ 
+ 	//-----------------其他信号连线-----------------//
++	assign reg_command = flag_command_bank ? reg_command_high : reg_command_low;
+ 	assign flag_halo_load = state_current == ST_HALO_BYTE;
+ 	assign wire_load_kind = flag_halo_load ? 3'd0 : reg_command[48:46];
+ 	assign wire_load_address = flag_halo_load ? cnt_halo_address : reg_command[59:49];
+@@ -174,7 +179,8 @@
+ 
+ 	// 固定ROM文件与参考生成器绑定；首轮核输入只来自加载程序。
+ 	initial begin
+-		$readmemh("program.hex",reg_commands);
++		$readmemh("program_low.hex",reg_commands_low);
++		$readmemh("program_high.hex",reg_commands_high);
+ 		$readmemh("stem_golden.hex",reg_stem_golden);
+ 		$readmemh("stem_addresses.hex",reg_addresses);
+ 		$readmemh("halo_map.hex",reg_halo_map);
+@@ -184,7 +190,9 @@
+ 	// 同步ROM读边界无需清空数据；状态机只在取数后的状态使用它。
+ 	always@(posedge i_clk)begin
+ 		if(state_current == ST_FETCH)begin
+-			reg_command <= reg_commands[cnt_program];
++			reg_command_low <= reg_commands_low[cnt_program[11:0]];
++			reg_command_high <= reg_commands_high[cnt_program[11:0]];
++			flag_command_bank <= cnt_program[12];
+ 		end
+ 		reg_golden <= reg_stem_golden[reg_golden_index];
+ 		reg_address <= reg_addresses[reg_golden_index][24:0];

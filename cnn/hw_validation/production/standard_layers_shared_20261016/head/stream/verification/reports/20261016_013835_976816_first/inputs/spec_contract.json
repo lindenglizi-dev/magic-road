@@ -1,0 +1,379 @@
+{
+  "name": "head_stream_local_validation",
+  "modules": [
+    {
+      "feature": "road_head_cell_stream",
+      "name": "road_head_cell_stream",
+      "rtl_path": "rtl/road_head_cell_stream.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clk",
+            "clock_domain": "i_clk",
+            "description": "统一100MHz上升沿时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "rstn",
+            "clock_domain": "i_clk",
+            "description": "共同低有效异步复位，本地两级同步释放"
+          },
+          {
+            "name": "i_cancel",
+            "direction": "input",
+            "width": 1,
+            "role": "cancel",
+            "clock_domain": "i_clk",
+            "description": "取消当前查表，已接受的ROM读必须排空后再接新任务"
+          },
+          {
+            "name": "i_start_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "start_valid",
+            "clock_domain": "i_clk",
+            "description": "start_valid：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "i_start_frame_token",
+            "direction": "input",
+            "width": 32,
+            "role": "start_frame_token",
+            "clock_domain": "i_clk",
+            "description": "start_frame_token：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "i_start_model_id",
+            "direction": "input",
+            "width": 32,
+            "role": "start_model_id",
+            "clock_domain": "i_clk",
+            "description": "start_model_id：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "i_predictions_committed",
+            "direction": "input",
+            "width": 1,
+            "role": "predictions_committed",
+            "clock_domain": "i_clk",
+            "description": "predictions_committed：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "i_read_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "read_ready",
+            "clock_domain": "i_clk",
+            "description": "read_ready：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "i_read_rsp_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "read_rsp_valid",
+            "clock_domain": "i_clk",
+            "description": "完整DECODED160记录有效并保持至消费"
+          },
+          {
+            "name": "i_read_rsp_address",
+            "direction": "input",
+            "width": 32,
+            "role": "read_rsp_address",
+            "clock_domain": "i_clk",
+            "description": "read_rsp_address：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "i_read_rsp_data",
+            "direction": "input",
+            "width": 128,
+            "role": "read_rsp_data",
+            "clock_domain": "i_clk",
+            "description": "PIF1固定DECODED160记录"
+          },
+          {
+            "name": "i_read_error",
+            "direction": "input",
+            "width": 1,
+            "role": "read_error",
+            "clock_domain": "i_clk",
+            "description": "read_error：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "i_cell_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "cell_ready",
+            "clock_domain": "i_clk",
+            "description": "cell_ready：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_start_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "start_ready",
+            "clock_domain": "i_clk",
+            "description": "start_ready：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "busy",
+            "clock_domain": "i_clk",
+            "description": "busy：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "done",
+            "clock_domain": "i_clk",
+            "description": "done：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "fault",
+            "clock_domain": "i_clk",
+            "description": "本组件故障状态，不得发布为成功表"
+          },
+          {
+            "name": "o_read_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "read_valid",
+            "clock_domain": "i_clk",
+            "description": "read_valid：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_read_address",
+            "direction": "output",
+            "width": 32,
+            "role": "read_address",
+            "clock_domain": "i_clk",
+            "description": "read_address：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_read_rsp_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "read_rsp_ready",
+            "clock_domain": "i_clk",
+            "description": "NMS消费完整候选响应"
+          },
+          {
+            "name": "o_cell_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "cell_valid",
+            "clock_domain": "i_clk",
+            "description": "cell_valid：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_cell_data",
+            "direction": "output",
+            "width": 112,
+            "role": "cell_data",
+            "clock_domain": "i_clk",
+            "description": "cell_data：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_cell_id",
+            "direction": "output",
+            "width": 14,
+            "role": "cell_id",
+            "clock_domain": "i_clk",
+            "description": "cell_id：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_cell_frame_token",
+            "direction": "output",
+            "width": 32,
+            "role": "cell_frame_token",
+            "clock_domain": "i_clk",
+            "description": "cell_frame_token：按requirements中对应事务/计数合同使用"
+          },
+          {
+            "name": "o_cell_model_id",
+            "direction": "output",
+            "width": 32,
+            "role": "cell_model_id",
+            "clock_domain": "i_clk",
+            "description": "cell_model_id：按requirements中对应事务/计数合同使用"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "assert": "async_low",
+        "release": "local_sync_two_flops_or_owner_gating"
+      },
+      "parameters": {},
+      "behavior": [
+        "仅全部预测写可见且start握手才锁定token/model，依次读取六个固定INT16张量。",
+        "一未决128位读，全地址核验后才填行寄存器；每字段均偶数地址，不跨16字节行。",
+        "一个112位cell寄存器，字段0..4回归、5..6分类，12096个cell按S4/S8/S16和逐行序发布。",
+        "cell背压保持完整数据/编号/上下文；最后cell实际消费后done；故障与cancel保留owner到共同reset。"
+      ],
+      "constraints": [
+        "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+        "不改变冻结算术核/数值，不复制公共存储"
+      ],
+      "corner_cases": [
+        "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+      ],
+      "verification_cases": [
+        "all12096 cells/84672 fields and exact source byte addresses",
+        "head scale and row/tile boundaries",
+        "H18 tail rows",
+        "random read and cell backpressure",
+        "request/response reset and cancellation owner",
+        "wrong address/error",
+        "no full prediction RAM"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "ownership",
+          "title": "请求所有权与停顿",
+          "scenario": "request-hold-response",
+          "description": "协议示意：省略内部变长计算，用空白间隔表示；不是固定总时延。仅valid与ready同拍消费。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..........."
+              },
+              {
+                "name": "read_valid",
+                "wave": "01..0......."
+              },
+              {
+                "name": "read_ready",
+                "wave": "0..10......."
+              },
+              {
+                "name": "read_rsp_valid",
+                "wave": "0....10....."
+              },
+              {
+                "name": "cell_valid",
+                "wave": "0.......1..0"
+              },
+              {
+                "name": "cell_ready",
+                "wave": "0.........10"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tb_head_cell_stream",
+      "rtl_path": "tb_head_cell_stream.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "verification_completion",
+            "description": "当前独立案例的实际比较通过后才置位"
+          }
+        ]
+      },
+      "behavior": [
+        "读取冻结六平面物理128位行镜像，不用expected cell驱动源响应",
+        "实际请求逐个对齐独立字段地址，缓存复制每字段也逐个核对原graph地址",
+        "实际12096输出cell完整112位/id/token/model对拍，保留随机长反压",
+        "末源读消费、最末cell消费和done分别记录，取消与错误持busy直到共同reset"
+      ],
+      "constraints": [
+        "数组仅属于行为读服务和独立golden，不是DUT预测RAM或实际DDR",
+        "不更改DUT、冻结golden、五核，不做综合或物理映射"
+      ],
+      "corner_cases": [
+        "未committed不得准入、首握手后身份扰动、S4/S8/S16边界、H18末两行",
+        "请求pending、取消造成response-held、cell-held共同reset",
+        "错响应地址/error、取消持owner、真实checker一位负例"
+      ],
+      "verification_cases": [
+        "full12096_random",
+        "uncommitted",
+        "identity",
+        "cancel_request",
+        "reset_request",
+        "reset_response_held",
+        "reset_cell_held",
+        "wrong_address",
+        "read_error",
+        "cancel_cell",
+        "checker_negative"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "retirement",
+          "title": "最后读响应与最后cell分别退休",
+          "scenario": "read-cell-retirement",
+          "description": "协议示意不规定内部时延；读响应先消费，cell可以长时间保持；最后cell消费后才done。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..........."
+              },
+              {
+                "name": "read_valid",
+                "wave": "01..0......."
+              },
+              {
+                "name": "read_ready",
+                "wave": "0..10......."
+              },
+              {
+                "name": "rsp_valid",
+                "wave": "0....10....."
+              },
+              {
+                "name": "rsp_ready",
+                "wave": "0....10....."
+              },
+              {
+                "name": "cell_valid",
+                "wave": "0......1..0."
+              },
+              {
+                "name": "cell_ready",
+                "wave": "0........10."
+              },
+              {
+                "name": "done",
+                "wave": "0.........10"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

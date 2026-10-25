@@ -1,0 +1,58 @@
+第八批C8：R256采集参考与接口交接
+2026-10-16；work/roadyolo；仅production/r256_capture_contract_20261016/。
+
+一、先看仍未完成的部分
+这是256候选的离线筛选，不是模型切换、RTL实现、DDR闭环或上板通过。
+真实camera域slot credit及槽元数据排序、实际write_visible、最后读消费/复位排空服务仍未接通。
+本批不改这些协议，不造假事件，也不运行RTL/TD；八门全部NOT_RUN。
+readable-python-generator未安装，没有Python严格门通过声明；CPU断言与AST解析单独留证。
+
+二、实际已完成
+原1280×720 RGB888直接5×5二维和/25一次RNE→256×144×3 UINT8，恰好110592B。
+直接二维索引算法与AWB96逐lane水平/垂直累计算法在九套完整图逐字节一致，共995328字节比较。
+图集：零、255、128、八彩条、坐标编号、棋盘极值、四边/角、seed42随机、二次舍入反例。
+全部6376个合法0..6375和与Fraction精确RNE一致；拒绝10种不完整/错SOF/EOL/非法96bit事件。
+INT8入口pixel-128一次，零/255/128分别-128/127/0；拒绝错误长度及signed数据再次中心化。
+两套SOF方式（与首valid同拍/提前）和每19输入beat的气泡均覆盖；每帧五起点相位各46080拍，
+四个lane水平完成各46080次；输出mask01/低字节RGB、首SOF/每行EOL/末EOF/坐标均核对。
+九帧单次CPU执行约13秒；不是硬件周期/FPS测量。最终准确运行时见golden_manifest所指receipt。
+独立解析检查：编号首像素(2,2,34)，四角输出(51,51,10)，彩条RGB与金值一致。
+反例5×5每行[0,0,0,0,3]：原图直接输出1；先舍入512四点[0,1;0,1]再平均RNE输出0。
+因此不能从已舍入512缓存重采样来做本次严格同源分辨率比较。
+
+三、C2可直接读取的入口
+reference.py：导入不写文件、不加载GPU/模型。
+  resize_rgb888(original720p_uint8_RGB_bytes) -> RGB/NHWC bytes，长度110592。
+  centered_int8(rgb256) -> array('b')，仅需要已中心化入口时调用。
+  resize_awb96(events) -> 同结果＋相位统计，独立数据依赖参考，不是RTL周期仿真。
+  output_records(rgb256) -> x/y、o_pixels语义、mask/SOF/EOL/EOF记录，无新增硬件端口声明。
+若整数CNN入口自己做pixel-128，直接给UINT8 rgb256，不预先centered_int8。
+golden_manifest.json：九套原图压缩文件、110592B RGB、同长度INT8及哈希/运行路径。
+self_check.py：CPU自检/生成新run，所有输出限定本新目录，保留每次收据不覆盖旧run。
+finalize.py：核验输入/工具/黄金文件闭包并封存，不再次执行九帧或旧显示仿真。
+source_manifest.json、inputs.json、final_receipt.json、artifact_hashes.json为闭包索引。
+合成图没有GT，不是17图准确率评估；C2用同API与其独立最小参考交叉比对。
+本线不跨聊天发送任务/消息；总协调依据这些稳定文件交接。
+
+四、真正需要改变的范围（详见interface_contract.txt）
+旧AWB输入lane3→2→1→0、RGB高byte优先不变；输出则R/G/B低byte优先，不能混淆。
+旧o_pixels48/o_pixel_mask2及所有标志端口可保留；原实际RTL没有o_x/o_y端口。
+内部x/y原9位可以保留，范围改0..255/0..143；源beat9位0..319/row10位0..719保持。
+水平5→2权重机制须改5→1无中间舍入累计，不能只改边界常量；新流水/队列/ERAM资源尚未设计测量。
+旧capture_slots的两个442368长度判断和实际dispatcher实例副本都需在新候选改110592，
+DMA累积/EOF/输入读取有效长度同改；本批仅出清单，没有修改任一RTL。
+原slot0=0x03400000、slot1=0x03480000及各512KiB分配不动，有效末端分别0x0341B000/0x0349B000。
+i_capture_bytes19位保留；128位身份、225位job、epoch/frame/time及last-read释放规则不改。
+无credit整帧跳过；溢出/重入/半帧隔离且不READY；READY必须同身份真实写可见，不靠AW/W接受或等待常数。
+raw SOF异常取消与admit分配、credit跨域和元数据先于身份可见的问题明确保留，不偷增CDC/DMA/外设。
+
+五、显示及模型身份
+既有box_overlay_joint_20261016的18整帧64框＋AGE交接通过收据/关键源哈希已封存，未重跑/改动显示。
+720p源坐标、完整表SOF切换、实时撤框、2000ms源图年龄都不变；R256坐标由C9直接乘5处理。
+共同候选JSON的wire model_id/resize_id仍null，离线tag＋完整hash标识，不冒充已发布部署模型。
+固定DSP/ROM/工作仓不会因输入缩小自动省资源；本线没有新资源或1FPS实测数据。
+
+六、下一步
+C2使用本参考对齐其17图预处理并完成同权重分辨率比较；C7汇总C9地址/几何参考与C4唯一诊断综合。
+仅在总协调选定候选并批准硬件适配后，建立新R256 resize/slots候选并跑实际RTL/厂商RAM回归。
+本批不训练、不重校准、不H24、不修改生产、不位流/板/Flash、不新增时序例外，不提交推送。

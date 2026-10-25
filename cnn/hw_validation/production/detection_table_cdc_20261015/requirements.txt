@@ -1,0 +1,17 @@
+SRIF1 64框表与同源时间快照；create/validate；2026-10-15。
+唯一元数据265bit：epoch31:0/task63:32/frame95:64/model127:96/count134:128/status136:135/capture200:137/completion264:201。
+FINAL97保持PIF1。模型常量B35D4A66须绑定完整payload SHA。frame_token是task，不是source_frame。
+只在本目录新增；先冻结camera_capture_2fps_20261015所有成果，不修改已通过RTL/报告/算术/生产。
+表模块拥有唯一source97x64、两个目标97x64旋转bank，以及三份265bit元数据；C7直接把NMS输出写入source，不额外再组装第四表。
+源entry valid/ready顺序写0..63；seal metadata valid/ready要求count等于已接受entry数且<=64，直到last-copy ack不能复用源表。
+局部abort只在源未seal时丢弃部分装载，不撤销已跨域请求；封存后必须等复制ack或共同复位。故障/取消可发送count0非0status诊断，不绘框。
+复制请求toggle，两级目标同步+稳定等待拍后取metadata；源RAM冻结，目标本域地址驱动异步LUTRAM读，逐项落入空闲pending bank。copy_enable=0时游标与读地址保持，末项才ack。
+目标pending未采用前不覆盖；SOF只交换已完整pending和active；末项同拍SOF不走新表旁路。active表内容整帧保持；age/身份不合则只撤绘制许可。
+count0合法，metadata捕获完成即pending/ack，下一SOF清框。不把取消/故障半表当成功。
+共享时间模块：源100MHz每100000拍递增同源64bit ms，epoch一并冻结进96bit快照；每1ms机会发toggle，busy时保持至2级返回ack。
+目标75MHz来自模板PLL clk4_out；两级req同步+一稳定拍捕获后ack，时间传输不受表copy_enable/pending控制。
+目标连续超过150000像素拍无更新撤time_valid；首次有效快照前不绘框。数字时钟活跃假设下证明传输<=1ms，snapshot滞后<=3ms，年龄上界=(snapshot-capture)+4ms；未来capture/完成时间次序错误/epoch/model/status错/无time均不绘框。
+默认500ms；2000ms只在独立参数化TB实例/候选中测试，实际默认不启用。1FPS100M周期，不代表已达实板。
+共同i_rstn异步断言，各域两拍同步释放。必须两域共同取消，不证明单域热复位恢复。RAM不清零，valid/count隔离旧数据。
+不新增时序例外；bundled RAM read、metadata/time冻结总线及同步器仍需实际物理约束/CDC检查，本批不跑TD。
+所有三表LUTRAM和96bit时间payload计入共享D组，不申额外ERAM/DSP。只报告逻辑位数，不能宣布资源通过。

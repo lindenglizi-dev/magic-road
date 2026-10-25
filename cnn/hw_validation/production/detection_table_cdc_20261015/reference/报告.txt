@@ -1,0 +1,31 @@
+detection_table_cdc_20261015 CPU参考报告
+状态：PASS（仅数字CPU契约，TEST_ONLY）
+
+1. 格式与三表
+- SRIF1元数据265bit；postprocess frame_token映射到task_id，camera source_frame_id与其独立。
+- FINAL97保持PIF1：[0]class、[16:1]score、其余四个20bit Q12.8坐标。
+- source/pending/active三表逻辑位数：18624 + 795 = 19419bit。
+- count=0/1/32/33/64、随机停顿、pending满、最后copy与SOF同拍不旁路均由assert覆盖。
+- seal的box_count必须等于已接收entry数；非零status允许携带0..64项完整诊断表，照常复制/冻结，但禁止绘制。
+
+2. 绘制过滤与年龄
+- 必须time_valid、epoch/model匹配、status=0、count一致、capture<=completion<=now。
+- age_upper_ms = now_ms - capture_timestamp_ms + 4；默认500ms，独立2000ms边界。
+- 500ms：raw age 496接收、497拒绝；2000ms：1996接收、1997拒绝。
+- model_id=0xB35D4A66，完整payload SHA256=b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+
+3. 时间与CDC数字上界（条件：两时钟持续活动）
+- source=100MHz，每100000拍+1ms，并在tick拍冻结递增后的now_ms。
+- destination使用模板PLL clk4_out=75MHz的配置证据；非实测频率。
+- req经两级同步并稳定等待后capture：<4*Td=53.333333333ns。
+- ack返回source：<3*Ts=30.000000000ns；数字往返<83.333333333ns，远小于1ms发布间隔。
+- watchdog在150000拍边界仍valid，150001拍撤销；最长2.000013333ms。
+- 冻结到撤销总上界<2.000066667ms <3ms；不重复叠加source发布1ms。
+- capture timestamp另计<1ms量化，故约定保守age margin仍为+4ms。
+
+4. 明确未验证
+- 未验证实际亚稳态延迟、物理bundled-data CDC、时钟存活/晶振误差、RAM物理映射。
+- 未运行综合、布局布线、时序、TD、板卡、位流；未改RTL及旧reference_table.py。
+
+复现：python reference_srif.py
+输出：contract.json、vectors.json、manifest.sha256、报告.txt

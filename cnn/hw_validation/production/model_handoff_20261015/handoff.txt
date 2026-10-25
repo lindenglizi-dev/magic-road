@@ -1,0 +1,126 @@
+RoadYOLO 唯一模型参数与 CPU golden 交接（C2→C7/C8/C4）
+日期：2026-10-15；分支：work/roadyolo；本批仅CPU，没有训练、RTL执行、TD、位流或板卡操作。
+所有新文件限于 E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/model_handoff_20261015/。
+Ponytail原则：复用现有包、图、整数参考及前三层/CSP资产；没有复制模型包、重做缓存或另建导出框架。
+
+一、唯一联调版本
+
+唯一参数包（不复制，不让历史PTQ同时成为当前模型）：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/reports/qat_frozen_stem_g10_20261014_v1/package/
+payload numeric_test.bin：140522字节；SHA256 b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+physical numeric_test_padded.bin：143360字节；SHA256 bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417。
+manifest.json：SHA256 93a05a97f78489fabd511909367be0f8b676680c01e5f74a21d571a88f82ff2b。
+检查点：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/runs/qat_frozen_stem_g10_20261014_v1/last.pt。
+checkpoint SHA256 f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd。
+
+原manifest原样保留：TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED，acceptance_eligible=false。
+目录含QAT不等于正式量化、道路精度、整网RTL、物理实现或板测通过。
+检查点父模型：FP32 replay-G10，SHA256 e7e6a0f514b39417451ff90cec32e7f5adc862136bdf3adeac988c4d454fa262。
+其初始PTQ仅作历史对照：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/reports/replay_g10_integer_20261013_v2/package/。
+不恢复本聊天旧E7训练。最新停止决定是 early_feature_injection16_20261014_v1/decision.json，no_automatic_QAT=true，累计候选更新36次。
+
+二、给C7/C8的参数、图与数值合同
+
+机器可读完整交接清单：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/model_handoff_20261015/artifacts/layer_parameter_index.json
+包含67层各字段绝对包路径、偏移、长度、dtype、shape、SHA256、160-bit起始词/词内字节、输入输出尺度、逐输出通道权重尺度、累加尺度、图节点号、逻辑DDR位置和INT8/INT16模式。
+全部393个连续参数/表段覆盖140522字节；56个lane初始化文件及7168个160-bit词由既有load_package逐项检查。
+小端、OIHW权重；每词20字节，14组×512词×4个40-bit lane。不能按对齐32-bit读取忽略跨词/跨组字段。
+offset是numeric_test.bin的逻辑字节偏移；word=offset//20，byte=offset%20，group=word//512，group_word=word%512，lane=byte//5，lane_byte=byte%5。
+共享表：SiLU offset135914/2048B/1024×INT16；sigmoid offset137962/2048B/1024×UINT16；exp offset140010/512B/256×UINT16。
+silu_upper/sigmoid_upper独立常量见清单，不是可从越界表地址读取的第1025项。
+
+图：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/graph_artifacts/graph.json
+合同：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/deployment_contract.json
+合同SHA256 5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681。
+结构hash 106ccd0f223b1cefaff8e36408d3968aee3e4a1703d17e27786db58eb8124595。
+注意：原graph文件字节SHA与checkpoint里canonical JSON graph_sha256不是一种哈希。交接receipt分别绑定文件和模型内图，不能互换。
+模型版本键采用完整payload SHA；32-bit wire model_id原包未定义，清单明确留空，由C7唯一集成处绑定，不能各聊天自行分配冲突ID。
+
+权重尺度沿QAT固定父量化资产：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/reports/replay_g10_integer_20261013_v2/quantization.json
+SHA256 fb87d939fee610f3a44304710a79799658a9747d5db82581da217de3518ada29。
+偏置、乘数、权重必须从本次选定payload读取，不得从这个父文件或FP32检查点替换。父文件这里只提供被固定的weight_scale。
+RGB入口UINT8→pixel−128一次；权重INT8按输出通道、激活INT8按张量、zero-point0；bias INT32仅first一次。
+signed33部分和，最终含偏置检查INT32；现核归约上限192乘积/24组、三路原子故障及现II均不改。
+pre：INT32×非负INT32→精确INT64，shift0…62，最近偶数、INT16饱和；SiLU输入输出Q7.8。
+SiLU地址RNE(input/4)+512；input≤−2048输出0，input≥2048恒等；舍入地址1024用silu_upper。
+61激活卷积走pre→SiLU→post→satINT8；post按张量参数。
+6预测卷积 head2/3/4.cls_out、reg_out只走pre→INT16 Q7.8，必须绕过SiLU与INT8 post；cls2项、reg5项。
+三尺度拼头顺序tx,ty,tw,th,objectness,person_logit,vehicle_logit；12,096位置，169,344字节。
+解码前tw/th裁至Q8 [−1024,896]，objectness×class分数按RNE；同类NMS严格IoU>0.5才抑制；阈值未正式冻结。
+残差两边scale必须一致，signed9加法后satINT8；concat/split/nearest是等尺度视图，不新增整幅副本。
+卷积逻辑越界补0，maxpool逻辑越界−128，物理tile空槽0。这三者不能混用。
+特征DDR为tile4x4_hwc，真实通道数不补齐8；视图地址用现graph.resolve_byte_address，输入为普通NHWC。
+这里只提供逻辑字节/存储描述，不替C8批准byte/native转换、写可见性或视频并发协议。
+
+三、同包golden和输入来源
+
+既有前三层参考（复用，不覆盖）：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/qat_g10_front3_data_20261014_v1/
+包含parameters、oracle/stages.npz、vectors、验证收据；起点RGB是合成测试图。26,624项acc/pre/SiLU/post已在本批CPU重放逐项一致。
+既有CSP首残差参考（复用，不覆盖）：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/qat_g10_csp_first_data_20261015_v2/
+其PW输入确实等于同包前三层输出；但只有左上8×8已知窗口，因此不能把图内缺失邻域补0扩展为完整CSP2。
+本批重放其DW/PW四级1,536值及残差sum/post384值一致；输入源仍是上述合成RGB，不冒充真实道路输入。
+
+新增最小真实图前缀：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/model_handoff_20261015/artifacts/golden_prefix_index.json
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/model_handoff_20261015/artifacts/golden_prefix/
+选已有17图开发集按image路径排序的第一张，选择与预测无关；来源为VIRAT_S_000200_00_000100_000171_f0000637/raw.png。
+原图SHA256 2aa54183d41253020bb1d51ea7a2ba93525d921cfb8948a7a65ac4f86cab7363。
+沿既有FullFrameDataset完整letterbox720p→精确2/5面积缩放与pixel−128，不改标签，也不新增准确率结果。
+完整计算图节点0…11：Stem→down2 DW→PW→split→CSP2残差0→残差1→concat→csp2.out。
+提供8层完整acc/pre/SiLU/post HWC数组、8份实际tile布局post二进制、5份split/残差/concat视图、UINT8输入NHWC二进制。
+C4：两处DW分别提供四角和内部位置共10份6×6×12 halo；每份来自完整真实上游。图内未知邻域不补0。
+初次生成对四角/内部的标量卷积与独立RNE/SiLU共40,960项检查一致；完整张量重放数量以validation.json为准。
+这些是CPU golden，不是板上采集，不证明C4/C8当前RTL已经消费此包，也不是PAXI完成或可见性证据。
+
+四、可复现入口与消费者使用方法
+
+CPU包装入口（默认verify，不重复生成，也不会启动训练）：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/model_handoff_20261015/run_cpu.ps1
+执行：& 'E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/model_handoff_20261015/run_cpu.ps1' -Mode verify
+首次构建：-Mode build；artifacts已存在则拒绝覆盖。单元自检：-Mode self-test。
+固定隔离NumPy2.3.5及原native runtime收据，隐藏CUDA。没有升级包、改venv或全缓存重建。
+完整CPU回归入口：同样环境运行本目录test_handoff.py；validation.json为首次回归专属输出，重复运行须由协调明确安排新报告名，不覆盖。
+首次回归的精确命令（在工程根目录）：
+$env:PYTHONPATH='E:/project/qiansai/.tools/road_yolo_numpy_235_20261014;E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision'
+$env:CUDA_VISIBLE_DEVICES='-1'
+$env:PYTORCH_NVML_BASED_CUDA_CHECK='1'
+& 'E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe' -B 'E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/model_handoff_20261015/test_handoff.py'
+
+C7/C8应读取layer_parameter_index与golden_prefix_index；输入.bin是RGB UINT8 NHWC，post.tile4x4_hwc.bin是特征真实布局。
+C4应从完整split.00.1.npy、residual.00.npy取两残差halo，不从旧8×8窗口或另一PTQ包取邻域。
+不要把旧前三层/深PW/CSP各自的PASS拼成同包整网PASS；当前完整67层参考可复用：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/trained_integer.py
+调用 load_package(唯一PACKAGE)，再 IntegerModel.forward(centered_HWC_INT8_512x288,capture=True)。
+返回heads、statistics、values；values含每层输出以及name+':acc'/':pre'，同包SiLU/post可由现integer函数取。
+这提供全部节点golden入口；本批只执行所需12节点前缀，没有运行或发布新的全网推理/全网RTL对拍。
+
+五、回归、周期与证据边界
+
+主回归：本目录artifacts/receipt.json（原包/393段/56lane/原模型合同、旧参考重放、前缀生成与输入源闭包）。
+完整重放、5项负例及所有67层INT32绝对界：本目录validation.json。完整前缀7,151,616值一致，重放12.01秒；全部层保守累加绝对界最大1,114,094，小于INT32上限。
+新RTL周期、TD资源/时序、板测、5FPS：全部NOT_RUN；17.01秒只是本机CPU初次参考生成耗时，不能转换成FPGA周期或FPS。
+历史周期只供定位，未在本批重跑：qat_g10_front3_rtl_20261015_v2/status.json的正常case0=122921拍、反压case1=127898、case2=209576。
+历史CSP首残差：qat_g10_csp_first_rtl_20261015_v1/status.json正常case0=7167拍，case1=7802、case2=7679；不是完整CSP2。
+这些旧周期作用域都是小窗口；不能加起来替代新完整前缀、完整DDR或67层周期。
+数值包原export_parity.json保留181个trace/18,275,904值通过的既有记录；本批仅核对其身份和哈希，不冒充本批重新执行。
+本批没有调用readable-verilog-generator或修改RTL；八项RTL门禁NOT_RUN，不改写原严格门失败。
+
+六、精度和量化缺口，唯一后续建议
+
+读取既有17图开发评估，不是新测试：person P48.21%/R29.35%/AP50 26.33%；vehicle P32.61%/R17.24%/AP50 13.15%，均阈值0.5。
+相对父FP32平均AP50下降29.4139个百分点；formal_quantization_gate_passed=false、formal_accuracy_gate_passed=false。
+硬件数值一致只能排除对应局部适配偏差，不能修复模型误报/漏检或量化损失。实际RTL不一致先修适配，不训练抵消。
+Ground48正式完整真值不能由开发17图替代；已查看、用于选择的开发图不能再次称独立盲测。
+G20/H5及三个注入分支的停止决定保留，本批训练更新0；不能拿100次历史预算余额当作自动继续授权。
+
+唯一训练建议（未执行、需新的明确授权及数据门槛）：先完成既有固定机位整帧标签缺口，保留机位/原片隔离，然后仅做一次从父FP32 replay-G10出发的2轮“新增完整地面标注+既有replay”监督适配对照。
+理由：父FP32的17图召回本来就低，既有AC决定指出只有两个录制家族、机位趋势冲突和定位/误报问题；继续被停止的QAT小样本路线无法据此保证精度。
+该建议不改网络、损失/头表达、部署数值合同或验收口径；训练前必须冻结新数据/采样与同预算对照，不因本交接自动启动，也不与量化尺度实验同时扫参。
+标签条件未满足时继续CPU错误归类，不提出第二套网络、自动恢复旧分支或追加长训。
+
+交接结束条件：C7/C8/C4可读取同包参数、完整前三层→CSP2参考和真实halo；剩余RTL适配、model_id分配、性能与精度由各唯一所有者明确承接。
+未提交、未推送，未向其它聊天直接发送消息。

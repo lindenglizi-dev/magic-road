@@ -1,0 +1,31 @@
+{
+  "module": "road_rom_two_client_arbiter",
+  "task_class": ["generate", "validate"],
+  "clock_hz": 100000000,
+  "inputs": {
+    "i_clk": 1, "i_rstn": 1,
+    "i_param_request_valid": 1, "i_param_request_addr": 13, "i_param_response_ready": 1,
+    "i_lut_request_valid": 1, "i_lut_request_addr": 13, "i_lut_response_ready": 1,
+    "i_rom_request_ready": 1, "i_rom_response_valid": 1, "i_rom_response_data": 160, "i_rom_fault": 1
+  },
+  "outputs": {
+    "o_param_request_ready": 1, "o_param_response_valid": 1, "o_param_response_data": 160,
+    "o_lut_request_ready": 1, "o_lut_response_valid": 1, "o_lut_response_data": 160,
+    "o_rom_request_valid": 1, "o_rom_request_addr": 13, "o_rom_response_ready": 1, "o_fault": 1
+  },
+  "admission": "One client valid&&ready latches owner and addr13 into single transaction slot; a registered ROM request is forwarded next cycle. Admission is distinct from physical reader acceptance.",
+  "retirement": "Only owner response valid&&ready releases transaction; reader return payload/valid routed only to owner. No OR ready, no broadcast return.",
+  "one_outstanding": true,
+  "round_robin": "Initial preference parameter client; after each admitted request preference switches to other owner. Sole requester wins regardless of preference. At most one other admitted request can bypass a continuously pending client, conditional on eventual physical ready/return and owner-ready.",
+  "cancel": "No arbiter cancel port. Existing LUT service drains logical ROM transaction accepted by arbiter, including queued-before-physical-read. Arbiter never clears owner on cancellation.",
+  "reset": "Common asynchronous assert across reader/arbiter/prefetch/LUT; arbiter local two-stage synchronous release, earliest third rising edge client admission",
+  "fault": "Sticky global fault on reader fault or illegal FSM; owner not falsely retired. Original prefetch has no ROM fault input: expose global fault and require common reset; do not fabricate a successful response.",
+  "resources_not_measured": {"added_eram": 0, "added_dsp": 0, "address_storage_bits": 13},
+  "integration_top": "road_rom_two_client_top",
+  "existing_prefetch_scope": "Boot-time down2.dw.conv16 and down2.pw.conv16to24 parameters plus1024 SiLU; no runtime layer input, restart only common reset, no ROM fault input, not67 layers",
+  "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "physical_sha256": "bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417",
+  "verification": ["both continuous requesters alternate", "single requester without starvation", "owner held while response backpressured", "nonowner ready cannot retire", "request address stable", "true down2 parameters and SiLU versus frozen manifest", "dynamic sigmoid1024/exp256 while prefetch active", "random client sink backpressure", "LUT cancel before admission and after admission late return", "new token isolation", "common reset during ownership/response"],
+  "demonstration_age": {"AGE_LIMIT_MS": 2000, "approved": true, "old500ms_baseline_readonly": true, "age_display_implementation": "C8/C9 not this ROM task"},
+  "scope": "New directory only; one correct G10 reader, no frozen source/interface/II/numeric/reset changes, no full7168 re-audit, training/production/TD/bitstream/board/Flash/commit/push"
+}

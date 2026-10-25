@@ -1,0 +1,165 @@
+{
+  "status": "PASS",
+  "scope": "CPU digital reference only; TEST_ONLY",
+  "format": {
+    "payload": "FINAL97/PIF1",
+    "metadata": "SRIF1 265-bit task metadata",
+    "time_snapshot": "96-bit {now_ms[63:0],epoch[31:0]}",
+    "metadata_fields": [
+      {
+        "name": "epoch",
+        "lsb": 0,
+        "width": 32
+      },
+      {
+        "name": "task_id",
+        "lsb": 32,
+        "width": 32
+      },
+      {
+        "name": "source_frame_id",
+        "lsb": 64,
+        "width": 32
+      },
+      {
+        "name": "model_id",
+        "lsb": 96,
+        "width": 32
+      },
+      {
+        "name": "box_count",
+        "lsb": 128,
+        "width": 7
+      },
+      {
+        "name": "result_status",
+        "lsb": 135,
+        "width": 2
+      },
+      {
+        "name": "capture_timestamp_ms",
+        "lsb": 137,
+        "width": 64
+      },
+      {
+        "name": "completion_timestamp_ms",
+        "lsb": 201,
+        "width": 64
+      }
+    ],
+    "task_id_semantics": "task token; independent from source_frame_id and not a frame token"
+  },
+  "model_binding": {
+    "model_id_hex": "0xB35D4A66",
+    "model_id_decimal": 3009235558,
+    "full_payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145"
+  },
+  "tables": {
+    "count": 3,
+    "entries_per_table": 64,
+    "entry_bits": 97,
+    "metadata_bits_per_table": 265,
+    "logical_payload_bits": 18624,
+    "logical_metadata_bits": 795,
+    "logical_total_bits": 19419,
+    "pending_full_blocks_copy": true,
+    "source_held_until_final_copy_ack": true,
+    "last_copy_plus_sof_has_no_bypass": true,
+    "count_zero_still_transfers_metadata_and_acks": true
+  },
+  "filter": {
+    "required": [
+      "time_valid",
+      "epoch_match",
+      "model_match",
+      "status_zero",
+      "count_matches_entries",
+      "capture<=completion<=now"
+    ],
+    "age_upper_formula_ms": "now_ms - capture_timestamp_ms + 4",
+    "accept_formula": "age_upper_ms <= age_limit_ms",
+    "default_age_limit_ms": 500,
+    "independent_boundary_age_limit_ms": 2000
+  },
+  "time_cdc": {
+    "source_hz": 100000000,
+    "source_tick_cycles": 100000,
+    "tick_semantics": "freeze incremented now_ms on each 100000th source cycle",
+    "destination_hz": 75000000,
+    "destination_clock_evidence": "template PLL clk4_out configuration is 75 MHz",
+    "request_path": "2 destination synchronizer stages then one stable wait/capture",
+    "ack_path": "ack only after capture; source observes through synchronizers",
+    "watchdog_cycles": 150000,
+    "watchdog_semantics": "valid through elapsed=150000; invalid at elapsed=150001",
+    "bounds_ns": {
+      "source_period_ns": {
+        "numerator": 10,
+        "denominator": 1,
+        "decimal": 10.0
+      },
+      "destination_period_ns": {
+        "numerator": 40,
+        "denominator": 3,
+        "decimal": 13.333333333333334
+      },
+      "req_to_capture_upper_exclusive_ns": {
+        "numerator": 160,
+        "denominator": 3,
+        "decimal": 53.333333333333336
+      },
+      "capture_to_ack_upper_exclusive_ns": {
+        "numerator": 30,
+        "denominator": 1,
+        "decimal": 30.0
+      },
+      "round_trip_upper_exclusive_ns": {
+        "numerator": 250,
+        "denominator": 3,
+        "decimal": 83.33333333333333
+      },
+      "watchdog_withdraw_max_ns": {
+        "numerator": 6000040,
+        "denominator": 3,
+        "decimal": 2000013.3333333333
+      },
+      "freeze_to_watchdog_withdraw_upper_exclusive_ns": {
+        "numerator": 6000200,
+        "denominator": 3,
+        "decimal": 2000066.6666666667
+      }
+    },
+    "steady_publish_interval_ms": 1,
+    "snapshot_lag_contract_ms": 3,
+    "timestamp_quantization_margin_ms": 1,
+    "age_margin_ms": 4,
+    "condition": "both clocks active and digital sampling assumptions hold"
+  },
+  "reset": {
+    "common_async_assert": true,
+    "two_cycle_synchronous_release_each_domain": true,
+    "unilateral_hot_reset_supported": false,
+    "ram_clear_required": false,
+    "valid_and_count_isolate_uncleared_ram": true
+  },
+  "not_validated": [
+    "metastability MTBF or physical bundled-data CDC",
+    "active-clock availability or oscillator tolerance",
+    "RAM primitive/inference mapping",
+    "synthesis, place-and-route, timing closure, board, bitstream, TD"
+  ],
+  "source_sha256": {
+    "cnn/hw_validation/production/detection_table_cdc_20261015/requirements.txt": "a4dc4bed46fd4fed9c3d06e32c134edc20f15d16186c83b4ba3e86ae146ee940",
+    "cnn/hw_validation/production/detection_table_cdc_20261015/interfaces.json": "b35b173734453e00c0761cdb3a798010b93db0766004701f8d92b7be41653562",
+    "cnn/hw_validation/production/detection_table_cdc_20261015/codegen_plan.json": "3ce8b6c1917911ef63ffcc4fd9f5da6876e26f393f184a8bd6e149be5f754b86",
+    "cnn/hw_validation/production/detection_table_cdc_20261015/reference_table.py": "3616a284edbd71feabbd3b14aaa3e7bd84cd3a17270f563d68fd938a089065c9",
+    "cnn/hw_validation/plans/resource_budget_20261015/连续视频1FPS目标与第四批任务_20261015.txt": "aaf5d3e1be0752616c145cf98515d289f6e2fafb7dd82d9f7121378d7bf09202",
+    "cnn/hw_validation/plans/resource_budget_20261015/后处理共享RAM与接口约定_20261015.txt": "07d25e3551d19479d0d0d578a906a71f327d80f76a0cc7e5dc1d6a5fa0ffe87d",
+    "user_source/ip_source/PLL/PLL.v": "1137946f04514e440b6c6cfd6695715dd6ae48d213af0c7314932b9f5e671037",
+    "user_source/ip_source/PLL/.params_PLL.txt": "e73afc6db374fd675872530f5d57c162c75f708898c0c7493b61c499ca2d00ec",
+    "user_source/ip_source/PLL/Design.xml": "d72d72c78ca050de67b898426664373e915a67effed434d44aba3ff1fe30624f",
+    "cnn/template/design_top_wrapper.v": "a31d852619f84925a3aed13e69b5de556b4e43c0b361318c21794a664ceb4643",
+    "cnn/hw_validation/production/csp2_complete_20261015/status.json": "32c315d2a3644020a982f381a603b4996ae9cb4f25772b6930050d85c4585c96"
+  },
+  "vectors_file": "vectors.json",
+  "self_check": "python reference_srif.py"
+}

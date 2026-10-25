@@ -1,0 +1,17 @@
+Sixth-batch C9-to-C8 verification contract
+
+Owner: verify; writes only this verification directory. Parent owns copied RTL/vendor closure and publisher.
+Reuse fifth-batch actual-PH1P true-G10 numerical vectors, golden checker and 56-lane closure.
+Main chain: 12096 HEAD112 cells -> reader/shared LUT -> TopK actual candidate RAM -> NMS FINAL97 -> publisher -> C8 source/pending/active.
+No fourth RTL result table; testbench expected_words is a golden comparison store only.
+
+Clocks: source 100 MHz; destination template 75 MHz. At least normal/empty/64 cases use actual millisecond time snapshot and actual template SOF period, pending review confirmation.
+Start context: epoch/task/source_frame/model/capture timestamp locked at shared start handshake; task is NMS frame_token. Inputs mutate while busy to prove capture.
+Metadata: exact 265-bit comparison, count/status, actual source completion timestamp. Last entry and metadata cannot transfer together. Valid/payload hold until ready.
+Endpoints: postprocess start -> metadata acceptance -> source copy_ack -> next SOF active; report timestamps and mutually disjoint intervals. Contained source-entry/meta/copy waits listed separately, never summed twice.
+
+Cases: real-image seven; complete empty and old-active clearing; full64 including 6944 worst NMS comparisons; random backpressure; long output/meta/copy backpressure; partial NMS response fault then source abort and recovery; common reset during partial and sealed transactions; consecutive differing task/source identities; post-seal cancel cannot withdraw and prevents restart until copy_ack.
+Normal time cases use road_time_snapshot unmodified and normal clocks. Age-boundary control group supplies coherent time records directly, explicitly separate from real-time/FPS evidence: raw ages 1996 and1997 yield conservative2000 allowed and2001 rejected; unknown/lost time yields invalid age and no draw; one-second identity updates counted only for new source_frame_id, plus retention without new detection.
+
+Evidence: unique immutable run directory, compile/simulator logs including failed attempts, full source/config/vector/tool hashes before/after, actualROM receipt closure check and unchanged snapshots. Known encrypted-vendor bounds warnings classified exactly:112 fresh;0 only with explicit cached-design diagnostic; any other warning fails.
+No synthesis/TD/training/bitstream/board/production/Git mutation. Readable eight gates reported distinctly from actual simulator evidence; a report existing is not pass.

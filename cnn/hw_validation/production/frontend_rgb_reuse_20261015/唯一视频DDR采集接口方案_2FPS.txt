@@ -1,0 +1,78 @@
+唯一视频/DDR/采集接口方案：本周连续摄像头≥2FPS
+2026-10-15，承接L2F1；本文件是方案，不是已实现视频并发或真实写可见性证据。
+S1最终收据保持原样：comparison.json及verification/suite_manifest.json；normal15848967拍、十例通过。此处不重复运行。
+
+一、唯一结构和所有权
+以cnn/template/design_top_wrapper.v为唯一720p底座，保留MIPI/ISP、video_in/video_out FIFO、DDR IP/PHY/PLL、HDMI时序和发送器。
+ISP四像素彩色旁路→精确2/5缩放→128bit打包与小CDC FIFO→两个独立CNN输入槽→C7固定图执行器。
+video_in写、video_out读和CNN客户统一交一套DDR服务；capture/feature DMA为CNN客户内部两个有界来源，不再放第二套PAXI驱动。
+C7提供唯一算术/ROM/图执行器和真实结果表；C8只做采集、服务及显示。C9只交协议依据，不写另一桥。
+不把TEST图案源、golden比较、私有核和诊断HDMI壳带入最终摄像头顶层。
+
+二、实际接入点与旧适配器必须替换的原因
+isp_top.v:15-18/42-45已有O_analysis_rgb[95:0]/valid/sof/eol，模板当前未接；不必更改ISP数据通路。
+本批已明确AWB高lane优先：bits95:72最先，随后71:48、47:24、23:0。每lane本身R=bits23:16、G=15:8、B=7:0。
+捕获张量字节顺序是R,G,B，最早R落DDR data[7:0]；不能直接复制AWB的低byte B当R。旧灰度适配器的低lane优先不能直接继承。
+模板top:694-702目前合并video写/读；mc_to_user_interface.v以155bit单FIFO缓存，却把所有读返回无owner地直送video_out。
+ph1p35_324_ddr_wrapper.v把O_mc_app_rdy=ARREADY||AWREADY、O_mc_app_wdf_rdy=AWREADY，未使用真实WREADY作为写数据接受条件。
+因此不能仅加一个CNN mux继续套旧ready，也不能并联road_paxi_mailbox的第二主端口。
+后续仅在独立联合候选替换mc_to_user_interface及DDR包装中的PAXI适配逻辑；保留一个ddr2、原PLL/PHY和引脚。现生产文件不改。
+
+三、采集/缩放组件合同（先独立验证，不等真实屏障）
+摄像头域输入：rgb96/valid/sof/eol，不能由CNN ready反压；SOF可先于第一个valid，需pending标记和编号测试，不能猜固定延迟。
+按每行320个有效beat计1280像素、720行；eol仅核对行几何，不用任意valid下降沿直接推进新行。短帧/多像素/重入SOF使该帧无效。
+缩放输出48bit、2bit有效mask（00/01/11），最多两RGB像素，字节R/G/B低位优先，携带sof/eol/eof/error；不得拼跨行像素。
+水平/垂直5输入→2输出权重为(2,2,1,0,0)/(0,0,1,2,2)。先横向11bit和，再纵向13bit和，最后除25只舍入一次；25为奇数不产生精确0.5中点，按RNE定义结果。
+每个有效完整帧512×288×3=442368B，恰好27648个完整128bit词；不借用BGR视频打包顺序。
+缩放目标2ERAM：每bank512×40bit，RGB各13bit共39bit；端口A读、B流水写，一像素/周期处理，两bank在中间行同时更新。
+AWB行可能是320拍连续四像素突发，不能用“2FPS平均带宽低”证明端口够用。横向最多两结果用有界浅LUTRAM队列吸收；队列与行间空闲的上界先用CPU时序模型核对。2ERAM仅是目标，未布局前不得宣称映射通过。
+如果队列/CDC溢出，丢弃该次CNN整帧、拒绝发布；不能反压或停掉直播。须统计丢帧，不得将丢帧隐藏来提高FPS。
+
+四、输入槽：事件分开，当前先做外部事件驱动组件
+slot0 byte[0x03400000,0x03480000)，slot1[0x03480000,0x03500000)，每槽512KiB，实际442368B。
+状态FREE→CAPTURING→等待写可见→READY→READING→FREE；等待可见是独立内部状态，不以EOF就发布。
+SOF无FREE则整帧跳过；不覆盖CAPTURING/READING。完成尺寸/字节核对且对应(epoch,frame_id,slot)write_visible到达才READY。
+描述符含epoch、source_frame_id、timestamp、slot/base、resize_id/model_id；字段位宽随总协调唯一合同冻结，不各聊天另定部署包。
+优先最新完整READY，不建长队列。READY被丢弃前必须确认无在途访问；READING只在C7报告该槽最后实际读响应已消费、且无未来输入读取后释放，不能用CNN done。
+本批槽组件write_visible由明确外部输入驱动；TB可按该合同驱动，仅记“受控端点”。真实服务未提供该事件时，不使能实板READY。
+异常半帧不READY；已有写/读未排空时保持隔离，不把本地计数清零当退休。独立热复位/重试不在本周默认范围。
+
+五、权威地址与容量账（静态核对，仍非板级可见性保证）
+当前video_in/out四bank native基址为0、7000000、14000000、21000000；native半字，16B步长8。
+合法720p RGB每帧2764800B，172800词。四bank实际byte区间依次为：
+[0,2764800)、[14000000,16764800)、[28000000,30764800)、[42000000,44764800)。
+在尺寸与最大预取被约束的正常范围内，最高视频尾44764800低于CNN起点54525952，间隔9761152B。
+旧video_in/out没有显式整帧地址上限；不能只靠四个基址就宣称异常情况下永不越界。新服务接受前做宽地址/长度/客户区域检查，并计预取guard和在途返回。
+CNN双槽54525952..55574528；graph当前feature_begin55574528、feature_end62779392、arena_end67108864。
+逻辑地址统一32bit byte，先检查范围与16B对齐，再唯一转换native=byte>>1；旧video native只在边缘扩回byte(native<<1)，不可重复右移。
+ROW_COL_BANK配置容量账为64MiB，不代表实物所有末端地址已经板测。graph当前byte_unverified标记保留，不擅自改为已验证。
+
+六、统一服务的最小协议方案（尚未实现，须结合C9证据收口）
+DDR域三个客户VWRITE/VREAD/CNN，接受请求时锁定client/epoch/task和完整payload；读接受前预留返回空间。
+视频原240词逻辑批次可保留；一旦客户开始写，AW/W配对完成前不可换owner。授予单位定义为一个完整128bit事务，不把AW、W分别计为可抢占单位。
+CNN最多连续16个完整事务后重新仲裁；有视频需求即优先，读FIFO低水位优先补视频读。公平规则不能损坏video_in/out原互斥批次。
+AR/AW/W各按各自真实ready；VALID/payload保持到接受。WSTRB高有效屏蔽，完整写16'h0000，绝非高有效写使能。
+不得让CNN读返回进入video_out FIFO；owner/epoch队列有界，视频SOF后的旧epoch返回排空但不进入新显示帧FIFO。
+CPU/CNN跨域只复用现source-held request/response握手机制，DDR服务一套；不是保留旧mailbox PAXI主端再加第二主端。
+accept：源端请求/DDR AW/W/AR各自接受。visible：厂商允许的先写后读保证/屏障所定义事件。drained：旧owner请求已退休/返回已消费且不再触碰区域。
+目前服务没有visible/drained的正式保证。C9的Q1(NORMAL下RAW顺序)、Q2可见/退休事件、Q3 AW→W“两拍”含义是准确外部问题，不能用固定N拍或内部BVALID假装解决。
+Q4共同复位队列语义、Q5返回顺序/反压同样影响未来共享恢复。等待依据时继续缩放/槽受控端点验证，不停所有离线工作。
+CNN局部故障先停止新请求、保留已呈现握手、隔离坏槽并按已接受owner排空；不擅自复位承载直播的DDR。不能排空则明确停止该CNN分支，视频能否持续依真实未配AW/W状态判定，不能保证永远无影响。
+此服务替代边界/多客户协议由总协调集中确认后实施，本文件没有偷偷更改现真实外设协议。
+
+七、显示与2FPS/500ms
+接C7冻结完整64框表：每框1类+16分数+4×20源坐标=97bit。元数据沿协调265bit统一定义，不自行扩宽。
+源表冻结到最后一项复制ack；pending完整才可在HDMI SOF变active，复制ack不等于显示生效。空表/故障显式清框，不延用旧成功。
+优先在现mixer输出与hdmi_tx输入间叠加，必要时RGB/de/vsync等长流水；不改原直播时序，不再放一个TEST HDMI发送器。
+共享时间基准发布安全跨域快照或Gray时基，不直接双触发器采样动态二进制计数。比较源时间戳到当前时刻，超过500ms撤框。
+分别计video FPS、不同source_frame_id的CNN完成FPS、SOF实际表更新FPS、结果年龄和过期撤框时长；0框真实推理也计完成，重复旧表不计。
+100MHz的2FPS全流程预算50M，S1前缀15848967拍仅是受控端点，不含真实摄像头采集/视频竞争。停止为5FPS继续小优化。
+若每500ms更新且新框已有A>0ms年龄，则A+500>500，会出现撤框空窗；保持该事实，不自动把过期改1000ms。
+
+八、资源/实施顺序/验收边界
+常规19000Slice/38DSP/107ERAM；硬限21216/40/108。C8与C7检测共享D组1100Slice/0DSP/6ERAM（缩放2、DMA/CDC2、TopK/NMS2），不是C8独占再领一份。
+缩放队列、三表及像素比较须计LUTRAM/Slice；2FPS不减少四lane捕获瞬时带宽，不增加缓存额度。
+下一独立实现目录camera_capture_2fps_20261015：CPU/编号彩条→缩放及槽RTL→受控write_visible/末读事件TB；不接真实PAXI、不跑TD、不生成位流。
+后续在唯一联合工程接上述服务和官方视频；统一参数包用frozen-Stem QAT-G10，S1测试权重不等于这份部署联调包。
+最后才在同闭包下做真实资源/时序、连续直播/新帧检测≥2FPS与30分钟板测。纯组件/静态图/TEST绿屏均不是本周摄像头交付。
+本次readable-verilog-generator为analyze方案；八门本轮NOT_RUN，S1原十例和原门禁状态保留。Ponytail原则为只复用一个视频/DDR/核，不新增通用总线层。

@@ -1,0 +1,14 @@
+WIF1 准确接口草案；2026-10-16；实现所有权C4，C2只消费。
+模块 road_feature_workstore，单100MHz，i_clk/i_rstn（共同低有效复位）。
+byte请求：i_byte_req_valid / o_byte_req_ready / i_byte_req_write / i_byte_req_addr[11:0] / i_byte_req_data[7:0]。
+byte响应：o_byte_rsp_valid / i_byte_rsp_ready / o_byte_rsp_data[7:0] / o_byte_rsp_error。
+weight请求：i_weight_req_valid / o_weight_req_ready / i_weight_req_write / i_weight_req_group[4:0] / i_weight_req_data[191:0]。
+weight响应：o_weight_rsp_valid / i_weight_rsp_ready / o_weight_rsp_data[191:0] / o_weight_rsp_error。
+o_fault：任一越界接受后粘滞，直到共同复位；错误仍完成响应，不静默丢请求。
+byte合法0..3071；weight合法0..23。非法接受不触碰RAM，返回error/data0。
+每通道最多一个未退休，允许旧响应接受同拍接收新请求；两通道可并行。
+响应在真实native读取得/所有写word提交后出现；写响应data0。valid&&!ready保持payload。
+同通道请求序列化，避免读写碰撞。复位取消旧valid、不复位RAM内容；消费者用前完整覆盖，不依赖初值。
+候选组织：byte两块2048×8，地址bit11选bank；weight两块512×40并行80bit/group三word，最后word高48bit0。
+native参数、实际延迟和RTL/hash尚待厂商模型实测；本草案不作为物理4ERAM通过证据，完成后追加实际结果。
+全系统owner仲裁不在本仓内；切任务前两通道响应必须排空且权重写已确认。

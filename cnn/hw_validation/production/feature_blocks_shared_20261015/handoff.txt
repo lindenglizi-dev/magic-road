@@ -1,0 +1,54 @@
+第六批C4第一阶段：单一固定CSP客户端交接
+日期2026-10-15；work/roadyolo；本地保存，不提交/推送。
+选定frozen_attempt2/，baseline frozen/及旧CSP2/CSP3/CSP4目录只读。
+
+实际成果
+同一个road_feature_blocks_client实例、一个工作缓存/权重bank和唯一外部算术owner，按start握手锁存block_id2->3->4。
+不再用三个编译期客户并排冒充共享；busy中输入块编号/start扰动不能改当前owner。
+全部7组ModelSim用例通过：正常连续序列、随机反压序列、共同复位重跑序列、非法ID15、错误参数block、错误屏障block、真实acc检查器负例。
+三种完整序列合计9次完整块运行，每序列1327104个输出及acc/pre/SiLU/post逐项一致，残差sum/地址/物理padding另查。
+每序列精确groups1612800、tasks520704、reads190858、parameters193920、writes1327104、barriers19。
+各块5/7/7层和17状态周期独立求和等于块端点；互斥账见cycle_ledger.json，不重加流水重叠活动。
+
+实际周期（100MHz，LUT预装不含在正常序列）
+                 正常             随机反压        复位后完整重跑
+CSP2             19426266         20208484        19426266
+CSP3             14712536         15290483        14712536
+CSP4              9204840          9589468         9204840
+clean合计        43343642         45088435        43343642
+wrapper端点      43343656         45088449        50093511
+正常与随机wrapper各含14拍块间空闲；复位序列另含6748822拍已放弃任务和1047拍复位/重装LUT/空闲开销。
+中止前输出221312项，不当作完整运行；中止计时终点已与真正共同复位断言沿对齐。
+计时从start接受到末层写可见性后进入DONE；DONE仍busy，下一拍idle才再接任务。
+这三个块之间的down3/down4尚由CPU源夹具跨越，不是连续骨干，更不是整网1FPS实测。
+
+修正与失败保留
+根TB的CASE2只插入一条rstn=0，将中止快照与实际复位沿对齐；baseline staged旧TB及完整gate保持不变，final_checks明确唯一original例外。
+原完整gate3639 errors/5 strict warnings，修正候选3640/5；如实保留，未为了数字好看降低门禁。
+两次write-spec调用失败分别为沙箱WinError5与工具工作目录边界；spec_attempt1/2日志/命令保留。
+最终使用registered write-spec在项目工作目录调用已安装工具，规范及周期图生成成功。
+ModelSim每例vlog0错误/0警告；elaboration12警告为旧包装9诊断未接、1连接数汇总和厂商INIT2警告，日志保留。
+真实acc负例的native exit可能0，但Fatal被runner映射validated非0；不能称native进程返回1。
+
+接口与资源
+新增应用层i_block_id/o_block_id4bit、参数响应block_id4bit、屏障block_id4bit；channel7/group5/layer3/window3。
+只支持固定2/3/4，非法启动故障保持占有；读16B对齐单在途、返回身份/参数/屏障精确核验。
+CSP2 Cin12尾mask0f，CSP4末tile只有y16/17，不写y18/y19；数组不reset但使用前覆盖；开始块清行valid。
+3072B缓存和24x192bit权重bank只有一个源级owner，不含私有MAC/SiLU/完整ROM；原核/II/signed33/RNE/复位未改。
+具体存储组织与物理待验见PAN_存储交接.txt。physical_shared_cache_mapped=false，不能说4ERAM已实现。
+
+下一阶段进度
+SPPF两卷积及三池化CPU全量标量对拍已过；逻辑pad=-128与物理尾padding0明确分开，真实道路wrong-pad0差异273/73/46。
+SPPF增量RTL候选正在独立sppf_candidate/推进，绝不修改本次封存源；其实际仿真/资格单独交接，不能由CPU结果代签。
+上行PAN仅完成准确图依赖/参数/视图规格，未实现；底部PAN所需真实down3_bu/down4_bu仍是断点。
+1FPS/100M是整网目标；新演示2秒框保留已获授权但仅显示规则，旧500ms正式基线不变，本计算客户不改显示链。
+资源硬限21216Slice/40DSP/108ERAM、管理19000/38/107不变，未综合/未时序/未板测不能说通过。
+payload b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145，仍沿TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED资格。
+本批无训练、精度评估、生产修改、TD/位流/板卡/Flash或时序例外。
+
+证据入口
+delivery_manifest.json绑定最终六个汇总与交接文件；final_checks/status及cycle_ledger/integration_sources由finalize.py复查真实日志后发布。
+frozen_attempt2/input_binding.json及各case的commands/compile/simulation/receipt/status完整保留；旧资产原/快照哈希均复核。
+reference/csp_manifest.json=bcf53ed288a9da52bc0b2528d099813188cc4b52618958251ee78c424fd48604。
+reference/sppf_manifest.json=912150ffd9442f130d9abf5b0d4d000da89171f248dfa6604408928d2678c6d3。
+readable-verilog-generator八门真实状态保留；伴随readable-python/script技能不可用，只声称实际Python自检/标量oracle通过，不补造严格技能门禁。

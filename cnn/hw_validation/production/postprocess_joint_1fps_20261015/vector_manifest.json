@@ -1,0 +1,719 @@
+{
+  "schema": 1,
+  "scope": "saved 12096-word head streams to frozen FINAL97; no CNN inference",
+  "model": {
+    "model_id32": "B35D4A66",
+    "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+    "payload": {
+      "path": "cnn/reports/qat_frozen_stem_g10_20261014_v1/package/numeric_test.bin",
+      "sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+      "bytes": 140522
+    }
+  },
+  "limits": {
+    "head_words_per_case": 12096,
+    "candidates_per_class": 128,
+    "final_entries": 64
+  },
+  "sources": {
+    "checker": {
+      "path": "cnn/hw_validation/production/postprocess_joint_1fps_20261015/verify_vectors.py",
+      "sha256": "8935de3ac08da883be887ff8a6b1f495525cf966864e26b8c3dc1602351bf1a2",
+      "bytes": 12978
+    },
+    "c2_cases": {
+      "path": "cnn/hw_validation/production/head_decode_topk_rtl_20261015/verification/assets/cases.json",
+      "sha256": "14bd5c85df42824bfd661ddeabd96585d260e478782ea9dde4fc6c515d40ac72",
+      "bytes": 6857
+    },
+    "golden_delivery_manifest": {
+      "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/delivery_manifest.json",
+      "sha256": "ffe059169c79d5aee23a4cd5382f7cc1f01e8bb3b2a0e730ff4ee8043749cf3a",
+      "bytes": 3068
+    },
+    "boundary_vectors": {
+      "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/boundary_vectors.json",
+      "sha256": "a59196a9d5079e43cc134d4d720483c5ffffb721c5373e4abae275d59ad9d62e",
+      "bytes": 1025339
+    },
+    "lut_source": {
+      "path": "cnn/integer.py",
+      "sha256": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+      "bytes": 11117
+    },
+    "sigmoid_lut_16": {
+      "path": "cnn/hw_validation/production/head_decode_topk_rtl_20261015/verification/assets/sigmoid_lut_16.hex",
+      "sha256": "889fa62b54d26210c37e9260c3e954d1913c0606593381152a2846b2609419ca",
+      "bytes": 5120,
+      "words": 1024,
+      "bits": 16
+    },
+    "exp_lut_16": {
+      "path": "cnn/hw_validation/production/head_decode_topk_rtl_20261015/verification/assets/exp_lut_16.hex",
+      "sha256": "135731b97a0a144eacf953b80a540eb68591bcb6b5bddb588824917218ca8d0c",
+      "bytes": 1280,
+      "words": 256,
+      "bits": 16
+    }
+  },
+  "cases": [
+    {
+      "case_id": 0,
+      "name": "real_image",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 3,
+        "vehicle_candidates": 9,
+        "decoded_candidates": 12,
+        "final_entries": 7,
+        "final_person": 2,
+        "final_vehicle": 5,
+        "event_count": 12,
+        "comparison_count": 16,
+        "decision_counts": {
+          "keep": 7,
+          "suppress": 5
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image/heads_cell_order_112.hex",
+        "sha256": "2fe18d831eba985796ad8735b1774b97c55c580f71f9c4e9a29a7e602f3a154f",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image/top128_decoded_160.hex",
+        "sha256": "35c75cc2ecb7dd90e55da4cfa580abb464305631148d41a6a02066fb361d2212",
+        "bytes": 504,
+        "words": 12,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image/result_table_97.hex",
+        "sha256": "c5cd21644f6e3bd16fb19726839b20f18c4affa59e33e88062f895e883d3c96c",
+        "bytes": 189,
+        "words": 7,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image/final.json",
+        "sha256": "4e139e132e7e181dc5be0d6256fd9aeed53a9995a617b10fa5b4054b6c2e7141",
+        "bytes": 2298
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image/nms_events.jsonl",
+        "sha256": "55c9b47935a13c05d56fdbe1e7152d7dbed7c3d344148cc424db07d4077dcfa0",
+        "bytes": 2402,
+        "events": 12,
+        "comparisons": 16
+      }
+    },
+    {
+      "case_id": 1,
+      "name": "all_low_empty_complete_table",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 0,
+        "vehicle_candidates": 0,
+        "decoded_candidates": 0,
+        "final_entries": 0,
+        "final_person": 0,
+        "final_vehicle": 0,
+        "event_count": 0,
+        "comparison_count": 0,
+        "decision_counts": {}
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/all_low_empty_complete_table/heads_cell_order_112.hex",
+        "sha256": "f077c2d74bd8d18e02666f787cc96b242ababadb3fb89c5af3e6ea795286f990",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/all_low_empty_complete_table/top128_decoded_160.hex",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "words": 0,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/all_low_empty_complete_table/result_table_97.hex",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "words": 0,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/all_low_empty_complete_table/final.json",
+        "sha256": "7d2a3486cf333ae391b7173043e6e3b910edcdaf0b3a994692270b2a139e73af",
+        "bytes": 370
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/all_low_empty_complete_table/nms_events.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "events": 0,
+        "comparisons": 0
+      }
+    },
+    {
+      "case_id": 2,
+      "name": "threshold_equal_inclusive_and_below",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 1,
+        "vehicle_candidates": 0,
+        "decoded_candidates": 1,
+        "final_entries": 1,
+        "final_person": 1,
+        "final_vehicle": 0,
+        "event_count": 1,
+        "comparison_count": 0,
+        "decision_counts": {
+          "keep": 1
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/threshold_equal_inclusive_and_below/heads_cell_order_112.hex",
+        "sha256": "95731800e39321fabddff5e290a8f1d823a06500fb031196dbefd7e11798757c",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/threshold_equal_inclusive_and_below/top128_decoded_160.hex",
+        "sha256": "e9e588f171bb4f545c5a78bcaecf28420c0c00ea0b4f2615c3c82c7c6fd685d2",
+        "bytes": 42,
+        "words": 1,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/threshold_equal_inclusive_and_below/result_table_97.hex",
+        "sha256": "106cf8b761776d0ecf3cee5c4f446b46c6eb309e6e72bb858a7b82303ce84966",
+        "bytes": 27,
+        "words": 1,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/threshold_equal_inclusive_and_below/final.json",
+        "sha256": "fa391cc68b0f7fdb11f267601aa6727a68b932368f930eb7eb4342ced15bd0c2",
+        "bytes": 634
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/threshold_equal_inclusive_and_below/nms_events.jsonl",
+        "sha256": "a8e44920afdfa1776bb704ea73d02db5713e43f0a7544dd14bbcf2d3ac79d226",
+        "bytes": 69,
+        "events": 1,
+        "comparisons": 0
+      }
+    },
+    {
+      "case_id": 3,
+      "name": "top128_ties_and_each32_total64",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 128,
+        "vehicle_candidates": 128,
+        "decoded_candidates": 256,
+        "final_entries": 64,
+        "final_person": 32,
+        "final_vehicle": 32,
+        "event_count": 256,
+        "comparison_count": 992,
+        "decision_counts": {
+          "keep": 64,
+          "not_processed_class_cap": 192
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/top128_ties_and_each32_total64/heads_cell_order_112.hex",
+        "sha256": "f9ec347e7b2b9205346e62cd14a995c894f81d405396a9d46a65099f5e52541b",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/top128_ties_and_each32_total64/top128_decoded_160.hex",
+        "sha256": "65ed60bc70b39a4af7b952de3bfdbe008cdd4c287894eb37a2f1a89afca4a588",
+        "bytes": 10752,
+        "words": 256,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/top128_ties_and_each32_total64/result_table_97.hex",
+        "sha256": "e766357f8b0e34dca5e1075a07e905141e0a90da3d40b5fc17091292097c3782",
+        "bytes": 1728,
+        "words": 64,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/top128_ties_and_each32_total64/final.json",
+        "sha256": "3b9eafcc686ac1bf5c966e825ad6f9e98116d49252c58935c15f59562c1fc83c",
+        "bytes": 16658
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/top128_ties_and_each32_total64/nms_events.jsonl",
+        "sha256": "016aca16f77e43bfef8a34953e37d7866a34e2949634bae511b04c231a9bb79f",
+        "bytes": 106616,
+        "events": 256,
+        "comparisons": 992
+      }
+    },
+    {
+      "case_id": 4,
+      "name": "full_heap_replaces_worst_two",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 128,
+        "vehicle_candidates": 0,
+        "decoded_candidates": 128,
+        "final_entries": 32,
+        "final_person": 32,
+        "final_vehicle": 0,
+        "event_count": 128,
+        "comparison_count": 496,
+        "decision_counts": {
+          "keep": 32,
+          "not_processed_class_cap": 96
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/full_heap_replaces_worst_two/heads_cell_order_112.hex",
+        "sha256": "df493fbc4098ccc875050852086823978b512907599d786c88957831d48e3eb6",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/full_heap_replaces_worst_two/top128_decoded_160.hex",
+        "sha256": "cf5f8f5ac5fc68c153b48c0e5d32c145fc5c94024bc9dd6397756cd617c4a6f5",
+        "bytes": 5376,
+        "words": 128,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/full_heap_replaces_worst_two/result_table_97.hex",
+        "sha256": "b26140e52cc1d6a097d54ffc696b6aa12c32abebaedbbe5042df0868f5cbb537",
+        "bytes": 864,
+        "words": 32,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/full_heap_replaces_worst_two/final.json",
+        "sha256": "bd25699fff514935e1049e88c96025d24612164aca4afe92070aebc2aca33ed6",
+        "bytes": 8547
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/full_heap_replaces_worst_two/nms_events.jsonl",
+        "sha256": "db8fd0b3c3aa160c8a7150dc0b781e45d80bf9c90224888b4b095664fcc15a32",
+        "bytes": 53420,
+        "events": 128,
+        "comparisons": 496
+      }
+    },
+    {
+      "case_id": 5,
+      "name": "cell_order_cross_scale",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 3,
+        "vehicle_candidates": 0,
+        "decoded_candidates": 3,
+        "final_entries": 3,
+        "final_person": 3,
+        "final_vehicle": 0,
+        "event_count": 3,
+        "comparison_count": 3,
+        "decision_counts": {
+          "keep": 3
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/cell_order_cross_scale/heads_cell_order_112.hex",
+        "sha256": "836b41e05d68470455d1c99704780ce30d2ce9dd463fd880d3bd1d36f1a6e54c",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/cell_order_cross_scale/top128_decoded_160.hex",
+        "sha256": "c0633027325d3508b4bbb82e21081c8ee9f29427e0852137c13e7968ee0987ea",
+        "bytes": 126,
+        "words": 3,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/cell_order_cross_scale/result_table_97.hex",
+        "sha256": "89af9c844bfe2162f07da7b94fa5be5c11107076eca7ceaf3cd2878c5dd78a3a",
+        "bytes": 81,
+        "words": 3,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/cell_order_cross_scale/final.json",
+        "sha256": "59fe1300199a4596e645695deb2869c43d3fd9d0830cad23c6e86296120f7dc8",
+        "bytes": 1196
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/cell_order_cross_scale/nms_events.jsonl",
+        "sha256": "22149bfc6f347dd29d224641b02e6a78ccb0ec7bad4d758a5edc1cc34c701591",
+        "bytes": 491,
+        "events": 3,
+        "comparisons": 3
+      }
+    },
+    {
+      "case_id": 6,
+      "name": "person_vehicle_same_box_not_suppressed",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 1,
+        "vehicle_candidates": 1,
+        "decoded_candidates": 2,
+        "final_entries": 2,
+        "final_person": 1,
+        "final_vehicle": 1,
+        "event_count": 2,
+        "comparison_count": 0,
+        "decision_counts": {
+          "keep": 2
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/person_vehicle_same_box_not_suppressed/heads_cell_order_112.hex",
+        "sha256": "ef0664d302984ba1b07039989d730030e8ae5b145e3c37fbb4c062743af1016f",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/person_vehicle_same_box_not_suppressed/top128_decoded_160.hex",
+        "sha256": "52c5dadfd10c5b3149f36c264554278669f86f7cd861def4ffe5b540f742b0ba",
+        "bytes": 84,
+        "words": 2,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/person_vehicle_same_box_not_suppressed/result_table_97.hex",
+        "sha256": "49094990689773ac86fd60ac6b6b77a26f34f14966398308d2d49af57ae681d7",
+        "bytes": 54,
+        "words": 2,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/person_vehicle_same_box_not_suppressed/final.json",
+        "sha256": "8f34c6328b0980e3b73c657657309ea07a56d23bc9ce405207bbd7b1be296103",
+        "bytes": 878
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/person_vehicle_same_box_not_suppressed/nms_events.jsonl",
+        "sha256": "eddebe61c7ca140dfb0b1a26c3f64b6d9522812a62704921afa331f34a230648",
+        "bytes": 138,
+        "events": 2,
+        "comparisons": 0
+      }
+    },
+    {
+      "case_id": 7,
+      "name": "same_class_duplicate_suppressed",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 2,
+        "vehicle_candidates": 0,
+        "decoded_candidates": 2,
+        "final_entries": 1,
+        "final_person": 1,
+        "final_vehicle": 0,
+        "event_count": 2,
+        "comparison_count": 1,
+        "decision_counts": {
+          "keep": 1,
+          "suppress": 1
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/same_class_duplicate_suppressed/heads_cell_order_112.hex",
+        "sha256": "52a87aad445e4f746b76244fe7a8fc0eccf1e0b606a7eb7dfd4022fa475b5ed3",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/same_class_duplicate_suppressed/top128_decoded_160.hex",
+        "sha256": "59de3c82fe2e34e2457374f8b0bbbd57e0dbce24233dd17cc57988c7434163b2",
+        "bytes": 84,
+        "words": 2,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/same_class_duplicate_suppressed/result_table_97.hex",
+        "sha256": "725736e5c237bf01e8c95c6d346141541635c7425217e7c85e22ff608ba98120",
+        "bytes": 27,
+        "words": 1,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/same_class_duplicate_suppressed/final.json",
+        "sha256": "43f98f0902bd2ed1f216ecc4d514a38c5f8468df6f3136cca3c7a26e18283c47",
+        "bytes": 678
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/same_class_duplicate_suppressed/nms_events.jsonl",
+        "sha256": "40d67912b833cbae095a35e381784f343d25192eca7a793b26e28e998aa19ae6",
+        "bytes": 233,
+        "events": 2,
+        "comparisons": 1
+      }
+    },
+    {
+      "case_id": 8,
+      "name": "zero_area_after_clipping",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 1,
+        "vehicle_candidates": 0,
+        "decoded_candidates": 1,
+        "final_entries": 0,
+        "final_person": 0,
+        "final_vehicle": 0,
+        "event_count": 1,
+        "comparison_count": 0,
+        "decision_counts": {
+          "drop_zero_area": 1
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_after_clipping/heads_cell_order_112.hex",
+        "sha256": "4c423c9256f9748c92b872d2d4f488d3a74d08f31d386ba59c9f5c62c2fce2f7",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_after_clipping/top128_decoded_160.hex",
+        "sha256": "95311a6378e5062814bfefef455621f127c9850cb66b83482ad98dbf79893693",
+        "bytes": 42,
+        "words": 1,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_after_clipping/result_table_97.hex",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "words": 0,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_after_clipping/final.json",
+        "sha256": "cd32a2242d7e19fd5195df11596b8b10817a25e8f8638929c84bee34550a5a82",
+        "bytes": 407
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_after_clipping/nms_events.jsonl",
+        "sha256": "b4c601280bb87e3d58a02e261c2d11b5be879bb6a983af4d9051eaa08500ec49",
+        "bytes": 79,
+        "events": 1,
+        "comparisons": 0
+      }
+    },
+    {
+      "case_id": 9,
+      "name": "zero_area_not_removed_before_topk",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 128,
+        "vehicle_candidates": 0,
+        "decoded_candidates": 128,
+        "final_entries": 0,
+        "final_person": 0,
+        "final_vehicle": 0,
+        "event_count": 128,
+        "comparison_count": 0,
+        "decision_counts": {
+          "drop_zero_area": 128
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_not_removed_before_topk/heads_cell_order_112.hex",
+        "sha256": "4d1a729496485aabac2753ad933b732c468712abe516faa819451eaca621ce07",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_not_removed_before_topk/top128_decoded_160.hex",
+        "sha256": "0261a9ec98a952096f50df1366984c2deb5b96f0a6aede555b1a76b854ed2832",
+        "bytes": 5376,
+        "words": 128,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_not_removed_before_topk/result_table_97.hex",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "words": 0,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_not_removed_before_topk/final.json",
+        "sha256": "16fff0116d076e328c69a85713d5a796a023c3f0e9c83c1dfe62cd0213ac9961",
+        "bytes": 442
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/zero_area_not_removed_before_topk/nms_events.jsonl",
+        "sha256": "0b6e06d7a9c3e45d0af79975c2629d05e667a28cdc22ee512a9fa82623425fdf",
+        "bytes": 10404,
+        "events": 128,
+        "comparisons": 0
+      }
+    },
+    {
+      "case_id": 10,
+      "name": "source_rounding_degenerate_kept_by_current_reference",
+      "origin": "frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 1,
+        "vehicle_candidates": 0,
+        "decoded_candidates": 1,
+        "final_entries": 1,
+        "final_person": 1,
+        "final_vehicle": 0,
+        "event_count": 1,
+        "comparison_count": 0,
+        "decision_counts": {
+          "keep": 1
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/source_rounding_degenerate_kept_by_current_reference/heads_cell_order_112.hex",
+        "sha256": "11c7b261bb2bef019a52da6066195132b064c6c5a1bfb903bfadc160055d48e3",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/source_rounding_degenerate_kept_by_current_reference/top128_decoded_160.hex",
+        "sha256": "e6772ce4fbce954e9a41e9c65d73fa27d4516e1f4d093977f9be6e4cd651e959",
+        "bytes": 42,
+        "words": 1,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/source_rounding_degenerate_kept_by_current_reference/result_table_97.hex",
+        "sha256": "c1a29e05d4b91216d8d4c8730565d4a8711b8a77e77448b3122e325928213c9a",
+        "bytes": 27,
+        "words": 1,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/source_rounding_degenerate_kept_by_current_reference/final.json",
+        "sha256": "c3aa589d4fdebc23568f7070006eed391760d0fdad2e5ed22e8b0bd027ad509d",
+        "bytes": 639
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/source_rounding_degenerate_kept_by_current_reference/nms_events.jsonl",
+        "sha256": "b6e9881a6a17bdad0176675fd544f035f1fa525cae37e3a531ea2b6aa1a65c88",
+        "bytes": 69,
+        "events": 1,
+        "comparisons": 0
+      }
+    }
+  ],
+  "joint_extra_cases": [
+    {
+      "case_id": 11,
+      "name": "worst_comparisons_full_output",
+      "origin": "new_saved_heads_via_frozen_golden",
+      "expected": {
+        "head_words": 12096,
+        "person_candidates": 128,
+        "vehicle_candidates": 128,
+        "decoded_candidates": 256,
+        "final_entries": 64,
+        "final_person": 32,
+        "final_vehicle": 32,
+        "event_count": 256,
+        "comparison_count": 6944,
+        "decision_counts": {
+          "keep": 64,
+          "suppress": 192
+        }
+      },
+      "heads112": {
+        "path": "cnn/hw_validation/production/postprocess_joint_1fps_20261015/assets/worst_comparisons_full_output/heads_cell_order_112.hex",
+        "sha256": "8855843f829c8907e408735a8b222674c6547a9eeee19f9813439758faa24723",
+        "bytes": 362880,
+        "words": 12096,
+        "bits": 112
+      },
+      "decoded160": {
+        "path": "cnn/hw_validation/production/postprocess_joint_1fps_20261015/assets/worst_comparisons_full_output/top128_decoded_160.hex",
+        "sha256": "72709e2ef63362c2d03143001104898ce8cc46120fe9882482c0996c751d42a1",
+        "bytes": 10752,
+        "words": 256,
+        "bits": 160
+      },
+      "final97": {
+        "path": "cnn/hw_validation/production/postprocess_joint_1fps_20261015/assets/worst_comparisons_full_output/result_table_97.hex",
+        "sha256": "0cd719546d6cc2fcc18d7eb5fd6ab743f1d79ad82ffe8975f37a8f14386db446",
+        "bytes": 1728,
+        "words": 64,
+        "bits": 97
+      },
+      "final_json": {
+        "path": "cnn/hw_validation/production/postprocess_joint_1fps_20261015/assets/worst_comparisons_full_output/final.json",
+        "sha256": "7f1de9661f3e36a991790e05f737a27983d7fe4da3edd96f1d93232cf18adb4c",
+        "bytes": 17028
+      },
+      "nms_events": {
+        "path": "cnn/hw_validation/production/postprocess_joint_1fps_20261015/assets/worst_comparisons_full_output/nms_events.jsonl",
+        "sha256": "69f75125a9de4fbed8168bed635c0f4627f8ab39ff57883f22e5cb6e0110f0f0",
+        "bytes": 628344,
+        "events": 256,
+        "comparisons": 6944
+      }
+    }
+  ],
+  "comparison_landmarks": {
+    "real_image": {
+      "final_entries": 7,
+      "nms_comparisons": 16
+    },
+    "frozen_top128_both_classes": {
+      "decoded_candidates": 256,
+      "final_entries": 64,
+      "nms_comparisons": 992
+    },
+    "joint_saved_head_stress": {
+      "head_words": 12096,
+      "final_entries": 64,
+      "nms_comparisons": 6944
+    },
+    "c9_only_direct_candidate_stress": {
+      "included_in_joint_cases": false,
+      "final_entries": 64,
+      "nms_comparisons": 6944,
+      "source": {
+        "path": "cnn/hw_validation/production/nms_serial_rtl_20261015/extras/worst_comparisons_full_output/case.json",
+        "sha256": "c85b0acee5ebf0ff5b5469d2e2b917c042ef207586f2698be217d495d56effe2",
+        "bytes": 1314185
+      }
+    }
+  },
+  "case_count": 11,
+  "joint_extra_case_count": 1,
+  "CNN_inference_runs": 0
+}

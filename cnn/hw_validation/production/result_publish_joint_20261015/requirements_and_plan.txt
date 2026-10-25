@@ -1,0 +1,51 @@
+C9 第六批：真实后处理到三表发布，2026-10-15
+分支work/roadyolo；依据第六批任务_共享计算与结果发布接入_20261015.txt。
+写入仅本新目录；旧后处理/C8源码及报告只读。普通代理gpt-6.1-sol/high，文件独占。无TD/训练/生产/位流/上板/Flash/时序例外/commit/push/外部聊天消息。
+
+新增模块：road_result_publisher，Verilog-2001，100MHz单域。
+它只持有265位SRIF1上下文、7位已接受计数及状态/复位许可/错误脉冲，不保存任何FINAL97数组。
+FINAL97直接连接NMS到C8 source入口，entry_ready回传NMS；整个系统仅C8原source/pending/active三张表。
+流程：requirements→codegen_plan→规范/WaveDrom→Python状态语义→RTL→实际功能/门禁。沿readable-verilog-generator；Ponytail复用所有通过模块，不抽象通用发布框架。
+
+接口（除注明宽度外1位，全为i_clk域；i_rstn共同低有效异步断言、本地两拍许可后启动）
+输入 i_clk,i_rstn,i_cancel。
+输入 i_start_valid；i_start_epoch[31:0]、i_start_task_id[31:0]、i_start_source_frame_id[31:0]、i_start_model_id[31:0]、i_start_capture_ms[63:0]。
+输入 i_now_ms[63:0]：唯一road_time_snapshot.o_src_now_ms，完成时从同源计时器锁存，不跨域采样。
+输入 i_pipeline_start_ready：C2.o_start_ready。
+输入 i_entry_valid、i_entry[96:0]：NMS原输出；i_result_frame_token[31:0]、i_result_count[6:0]、i_result_done：NMS token/count/done。
+输入 i_pipeline_fault：现C2/NMS/LUT/reader故障聚合；i_table_entry_ready、i_table_meta_ready、i_table_copy_ack、i_table_busy、i_table_error：C8源端原输出。
+输出 o_start_ready：只有发布器IDLE、C8 source空且可写、C2能启动、已释放且无cancel/fault/error时接受。
+输出 o_pipeline_start_valid、o_pipeline_frame_token[31:0]、o_pipeline_model_id[31:0]：与外部start原子握手，token=task_id；输入描述符保持到接受。接收后输出锁存上下文。
+输出 o_pipeline_cancel：ABORT状态保持一拍，或IDLE/RUN/META中的外部cancel即时取消。故障经状态寄存器进入ABORT后取消，绝不把NMS故障组合反馈到其cancel（NMS故障本身受cancel门控）。接现C2.i_abort/NMS.i_cancel及LUT服务取消；reader不因此复位。
+输出 o_entry_ready、o_table_entry_valid、o_table_entry[96:0]：只有RUN且无失败、正确token、未满64才转发；o_table_entry是直接连线，不寄存数组。
+输出 o_table_meta_valid、o_table_metadata[264:0]：META阶段有效，保持直到C8 ready，末entry与metadata分拍。
+输出 o_table_abort：seal前失败即时阻断写入并撤销source部分表，ABORT状态再保持一拍；WAIT_ACK绝不驱动此信号。
+输出 o_busy、o_error：有任务到copy_ack都busy；错误为ABORT状态单拍，不新增粘滞诊断存储。
+
+状态及优先级
+IDLE：仅当全部启动许可满足才原子接收start，同时锁metadata{completion0,capture,status0,count0,model,source_frame,task,epoch}。
+RUN：累加实际entry valid&&ready，0..64；每项token必须等于锁定task。第65个valid、错误token、pipeline/table故障或cancel→ABORT。
+RUN的done只有在本拍没有entry_valid、result_count==accepted_count<=64、token正确、now>=capture时合法；否则→ABORT。冻结NMS保证done晚于最后entry接受。
+合法done在本边沿锁completion=同源now及count，下一拍才META，因此不同时写末entry和seal。
+META：metadata全265位保持。cancel/fault/error/意外entry_valid优先于meta接受，阻断meta valid并ABORT。meta valid&&ready后WAIT_ACK。
+WAIT_ACK：已seal是提交边界，忽略外部cancel/迟到故障对表的撤销要求，metadata保持，o_table_abort/o_pipeline_cancel为0。只认copy_ack退休；共同reset可取消所有已发布事务。
+ABORT：C8 source_abort和pipeline_cancel保持一拍，清计数后回IDLE；外部cancel若持续，则IDLE不再启动。已接受ROM读沿原LUT DRAIN排空，不伪造完成。
+同拍优先级：共同reset最高；未seal故障/cancel优先于start/entry/meta；seal后ack优先退休且不因cancel发abort。o_start_ready不因C8 busy初值0而提前放行第二帧。
+
+SRIF1固定布局
+epoch31:0/task63:32/source_frame95:64/model127:96/count134:128/status136:135/capture200:137/completion264:201。
+成功包括count0，status=0。失败不seal半表，不生成虚构成功空表。新的正常空表在下一SOF清框。
+
+冻结组件和演示时间
+四个后处理RTL沿上批哈希，唯一真实G10 ROM/reader/group/vendor/56lane来自上批通过闭包。
+C8 table SHA48a2cbfcd71f586bb4c616c7cca71365569e265b50854bfd49377ac1981209d3；time SHA00e3e267f6d479612019e8a63c52099705d69d2b29c0379e76c1fc9ae1eb4921。
+仅在新table实例设置AGE_LIMIT_MS=2000，旧模块默认500和旧收据不改。age_upper=snapshot-capture+4，1996原始差→2000可画，1997→2001禁画。未知/失联为AGE_INVALID（全1年龄），不显示0。
+正常100MHz/75MHz，模板1650×750总时序，每1237500像素拍一次用户SOF=16.5ms；这是实际模板75MHz/60.606Hz参数，不套用60Hz。
+正常整链使用真实road_time_snapshot。长年龄/1秒更新另用显式受控coherent时基分组，不修改时间模块或拿加速TB冒充真实FPS。capture上下文当前受控，等C8 source_sof_identity稳定交付再接真实SOF，不宣称摄像头闭环。
+
+验收
+先Python状态模型覆盖0/1/64条、启动阻塞、meta保持、preseal同拍取消、postseal取消保留、copy_ack退休、故障/计数/token/时间次序及共同reset。
+再完整12096cell→唯一正确PH1P ROM→LUT/TopK/NMS→source/pending/active：真实7框、空表、64框6944比较、长反压、部分输出故障、各阶段复位、不同token连续结果。
+测start→meta_accept→copy_ack→下一SOF active；互斥区间相加，LUT/ROM/输出等待为子计数。只有新source_frame完整结果算新检测，旧表保留不加FPS。
+保留厂商INIT_FILE/vopt-2697警告、所有严格门未闭合状态及数值/握手失败记录。新publisher优先审位宽、状态、驱动、归属；不借门禁格式追求改冻结核/接口。
+整帧1FPS/100M规划和硬限21216/40/108不变。本次组件功能不替代实际DDR、67层CNN、资源及时序、上板验收。

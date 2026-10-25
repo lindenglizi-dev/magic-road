@@ -1,0 +1,98 @@
+{
+  "name": "owner_tests",
+  "modules": [
+    {
+      "name": "tb_standard_arithmetic_owner",
+      "rtl_path": "tests/tb_standard_arithmetic_owner.v",
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "verification_completion",
+            "description": "全部断言完成后结束"
+          }
+        ]
+      },
+      "behavior": [
+        "加载冻结Python数值向量与原SiLU1024表",
+        "CASE0运行12任务并逐ACC/PRE/SiLU/POST/final对拍",
+        "CASE1/2/3在GROUP/ACC/OUTPUT共同reset后重装表恢复",
+        "CASE10..19/21检查身份类型、首组协议与核错误的sticky故障",
+        "CASE99真实修改ACC期望值一位，原数值checker必须报错而非PASS"
+      ],
+      "constraints": [
+        "仅仿真夹具，非可综合设计；force仅用于输出损坏负例",
+        "不测ROM7168、TD、DDR、整网或板卡"
+      ],
+      "corner_cases": [
+        "mask1/3/7、opaque唯一tags、错误/重复身份与错误类型",
+        "激活输出必须INT8符号扩展；raw保留完整INT16",
+        "末输出背压不释放，table只在idle接受",
+        "reset取消原核和元数据，SiLU必须重新装满"
+      ],
+      "verification_cases": [
+        "整数参考逐MAC/pre/SiLU/post/final值",
+        "真实ModelSim原核和原SiLU1024表",
+        "多组bias一次、尾mask、首组锁存扰动",
+        "GROUP/ACC/OUTPUT共同复位和故障保持"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "retirement",
+          "title": "仅最后真实输出退休释放",
+          "scenario": "retirement",
+          "description": "省略原核计算拍，输出反压保持身份，MAC交接不释放owner",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p..|......"
+              },
+              {
+                "name": "first_accept",
+                "wave": "010|000000"
+              },
+              {
+                "name": "mac_to_dpp",
+                "wave": "000|100000"
+              },
+              {
+                "name": "output_valid",
+                "wave": "000|011110"
+              },
+              {
+                "name": "output_ready",
+                "wave": "000|001010"
+              },
+              {
+                "name": "remaining",
+                "wave": ".=.|..=.=.",
+                "data": [
+                  "3",
+                  "2",
+                  "0"
+                ]
+              },
+              {
+                "name": "busy",
+                "wave": "0.1|111100"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

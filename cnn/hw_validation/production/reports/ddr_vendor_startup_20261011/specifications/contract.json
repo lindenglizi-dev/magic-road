@@ -1,0 +1,69 @@
+{
+  "modules": [
+    {
+      "name": "tb_ddr_vendor_startup",
+      "feature": "ddr_vendor_startup",
+      "rtl_path": "tb_ddr_vendor_startup.v",
+      "description": "Portless original-IP startup observation, no device model or memory PASS",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "ref_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "sys_rst_n",
+        "active": "low",
+        "synchronous": false,
+        "values": "Low for 2us, then observed for 1ms"
+      },
+      "behavior": [
+        "Idle APB and PAXI; observe original clocks, resets and DDR commands"
+      ],
+      "constraints": [
+        "No force, clock replacement, model substitution or timing acceleration"
+      ],
+      "corner_cases": [
+        "Missing clock, readiness timeout, unsolicited return"
+      ],
+      "verification_cases": [
+        "100200 reference rising edges in 1002us; no read/write claim without chip model"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "startup",
+          "title": "Startup observation",
+          "scenario": "startup",
+          "description": "Compressed stimulus schematic, no asserted PLL lock latency",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "ref_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "sys_rst_n",
+                "wave": "0..1......"
+              },
+              {
+                "name": "PAXI_valid",
+                "wave": "0........."
+              },
+              {
+                "name": "derived_clock_or_ready",
+                "wave": "x........."
+              }
+            ],
+            "head": {
+              "text": "Schematic only: clock/ready outputs are observed, not forced"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

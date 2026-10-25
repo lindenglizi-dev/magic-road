@@ -1,0 +1,123 @@
+{
+  "review": "independent_numeric_runtime_and_completed_diagnosis_review",
+  "reviewed_at_local_date": "2026-10-14",
+  "status": "CONTROLLED_DIAGNOSTIC_COMPLETED_RUNTIME_CAUSE_UNRESOLVED",
+  "scope": {
+    "read_only": true,
+    "python_or_tests_run_by_reviewer": false,
+    "model_or_training_run_by_reviewer": false,
+    "gpu_accessed_by_reviewer": false,
+    "production_training_or_qat_source_modified": false,
+    "review_boundary": "new diagnostic sources, CUDA availability isolation, frozen source evidence, and completed four-frame numeric report only"
+  },
+  "reviewed_artifacts_sha256": {
+    "cnn/hw_validation/production/diagnose_qat_continuation_drift.py": "f9cf51ce3fd376eeffedf590af95e81a2e44654a7aeb243ab10bd35caca777dc",
+    "cnn/hw_validation/production/inspect_qat_continuation_gradients.py": "ed0f6ff141fa1a2fdbb74f876e470672c8be35e4b24ab3bf119b02da45530da1",
+    "cnn/hw_validation/production/test_diagnose_qat_continuation_drift.py": "e731f94a03556013d67f724fd81c4b672d690316cf0efb74568988e8cd711dd8",
+    "cnn/hw_validation/production/test_inspect_qat_continuation_gradients.py": "1ca83f636b872a876b849a52cf59541a187a7a7db48fa2546ad1afc8a2fb3f0c",
+    "cnn/reports/qat_g20_drift_20261014_v1/numeric_failed_launch_v1/executed_source_recovered.py": "c8b12f53494487d7ce442c284f6ad928e2281b6dee9c74ec2f78ed98e864daff",
+    "cnn/reports/qat_g20_drift_20261014_v1/numeric_failed_launch_v1/failure.json": "544bba243f57dcbc6705cd3c70d3d2f7ef278788c8b255d27bc9d2f8cc267d23",
+    "cnn/reports/qat_g20_drift_20261014_v1/numeric/source_snapshot.json": "e3035cf2e792d1a209438369e0c5d8cf511142fd0eeaf2324d86749a1c1adb07",
+    "cnn/reports/qat_g20_drift_20261014_v1/numeric/diagnosis.json": "12424767d10a52c580324879e62eb9280548a3af9355cbfe1701b7fead84e749"
+  },
+  "runtime_path_review": {
+    "result": "PASS_FOR_THIS_BOUNDED_CPU_DIAGNOSTIC",
+    "diagnostic_guards": [
+      "diagnose_qat_continuation_drift.py:139-146 requires CUDA_VISIBLE_DEVICES=-1 and PYTORCH_NVML_BASED_CUDA_CHECK=1 before calling torch.cuda.is_available(), then rejects availability or prior CUDA initialization",
+      "inspect_qat_continuation_gradients.py:176-181 applies the same process-environment and CUDA-state guards"
+    ],
+    "installed_torch_2_7_1_path": [
+      "torch/cuda/__init__.py:157-169 selects device_count() when PYTORCH_NVML_BASED_CUDA_CHECK is exactly 1",
+      "torch/cuda/__init__.py:698-767 parses CUDA_VISIBLE_DEVICES=-1 as an empty visible-device list",
+      "torch/cuda/__init__.py:926-933 returns 0 immediately for that empty list, before NVML discovery",
+      "torch/cuda/__init__.py:982-997 calls torch._C._cuda_getDeviceCount() only when the NVML-derived count is negative; here it is 0"
+    ],
+    "conclusion": "For this installed Torch source and the guarded environment values, the availability check returns false without the cudaGetDeviceCount/cuInit fallback. The completed child self-recorded CUDA hidden, CUDA uninitialized, CPU threads 2, NumPy 2.3.5 overlay, and gpu_used false.",
+    "limit": "This proves the availability-query path, not absence of all CUDA-linked DLL loading during torch import and not the cause of earlier native crashes. The environment must still be supplied by the launcher before Python imports torch; the scripts validate rather than create that pre-import condition."
+  },
+  "failed_launch_preservation": {
+    "status": "preserved",
+    "source_sha256": "c8b12f53494487d7ce442c284f6ad928e2281b6dee9c74ec2f78ed98e864daff",
+    "failure": "native crash before numeric inference while verifying a training-source hash",
+    "windows_event": "2026-10-14T17:41:15.3103122+08:00, PID 0x7FA0, _generator.cp313-win_amd64.pyd, exception 0xC0000409, offset 0x4e185",
+    "candidate_updates": 0,
+    "root_cause": "UNRESOLVED"
+  },
+  "completed_numeric_diagnosis": {
+    "status": "completed_train_only_G20_drift_diagnosis_not_accuracy",
+    "seconds": 28.3926559999818,
+    "scope": "fixed first four of 86 training frames; targets constructed but unused; no validation data read",
+    "runtime": {
+      "python": "3.13.12",
+      "torch": "2.7.1+cu126",
+      "numpy": "2.3.5 isolated overlay",
+      "device": "cpu",
+      "cpu_threads": 2,
+      "cuda_visible_devices": "-1",
+      "pytorch_nvml_based_cuda_check": "1"
+    },
+    "bindings": {
+      "parent_g10_checkpoint_sha256": "f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd",
+      "g20_checkpoint_sha256": "36136fa83b37d4d8c4960d22fb5126e3326d984ffce0f4bd3136c24494bdb284",
+      "sample_identity_sha256": "51e6d202911d6884bb96b43a849793428dd99ac670b6d1ef28323fa10359523d",
+      "source_snapshot_count": 15,
+      "source_and_snapshot_hash_mismatches_at_review": 0,
+      "captured_before_inference": true,
+      "checkpoint_to_package_codes_exact": true
+    },
+    "safety_checks": {
+      "optimizer_created": false,
+      "training_updates": 0,
+      "validation_inference": false,
+      "ground_truth_used": false,
+      "candidate_exported": false,
+      "model_selection_performed": false,
+      "gpu_used": false
+    },
+    "parameter_change_evidence_parent_g10_to_g20": {
+      "weight_quant_code_differences": 1747,
+      "weight_quant_code_elements": 113100,
+      "bias_code_differences": 739,
+      "bias_code_elements": 2501,
+      "float_weight_changed": 112569,
+      "float_weight_elements": 113100,
+      "float_bias_changed": 2483,
+      "float_bias_elements": 2501
+    },
+    "g20_integer_vs_parent_integer_all7_normalized_rmse_mean": {
+      "concat.12": 0.3009289871233534,
+      "concat.13": 0.47794650644972236,
+      "concat.14": 0.29080081377040495
+    },
+    "largest_layer_normalized_rmse_mean": [
+      {"name": "head4.cls_pw.conv", "value": 0.9843996276684428},
+      {"name": "head4.cls_dw.conv", "value": 0.8500626588760916},
+      {"name": "fuse3_bu.reduce.conv", "value": 0.8486384046439375}
+    ],
+    "controlled_localization": {
+      "restore_parent_head_21_layers_normalized_rmse_mean": {
+        "concat.12": 0.298871583426197,
+        "concat.13": 0.478951162648955,
+        "concat.14": 0.291123651450509
+      },
+      "restore_parent_nonhead_46_layers_normalized_rmse_mean": {
+        "concat.12": 0.04131037440787,
+        "concat.13": 0.0579164433200216,
+        "concat.14": 0.0131516222755888
+      },
+      "interpretation": "On these four training inputs, restoring the 46 non-head weight/bias sets reduces output drift far more than restoring the 21 head sets; this localizes the dominant observed drift upstream/non-head for this diagnostic only. The two hybrids retain G20 scales and quantization coefficients, are nonlinear and not additive, so this is not AP causality or proof of a training defect."
+    },
+    "endpoint_note": "The report observed zero endpoint occupancy for the captured layers on these four frames, but correctly states that endpoint occupancy is not an exact clipping count."
+  },
+  "causality_boundary": {
+    "supported": "The NVML-based masked availability path was correctly guarded and a single controlled rerun completed without GPU use, optimizer construction, or updates.",
+    "not_supported": [
+      "that cudaGetDeviceCount or cuInit caused the earlier _generator native crash",
+      "that NumPy 2.3.5 or 2.4.6 is the root cause",
+      "that one successful rerun establishes general native-runtime stability",
+      "that four training-frame numeric localization explains the same17 AP regression"
+    ],
+    "root_cause": "UNRESOLVED"
+  },
+  "decision": "No technical blocker was found in the added environment guard for this bounded diagnostic, and the completed numeric evidence is internally bound to its frozen inputs and source snapshot. Keep the result diagnostic-only; it does not authorize a new recipe, added QAT updates, or a claim that the underlying native crash is fixed."
+}

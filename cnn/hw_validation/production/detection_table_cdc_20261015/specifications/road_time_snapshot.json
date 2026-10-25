@@ -1,0 +1,159 @@
+{
+  "modules": [
+    {
+      "name": "road_time_snapshot",
+      "feature": "detection_table_cdc",
+      "rtl_path": "road_time_snapshot.v",
+      "description": "独立同源时间冻结快照",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_src_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_src_clk",
+            "description": "i_src_clk"
+          },
+          {
+            "name": "i_dst_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_dst_clk",
+            "description": "i_dst_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn"
+          },
+          {
+            "name": "i_src_epoch",
+            "direction": "input",
+            "width": 32,
+            "role": "i_src_epoch",
+            "description": "i_src_epoch"
+          },
+          {
+            "name": "o_src_now_ms",
+            "direction": "output",
+            "width": 64,
+            "role": "o_src_now_ms",
+            "description": "o_src_now_ms"
+          },
+          {
+            "name": "o_src_tick",
+            "direction": "output",
+            "width": 1,
+            "role": "o_src_tick",
+            "description": "o_src_tick"
+          },
+          {
+            "name": "o_src_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "o_src_busy",
+            "description": "o_src_busy"
+          },
+          {
+            "name": "o_dst_now_ms",
+            "direction": "output",
+            "width": 64,
+            "role": "o_dst_now_ms",
+            "description": "o_dst_now_ms"
+          },
+          {
+            "name": "o_dst_epoch",
+            "direction": "output",
+            "width": 32,
+            "role": "o_dst_epoch",
+            "description": "o_dst_epoch"
+          },
+          {
+            "name": "o_dst_time_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "o_dst_time_valid",
+            "description": "o_dst_time_valid"
+          },
+          {
+            "name": "o_dst_update",
+            "direction": "output",
+            "width": 1,
+            "role": "o_dst_update",
+            "description": "o_dst_update"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "domains": "source100MHz, HDMI75MHz; actual template PLL.v C0/C4"
+      },
+      "reset": {
+        "assertion": "common i_rstn low asynchronously cancels both domains",
+        "release": "two locally clocked release registers per domain; no single-domain hot reset proof"
+      },
+      "behavior": [
+        "100000 source clocks per ms; epoch/time frozen before request toggle until synchronized ack.",
+        "Two destination request synchronizers, one stable capture wait; capture then ack.",
+        "Time channel independent of table pending/copy backpressure.",
+        "No time_valid before first new snapshot; >150000 destination clocks without update invalidates.",
+        "Physical CDC/bundled-data checks pending; clocks must be active for digital latency bound."
+      ],
+      "constraints": [
+        "No production, arithmetic, TD, timing exceptions, bitstream, board or Flash changes.",
+        "RAM and metadata/time bundled-data physical constraints remain unsigned-off."
+      ],
+      "corner_cases": [
+        "zero/full count, pending full, reset, stale identity, future time, time loss"
+      ],
+      "verification_cases": [
+        "dual clocks; all copy positions reset; backpressure; counts0/1/32/33/64; age500/2000; time watchdog"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "held_transfer",
+          "title": "冻结载荷与完整复制发布",
+          "scenario": "normal",
+          "description": "Rising-edge digital illustration; source payload must remain physically stable until ack.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "dst_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "request",
+                "wave": "01......"
+              },
+              {
+                "name": "req_meta",
+                "wave": "0.1....."
+              },
+              {
+                "name": "req_sync",
+                "wave": "0..1...."
+              },
+              {
+                "name": "capture_pending",
+                "wave": "0...10.."
+              },
+              {
+                "name": "capture_ack",
+                "wave": "0....1.."
+              },
+              {
+                "name": "held_payload",
+                "wave": "=.......",
+                "data": [
+                  "epoch,time held"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

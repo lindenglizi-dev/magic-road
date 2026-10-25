@@ -1,0 +1,31 @@
+第七批C2组件功能交接；2026-10-16；严格交付和系统闭环未完成。
+第六批ROM稳定交接已存在并已获C7独立只读核实：
+../rom_two_client_20261015/verification/handoff.md
+../rom_two_client_20261015/verification/final_summary.json
+最终实际PASS收据：reports/20261015_231451_881312_observed_stream_final/summary.json
+SHA256 098bf27eba702f925e23fa2c9f4f415cfa44a92349f9645ff79d3b63710c915d。
+652+1024仅down2 boot；真实两客户1280动态LUT通过，严格门失败保留，不能当67层参数服务或物理签核。
+本批当前稳定交接：
+verification/final_summary.json + handoff.txt：四骨干卷积20tile、12协议+1真实ACC负例通过，仅行为WIF。
+verification_extended/final_summary.json + handoff.txt：十固定卷积50行为tile、34真实C4厂商模型tile、12 native协议+1真实ACC负例通过。
+当前合格十层替换源extended/rtl/road_standard_tile_client.v；原base候选只读，两者不得并排例化。
+唯一C4仓源码SHA0d9f78544ce6e726a8ff042d7be0f5a2aee7d717bfbde0495a98a78dea25eb1c，准确资格核对在verification_extended/c4_qualification.json。
+前三reference目录31层/155个代表tile的CPU参考已全部通过；独立只读入口check_receipts.py重新核验所有100/102/113输入、514/789/2963产物。
+最终选源：head/client/rtl/road_standard_tile_client.v，只有一个31层固定case客户端，不并排例化base/extended。
+head/owner选用runs/20261016_013711_704214_case0/rtl/road_standard_arithmetic_owner.v，SHA244eb1939b68e91a88a21366fccde37026ac3ed2d502869d65df18b4d62aaf2d；live RTL同hash。原五核不改。
+head/owner/handoff.json：16场景真实ModelSim通过。发现并修复了badgroup接受立即fault与client撤valid形成的组合反馈，case21 gate-valid负例通过；旧013418仅诊断，不进入最终joint。
+verification_head/final_summary.json：31固定标准层选源真实C4厂商模型代表对拍通过。21head共105tile、22176任务、92352组、55328输出；其中1568 raw INT16，1537超INT8范围未截断。加旧十层各一个代表共115 nominal tile。
+同一最终选源12协议+实际ACC负例，以及raw取消/组接受后reset/输出未退休reset三项均通过。全部参数、WIF、部分和、acc/pre/SiLU/post、有效输出地址与黄金一致。
+head/stream/verification/delivery.json：无完整预测RAM的实际读取流，10正向+1真实比较器负例通过。六plane→12096cell/84672字段/30240源行读全部一致；源为冻结CPU预测plane，不是上述代表tile硬件完整生产输出。
+stream受控窗口313338拍，最后源读退休313293、最后cell接受313336；不能据此算整网FPS或后处理总时间，现有decode/TopK/NMS未包含在该窗口。
+sequence/rtl/road_standard_layer_sequence.v：31层全部6240tile发令、随机准入/完成、非法层/取消/reset在真实ModelSim通过（verification/reports/20261016_014753_201865）。完成端点为受控服务，未实际计算6240tile或连接完整CSP链。
+主最终独立收据final_receipt.json已重新核对所有参考输入/产物、7个head联合收据、相同owner/16局部case、stream与sequence源、五核、工具和规格hash。复现只读入口python -B finalize.py，不重启训练/仿真/综合。
+三concat输入按图内split左半+已融合残差物理alias路由，不物化拼接；部分新增输入为合成并明确非实际PAN前缀。
+严格八门失败与组合来源/运算预算项均保留，不称格式全过或100MHz物理通过。
+最终联合严格门verification_head/quality/20261016_014043_032197/gate.json为3988 errors/6 strict warnings，仍不准严格交付。各module/TB门和早期失败分别保留，不相加当唯一全局计数。
+source-bound规范和SVG分别在head/client/sc、head/stream/sc、head/owner/rtl与spec、sequence/sc、sequence/t；TB无source确认的限制见各verification交接，不能冒称全TB source crosscheck通过。
+未完成：全层发令器与实际compute相连后的完整输出对拍、实际down3→CSP3→down4→CSP4全幅共享owner链、完整31层/67卷积图执行、运行时ROM全部参数、真实DDR写可见性/视频闭环、整机资源/时序/FPS/精度。
+下一步先选唯一31层client+合格owner+C4仓，把全层发令接到真实tile服务，完成down3 DW→PW全幅输出对拍。
+跨线接口待C7统一：当前新raw/INT8 owner不做残差，C4 CSP客户仍需要原residual/bypass/signed9路径；两种应用owner不可各例化一套MAC/DPP来拼成“共享”链。须选择一个支持raw16和残差写回的新应用封装/适配并有界验证，仍只保留同一五核，不能直接把不支持残差的新owner接CSP。
+接口统一后再与C4 CSP3接同一owner；随后down4与CSP4，禁止CPU tensor跨越仍缺失的硬件阶段来宣布完整前缀。
+没有训练、TD、生产修改、位流、板卡、commit或push；本批1FPS/100M与资源上限只为目标，2000ms显示由其它线承担、旧500ms只读。

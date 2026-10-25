@@ -1,0 +1,810 @@
+{
+  "feature": "road_standard_tile_client",
+  "name": "road_standard_tile_client",
+  "rtl_path": "rtl/road_standard_tile_client.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "input",
+        "width": 1,
+        "role": "clk",
+        "clock_domain": "i_clk",
+        "description": "统一100MHz上升沿时钟"
+      },
+      {
+        "name": "i_rstn",
+        "direction": "input",
+        "width": 1,
+        "role": "rstn",
+        "clock_domain": "i_clk",
+        "description": "共同低有效异步复位，本地两级同步释放"
+      },
+      {
+        "name": "i_cancel",
+        "direction": "input",
+        "width": 1,
+        "role": "cancel",
+        "clock_domain": "i_clk",
+        "description": "取消当前查表，已接受的ROM读必须排空后再接新任务"
+      },
+      {
+        "name": "i_start_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "start_valid",
+        "clock_domain": "i_clk",
+        "description": "start_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_layer_id",
+        "direction": "input",
+        "width": 7,
+        "role": "layer_id",
+        "clock_domain": "i_clk",
+        "description": "layer_id：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_tile_y",
+        "direction": "input",
+        "width": 7,
+        "role": "tile_y",
+        "clock_domain": "i_clk",
+        "description": "tile_y：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_tile_x",
+        "direction": "input",
+        "width": 7,
+        "role": "tile_x",
+        "clock_domain": "i_clk",
+        "description": "tile_x：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_table_loaded",
+        "direction": "input",
+        "width": 1,
+        "role": "table_loaded",
+        "clock_domain": "i_clk",
+        "description": "table_loaded：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "parameter_ready",
+        "clock_domain": "i_clk",
+        "description": "parameter_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_rsp_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "parameter_rsp_valid",
+        "clock_domain": "i_clk",
+        "description": "parameter_rsp_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_rsp_layer",
+        "direction": "input",
+        "width": 7,
+        "role": "parameter_rsp_layer",
+        "clock_domain": "i_clk",
+        "description": "parameter_rsp_layer：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_rsp_channel",
+        "direction": "input",
+        "width": 7,
+        "role": "parameter_rsp_channel",
+        "clock_domain": "i_clk",
+        "description": "parameter_rsp_channel：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_rsp_window",
+        "direction": "input",
+        "width": 3,
+        "role": "parameter_rsp_window",
+        "clock_domain": "i_clk",
+        "description": "parameter_rsp_window：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_rsp_group",
+        "direction": "input",
+        "width": 5,
+        "role": "parameter_rsp_group",
+        "clock_domain": "i_clk",
+        "description": "parameter_rsp_group：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_weight",
+        "direction": "input",
+        "width": 192,
+        "role": "parameter_weight",
+        "clock_domain": "i_clk",
+        "description": "parameter_weight：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_quant",
+        "direction": "input",
+        "width": 248,
+        "role": "parameter_quant",
+        "clock_domain": "i_clk",
+        "description": "parameter_quant：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_parameter_error",
+        "direction": "input",
+        "width": 1,
+        "role": "parameter_error",
+        "clock_domain": "i_clk",
+        "description": "parameter_error：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_read_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "read_ready",
+        "clock_domain": "i_clk",
+        "description": "read_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_read_rsp_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "read_rsp_valid",
+        "clock_domain": "i_clk",
+        "description": "完整DECODED160记录有效并保持至消费"
+      },
+      {
+        "name": "i_read_rsp_address",
+        "direction": "input",
+        "width": 32,
+        "role": "read_rsp_address",
+        "clock_domain": "i_clk",
+        "description": "read_rsp_address：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_read_rsp_data",
+        "direction": "input",
+        "width": 128,
+        "role": "read_rsp_data",
+        "clock_domain": "i_clk",
+        "description": "PIF1固定DECODED160记录"
+      },
+      {
+        "name": "i_read_error",
+        "direction": "input",
+        "width": 1,
+        "role": "read_error",
+        "clock_domain": "i_clk",
+        "description": "read_error：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_write_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "write_ready",
+        "clock_domain": "i_clk",
+        "description": "write_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_barrier_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "barrier_ready",
+        "clock_domain": "i_clk",
+        "description": "barrier_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_barrier_layer",
+        "direction": "input",
+        "width": 7,
+        "role": "barrier_layer",
+        "clock_domain": "i_clk",
+        "description": "barrier_layer：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_barrier_tile_y",
+        "direction": "input",
+        "width": 7,
+        "role": "barrier_tile_y",
+        "clock_domain": "i_clk",
+        "description": "barrier_tile_y：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_barrier_tile_x",
+        "direction": "input",
+        "width": 7,
+        "role": "barrier_tile_x",
+        "clock_domain": "i_clk",
+        "description": "barrier_tile_x：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_byte_req_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "byte_req_ready",
+        "clock_domain": "i_clk",
+        "description": "byte_req_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_byte_rsp_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "byte_rsp_valid",
+        "clock_domain": "i_clk",
+        "description": "byte_rsp_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_byte_rsp_data",
+        "direction": "input",
+        "width": 8,
+        "role": "byte_rsp_data",
+        "clock_domain": "i_clk",
+        "description": "byte_rsp_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_byte_rsp_error",
+        "direction": "input",
+        "width": 1,
+        "role": "byte_rsp_error",
+        "clock_domain": "i_clk",
+        "description": "byte_rsp_error：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_weight_req_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "weight_req_ready",
+        "clock_domain": "i_clk",
+        "description": "weight_req_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_weight_rsp_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "weight_rsp_valid",
+        "clock_domain": "i_clk",
+        "description": "weight_rsp_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_weight_rsp_data",
+        "direction": "input",
+        "width": 192,
+        "role": "weight_rsp_data",
+        "clock_domain": "i_clk",
+        "description": "weight_rsp_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_weight_rsp_error",
+        "direction": "input",
+        "width": 1,
+        "role": "weight_rsp_error",
+        "clock_domain": "i_clk",
+        "description": "weight_rsp_error：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_work_fault",
+        "direction": "input",
+        "width": 1,
+        "role": "work_fault",
+        "clock_domain": "i_clk",
+        "description": "work_fault：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_core_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "core_ready",
+        "clock_domain": "i_clk",
+        "description": "core_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_core_output_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "core_output_valid",
+        "clock_domain": "i_clk",
+        "description": "core_output_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_core_output_tag",
+        "direction": "input",
+        "width": 16,
+        "role": "core_output_tag",
+        "clock_domain": "i_clk",
+        "description": "core_output_tag：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_core_output_address",
+        "direction": "input",
+        "width": 32,
+        "role": "core_output_address",
+        "clock_domain": "i_clk",
+        "description": "core_output_address：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_core_output_data",
+        "direction": "input",
+        "width": 16,
+        "role": "core_output_data",
+        "clock_domain": "i_clk",
+        "description": "core_output_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_core_fault",
+        "direction": "input",
+        "width": 1,
+        "role": "core_fault",
+        "clock_domain": "i_clk",
+        "description": "core_fault：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_start_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "start_ready",
+        "clock_domain": "i_clk",
+        "description": "start_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_busy",
+        "direction": "output",
+        "width": 1,
+        "role": "busy",
+        "clock_domain": "i_clk",
+        "description": "busy：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_done",
+        "direction": "output",
+        "width": 1,
+        "role": "done",
+        "clock_domain": "i_clk",
+        "description": "done：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_fault",
+        "direction": "output",
+        "width": 1,
+        "role": "fault",
+        "clock_domain": "i_clk",
+        "description": "本组件故障状态，不得发布为成功表"
+      },
+      {
+        "name": "o_layer_id",
+        "direction": "output",
+        "width": 7,
+        "role": "layer_id",
+        "clock_domain": "i_clk",
+        "description": "layer_id：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_tile_y",
+        "direction": "output",
+        "width": 7,
+        "role": "tile_y",
+        "clock_domain": "i_clk",
+        "description": "tile_y：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_tile_x",
+        "direction": "output",
+        "width": 7,
+        "role": "tile_x",
+        "clock_domain": "i_clk",
+        "description": "tile_x：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_parameter_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "parameter_valid",
+        "clock_domain": "i_clk",
+        "description": "parameter_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_parameter_channel",
+        "direction": "output",
+        "width": 7,
+        "role": "parameter_channel",
+        "clock_domain": "i_clk",
+        "description": "parameter_channel：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_parameter_window",
+        "direction": "output",
+        "width": 3,
+        "role": "parameter_window",
+        "clock_domain": "i_clk",
+        "description": "parameter_window：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_parameter_group",
+        "direction": "output",
+        "width": 5,
+        "role": "parameter_group",
+        "clock_domain": "i_clk",
+        "description": "parameter_group：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_parameter_rsp_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "parameter_rsp_ready",
+        "clock_domain": "i_clk",
+        "description": "parameter_rsp_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_read_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "read_valid",
+        "clock_domain": "i_clk",
+        "description": "read_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_read_address",
+        "direction": "output",
+        "width": 32,
+        "role": "read_address",
+        "clock_domain": "i_clk",
+        "description": "read_address：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_read_rsp_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "read_rsp_ready",
+        "clock_domain": "i_clk",
+        "description": "NMS消费完整候选响应"
+      },
+      {
+        "name": "o_write_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "write_valid",
+        "clock_domain": "i_clk",
+        "description": "write_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_write_address",
+        "direction": "output",
+        "width": 32,
+        "role": "write_address",
+        "clock_domain": "i_clk",
+        "description": "write_address：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_write_data",
+        "direction": "output",
+        "width": 16,
+        "role": "write_data",
+        "clock_domain": "i_clk",
+        "description": "write_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_barrier_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "barrier_valid",
+        "clock_domain": "i_clk",
+        "description": "barrier_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_byte_req_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "byte_req_valid",
+        "clock_domain": "i_clk",
+        "description": "byte_req_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_byte_req_write",
+        "direction": "output",
+        "width": 1,
+        "role": "byte_req_write",
+        "clock_domain": "i_clk",
+        "description": "byte_req_write：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_byte_req_addr",
+        "direction": "output",
+        "width": 12,
+        "role": "byte_req_addr",
+        "clock_domain": "i_clk",
+        "description": "byte_req_addr：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_byte_req_data",
+        "direction": "output",
+        "width": 8,
+        "role": "byte_req_data",
+        "clock_domain": "i_clk",
+        "description": "byte_req_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_byte_rsp_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "byte_rsp_ready",
+        "clock_domain": "i_clk",
+        "description": "byte_rsp_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_weight_req_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "weight_req_valid",
+        "clock_domain": "i_clk",
+        "description": "weight_req_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_weight_req_write",
+        "direction": "output",
+        "width": 1,
+        "role": "weight_req_write",
+        "clock_domain": "i_clk",
+        "description": "weight_req_write：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_weight_req_group",
+        "direction": "output",
+        "width": 5,
+        "role": "weight_req_group",
+        "clock_domain": "i_clk",
+        "description": "weight_req_group：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_weight_req_data",
+        "direction": "output",
+        "width": 192,
+        "role": "weight_req_data",
+        "clock_domain": "i_clk",
+        "description": "weight_req_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_weight_rsp_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "weight_rsp_ready",
+        "clock_domain": "i_clk",
+        "description": "weight_rsp_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "core_valid",
+        "clock_domain": "i_clk",
+        "description": "core_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_first",
+        "direction": "output",
+        "width": 1,
+        "role": "core_first",
+        "clock_domain": "i_clk",
+        "description": "core_first：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_last",
+        "direction": "output",
+        "width": 1,
+        "role": "core_last",
+        "clock_domain": "i_clk",
+        "description": "core_last：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_input_mask",
+        "direction": "output",
+        "width": 8,
+        "role": "core_input_mask",
+        "clock_domain": "i_clk",
+        "description": "core_input_mask：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_activation",
+        "direction": "output",
+        "width": 64,
+        "role": "core_activation",
+        "clock_domain": "i_clk",
+        "description": "core_activation：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_weight",
+        "direction": "output",
+        "width": 192,
+        "role": "core_weight",
+        "clock_domain": "i_clk",
+        "description": "core_weight：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_bias",
+        "direction": "output",
+        "width": 96,
+        "role": "core_bias",
+        "clock_domain": "i_clk",
+        "description": "core_bias：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_output_mask",
+        "direction": "output",
+        "width": 3,
+        "role": "core_output_mask",
+        "clock_domain": "i_clk",
+        "description": "core_output_mask：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_tags",
+        "direction": "output",
+        "width": 48,
+        "role": "core_tags",
+        "clock_domain": "i_clk",
+        "description": "core_tags：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_addresses",
+        "direction": "output",
+        "width": 96,
+        "role": "core_addresses",
+        "clock_domain": "i_clk",
+        "description": "core_addresses：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_pre_multiplier",
+        "direction": "output",
+        "width": 96,
+        "role": "core_pre_multiplier",
+        "clock_domain": "i_clk",
+        "description": "core_pre_multiplier：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_pre_shift",
+        "direction": "output",
+        "width": 18,
+        "role": "core_pre_shift",
+        "clock_domain": "i_clk",
+        "description": "core_pre_shift：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_post_multiplier",
+        "direction": "output",
+        "width": 32,
+        "role": "core_post_multiplier",
+        "clock_domain": "i_clk",
+        "description": "core_post_multiplier：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_post_shift",
+        "direction": "output",
+        "width": 6,
+        "role": "core_post_shift",
+        "clock_domain": "i_clk",
+        "description": "core_post_shift：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_core_output_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "core_output_ready",
+        "clock_domain": "i_clk",
+        "description": "core_output_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_core_output_int16",
+        "direction": "input",
+        "width": 1,
+        "role": "core_output_int16",
+        "description": "预测头原始INT16模式与实际写回类型，首组冻结后保持",
+        "clock_domain": "i_clk"
+      },
+      {
+        "name": "o_write_int16",
+        "direction": "output",
+        "width": 1,
+        "role": "write_int16",
+        "description": "预测头原始INT16模式与实际写回类型，首组冻结后保持",
+        "clock_domain": "i_clk"
+      },
+      {
+        "name": "o_core_activate",
+        "direction": "output",
+        "width": 1,
+        "role": "core_activate",
+        "description": "预测头原始INT16模式与实际写回类型，首组冻结后保持",
+        "clock_domain": "i_clk"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "local_sync_two_flops_or_owner_gating"
+  },
+  "parameters": {},
+  "behavior": [
+    "锁存固定graph层与对齐tile；一任务覆盖真实有效行和全部输出通道，不冒充整层。",
+    "先完整覆盖WIF1 byte/weight使用范围，所有写响应退休后再读。DW逐通道81B，PW16*Cin。",
+    "每组先同步读weight响应，再逐byte组装activation；发射保持至核ready；偏置仅first有效。",
+    "输出逐tag核验mask、地址与唯一性；全部真实写接受后再发barrier；barrier身份核验后done。",
+    "cancel/fault占有直到共同reset；不允许借此切owner或宣称DDR已排空。",
+    "十层固定case候选，base四层保持；Cin96需要12权重组和1536字节完整覆盖。",
+    "三个concat输入按原graph视图选择两个物理存储，不物化拼接，不重复做残差加法。",
+    "31固定卷积可选；stride1 DW并集15与末点9，分别四槽权重；输出H72/W128。",
+    "六预测卷积INT16 pre-only；cls2/reg5尾mask只启用真实输出，输出写宽16+类型且字节地址乘二。"
+  ],
+  "constraints": [
+    "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+    "不改变冻结算术核/数值，不复制公共存储",
+    "C4独占工作仓实现；本客户无私有tile/weight数组",
+    "首批仅INT8四层，不含INT16预测头或物理时序"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "four layers real G10 parameter representative corner/interior tiles",
+    "H18 tail row protection",
+    "intermediate acc/pre/SiLU/post",
+    "random source/parameter/WIF/core/write backpressure",
+    "common reset outstanding read/write",
+    "bad parameter identity and illegal tile/layer",
+    "no private caches and stable stalled payloads",
+    "六层新增代表tile与虚拟concat物理地址对拍",
+    "1536字节索引及12组权重不截断"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "协议示意：省略内部变长计算，用空白间隔表示；不是固定总时延。仅valid与ready同拍消费。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p..........."
+          },
+          {
+            "name": "start_valid",
+            "wave": "010........."
+          },
+          {
+            "name": "byte_write_req",
+            "wave": "0.1.0......."
+          },
+          {
+            "name": "byte_write_rsp",
+            "wave": "0....10....."
+          },
+          {
+            "name": "weight_read_req",
+            "wave": "0.....10...."
+          },
+          {
+            "name": "weight_read_rsp",
+            "wave": "0.......10.."
+          },
+          {
+            "name": "core_valid",
+            "wave": "0........1.0"
+          },
+          {
+            "name": "core_ready",
+            "wave": "0.........10"
+          }
+        ]
+      }
+    }
+  ],
+  "clock_reset": {
+    "clock": "i_clk 100MHz rising edge",
+    "reset": "i_rstn async assert, two-edge sync release; all services common reset"
+  }
+}

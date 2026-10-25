@@ -1,0 +1,10 @@
+任务：modify + validate，单变量ROM布局候选。
+基线：stem_ddr_down2_four_20261014；所有旧文件、失败报告和已上板单tile位流冻结不覆盖。
+修改：仅road_stem_ddr_sequence中8192×64命令ROM，改为两个显式4096×64 bank；同步读取两个bank，同拍寄存bank选择位，组合选择稳定的命令字。
+接口/时序：不改任何端口、FSM、内部核II、数值、DDR握手、复位取消或外设协议。FETCH沿后命令可用，DECODE沿消费，非FETCH期间两个返回寄存器及选择位保持。命令内容和每个案例端点周期必须与基线一致。
+复位：新增ROM返回/选择寄存器无需清零，与原reg_command一样在首个FETCH前无效；共同复位取消valid，释放后仍重新装满1024表项，不能消费旧命令。
+范围：16 Stem tile、256唯一写字、289读字、四down2 tile、1536输出字节、26624逐阶段数值检查不变；测试参数不代表真实模型精度。
+验证：8192词双bank重建；RTL逐地址/4095→4096/停顿保持；原13例和双时钟联调；严格八项门禁；一次同器件、同SDC、同工具配置完整TD。若同点崩溃，停止该结构分支，不继续随机调参或冒充根因已定位。
+物理：PH1P35MDG324速度3，计算100MHz，原DDR/HDMI时钟及原显示CDC例外不变。沿基线最后一次flow.thread=1、place.opt_timing=medium，其余构建配置按字节复制。
+不做：训练、生产改动、上板、Flash、额外时序例外、更多tile、CRC探针、核结构重写。未完成有效全量时序前不生成位流。
+技能：readable-verilog-generator、Ponytail最小复用。readable-python-generator/readable-script-generator缺项保留，不安装、不宣称其严格门通过。

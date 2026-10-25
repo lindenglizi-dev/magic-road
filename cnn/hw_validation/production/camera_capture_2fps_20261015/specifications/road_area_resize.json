@@ -1,0 +1,176 @@
+{
+  "modules": [
+    {
+      "name": "road_area_resize",
+      "feature": "camera_capture",
+      "rtl_path": "road_area_resize.v",
+      "description": "精确2/5面积缩放",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_clk",
+            "description": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": 96,
+            "role": "i_rgb",
+            "description": "i_rgb"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "i_valid",
+            "description": "i_valid"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "i_sof",
+            "description": "i_sof"
+          },
+          {
+            "name": "i_eol",
+            "direction": "input",
+            "width": 1,
+            "role": "i_eol",
+            "description": "i_eol"
+          },
+          {
+            "name": "o_pixels",
+            "direction": "output",
+            "width": 48,
+            "role": "o_pixels",
+            "description": "o_pixels"
+          },
+          {
+            "name": "o_pixel_mask",
+            "direction": "output",
+            "width": 2,
+            "role": "o_pixel_mask",
+            "description": "o_pixel_mask"
+          },
+          {
+            "name": "o_sof",
+            "direction": "output",
+            "width": 1,
+            "role": "o_sof",
+            "description": "o_sof"
+          },
+          {
+            "name": "o_eol",
+            "direction": "output",
+            "width": 1,
+            "role": "o_eol",
+            "description": "o_eol"
+          },
+          {
+            "name": "o_eof",
+            "direction": "output",
+            "width": 1,
+            "role": "o_eof",
+            "description": "o_eof"
+          },
+          {
+            "name": "o_frame_error",
+            "direction": "output",
+            "width": 1,
+            "role": "o_frame_error",
+            "description": "o_frame_error"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "o_busy",
+            "description": "o_busy"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "single i_clk domain; no CDC supplied"
+      },
+      "reset": {
+        "assertion": "i_rstn low asynchronously cancels state and transactions",
+        "release": "caller supplies locally synchronized release; external DDR drain is not implemented"
+      },
+      "behavior": [
+        "AWB96 high lane first; each lane R[23:16], G[15:8], B[7:0].",
+        "1280x720 to 512x288; horizontal 11-bit and vertical 13-bit; round once after /25.",
+        "128 record queue; each record contains one or two horizontal sums; worker emits at most one pixel per cycle.",
+        "Ordinary fixture: 320 active beats plus 480 gap clocks per row; overflow cancels frame.",
+        "Output low byte R,G,B; mask01; SOF first pixel, EOL each 512th, EOF final pixel.",
+        "No camera backpressure; short/long row, reentrant SOF, overflow or reset flush partial frame."
+      ],
+      "constraints": [
+        "Do not modify production, arithmetic, timing exceptions or real peripheral protocol.",
+        "No physical mapping, bitstream, board or real DDR visibility claim."
+      ],
+      "corner_cases": [
+        "reset, simultaneous events, partial input, stale events, overload"
+      ],
+      "verification_cases": [
+        "three complete pixelwise frames and malformed frame tests"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "horizontal_records",
+          "title": "五拍水平相位与变长记录",
+          "scenario": "record_flow",
+          "description": "Each valid AWB96 beat creates one record. Vertical worker drains one pixel per clock; final pipeline latency is measured separately.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "input_valid",
+                "wave": "01....0"
+              },
+              {
+                "name": "phase",
+                "wave": "=======",
+                "data": [
+                  "0",
+                  "0",
+                  "4",
+                  "3",
+                  "2",
+                  "1",
+                  "0"
+                ]
+              },
+              {
+                "name": "record_pixels",
+                "wave": "=======",
+                "data": [
+                  "0",
+                  "1",
+                  "2",
+                  "1",
+                  "2",
+                  "2",
+                  "0"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

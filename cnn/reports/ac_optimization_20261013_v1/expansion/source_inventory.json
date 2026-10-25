@@ -1,0 +1,452 @@
+{
+  "schema": "roadyolo_ac_expansion_source_inventory_v1",
+  "date_local": "2026-10-13",
+  "branch": "work/roadyolo",
+  "status": "inventory_and_target_slots_only_not_dataset_freeze",
+  "scope": {
+    "target_train_images": 128,
+    "target_dev_images": 64,
+    "current_train_images": 22,
+    "current_dev_images": 17,
+    "current_distinct_images_total": 39,
+    "train_shortfall": 106,
+    "dev_shortfall": 64,
+    "current_dev_role": "historical_comparison_only_not_counted_in_target64",
+    "main_scenes": [
+      "A_fixed_oblique_overhead_park_road_entrance_passage"
+    ],
+    "supplement_scenes": [
+      "C_parking_lane"
+    ],
+    "conditions": "daylight_low_or_medium_density",
+    "pressure_only": [
+      "D_large_intersection"
+    ],
+    "minimum_dev_physical_cameras": 6,
+    "current_dev_registered_cameras": 3,
+    "minimum_new_dev_cameras": 6,
+    "human_uncertain_frame_budget_max": 12,
+    "selection_by_student_or_teacher_prediction_quality": false,
+    "blind_reserve_newtest_opened": false,
+    "download_performed": false,
+    "labels_created": false,
+    "teacher_inference_performed": false,
+    "training_performed": false
+  },
+  "evidence_levels": {
+    "E3": "已进入2026-10-13小诊断冻结清单；仅对该G10诊断可用，不是正式128/64验收集",
+    "E2": "已有精确逐图候选、原图哈希和坐标检查，但标签未签署或存在监督待定，不能训练/选模",
+    "E1": "本地已有媒体与来源标签或收据，但没有合格逐图候选清单，或机位/完整性未闭合",
+    "X": "已排除、仅压力用途、历史比较或保留集，不进入本次A/C主集合"
+  },
+  "current_diagnostic_dataset": {
+    "dataset_json": "cnn/reports/ac_g10_20261013_v1/dataset.json",
+    "dataset_sha256": "6af48b5ec8da6550a5d0af31db8b8f58d1fc8c9960df0eda9a66ad7c94f5f5e1",
+    "formal_acceptance": false,
+    "train": {
+      "images": 22,
+      "registered_camera_ids": 5,
+      "original_recording_families": 2,
+      "camera_ids": [
+        "EPFL:c0",
+        "EPFL:c2",
+        "EPFL:c3",
+        "EPFL:c5",
+        "VIRAT-0102xx-train-only-provisional"
+      ],
+      "family_collapse": {
+        "epfl_multiclass_synchronized_campus_recording": [
+          "EPFL:c0",
+          "EPFL:c2",
+          "EPFL:c3",
+          "EPFL:c5"
+        ],
+        "VIRAT_S_010204_05_000856_000890": [
+          "VIRAT-0102xx-train-only-provisional"
+        ]
+      },
+      "warning": "5个camera_id只来自2个原始拍摄家族；后续106张不能用同视频相邻帧补齐。"
+    },
+    "dev": {
+      "images": 17,
+      "registered_camera_ids": 3,
+      "camera_counts": {
+        "PETS09-S2L1-view1": 13,
+        "virat-010107-camera-b": 2,
+        "virat-parking-lot-camera-a": 2
+      },
+      "dominance": {
+        "camera_id": "PETS09-S2L1-view1",
+        "images": 13,
+        "fraction": 0.7647058823529411
+      },
+      "warning": "当前PETS单机位占13/17，不能作为64图多机位开发集的最终比例。"
+    }
+  },
+  "fixed_target_manifest_table": [
+    {
+      "slot": "train_current_A",
+      "split": "train",
+      "scene": "A",
+      "images": 16,
+      "source_requirement": "保留当前EPFL A 4图与VIRAT 010204_05 A 12图",
+      "assignment_status": "existing_E3"
+    },
+    {
+      "slot": "train_current_C",
+      "split": "train",
+      "scene": "C",
+      "images": 6,
+      "source_requirement": "保留当前EPFL C 6图",
+      "assignment_status": "existing_E3"
+    },
+    {
+      "slot": "train_new_A_family_1",
+      "split": "train",
+      "scene": "A",
+      "images": 40,
+      "source_requirement": "新的固定斜俯视入口/通道原片家族，完整person/vehicle原生GT",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    },
+    {
+      "slot": "train_new_A_family_2",
+      "split": "train",
+      "scene": "A",
+      "images": 40,
+      "source_requirement": "与现有EPFL、VIRAT-0102xx及family_1不同的固定斜俯视原片家族",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    },
+    {
+      "slot": "train_new_C_family_1",
+      "split": "train",
+      "scene": "C",
+      "images": 26,
+      "source_requirement": "新的停车车道原片家族，静止车辆与骑行者口径完整",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    },
+    {
+      "slot": "dev_new_A_camera_1",
+      "split": "dev",
+      "scene": "A",
+      "images": 12,
+      "source_requirement": "新物理机位/原片家族，固定斜俯视入口或通道，完整GT",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    },
+    {
+      "slot": "dev_new_A_camera_2",
+      "split": "dev",
+      "scene": "A",
+      "images": 12,
+      "source_requirement": "与所有训练源及其他开发机位不同的物理机位/原片家族",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    },
+    {
+      "slot": "dev_new_A_camera_3",
+      "split": "dev",
+      "scene": "A",
+      "images": 12,
+      "source_requirement": "与所有训练源及其他开发机位不同的物理机位/原片家族",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    },
+    {
+      "slot": "dev_new_A_camera_4",
+      "split": "dev",
+      "scene": "A",
+      "images": 12,
+      "source_requirement": "与所有训练源及其他开发机位不同的物理机位/原片家族",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    },
+    {
+      "slot": "dev_new_C_camera_1",
+      "split": "dev",
+      "scene": "C",
+      "images": 8,
+      "source_requirement": "新停车车道物理机位/原片家族，完整静止车辆标签",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    },
+    {
+      "slot": "dev_new_C_camera_2",
+      "split": "dev",
+      "scene": "C",
+      "images": 8,
+      "source_requirement": "与所有训练源及其他开发机位不同的停车车道物理机位/原片家族",
+      "assignment_status": "unfilled_no_current_local_source_certified"
+    }
+  ],
+  "local_exact_sources": [
+    {
+      "source_id": "current_EPFL_reviewed10",
+      "split": "train",
+      "scene_counts": {"A": 4, "C": 6},
+      "family_id": "epfl_multiclass_synchronized_campus_recording",
+      "camera_frames": {
+        "EPFL:c0": [40, 160],
+        "EPFL:c2": [40, 80, 160, 220],
+        "EPFL:c3": [80, 220],
+        "EPFL:c5": [40, 160]
+      },
+      "images": 10,
+      "evidence": "E3",
+      "label_completeness": "用户审核记录已进入小诊断；EPFL原包整体仍有公交/自行车漏标风险",
+      "review_burden": "0张重审；不外推到其余1442张",
+      "decision": "retain_current_only"
+    },
+    {
+      "source_id": "current_VIRAT_S_010204_05_000856_000890_reviewed12",
+      "split": "train",
+      "scene": "A",
+      "family_id": "VIRAT-0102xx-train-only-provisional",
+      "camera_id": "VIRAT-0102xx-train-only-provisional",
+      "frames_zero_based": [46, 93, 139, 186, 233, 256, 326, 373, 419, 466, 489, 536],
+      "images": 12,
+      "evidence": "E3",
+      "label_completeness": "用户聊天授权代录进入小诊断；原8张AI疑点仍保留追溯",
+      "review_burden": "0张重审",
+      "decision": "retain_current_only"
+    },
+    {
+      "source_id": "current_PETS09_S2L1_reviewed13",
+      "split": "dev",
+      "scene": "A",
+      "family_id": "PETS09-S2L1-all-views",
+      "camera_id": "PETS09-S2L1-view1",
+      "frames_one_based": [40, 100, 170, 240, 310, 380, 450, 520, 550, 590, 660, 730, 790],
+      "images": 13,
+      "evidence": "E3",
+      "label_completeness": "当前小诊断标签含补画车辆；来源MOT/PETS原GT本身只覆盖行人",
+      "review_burden": "0张重审",
+      "decision": "historical_comparison_only_not_in_target64"
+    },
+    {
+      "source_id": "current_VIRAT_S_010107_02_000282_000312_reviewed2",
+      "split": "dev",
+      "scene": "C",
+      "family_id": "virat-010107-camera-b",
+      "camera_id": "virat-010107-camera-b",
+      "frames_zero_based": [104, 249],
+      "images": 2,
+      "evidence": "E3",
+      "label_completeness": "当前小诊断使用并保留2个ignore",
+      "review_burden": "0张重审",
+      "decision": "historical_comparison_only_not_in_target64"
+    },
+    {
+      "source_id": "current_VIRAT_S_000200_00_000100_000171_reviewed2",
+      "split": "dev",
+      "scene": "C",
+      "family_id": "virat-parking-lot-camera-a",
+      "camera_id": "virat-parking-lot-camera-a",
+      "frames_zero_based": [637, 1376],
+      "images": 2,
+      "evidence": "E3",
+      "label_completeness": "当前小诊断使用；VIRAT该原片其余帧不能由来源轨迹框推定完整",
+      "review_burden": "0张重审",
+      "decision": "historical_comparison_only_not_in_target64"
+    },
+    {
+      "source_id": "VIRAT_S_010204_05_remaining12",
+      "split": "train",
+      "scene": "A",
+      "family_id": "VIRAT-0102xx-train-only-provisional",
+      "camera_id": "VIRAT-0102xx-train-only-provisional",
+      "frames_zero_based": [23, 69, 116, 163, 209, 279, 303, 349, 396, 443, 513, 559],
+      "images": 12,
+      "evidence": "E2",
+      "label_completeness": "同一视频的未签署/监督待定草稿，不因当前12张获准而继承complete",
+      "review_burden": "逐帧补闭环；且增加相邻帧不增加机位/家族多样性",
+      "decision": "do_not_use_for_106_gap"
+    },
+    {
+      "source_id": "VIRAT_S_010204_01_000072_000225_candidate55",
+      "split": "train",
+      "scene": "A",
+      "family_id": "VIRAT-0102xx-train-only-provisional",
+      "camera_id": "VIRAT-0102xx-train-only-provisional",
+      "frames_zero_based": [65, 130, 195, 260, 325, 390, 455, 520, 585, 650, 715, 780, 845, 910, 975, 1040, 1105, 1170, 1236, 1301, 1366, 1431, 1496, 1561, 1626, 1691, 1756, 1821, 1886, 1951, 2016, 2081, 2146, 2211, 2276, 2341, 2406, 2472, 2537, 2602, 2667, 2732, 2797, 2862, 2927, 2992, 3057, 3122, 3187, 3252, 3317, 3382, 3447, 3512, 3577],
+      "images": 55,
+      "evidence": "E2",
+      "label_completeness": "AI草稿；0102xx剩余67图合计62图有99条hold、5图无hold但未签署",
+      "review_burden": "显著超过12张不确定帧预算；并与当前VIRAT12同一0102xx家族",
+      "decision": "exclude_from_fixed_target"
+    },
+    {
+      "source_id": "VIRAT_S_040000_00_000063_000085_candidate24",
+      "split": "train",
+      "scene": "C",
+      "family_id": "VIRAT-0400xx-train-only-provisional",
+      "camera_id": "VIRAT-0400xx-train-only-provisional",
+      "frames_zero_based": [34, 68, 92, 102, 136, 170, 185, 204, 238, 272, 277, 306, 341, 370, 375, 409, 443, 462, 477, 511, 545, 555, 579, 613],
+      "images": 24,
+      "evidence": "E2",
+      "label_completeness": "24/24图均有监督hold，共56条；其中6图虽保留历史人工记录也未闭合",
+      "review_burden": "至少24帧受影响，超过12张预算",
+      "decision": "exclude_from_fixed_target"
+    },
+    {
+      "source_id": "MIO_reviewed15_camera_unknown",
+      "split": "train",
+      "scene_counts": {"A": 13, "C": 2},
+      "family_id": "MIO-entire-source-train-only-camera-IDs-unresolved",
+      "image_ids": ["mio_00016630", "mio_00021031", "mio_00026320", "mio_00048542", "mio_00055961", "mio_00065563", "mio_00066766", "mio_00071079", "mio_00079251", "mio_00087785", "mio_00093389", "mio_00097475", "mio_00098678", "mio_00101156", "mio_00105154"],
+      "images": 15,
+      "evidence": "E2",
+      "label_completeness": "人工审核记录保留",
+      "review_burden": "标签无需重审，但15张真实camera_id仍未知，无法证明家族隔离",
+      "decision": "blocked_until_authoritative_camera_metadata"
+    },
+    {
+      "source_id": "VIRAT_S_000200_00_000100_000171_remaining12",
+      "split": "dev",
+      "scene": "C",
+      "family_id": "virat-parking-lot-camera-a",
+      "camera_id": "virat-parking-lot-camera-a",
+      "frames_zero_based": [162, 325, 487, 650, 812, 975, 1137, 1300, 1462, 1625, 1787, 1950],
+      "images": 12,
+      "evidence": "E2",
+      "label_completeness": "5图有7条hold，7图无登记hold但仍未签署",
+      "review_burden": "最多12帧但不能增加dev机位数，且会加重已有停车机位占比",
+      "decision": "do_not_use_for_dev_camera_gap"
+    },
+    {
+      "source_id": "VIRAT_050000_same_view_construction47",
+      "split": "dev",
+      "scene": "A_transfer_not_main",
+      "family_id": "VIRAT-0500xx-dev-only-provisional",
+      "camera_id": "VIRAT-0500xx-dev-only-provisional",
+      "clips": {
+        "VIRAT_S_050000_12_001591_001619": [33, 66, 99, 133, 166, 199, 233, 266, 299, 333, 366, 399, 433, 466, 499, 533, 566, 599, 633, 666, 699, 733, 766, 799],
+        "VIRAT_S_050000_10_001462_001491": [35, 71, 107, 143, 179, 215, 251, 287, 322, 358, 394, 430, 466, 502, 538, 574, 609, 645, 681, 717, 753, 789, 825]
+      },
+      "images": 47,
+      "evidence": "E2",
+      "label_completeness": "47/47图有监督hold，共156条；两段视觉确认是同一物理画面",
+      "review_burden": "远超12张预算",
+      "decision": "already_excluded_construction_dev_source"
+    },
+    {
+      "source_id": "VIRAT_S_050202_04_000690_000750",
+      "split": "unassigned",
+      "scene": "C_parking_only",
+      "family_id": "VIRAT-050202-04",
+      "screened_frames_zero_based": [357, 715, 1073, 1431],
+      "selected_candidate_frames": [],
+      "evidence": "E1",
+      "label_completeness": "视频与objects文件已校验；来源轨迹框不证明静止车辆完整",
+      "review_burden": "未知；尚无固定逐图候选清单",
+      "decision": "retained_source_not_assigned"
+    },
+    {
+      "source_id": "MOT17_02_SDP_local8",
+      "split": "unassigned_auxiliary",
+      "scene": "pedestrian_plaza_not_A_or_C",
+      "family_id": "MOT17-02=MOT16-02=MOT15-Venice-2",
+      "camera_id": "MOT17-02",
+      "frames_one_based": [1, 76, 151, 226, 301, 376, 451, 526],
+      "images": 8,
+      "evidence": "E1",
+      "label_completeness": "person跟踪框含遮挡推定；车辆标注不完整，静止车可不标",
+      "review_burden": "即使复核8帧也只能作person辅助域，不能补A/C主集",
+      "decision": "exclude_from_main_AC"
+    },
+    {
+      "source_id": "EPFL_full_local_package",
+      "split": "train_only_if_future_closure",
+      "scene": "A_C",
+      "family_id": "epfl_multiclass_synchronized_campus_recording",
+      "camera_ids": ["EPFL:c0", "EPFL:c1", "EPFL:c2", "EPFL:c3", "EPFL:c4", "EPFL:c5"],
+      "available_images": 1452,
+      "synchronized_ordinals": 242,
+      "selected_candidate_frames_beyond_current10": [],
+      "evidence": "E1",
+      "label_completeness": "原生仅person/car/bus；已发现公交、自行车及非法框问题",
+      "review_burden": "系统性缺类，不能靠最多12张疑例证明其余帧完整",
+      "decision": "do_not_bulk_expand"
+    },
+    {
+      "source_id": "VIRAT_ground_release2_other_local_clips",
+      "split": "unassigned_or_holdout",
+      "scene": "mixed_ground",
+      "family_notes": "000201和000206与当前dev的000200已视觉确认同一物理机位；000203完整性未认证；已预留/看过的holdout不回流",
+      "local_clip_frame_counts": {
+        "VIRAT_S_000201_02_000590_000623": 981,
+        "VIRAT_S_000203_03_000736_000785": 1468,
+        "VIRAT_S_000206_07_001501_001600": 2730
+      },
+      "selected_candidate_frames": [],
+      "evidence": "E1",
+      "label_completeness": "来源轨迹框不能证明完整全帧静止目标监督",
+      "review_burden": "未形成候选清单；000201/000206还有train/dev机位交叉风险",
+      "decision": "not_assignable_without_new_source_closure"
+    }
+  ],
+  "excluded_or_non_main_sources": [
+    {
+      "source": "Intersection-Flow-5K",
+      "decision": "D_large_intersection_pressure_only",
+      "reason": "不得填A/C主训练或主开发缺口；不读取其test/blind/reserve内容"
+    },
+    {
+      "source": "VisDrone2019-VID",
+      "decision": "historical_regression_and_separately_approved_reviewed_train_replay_not_AC_expansion",
+      "reason": "航拍旧训练/回归，不是新增固定地面机位；独立审核的64张train可用于本轮已授权replay，不计入新增A/C配额"
+    },
+    {
+      "source": "COCO2017",
+      "decision": "pretrain_or_chain_diagnostic_only",
+      "reason": "无固定道路机位/原片家族映射"
+    },
+    {
+      "source": "SPD_yizhuang09_and_SPD8",
+      "decision": "reserved_or_secondary_check_only",
+      "reason": "不进训练、不进主开发"
+    },
+    {
+      "source": "TrafficCAM",
+      "decision": "already_rejected_and_not_local",
+      "reason": "只标主路运动目标，不满足静止车辆完整监督；未下载"
+    },
+    {
+      "source": "VIRAT_reserved_or_previously_viewed_holdout_clips",
+      "decision": "closed",
+      "reason": "不回流训练/开发，不打开blind_reserve/newtest"
+    }
+  ],
+  "mechanical_old_pool_fill_rejected": {
+    "train_formula": "current22 + VIRAT0102_remaining67 + VIRAT0400_24 + MIO15 = 128",
+    "why_rejected": [
+      "VIRAT0102会使同一0102xx家族达到79/128",
+      "VIRAT0102剩余67图中62图有监督hold",
+      "VIRAT0400的24/24图有监督hold",
+      "MIO15缺真实camera_id",
+      "人工不确定帧远超12张预算"
+    ],
+    "dev_formula": "historical current17 + VIRAT050000_construction47 = 64",
+    "why_rejected_dev": [
+      "当前17图按本次口径只作历史对照，本公式本身不能成为新64图清单",
+      "新增47图实际为同一物理画面，即使做数量相加也仍仅4个登记机位",
+      "47/47图有156条监督hold",
+      "施工直路已在标签收口中整体排除",
+      "单一新机位占47/64，违反无单机位主导"
+    ]
+  },
+  "remaining_gaps": [
+    "训练仍缺106张可冻结图；旧本地草稿能机械凑数但不能在标签完整性、机位多样性和12张人工预算内闭合。",
+    "开发目标是全新的64张主开发集，当前17张只作历史对照；固定为4个新A机位各12张、2个新C机位各8张。",
+    "所有新dev来源必须与全部train物理机位/原片家族隔离；同视频不同帧、同画面不同短片都只算一个机位。",
+    "新来源必须自带完整person/vehicle全帧GT；12张人工预算只用于少量疑点裁决，不能承担系统性补标。",
+    "正式冻结前必须补来源/许可、媒体与标签哈希、逐图camera_id/family_id、类别映射、静止车辆/骑行者覆盖和完整性抽审。",
+    "当前训练22图计入128目标；当前开发17图继续只作历史小诊断比较，不计入新64，不宣称满足六机位、正式泛化或P95/R85。"
+  ],
+  "primary_evidence": [
+    "cnn/reports/ac_g10_20261013_v1/dataset.json",
+    "cnn/reports/ac_g10_20261013_v1/freeze_receipt.json",
+    "cnn/reports/ac_pool_inventory_20261011_v1/candidate_pool.json",
+    "cnn/reports/ac_label_closure_20261013_v1/closure_manifest_v2.json",
+    "cnn/reports/ac_label_closure_20261013_v1/结果与需要决定的事项.txt",
+    "cnn/reports/virat_a_fill_20261012_v1/candidate_pool_128_64.json",
+    "cnn/reports/virat_a_fill_20261012_v1/scene_decision.json",
+    "cnn/reports/ac_replacement_scope_20261013_v1/proposal.json",
+    "cnn/reports/mot17_person_source_20261010_v1/来源筛选结论与后续边界.txt",
+    "cnn/reports/ac_source_screen_20261009_v1/筛选结果与冻结状态.txt"
+  ]
+}

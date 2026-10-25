@@ -1,0 +1,325 @@
+{
+  "modules": [
+    {
+      "name": "road_ddr_selftest",
+      "feature": "ddr_extended_board",
+      "rtl_path": "road_ddr_selftest.v",
+      "description": "固定1056条命令的独占DDR边界与字节掩码自检；临时SRAM诊断。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "原厂DDR用户时钟",
+            "description": "原厂DDR用户时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "与整个DDR控制器共同复位",
+            "description": "与整个DDR控制器共同复位"
+          },
+          {
+            "name": "i_phy_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "初始化完成许可",
+            "description": "初始化完成许可"
+          },
+          {
+            "name": "i_awready",
+            "direction": "input",
+            "width": 1,
+            "role": "写地址接受条件",
+            "description": "写地址接受条件"
+          },
+          {
+            "name": "i_wready",
+            "direction": "input",
+            "width": 1,
+            "role": "写数据接受条件",
+            "description": "写数据接受条件"
+          },
+          {
+            "name": "i_arready",
+            "direction": "input",
+            "width": 1,
+            "role": "读地址接受条件",
+            "description": "读地址接受条件"
+          },
+          {
+            "name": "i_rvalid",
+            "direction": "input",
+            "width": 1,
+            "role": "实际读返回有效",
+            "description": "实际读返回有效"
+          },
+          {
+            "name": "i_rlast",
+            "direction": "input",
+            "width": 1,
+            "role": "单拍响应结束标志",
+            "description": "单拍响应结束标志"
+          },
+          {
+            "name": "i_rdata",
+            "direction": "input",
+            "width": 128,
+            "role": "全位宽读回数据",
+            "description": "全位宽读回数据"
+          },
+          {
+            "name": "o_awaddr",
+            "direction": "output",
+            "width": 25,
+            "role": "native16位字地址",
+            "description": "native16位字地址"
+          },
+          {
+            "name": "o_awvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "保持至AW握手",
+            "description": "保持至AW握手"
+          },
+          {
+            "name": "o_wdata",
+            "direction": "output",
+            "width": 128,
+            "role": "不随背压变化的写数据",
+            "description": "不随背压变化的写数据"
+          },
+          {
+            "name": "o_wstrb",
+            "direction": "output",
+            "width": 16,
+            "role": "位为一则禁止该字节写入",
+            "description": "位为一则禁止该字节写入"
+          },
+          {
+            "name": "o_wvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "保持至独立W握手",
+            "description": "保持至独立W握手"
+          },
+          {
+            "name": "o_wlast",
+            "direction": "output",
+            "width": 1,
+            "role": "每个命令仅一拍",
+            "description": "每个命令仅一拍"
+          },
+          {
+            "name": "o_araddr",
+            "direction": "output",
+            "width": 25,
+            "role": "当前唯一读命令地址",
+            "description": "当前唯一读命令地址"
+          },
+          {
+            "name": "o_arvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "读地址提交",
+            "description": "读地址提交"
+          },
+          {
+            "name": "o_rready",
+            "direction": "output",
+            "width": 1,
+            "role": "已登记或同拍登记读许可",
+            "description": "已登记或同拍登记读许可"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": 2,
+            "role": "零运行、一通过、二首错",
+            "description": "零运行、一通过、二首错"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 4,
+            "role": "失败原因锁存",
+            "description": "失败原因锁存"
+          },
+          {
+            "name": "o_state",
+            "direction": "output",
+            "width": 4,
+            "role": "当前协议阶段",
+            "description": "当前协议阶段"
+          },
+          {
+            "name": "o_writes",
+            "direction": "output",
+            "width": 10,
+            "role": "完整AW/W对接受数",
+            "description": "完整AW/W对接受数"
+          },
+          {
+            "name": "o_reads",
+            "direction": "output",
+            "width": 10,
+            "role": "正确比较读字数",
+            "description": "正确比较读字数"
+          },
+          {
+            "name": "o_address",
+            "direction": "output",
+            "width": 25,
+            "role": "当前或失败地址",
+            "description": "当前或失败地址"
+          },
+          {
+            "name": "o_expected",
+            "direction": "output",
+            "width": 128,
+            "role": "当前写字或读期望",
+            "description": "当前写字或读期望"
+          },
+          {
+            "name": "o_actual",
+            "direction": "output",
+            "width": 128,
+            "role": "最近实际响应",
+            "description": "最近实际响应"
+          },
+          {
+            "name": "o_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "PHY就绪后的运行周期",
+            "description": "PHY就绪后的运行周期"
+          },
+          {
+            "name": "o_init_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "初始化等待周期",
+            "description": "初始化等待周期"
+          },
+          {
+            "name": "o_wait_both",
+            "direction": "output",
+            "width": 32,
+            "role": "AW/W均未完成的等待拍",
+            "description": "AW/W均未完成的等待拍"
+          },
+          {
+            "name": "o_wait_aw",
+            "direction": "output",
+            "width": 32,
+            "role": "仅AW尚未完成的等待拍",
+            "description": "仅AW尚未完成的等待拍"
+          },
+          {
+            "name": "o_wait_w",
+            "direction": "output",
+            "width": 32,
+            "role": "仅W尚未完成的等待拍",
+            "description": "仅W尚未完成的等待拍"
+          },
+          {
+            "name": "o_wait_ar",
+            "direction": "output",
+            "width": 32,
+            "role": "AR尚未接受的等待拍",
+            "description": "AR尚未接受的等待拍"
+          },
+          {
+            "name": "o_wait_r",
+            "direction": "output",
+            "width": 32,
+            "role": "AR接受后缺少响应的等待拍",
+            "description": "AR接受后缺少响应的等待拍"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "DDR user ~133.33MHz; top ref100MHz/pixel75MHz/serial375MHz"
+      },
+      "reset": {
+        "assertion": "Async assertion resets requester and entire controller together",
+        "release": "Top two-flop release; requester additionally waits PHY permission"
+      },
+      "behavior": [
+        "同步ROM读取：FETCH沿读，LOAD沿锁存，ISSUE核对魔数/索引/对齐/范围，然后才发请求。",
+        "1056个合法命令，528写和528读；194地址，两轮别名检查及140组掩码写读。",
+        "AW/W同拍呈现，各自保持至ready；一个读在途，支持AR同拍返回。",
+        "掩码为一保留原字节；128位逐项比较和RLAST正确才计入成功读。",
+        "首错锁定；初始化与核心窗口分别统计；WRITE的both/AW-only/W-only与AR/R等待互斥。",
+        "显示最高两位为状态，四页携带期望、实际和等待计数；冻结payload直到ack，SOF接收。"
+      ],
+      "constraints": [
+        "native地址单位2字节，范围0x1a00000到0x1fffff8；ROM有效字1056、总深度2048、每字192位。",
+        "C_TIMEOUT=27h7ffffff；不从AW/W接受虚构写完成，不赋予CNN输入槽READY语义。",
+        "保留原显示CDC两级与已批准精确首级/7.5ns最大数据延迟处理；无全局false path。"
+      ],
+      "corner_cases": [
+        "独立AW/W背压、即时读返回、错数据/末拍、超时、PHY丢失、异常返回、指令损坏、部分事务中公共复位。"
+      ],
+      "verification_cases": [
+        "24项受控端点计划、完整命令scoreboard、真实TD实现和独立板测。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "command_write",
+          "title": "命令读取与独立接受",
+          "scenario": "split_write",
+          "description": "阶段图非控制器固定延迟；AW先接受时W继续保持，所有请求在ISSUE检查后。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........"
+              },
+              {
+                "name": "state",
+                "wave": "=========",
+                "data": [
+                  "FETCH",
+                  "LOAD",
+                  "ISSUE",
+                  "WRITE",
+                  "WRITE",
+                  "WRITE",
+                  "ADVANCE",
+                  "FETCH",
+                  "LOAD"
+                ]
+              },
+              {
+                "name": "AWVALID",
+                "wave": "0..10...."
+              },
+              {
+                "name": "AWREADY",
+                "wave": "0..10...."
+              },
+              {
+                "name": "WVALID",
+                "wave": "0..1..0.."
+              },
+              {
+                "name": "WREADY",
+                "wave": "0....10.."
+              },
+              {
+                "name": "payload",
+                "wave": "x.=......",
+                "data": [
+                  "address/data/mask held"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

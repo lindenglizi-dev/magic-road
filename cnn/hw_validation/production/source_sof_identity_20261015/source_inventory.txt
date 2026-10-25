@@ -1,0 +1,88 @@
+Source / SOF / font inventory — C8 read-only — 2026-10-15
+Project: E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision
+Branch: work/roadyolo
+Only new source_inventory.txt/json are written; no RTL or old reports changed.
+
+1. Actual source selection
+cnn/template/source_manifest.json SHA256 ff92fdc2f99313400323b2939abd21280d6a3d7440fce5be01fb5f49121fac89
+Selected AWB: user_source/hdl_source/awb.v, SHA256 b6d9d83a6b48952cc9531daf39bc6c6b94c4e45ddefe603908e9cb275533e50a.
+TD project camera_to_dsi_display.al:54-61 independently selects the same file. Alternative isp/awb/awb.v is NOT this closure; its line475 routes delayed I_tuser_r2, unlike selected line370 I_tuser bypass.
+18 inspected manifest entries match current SHA256; production top/project hashes also match. Full closure, especially protected DDR, was not rehashed.
+
+2. Actual camera/AWB clock
+IO_rx_clk_pad_p/n -> PH1P_LOGIC_DPHY_MIPI_RX.o_fabric_div4_8_clk -> S_mipiio_hs_rx_clk -> PH1P_LOGIC_BUFG -> O_mipiio_hs_rx_clk -> O_hs_rx_clk -> S_csi_rx_clk -> isp_top.axi4s_video_aclk -> awb.I_clk
+Template top:531-565 uses2 lanes / BYTE_NUM1; ph1p_mipiio_rx_wrapper.v:43 selects HS_S2P_RATIO1:8; :133-136 BUFG; :444-469 primitive.
+uics500reg_720p60.v:3-8 states24MHz MCLK,2-lane RAW10,~480Mbps/lane; line78 writes0x4837=0x42 with480Mbps comment. Configured byte rate480/8=60MHz.
+SDC:2 assumes4.167ns (~240MHz DDR pad); :11 names fabric output MIPI_RX_BYTE_CLK. This supports configuration nominal~60MHz, NOT measured board clock.
+100MHz I_lp_clk does not generate recovered byte clock. Clock drift/stops/frame jitter and actual register readback remain unmeasured.
+
+3. Physical SOF vs processed SOF
+Physical S_csi_frame_start is CSI DT00 short packet, source csi_unpacket_2lane.v:71-84 and template top:578-588. Its edge detector is independent of RAW pixel valid.
+- CSI frame-start -> raw10_unpacket_2lane.O_raw10_frame_start one register (line67)
+- uial2axis resets counters on I_data_start and reconstructs axis_tuser only at first valid pixel: vcnt=0,hcnt=0,axis_tvalid (lines53-76)
+- mipi_to_raw_converter registers raw user/valid (lines58-70)
+- zhenghe reconstructs first-line SOF at x_cnt==rd_valid_width_d0+1,y_cnt==0 and registers output (lines134-190)
+- raw_matrix_3x3_buffer shifts zhenghe_tuser three registers (lines300-323)
+- bilinear_interpolation shifts SOF and valid five registers (lines894-906)
+- selected awb directly assigns O_tuser=I_tuser (line370) while O_tvalid=valid_d2 from separate signal_delay path (lines184-199,229-237,356-371)
+isp_top.v:42-45 exposes AWB O_tuser as O_analysis_sof. Selected AWB:370 bypasses I_tuser; valid_d2:371 takes separate buffered pipeline. Never require analysis_valid && analysis_sof to count frames.
+For current width1280, data_complete_delay50, known reset state and normal frame sequencing, zhenghe comparison target is nonzero (>=51); x_cnt either increments or returns to0 each clock, so the comparison is single-cycle. Subsequent 3+5 register shifts preserve width and AWB bypass adds no cycles. AWB interface itself does not shorten an arbitrary multi-cycle I_tuser. No simulator waveform or formal pulse-width proof was run.
+AWB SOF is a pixel-pipeline reconstructed event, not the CSI packet pulse directly delayed. Source code alone does not establish one AWB SOF for every physical CSI SOF under missing/malformed pixels. To count all physical frames including skipped frames, count CSI packet SOF or first prove the mapping; expose the chosen event explicitly.
+zhenghe SOF output -> AWB/analysis SOF has 3+5 downstream register stages, no AWB SOF delay. CSI packet -> AWB SOF and AWB SOF -> first AWB valid include counter/line/buffer behavior and have not been measured. capture_ms at AWB boundary is not a sensor exposure timestamp.
+cnn/template/design_top_wrapper.v:668-671 leaves O_analysis_* unconnected. Production top user_source/hdl_source/design_top_wrapper.v:728-731 connects them to old grayscale branch; neither implements new CNN source identity binding.
+Capture candidate road_area_resize.v:50-55 starts at SOF while idle; road_capture_slots.v:68-73 allocates only when prior FREE and no active capture, latches identity at:169-174. Components are not proof of actual AWB clock/SOF/admit/DDR binding. interfaces.json retains external TB write-visible boundary.
+
+4. Display reuse
+road_status_overlay.v:33-58 is four colored16x16 tiles only. No age or font. Registered RGB/VS/HS/DE adds1 pixel clock.
+Known diagnostic source: cnn/hw_validation/production/reports/board_selftest_20261010/rtl/road_selftest_display.v
+SHA256 d61c8c661d3a366e0967fa628e3a7a46c013fc29436f9c2712113ae491c081ac.
+road_selftest_display.v:95-107 is fixed TEST (T,E,S glyphs), 5 columns x7 rows each; :116-117 expands8x to160x56; :127-138 RGB/VS/DE all registered1 clock. Snapshot updates at VS rising :78-85.
+Reuse bitmap/raster technique only; the original diagnostic module has no camera RGB input and replaces full image. No existing numeric/ASCII font API.
+Needed exact AGE xxxx ms / AGE_INVALID glyphs beyond E: A, G, I, N, V, L, D, _, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, m, s, space. S uppercase is available but not lowercase s.
+Official CNN template insertion point: hdmi_mixer output S_hdmi_out_* :833-836 -> candidate age adapter -> hdmi_tx inputs:848-854; S_hdmi_pixel_clk. Pass through RGB outside text; equal1-clock delay RGB/VS/DE (+HS if exported). Freeze text/age at HDMI SOF; safety draw invalidation independent.
+hdmi_mixer.v:76-87,142 has three register stages from I_video_vs/hs/de to outputs; source RGB read-data also has3 register assignments to output. Original CNN template has no road_box/status overlays. Production top has mixer->box->status->HDMI at lines1101-1166; box and status each add1 pixel clock, for5 timing-register stages vs3 in CNN template. Proposed standalone age adapter adds1. These are source-level relative pipeline counts, not full camera/DDR/HDMI latency measurements.
+No incremental resource or physical latency claim; TD/simulation/rendering are NOT_RUN.
+
+5. Eight public gates
+compile=NOT_RUN
+ast=NOT_RUN
+readability=NOT_RUN
+comment=NOT_RUN
+naming=NOT_RUN
+profile=NOT_RUN
+testbench=NOT_RUN
+toolchain=NOT_RUN
+Read-only evidence analysis does not claim strict acceptance, toolchain, continuous-camera timing or DDR integration.
+
+6. Evidence hashes (paths relative to project; precise line references above and in JSON)
+AGENTS.md | lines=45 | SHA256=25f55b392e0b2b8a8db389948d91c7af3ac7438de540ff8e0f6c0bcc85f69dc1
+MULTI_AGENT_WORKFLOW.md | lines=141 | SHA256=d00d37b9c04a49e313d498b5cbce1b268847b947d1a6236ca2d2fcfb95bdcad9
+cnn/template/source_manifest.json | lines=226 | SHA256=ff92fdc2f99313400323b2939abd21280d6a3d7440fce5be01fb5f49121fac89
+cnn/template/design_top_wrapper.v | lines=874 | SHA256=a31d852619f84925a3aed13e69b5de556b4e43c0b361318c21794a664ceb4643
+td_project/camera_to_dsi_display.al | lines=707 | SHA256=98cfcd75128de7f29754700ae9775ad7541a85820e5f111aac9467aaa49f94ae
+td_project/camera_to_dsi_display.sdc | lines=17 | SHA256=457379c949a59da39579d996bea3c56f066f85be422cec9a3b320d558e8f5c0d
+user_source/hdl_source/design_top_wrapper.v | lines=1183 | SHA256=adfa1f66738cd2f8cfa5e0f9739ea50f8c58e983cc0c401561cb1f3adbc1aca1
+user_source/hdl_source/awb.v | lines=383 | SHA256=b6d9d83a6b48952cc9531daf39bc6c6b94c4e45ddefe603908e9cb275533e50a
+user_source/hdl_source/isp/awb/awb.v | lines=490 | SHA256=bd7f8178ecdc372dcaac28195f97cc52e23a8db9824854a10376002b244e428c
+user_source/hdl_source/signal_delay.v | lines=131 | SHA256=b7a8156bc59bee5de2c1af20cb31079388ace1f4e767a18288a7dff8bae3d5fd
+user_source/hdl_source/isp/isp_top.v | lines=124 | SHA256=a18e6b99d840832cdb7ceb50a28a899fd36c1c2add98951474091fbe79f9995c
+user_source/hdl_source/isp/csi_unpacket_2lane.v | lines=139 | SHA256=b7e093e1e377f5a61a22216e9a4ec404068a3346923758297867b465679dacdd
+user_source/hdl_source/isp/raw10_unpacket_2lane.v | lines=235 | SHA256=83f89d7f8e2b19322a7f6a8ddc0cae64fcbd83fed6b742c10f5d2339f59d30fd
+user_source/hdl_source/isp/uial2axis.v | lines=84 | SHA256=8cd4d98799da50285bc381c16405aeb55eb4d28363e20b33836542a32539610e
+user_source/hdl_source/isp/demosaic_4x_2_0/demosaic.v | lines=110 | SHA256=95ff3eaa0e99fd1dbe63c153164e36faa1a97b19d071e4a0b0bb3936287f22d4
+user_source/hdl_source/isp/demosaic_4x_2_0/mipi_to_raw_converter.v | lines=79 | SHA256=b77e678034af9968d0969655f403cac3b992412b109dba889e8ccb3f6f224975
+user_source/hdl_source/isp/demosaic_4x_2_0/zhenghe.v | lines=195 | SHA256=abcc6447ea9c47185b0e93b5acaef001f19e5ff99d0f80cc6e4cb4bb852a4bdd
+user_source/hdl_source/isp/demosaic_4x_2_0/raw_matrix_3x3_buffer.v | lines=328 | SHA256=28f19502f5a70b48e9bdeeaddcb84500052b7bd0c6e15b4da1ea9899265577c3
+user_source/hdl_source/isp/demosaic_4x_2_0/bilinear_interpolation.v | lines=912 | SHA256=53a4fc3dea805d59cee9bdab1a090c26c03eb555ab612a1a4698d810c1991baf
+user_source/hdl_source/mipi_dphy_rx/mipi_dphy_rx_ph1p_mipiio_wrapper.sv | lines=141 | SHA256=86b796060b0a133d1d10fc659b85c73ebfc98ebfa51904860a89ad5bdb68fe5a
+user_source/hdl_source/mipi_dphy_rx/ph1p_mipiio_rx_wrapper.v | lines=539 | SHA256=f957019576d22a8322889af73f8bfee07f46006959f9efcca0595bc8fa3234ae
+user_source/hdl_source/uics500_cfg/uicfgcs500_720p.v | lines=142 | SHA256=b0dbcacfdb10d2932d88e1b2c5eab9a53a46683dc5a3aed0512db417ea900c5e
+user_source/hdl_source/uics500_cfg/uics500reg_720p60.v | lines=88 | SHA256=f4b9551ffc8629172acf61dc5731336bdf51ac3c4b53cddbb2e28bb8140287de
+user_source/hdl_source/hdmi_mixer.v | lines=148 | SHA256=23760e848c7fe803c1d562cb7a32afe33742ccf07c647d60af0cca8867a6b276
+user_source/hdl_source/road_vision/road_status_overlay.v | lines=61 | SHA256=cd25fbd7ff126a9af0b004a233f9730855e93eb4d82e29711f4b31fa7cf4aabe
+user_source/hdl_source/road_vision/road_box_overlay.v | lines=109 | SHA256=75430d193125b72d9831d8c0fb921303ad78b43aa333c4d1cc892585e84cc1d5
+cnn/hw_validation/production/reports/board_selftest_20261010/rtl/road_selftest_display.v | lines=140 | SHA256=d61c8c661d3a366e0967fa628e3a7a46c013fc29436f9c2712113ae491c081ac
+cnn/hw_validation/production/camera_capture_2fps_20261015/rtl/road_area_resize.v | lines=713 | SHA256=4a0a23239d9870dfbfebee45c61bff8e08d519f8bd2b0848385ea1bde7e3a5c0
+cnn/hw_validation/production/camera_capture_2fps_20261015/rtl/road_capture_slots.v | lines=204 | SHA256=746065b5c61393ceda8dc24b782f2d9984cbcb736a4d91ba05c3178569bb2cca
+cnn/hw_validation/production/camera_capture_2fps_20261015/interfaces.json | lines=27 | SHA256=f76a7a9b077a3c2a1838b0eed0bb8f6616cd64f02acbff4ddb45d465ebbc0c83
+

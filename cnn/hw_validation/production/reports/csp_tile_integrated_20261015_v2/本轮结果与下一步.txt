@@ -1,0 +1,56 @@
+首残差tile硬件驱动联合闭环：本轮结果与下一步
+日期：2026-10-15；工作分支work/roadyolo；仅本地保存。
+
+一、推进到了哪里
+完成计划步骤2的首个4x4x12残差tile硬件闭环：一次start由真实RTL产生160任务、320个八输入组，经过DW→实际DW缓存→PW→残差饱和，提交384个输出。
+TB不再发射任务、返回PW操作数或伪造task_done；只装载源/表、施加外部写背压、核对各阶段实际值。
+本轮仍不是完整CSP2、整网或真实DDR闭环。源装载口承载432字节halo和192字节旁路；取数及映射由硬件执行，但halo本身由外部供应。输入来自已验证QAT前三层的原合成RGB夹具，不是道路识别准确率证据。
+
+二、实现及复用
+新增road_csp_tile_integrated：三段状态机、624字节单端口源RAM及完整性位图，串行DW源取数、PW缓存请求/响应、旁路取数、单任务写退休。
+复用冻结road_csp_tile_schedule、五级写回road_csp_first_probe及五个算术核。全部核心端口、数值及组内II保持原样。
+DW结果缓存增加同步i_clear：清位图、数量及响应valid，RAM数据保持；不清粘滞故障。每次启动新tile局部清理，无需重置MAC/量化/SiLU。
+缓存增加o_write_legal：重复或越界DW候选在同拍不提交到外部；非法缓存请求触发粘滞错误。
+固定参数按通道/布局复用，56个192-bit权重词与16个248-bit参数词，共1840字节；逐词与同一冻结数值包比较一致。此常量case ROM仅服务本小块，不能把它当成完整模型ERAM初始化方案。
+
+三、综合发现、修复及旧现场
+v1仿真11项通过，但TD综合不合格：数组readmemh被报告未驱动，且组合task_done经early_done/fault/写准入返回自身。
+原v1全部现场保留，synthesis/qualification.json明确原资源/时序仅是诊断，不作合格结果。
+v2改显式常量注册ROM：IDLE捕获地址，PREPARE读取注册响应，RTL回归逐组核对权重/偏置；TD不再出现ROM未驱动。
+v2注册最后真实写事件：写握手沿n记录，调度器在n+1消费；消除反馈，保留原冻结核II。160任务各增加一拍退休延迟。
+没有用假接口、约束例外或规则豁免处理这些问题。
+
+四、v2实际ModelSim结果
+13/13场景通过，编译0 error/0 warning。8个成功场景累计9个完整run，每run实际320组、160任务、384输出。
+每run逐项比较384个acc、384个pre、384个SiLU、384个post，以及最终sum/data/tag/address；DW实际写缓存192次，PW真实请求缓存128次。
+普通：12001拍；随机背压：12153；DW长背压：12432；PW长背压：12454。
+三处复位（源取数、量化中、待写输出）取消旧事务后重新装载，最终完整run均为12001拍。
+重复tile：第二次改变一个halo字节和一个旁路字节，6个DW及共44个最终输出发生变化；连续两次都精确匹配，仅装表一次。证明没有复用旧DW结果或重置整个核。
+源越界/重复写拒绝启动；外部取消在已合法写20个值之后取消其余输出。
+内部错误注入仅在case11/12：越界DW候选保持外部写0；重复DW候选保留之前合法写1，错误本身不外部提交。随后均粘滞停止。正常数值场景没有内部force。
+12001拍在100MHz对应120.01us，仅为当前tile计算/硬件取数/写退休端点，排除1024表项及624源字节装载时间，不能换算整网FPS。
+旧五级算术包装7807拍依赖TB提供操作数；v1联合11841拍包含硬件串行取数；v2联合12001拍另含注册退休。端点范围不同，不以4034/4194拍差值冒充同口径性能退化。
+
+五、TD实际综合
+目标PH1P35MDG324/-3，工具TD6.2.1，100MHz时钟；隔离工程，与13项回归使用同一源码哈希。
+optimize_gate/器件映射完成，无HDL-5314未驱动或TMR-2509/TMR-2507组合环警告。
+局部映射：30DSP、1ERAM、4968寄存器；gate.area的Slice估算4384、LUT5547。TD提示最终Slice需布局后确认，不能用gate.qor不同口径的1330替代。
+综合阶段QoR无setup/hold违例仅为布局前估算，不作为实际setup/hold签核；只设100MHz时钟，没有外设I/O延迟，不作外设时序声明。
+本轮未布局布线、生成位流或操作板卡。以上资源不包含完整模型包ROM、视频、DDR桥、缩放、NMS和显示，不能证明整机装得下。
+
+六、严格门禁与交付边界
+新三个RTL模块严格门禁1708 errors/1 strict warning；最终十个真实RTL源码闭包4883 errors/7 strict warnings。作用域不同，不能与旧单包装324条直接相减。
+最终八项：compile passed；ast/readability/comment/naming/profile failed；testbench/toolchain not_requested。该静态工具未自动采集外部证据，ModelSim及TD实际收据独立保留，不能因此宣布八项全通过。
+readable-verilog-generator要求“Generated deliverables must pass the formatter-backed gate with zero errors and zero strict warnings.” 当前production_delivery_ready=false。
+非关键风格/文档可按已批准优先级暂缓；相关数值、握手、真实源闭包、资源及实际时序仍需保留。当前没有因审计失败抹掉功能进展，也没有把功能通过升级为生产通过。
+原始90项、冻结104项、综合18项哈希均复核，综合复制源码与仿真快照逐文件一致。显式ROM72词再次与冻结输入逐词一致，详见final_checks.json。
+
+七、紧接着的下一步
+先对当前联合顶层做一次隔离布局布线，检查100MHz下真实内部setup/hold、源RAM/参数逻辑和全局控制扇出，记录布局后资源。保留失败，不增加时序例外。
+随后进入计划步骤3：覆盖内部及四边/尾tile，完成CSP2第二残差及最终PW融合；第二残差使用真实相邻tile halo，不能在4x4外随意补零。
+源装载端再与已有前端/DDR资产连接：完整输入/响应身份/在途排空/写可见性仍需逐项确认。当前source_ready字节装载不是PAXI或真实DDR协议证据。
+不在本轮追加训练、蒸馏、换网络或修改生产工程；QAT-G10仍是精度未达标的集成基线。
+
+证据入口
+status.json、final_checks.json、input_binding.json、case_receipts.json、vectors/reference_receipt.json、resource_summary.json、synthesis/status.json、synthesis/launcher.log、synthesis/gate.area、source_closure_gate.json、independent_review.txt。
+可执行入口：cnn/hw_validation/production/run_csp_tile_integrated.py（reference/spec/prepare/execute；新候选使用新--out），check_csp_tile_implementation.py（独立综合），finalize_csp_tile_integrated.py（本候选封存）。

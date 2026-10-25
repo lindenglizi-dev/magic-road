@@ -1,0 +1,60 @@
+{
+  "review": "independent_head_only_G5_prelaunch_and_failed_launch_review",
+  "reviewed_at": "2026-10-14T19:04:00+08:00",
+  "scope": "read-only static review plus verification of the CPU gate and first protected GPU execution receipts; no model forward, training, GPU use, or evaluator execution by this reviewer",
+  "status": "BLOCKED_AFTER_FIRST_GPU_UPDATE_VALIDATOR_DEVICE_MISMATCH_NO_AUTOMATIC_RETRY",
+  "critical_findings": [
+    {
+      "severity": "P1",
+      "location": "launched source cnn/hw_validation/production/train_qat_head_only.py:227, SHA-256 d9aa3a8fd4aa9d9546129341787d8ec969646d1468e3d0f737d7364d61e230d5",
+      "finding": "Candidate checkpoint validation compares each frozen CUDA tensor directly with the preserved CPU parent tensor using torch.testing.assert_close. PyTorch treats device as an attribute, so the exact-value check fails on cuda:0 versus cpu before it can establish value equality.",
+      "runtime_evidence": "execution/segment.stderr.log SHA-256 7576a4a183f0bda7d9be04c534b5933b4c30db3d0a75ab0fb8614245f00ce2e2 records AssertionError: The values for attribute 'device' do not match: cuda:0 != cpu at validate_state line 227. execution/report.json records worker_exit_code=1 and status=failed_no_retry.",
+      "impact": "The first authorized head-only optimizer step consumed all 22 samples and completed, but validation then failed. No H1 checkpoint was published; only update_H0.pt exists. This is a validator/device bug, not evidence of a frozen-value change, numerical failure, or thermal stop.",
+      "required_state": "Keep the failed execution and its source snapshot immutable. Do not auto-resume or silently retry. Any rerun must use a separately validated device-neutral exact comparison and must follow the coordinator's renewed budget/authorization decision."
+    }
+  ],
+  "launched_source_closure": {
+    "cnn/hw_validation/production/train_qat_head_only.py": "d9aa3a8fd4aa9d9546129341787d8ec969646d1468e3d0f737d7364d61e230d5",
+    "cnn/hw_validation/production/test_train_qat_head_only.py": "cc55fba546a4bf3827d436bf7a7f95392a48c6070af4a06d5ded2c58dfe00aa8",
+    "snapshot_runner": "cnn/reports/qat_head_only_g5_20261014_v1/execution/sources/27_train_qat_head_only.py",
+    "snapshot_test": "cnn/reports/qat_head_only_g5_20261014_v1/execution/sources/28_test_train_qat_head_only.py"
+  },
+  "current_post_failure_source": {
+    "cnn/hw_validation/production/train_qat_head_only.py": "73109eb8d1a9eb309f29522a00dfff8e25c4bf15e260a6b37834bf44bef13bb2",
+    "change_observed": "A helper now moves both tensors to CPU before atol=0, rtol=0, dtype-checked comparison.",
+    "device_regression_receipt_sha256": "ce007b4f39e794d4de77779082d15fa0c88ffe24524a582277ea9dcec57d7696",
+    "device_regression_result": "PASS_REAL_CUDA_CPU_FROZEN_VALIDATOR_REGRESSION: the original device mismatch was reproduced; the repaired full-state validator accepted all 92 unchanged frozen tensors; wrong-value and wrong-dtype cases were rejected.",
+    "device_regression_boundary": "The check used the saved CPU H1 diagnostic state moved to CUDA and exercised no model forward, backward, optimizer construction, or training update. It verifies the checker repair, not a restarted training segment."
+  },
+  "passed_prerequisite_evidence": {
+    "cpu_resume_gate_sha256": "3258a1e8c17c4b0896c203268697c27430fc9accff4acd1ae98646353fd7bc6a",
+    "result": "passed=true with cpu_threads=2, PYTORCH_NVML_BASED_CUDA_CHECK=1, exact continuous H1/H2 versus restored H2, four negative cases, optimizer_updates_published=0, candidate_training_started=false, and cuda_initialized=false",
+    "boundary": "The CPU-only gate compared CPU candidate and CPU parent tensors, so it could not reveal the cross-device attribute mismatch. Its recovery, mapping, RNG, schedule, and negative-case evidence remains valid within that CPU scope."
+  },
+  "static_contract_observations": [
+    "The name-derived contract selects exactly 42 head parameter tensors and 92 frozen non-head tensors. It maps the 42 head tensors to unique parent optimizer slots by name and binds momentum buffers by shape, dtype, finiteness, and SHA-256.",
+    "The intended schedule is five 22-sample updates labeled H1..H5, source schedule 1..5, source global 11..15, with global QAT count 30 to 35 and no automatic retry or continuation.",
+    "The optimizer is constructed only from the 42 trainable head tensors after model.to(device); the 92 frozen tensors are excluded.",
+    "The supervised worker waits for owned GO before CUDA setup and uses the inherited 75 C watchdog. The observed failure was not a temperature event.",
+    "The export path requires a one-sample 181-node exact integer trace. A later completion audit should additionally compare all serialized integer parameter fields with the final checkpoint package."
+  ],
+  "execution_accounting": {
+    "last_worker_event": "microbatch update=1 samples_consumed=22 actual_update_samples=22",
+    "optimizer_updates_executed": 1,
+    "new_candidate_checkpoints_published": 0,
+    "run_directory_membership": ["update_H0.pt"],
+    "global_budget_after_failed_attempt": 31,
+    "temperature_cause": false,
+    "parent_checkpoint_unchanged": true,
+    "formal_acceptance": false
+  },
+  "evaluator_interface": {
+    "status": "not executed",
+    "current_static_hashes_at_review": {
+      "cnn/hw_validation/production/evaluate_qat_head_only.py": "3087f75790322d44d03889d2ae01d0cc4dd7e05bc7f700563b1befad7a8a0133",
+      "cnn/hw_validation/production/test_evaluate_qat_head_only.py": "d7bf0fd96a452da851d33f91e636f7207d1f3ee46e65bef5b1138c94b206955c"
+    },
+    "json_safety_fix": "The evaluator now replaces already-validated parent Python/NumPy/Torch/CUDA RNG objects with a JSON-safe binding summary rather than attempting to serialize Tensor/ndarray values. A focused Tensor/ndarray regression is present; this reviewer did not execute it."
+  },
+  "decision": "The original launched source remains proven unsuitable for CUDA candidate validation, and its failed execution record must remain immutable. The corrected checker has now passed a real CUDA/CPU full-validator positive case and wrong-value/wrong-dtype negative cases without any training update. No restart has occurred. A fresh five-update run still requires the user's explicit budget decision because one optimizer update was already consumed, making the next successful five-update segment end at global budget 36 rather than 35."
+}

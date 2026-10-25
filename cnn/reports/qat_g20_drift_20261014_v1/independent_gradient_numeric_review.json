@@ -1,0 +1,116 @@
+{
+  "review": "independent_completed_gradient_and_numeric_range_review",
+  "reviewed_at_local_date": "2026-10-14",
+  "status": "COMPLETED_EVIDENCE_VALID_WITH_LIMITS_NEW_EXPERIMENT_NOT_AUTHORIZED",
+  "scope": {
+    "read_only": true,
+    "python_tests_forward_training_or_gpu_run_by_reviewer": false,
+    "source_modified": false,
+    "reviewed_reports": {
+      "numeric_diagnosis_sha256": "12424767d10a52c580324879e62eb9280548a3af9355cbfe1701b7fead84e749",
+      "gradient_report_sha256": "dc0a6ea876482aac10f60b60aaed6c7984b666c40ea90d9dd664db9b2e3d44cc"
+    }
+  },
+  "gradient_artifact_binding": {
+    "result": "PASS_WITH_SOURCE_CLOSURE_LIMIT",
+    "preflight": {
+      "diagnostic_source_sha256": "ed0f6ff141fa1a2fdbb74f876e470672c8be35e4b24ab3bf119b02da45530da1",
+      "executed_source_snapshot_sha256": "ed0f6ff141fa1a2fdbb74f876e470672c8be35e4b24ab3bf119b02da45530da1",
+      "test_sha256": "1ca83f636b872a876b849a52cf59541a187a7a7db48fa2546ad1afc8a2fb3f0c",
+      "parent_checkpoint_sha256": "f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd",
+      "g20_checkpoint_sha256": "36136fa83b37d4d8c4960d22fb5126e3326d984ffce0f4bd3136c24494bdb284",
+      "inference_started": false,
+      "optimizer_created": false,
+      "optimizer_step_called": false,
+      "gpu_used": false
+    },
+    "post_run_closure": {
+      "classification": "POST_RUN_ONLY_NOT_PRE_RUN_SOURCE_FREEZE",
+      "verified_current_matches": [
+        "diagnostic source",
+        "diagnostic test",
+        "executed source snapshot",
+        "parent checkpoint",
+        "G20 checkpoint",
+        "cache receipt"
+      ],
+      "limitation": "The preflight copied and hashed the diagnostic entry script and hashed its test, but did not pre-snapshot every imported local dependency. Current dependency hashes can support a post-run closure only and must not be represented as a complete pre-run source closure."
+    }
+  },
+  "gradient_evidence": {
+    "scope": "one fixed two-image microbatch containing one new and one replay sample; same pixels and targets for G10 and G20; not the full 22-sample update",
+    "safety": {
+      "device": "cpu",
+      "cpu_threads": 2,
+      "pytorch_nvml_based_cuda_check": "1",
+      "finite_gradients": true,
+      "model_states_unchanged_after_backward": true,
+      "optimizer_created": false,
+      "optimizer_step_called": false,
+      "checkpoint_files_unchanged": true,
+      "validation_pixels_read": 0
+    },
+    "parent_g10": {
+      "foreground": 113,
+      "normalized_loss": 7.387968080233684,
+      "global_gradient_l2": 36.14402259494348,
+      "clip_gain_at_norm_10": 0.2766709204469951,
+      "nonhead_squared_norm_share": 0.9369135280472995,
+      "all_head_groups_squared_norm_share": 0.06308647195270048
+    },
+    "rejected_g20": {
+      "foreground": 122,
+      "normalized_loss": 6.528846615650615,
+      "global_gradient_l2": 21.629571950463635,
+      "clip_gain_at_norm_10": 0.46233000000657193,
+      "nonhead_squared_norm_share": 0.9351043139800277,
+      "all_head_groups_squared_norm_share": 0.0648956860199723
+    },
+    "interpretation": [
+      "The approximately 93.5 percent non-head squared-gradient share is reproducible in both checkpoints on this microbatch, but the non-head group also contains 46 of 67 convolution layers and many more parameters; the share alone does not prove pathological gradient allocation.",
+      "Foreground assignment changes from 113 to 122 between checkpoints, so the lower G20 normalized loss is not a fixed-assignment improvement claim.",
+      "Both full-model gradients would be clipped. Freezing all non-head parameters would remove their contribution from clip_grad_norm_; therefore a head-only run changes both the trainable set and the effective head-gradient gain, not only which tensors optimizer.step updates."
+    ]
+  },
+  "weight_numeric_range": {
+    "coverage": "all 113100 convolution weight elements in each checkpoint",
+    "parent_g10": {
+      "latent_code_outside_center_interval_minus128_to127": 386,
+      "rounded_code_out_of_range_before_clamp": 0,
+      "outside_with_two_sample_gradient_descent_outward": 255,
+      "torch_float32_vs_numpy_float64_encoded_differences": 0
+    },
+    "rejected_g20": {
+      "latent_code_outside_center_interval_minus128_to127": 406,
+      "rounded_code_out_of_range_before_clamp": 3,
+      "rounded_out_of_range_locations": {
+        "down2.dw.conv": 2,
+        "csp2.out.conv": 1
+      },
+      "outside_with_two_sample_gradient_descent_outward": 250,
+      "torch_float32_vs_numpy_float64_encoded_differences": 0
+    },
+    "interpretation": [
+      "Values with latent code just above 127 or below -128 can still round to a legal endpoint; only rounded_code_out_of_range measures an active hard-clamp case here. Thus the correct hard-clamp count is G10 0 and G20 3 of 113100, all in non-head layers.",
+      "The zero Torch-float32 versus NumPy-float64 code differences closes the previously identified encoding-path risk for the complete current G10 and G20 weight tensors.",
+      "gradient_over_quant_step omits learning rate, clip gain, momentum and optimizer state; it must not be interpreted as the number of quantization steps moved by an actual SGD update."
+    ]
+  },
+  "numeric_cross_evidence": {
+    "four_training_frame_result": "Restoring the parent values for 46 non-head layers reduced all-seven-channel normalized RMSE means from 0.300929/0.477947/0.290801 to 0.041310/0.057916/0.013152, whereas restoring only 21 head layers left them at 0.298872/0.478951/0.291124.",
+    "joint_interpretation": "The independent four-frame activation localization and two-sample backward norm share both point to the non-head path as the highest-value controlled experimental target. Neither is AP causality, and the native runtime root cause remains UNRESOLVED."
+  },
+  "proposed_head_only_experiment_review": {
+    "authorization": "PENDING_USER_APPROVAL_DO_NOT_START",
+    "technical_assessment": "Reasonable as one bounded branch experiment, but it is not a pure one-variable attribution because excluding non-head gradients also changes global clipping and increases the effective head-gradient gain relative to the original full-model update.",
+    "minimum_contract_if_approved": [
+      "start from the preserved G10 checkpoint hash, not G20",
+      "freeze all 46 non-head convolution weight and bias tensors before constructing the optimizer and assert they never enter optimizer state",
+      "migrate only the matching G10 head momentum buffers by stable parameter name and shape rather than raw optimizer parameter IDs",
+      "use exactly the original continuation samples for global updates 11 through 15, microbatch 2, total 22, SGD learning rate 1e-4, unchanged scales and loss normalization",
+      "record the changed clipping semantics explicitly in the new protocol",
+      "use a new output and run identity, execute resume/GPU/export gates, cap at five updates, evaluate same17 once, and do not auto-continue"
+    ]
+  },
+  "decision": "The completed numeric and gradient diagnostics are internally consistent and justify proposing a bounded non-head-freeze control, not claiming root cause or starting it. No new training recipe or updates are authorized until the user approves."
+}

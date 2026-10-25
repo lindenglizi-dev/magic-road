@@ -1,0 +1,266 @@
+{
+  "modules": [
+    {
+      "name": "road_ddr_selftest",
+      "feature": "ddr_board_selftest",
+      "rtl_path": "road_ddr_selftest.v",
+      "description": "Exclusive native PAXI DDR diagnostic, not full CNN or memory capacity proof.",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "原厂DDR用户域时钟",
+            "description": "原厂DDR用户域时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "顶层异步断言、同步释放复位",
+            "description": "顶层异步断言、同步释放复位"
+          },
+          {
+            "name": "i_phy_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "初始化状态，不代表存储已经通过",
+            "description": "初始化状态，不代表存储已经通过"
+          },
+          {
+            "name": "i_awready",
+            "direction": "input",
+            "width": 1,
+            "role": "写地址实际接受许可",
+            "description": "写地址实际接受许可"
+          },
+          {
+            "name": "i_wready",
+            "direction": "input",
+            "width": 1,
+            "role": "写数据实际接受许可",
+            "description": "写数据实际接受许可"
+          },
+          {
+            "name": "i_arready",
+            "direction": "input",
+            "width": 1,
+            "role": "读地址实际接受许可",
+            "description": "读地址实际接受许可"
+          },
+          {
+            "name": "i_rvalid",
+            "direction": "input",
+            "width": 1,
+            "role": "控制器返回数据有效",
+            "description": "控制器返回数据有效"
+          },
+          {
+            "name": "i_rlast",
+            "direction": "input",
+            "width": 1,
+            "role": "当前单拍读响应结束标记",
+            "description": "当前单拍读响应结束标记"
+          },
+          {
+            "name": "i_rdata",
+            "direction": "input",
+            "width": 128,
+            "role": "本次真实读回数据",
+            "description": "本次真实读回数据"
+          },
+          {
+            "name": "o_awaddr",
+            "direction": "output",
+            "width": 25,
+            "role": "原生PAXI写地址，不解释字节单位",
+            "description": "原生PAXI写地址，不解释字节单位"
+          },
+          {
+            "name": "o_awvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "写地址保持到自身握手",
+            "description": "写地址保持到自身握手"
+          },
+          {
+            "name": "o_wdata",
+            "direction": "output",
+            "width": 128,
+            "role": "当前地址对应确定性测试字",
+            "description": "当前地址对应确定性测试字"
+          },
+          {
+            "name": "o_wstrb",
+            "direction": "output",
+            "width": 16,
+            "role": "沿当前PH1P工程的零掩码",
+            "description": "沿当前PH1P工程的零掩码"
+          },
+          {
+            "name": "o_wvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "写数据保持到自身握手",
+            "description": "写数据保持到自身握手"
+          },
+          {
+            "name": "o_wlast",
+            "direction": "output",
+            "width": 1,
+            "role": "每个写命令只有一拍",
+            "description": "每个写命令只有一拍"
+          },
+          {
+            "name": "o_araddr",
+            "direction": "output",
+            "width": 25,
+            "role": "逆序访问四个原生地址",
+            "description": "逆序访问四个原生地址"
+          },
+          {
+            "name": "o_arvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "独立读请求有效",
+            "description": "独立读请求有效"
+          },
+          {
+            "name": "o_rready",
+            "direction": "output",
+            "width": 1,
+            "role": "只为已接受读请求接收数据",
+            "description": "只为已接受读请求接收数据"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": 2,
+            "role": "零运行、一观察通过、二失败",
+            "description": "零运行、一观察通过、二失败"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 4,
+            "role": "首错类型，复位前不覆盖",
+            "description": "首错类型，复位前不覆盖"
+          },
+          {
+            "name": "o_state",
+            "direction": "output",
+            "width": 4,
+            "role": "当前实验阶段",
+            "description": "当前实验阶段"
+          },
+          {
+            "name": "o_writes",
+            "direction": "output",
+            "width": 4,
+            "role": "地址和数据都已接受的写次数",
+            "description": "地址和数据都已接受的写次数"
+          },
+          {
+            "name": "o_reads",
+            "direction": "output",
+            "width": 4,
+            "role": "比较正确的读次数",
+            "description": "比较正确的读次数"
+          },
+          {
+            "name": "o_address",
+            "direction": "output",
+            "width": 25,
+            "role": "当前或首错地址",
+            "description": "当前或首错地址"
+          },
+          {
+            "name": "o_expected",
+            "direction": "output",
+            "width": 128,
+            "role": "当前或首错的完整期望字",
+            "description": "当前或首错的完整期望字"
+          },
+          {
+            "name": "o_actual",
+            "direction": "output",
+            "width": 128,
+            "role": "最近或首错的完整实际字",
+            "description": "最近或首错的完整实际字"
+          },
+          {
+            "name": "o_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "核心域经过周期，不折算带宽",
+            "description": "核心域经过周期，不折算带宽"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "DDR user ~133.33MHz; top additionally 100MHz ref,75MHz pixel,375MHz serial"
+      },
+      "reset": {
+        "assertion": "Asynchronous, full DDR IP and requester reset together",
+        "release": "Top two-flop release per domain; PHY reset also gates requester"
+      },
+      "behavior": [
+        "Wait PHY ready; write four native addresses 0/8/16/24, read reverse, repeat with complement.",
+        "Keep AW/W payload stable until own acceptance; present W with AW (zero launch delay).",
+        "One read outstanding; compare all 128 bits and RLAST; latch first failure, no retry.",
+        "PAXI mask=0; byte address=native*2 for current 16-bit DDR, not full-capacity validation.",
+        "HDMI frozen snapshots contain error/address/counts and alternate full expected/actual pages."
+      ],
+      "constraints": [
+        "No write completion fabricated from AW/W acceptance. No production Tensor READY claim.",
+        "C_TIMEOUT=27h7ffffff per waiting stage; immediate fault cancellation requires full IP reset before retry."
+      ],
+      "corner_cases": [
+        "Independent AW/W backpressure, missing response, mismatch, unsolicited R, PHY lost, partial reset."
+      ],
+      "verification_cases": [
+        "17 controlled-endpoint cases; separate actual-IP implementation; real DDR readback requires board."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "split_acceptance",
+          "title": "Split AW/W acceptance",
+          "scenario": "backpressure",
+          "description": "Compressed schematic only; maximum W generation delay is zero in requester.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "rstn",
+                "wave": "01........"
+              },
+              {
+                "name": "phy_ready",
+                "wave": "0..1......"
+              },
+              {
+                "name": "AWVALID/WVALID",
+                "wave": "0....1.0.."
+              },
+              {
+                "name": "AWREADY",
+                "wave": "0.....10.."
+              },
+              {
+                "name": "WREADY",
+                "wave": "0......10."
+              }
+            ],
+            "head": {
+              "text": "Schematic: AW/W offered together, accepted independently; no fixed DDR latency"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

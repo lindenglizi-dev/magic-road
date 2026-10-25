@@ -1,0 +1,98 @@
+{
+  "name": "csp_family",
+  "modules": [
+    {
+      "name": "tb_csp_family_client",
+      "rtl_path": "tests/tb_csp_family_client.v",
+      "parameters": [
+        {
+          "name": "C_FAMILY",
+          "default": 3,
+          "description": "合法常量3=CSP3，4=CSP4"
+        }
+      ],
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "verification_completion",
+            "description": "当前完整场景全部检查成功后置位"
+          }
+        ]
+      },
+      "behavior": [
+        "C_FAMILY仅取3或4，对应冻结CSP3或CSP4，不是运行时任意图",
+        "七阶段按层完整遍历：三个DW/PW残差单元及最终PW融合",
+        "只有真实图像外补零；CSP4最后tile仅两行有效输出，禁止写物理padding行",
+        "16B单在途行缓存、完整tile输入复用、当前三输出通道权重驻留",
+        "原核组接口/II/数值保留；末次真实写、注册退休、整层可见性分别观察",
+        "共同复位取消全部端点，重新装SiLU；未证明独立取消排空"
+      ],
+      "constraints": [
+        "合法常量C_FAMILY为3或4；参数channel7/group4只是外围扩宽",
+        "同一套冻结算术、无私有MAC/SiLU/完整ROM",
+        "4ERAM为共同工作仓目标，容量不证明实际映射或端口时序",
+        "100M是整机1FPS预算，局部对拍不能证明整网FPS；过期500ms不改"
+      ],
+      "corner_cases": [
+        "CSP3完整36行、CSP4完整18行与末两行tile",
+        "DW三点/尾一点，PW24/48/96输入组，残差alias保持",
+        "随机反压稳定，错误参数/读地址/返回地址/屏障拒绝",
+        "共同复位强制装表、检查器真实acc错误负例"
+      ],
+      "verification_cases": [
+        "CSP3每次442368、CSP4每次221184阶段输出/中间值逐项一致",
+        "正常、随机、复位重跑和协议负例",
+        "padding不写、源读/参数次数及周期账独立核验"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "visible",
+          "title": "完整层退休与下一层预取",
+          "scenario": "barrier",
+          "description": "省略其它任务；ready由外部写可见服务提供，不是固定等待拍数",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p..|......."
+              },
+              {
+                "name": "last_write_accept",
+                "wave": "010|......."
+              },
+              {
+                "name": "registered_task_done",
+                "wave": "001|0......"
+              },
+              {
+                "name": "layer_barrier_valid",
+                "wave": "0..|0111100"
+              },
+              {
+                "name": "layer_visible_ready",
+                "wave": "0..|0000100"
+              },
+              {
+                "name": "next_layer_prefetch",
+                "wave": "0..|0000010"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

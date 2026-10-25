@@ -1,0 +1,61 @@
+{
+  "references": [
+    {
+      "file": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\integer.py",
+      "sha256": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040"
+    },
+    {
+      "file": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\postprocess_golden_2fps_20261015\\golden.py",
+      "sha256": "95a386e97b2b73507315032c57f7386c57a2c1d00c7a874eb5602f9ff9ec4453"
+    },
+    {
+      "file": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\postprocess_joint_1fps_20261015\\verify_vectors.py",
+      "sha256": "8935de3ac08da883be887ff8a6b1f495525cf966864e26b8c3dc1602351bf1a2"
+    },
+    {
+      "file": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\postprocess_joint_1fps_20261015\\vector_manifest.json",
+      "sha256": "05908151d1b85d8deff53638f97614af4de47ecb3ee3b5e97c5eb0b8f6732750"
+    },
+    {
+      "file": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\head_decode_topk_rtl_20261015\\verification\\assets\\sigmoid_lut_16.hex",
+      "sha256": "889fa62b54d26210c37e9260c3e954d1913c0606593381152a2846b2609419ca"
+    },
+    {
+      "file": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\cnn\\hw_validation\\production\\head_decode_topk_rtl_20261015\\verification\\assets\\exp_lut_16.hex",
+      "sha256": "135731b97a0a144eacf953b80a540eb68591bcb6b5bddb588824917218ca8d0c"
+    }
+  ],
+  "thresholds_uint16": [
+    32768,
+    32768
+  ],
+  "threshold_comparison": ">=",
+  "threshold_status": "CURRENT_FROZEN_DIAGNOSTIC_ONLY_NOT_NEW_ACCURACY_ACCEPTANCE",
+  "sigmoid": "INT16 Q7.8; RNE(raw/4)+512; raw<=-2048=>0; raw>=2048=>65535; index1024=>sigmoid_upper",
+  "sigmoid_lut_entries": 1024,
+  "exp_lut_entries": 256,
+  "exponent": "clip raw to[-1024,896]; address=RNE((raw+1024)*255/1920); UINT16 Q6.10 table",
+  "score": "RNE(objectness_uint16*class_uint16/65536)",
+  "ranking": "descending(score,-global_cell_id); class0 then class1; equal score earlier cell wins",
+  "topk_per_class": 128,
+  "max_boxes_per_class": 32,
+  "max_boxes_total": 64,
+  "geometry": "center_q8=(raw_xy+grid_xy*256)*stride; size_q8=RNE(exp*stride/4); half=RNE(size/2); clip half-open endpoints",
+  "candidate_q8_limits": [
+    65536,
+    36864
+  ],
+  "zero_area": "removed after Top128, never before ranking",
+  "nms": "same class only; suppress iff3*intersection>area_a+area_b; equality atIoU1/2 retained",
+  "restore_old": "RNE(box_q8*5/512)",
+  "restore_new": "RNE(box_q8*5/256) once, then source[0,1280]x[0,720] clamp",
+  "source_rounding_collapse": "existing reference retains valid network box even when final source endpoints round equal; renderer skips collapsed geometry",
+  "unchanged": [
+    "24MAC/signed33/RNE/SiLU",
+    "age2000ms from capture timestamp",
+    "READY visibility and last-read release",
+    "dispatcher protocol",
+    "source epoch/frame/task identity",
+    "SOF full-table switch"
+  ]
+}

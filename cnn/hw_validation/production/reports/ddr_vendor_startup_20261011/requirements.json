@@ -1,0 +1,17 @@
+{
+  "task_classes": ["analyze", "generate", "validate"],
+  "scope": "Original generated controller timed startup, then real device simulation only when a matching chip model is available",
+  "frozen": "Previous conditional tensor regression and all production/controller sources remain unchanged",
+  "startup_contract": {
+    "reference_clock_hz": 100000000,
+    "reset_low_ps": 2000000,
+    "observe_ps": 1000000000,
+    "apb": "Driven idle, same reference clock and reset as current video wrapper",
+    "paxi": "Driven idle; no synthetic read response or write completion",
+    "chip_model": "Not connected for initial clock/reset characterization; no read/write PASS permitted",
+    "checks": ["Reference period", "Derived clock activity", "Reset release", "PHY readiness", "DDR command activity", "No unsolicited read valid"]
+  },
+  "plan": ["Freeze old artifacts and exact vendor closure", "Run dependency and strict gates", "Compile original vendor files with original config and shared compilation unit", "Run bounded startup with no force or timing acceleration", "Classify failure before adding any chip model or PAXI traffic"],
+  "not_allowed": ["Production edits", "Forced ready/lock/read data", "Invented commit", "Training", "Bitstream or board operations"],
+  "public_gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"]
+}

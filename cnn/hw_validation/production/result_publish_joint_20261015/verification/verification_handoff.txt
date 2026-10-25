@@ -1,0 +1,19 @@
+Role: verify. Writes confined to new verification directory. No functional RTL edits.
+
+Acceptance coverage is31baseline cases plus2separate supplemental actual-ROM cases, not a single31/33-runPASS.
+Baseline31 = protocol matrix1 (21internal protocol scenarios/13ABORT pulses) + actual-ROM matrix30.
+Select21passed cases from20261015_231535_293_7770b808; its overallFAIL and failedmode7 remain retained.
+Select10corrected-driver cases from20261015_233428_736_e114ca7d, PASS10/10.
+Supplement20261015_234212_068_637d4424, PASS2/2: held-META reset/recover and pending-full empty→empty.
+All three accepted snapshots unchanged during their runs; all15core-source hash bindings identical (11unique compiled source files plus4same files also bound through the immutable vendor closure). Per-case run, TB/runner hash, metrics and vendor-warning evidence are in baseline_acceptance_coverage.json and final_verification_receipt.json.
+
+TB admission bug reproduced narrowly: frame1 accepted exactly12096cells; recovery frame2 accepted0 because start helper sampled a falling-edge ready before the random gate changed. Corrected helper waits for rising-edge valid&&ready. No RTL duplicate-cell defect observed. Failed and focused-pass runs and trace are preserved; see start_driver_failure_analysis.txt.
+
+New publisher/C8 verification includes all97bits of every active entry, all265metadata bits, outside-count zero reads, real7/empty/64,6944worst comparisons, count0clearing, exact model/task/source identities, context mutation, output/meta/copy backpressure, partial fault/abort, stage/partial-source/sealed-copy/held-META resets, postseal cancel ignored, real time snapshot validity/loss and separate controlled age/one-second identity updates.
+Pending-full supplement: first metadata6,169,245ns/ack6,169,325ns, active16,500,035.634ns; second metadata12,338,505ns, held source until ack16,500,095ns, active33,000,035.634ns. Continuous source metadata/count/seal and publisher-busy checks passed throughout. Exactly2different source identities completed; all count0 active/out-of-count entries zero.
+
+Known encrypted-vendor INIT_FILE bounds warnings remain unresolved:336warnings across3fresh selected optimizations (112each);29selected actual-ROM cached runs have0warnings and explicit cache diagnostic. Unexpected warnings0. Totals exclude retained failed/diagnostic/smoke runs. Standalone controlled protocol does not instantiate vendor ROM. All selected simulator compilations report0errors/0warnings.
+Main TB strict gate at corrected-start snapshot:309comment-placement errors/0strictwarnings. Protocol TB:55comment errors/0strictwarnings. Testbench static compile/AST reports scan0files; actualvlog evidence is separate. Supplemental TB static gate was not rerun after coordinator instructed no further tests; actualcompile and2simulations passed. Real empty-port write-spec remains rejected; manual companions and governedWaveDrom render retained. No strict whole-delivery pass claimed.
+
+Clock100MHzsource/75MHzaverage destination; normalSOF1237500destination cycles, explicit arbitrary first-active-pixel phase rather than full h/v generator. Copy_ack endpoint is publisher sampling/retirement edge; first assertion may be10ns earlier. Selected phase has ack before active, not a universal CDC guarantee. Disjoint endpoint intervals are reported; contained wait counters are not added again. Pending-full wait is included in meta_to_ack, not copy_busy/copy_enable-low count.
+Controlled time jumps/one-second updates are not actualFPS evidence. Capture context remains a controlled input. No source-camera identity binding, age-text overlay, fullCNN/DDR, resource/timing, bitstream/board/Flash or production acceptance is claimed.

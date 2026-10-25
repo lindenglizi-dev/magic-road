@@ -1,0 +1,28 @@
+C9 第五批稳定交接：真实模型ROM→完整后处理，2026-10-15
+
+实测完成
+受控160bit ROM字端点＋真实共享LUT适配：25/25功能通过，共用后处理2M预算通过。
+实际唯一ROM reader＋14组56lane PH1P厂商RAM模型＋共享LUT＋C2/C9：24/24功能通过，2M预算通过，源码/输入运行前后相同。
+真实图7框：1577513正常、1591283随机；6944比较64框：1171727正常、1171949随机；全组最大完整恢复帧1591477拍（约15.91477ms/100MHz假设）。不是整网1FPS或板测。
+回执：verification/runs/20261015_220545_593_cdb98def/summary.json；verification/runs/20261015_221542_797_02bf7376/summary.json。
+最终报告：final_report.txt；接口/TB规格：verification/tb_road_postprocess_real_rom_spec.md；实际每版构建源在对应source_snapshot/。
+
+供C7集成的边界
+1. C2 start携带frame_token32/model_id32；完整12096项cell顺序、每项112位、id14及同一token。仅握手接受，反压保持。
+2. C2.o_lut_*与road_shared_lut_service原LUT接口逐项直连，不另复制sigmoid/exp表。kind0/1、index10、tag16、frame32、model32及UINT16响应/error契约不变。
+3. 共享ROM口为request_valid/ready、addr13和response_valid/ready、data160，reader故障粘滞到共同reset。服务cancel不复位reader，旧读必须DRAIN完才复用；ROM仲裁必须保留已接受请求的客户归属直到真实返回被消费，不能因客户cancel把晚返回交给新客户。
+4. 实际当前是LUT单客户，没有接权重读取或其他客户竞争。由C7接同一唯一ROM仲裁；不得另实例化第二ROM或MAC。
+5. C2内部唯一候选RAM；seal后只读，NMS最后读消费、最终结果接受完后done，当前冻结配对done直连finish且每次已断言finish_ready/token一致。C2收到finish后释放。
+6. C9 entry_valid/ready输出FINAL97：class[0]、score[16:1]、x0[36:17]、y0[56:37]、x1[76:57]、y1[96:77]，坐标是源图整数像素<<8；最多64项。done单拍、o_output_count7为接受数量；零框也done。
+7. 条目在done前均为暂存。C7应直接利用C8现有source-held表收集，保持完整描述符(epoch/source_frame_id/model_id/capture timestamp)直到完成，按SRIF1发布。fault/reset/cancel撤销本帧暂存有效性，不能发布半表，也不应为接线增第四张完整框表。
+8. 共同复位服务与reader；500ms结果年龄契约保持，未启用2000ms提案。C8的SOF切表/源时间绑定仍需整机联调。
+
+冻结依赖
+rtl/四个原模块、vendor_rom/rtl原reader/group、vendor_rom/vendor原厂模型/GSR、vendor_rom/artifacts正确56lane；所有SHA见报告和summary。USE_VENDOR_ROM实际分支排除受控完整词数组。
+模型B35D4A66，payload b35d4a66...65145、physical bab36c25...ec417；旧R1的66284020...abd43未使用/修改。上游C2实际来源回执9f9ebad3...56db0已冻结。
+包仍标TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED，不能由本回归宣称QAT精度验收通过。
+
+未闭合
+新TB212条注释规范、旧模块严格诊断仍保留；实际首次优化112条加密厂商INIT_FILE/vopt-2697警告未闭合，23次缓存载入没有重复警告，0意外警告。没有屏蔽厂商警告或改门禁。
+没有实际Slice/DSP/ERAM映射、setup/hold/recovery/removal或CDC签核；0新增DSP/不重复RAM是结构目标，不冒充TD测量。
+生产/C8收集器的半表撤销、共享ROM竞争、完整CNN预测流、实际DDR、摄像头/HDMI连续性尚待协调集成。C9本批不单独TD，不训练、生产改动、位流、上板/Flash或commit/push。

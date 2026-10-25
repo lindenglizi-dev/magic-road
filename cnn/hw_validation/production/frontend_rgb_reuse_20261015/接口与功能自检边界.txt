@@ -1,0 +1,63 @@
+S1供总集成使用的接口交接（事实与后续提取点分开）
+工程根：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision
+候选：cnn/hw_validation/production/frontend_rgb_reuse_20261015/
+替代：reports/frontend_ddr_full_20261015中的sequence；不是新增一套DDR控制器或第二套MAC。
+
+1. 当前可复用的实际接口
+sequence与mailbox：
+  计算域100MHz；o_req_valid && i_req_ready接受一次请求。
+  o_req_write、o_req_addr[24:0]、o_req_data[127:0]在未接受时保持；单outstanding，不能假定支持连续多请求。
+  i_rsp_valid && o_rsp_ready消费完整所属响应；i_rsp_data[127:0]、i_rsp_error[3:0]。
+  每个请求均等原响应；o_writes数的是写接受响应的消费，不能视为commit、visible或DDR全部退役。
+  当前返回归属只有这一客户，不含外部layer/tile/epoch标签；多客户不能原封不动直接套用。
+  当前共同DDR/CNN复位取消全部账目，不承诺独立CNN取消后的旧返回排空。
+
+sequence与冻结core：
+  owner：i_select_valid && o_select_ready选择Stem/down2；不能在busy或导出期间强行换owner。
+  SiLU：i_table_valid && o_table_ready，地址10bit、数据16bit；复位重新装满1024项，未满禁止启动。
+  参数/halo：i_load_valid && o_load_ready；kind3bit、局部addr11bit、data signed32。
+  RGB kind0携带0..255原始低8bit，Stem核内部只中心化一次；padding kind1携带中心化后的算子零，不应再次减128。
+  down2 halo kind0携带符号扩展的Stem INT8，不能当RGB无符号再中心化。
+  i_start由原ST_START发出，原核自身检查装载/owner/故障；busy、done、fault保持原语义。
+  i_export_start启动原缓存读回；o_output_valid && i_output_ready接受真实字节及9bit index。
+  最后输出接受、core_done、o_export_done和最后DDR写接受响应是不同事件。
+  本候选i_commit_ready仍接1，不因此向外发布“DDR commit”。此名字属于原核内部结果提交。
+
+2. 层/tile数据与地址合同
+完整输入：512x288x3 RGB NHWC；Stem输出256x144x16；down2 DW128x72x16，PW128x72x24。
+Stem tile为4x4x16、输入halo9x9x3；down2 tile为4x4x24、输入halo9x9x16，DW→PW中间结果不写外部DDR。
+halo空间坐标y=tile_y*8+hy-1，x=tile_x*8+hx-1；顶左padding为0，偶数尺寸末窗口右/下仍有效。
+Stem/PW外存为tile4x4_hwc：tile行优先，局部行/列，再channel；128bit词最低byte对应最早字节。
+
+张量       byte base    byte end(exclusive) native base   beat数量
+RGB        0x03400000   0x0346c000          0x01a00000    27648
+Stem       0x03500000   0x03590000          0x01a80000    36864
+PW         0x03600000   0x03636000          0x01b00000    13824
+唯一转换规则：native=byte>>1；16B beat的native步长8；当前sequence生成native，mailbox原样传递，不得再右移。
+RGB行偏移当前按native y*768生成；同像素跨词后重新计算(3*x+channel)，S1只复用同词内lane。
+未来C7的图/owner使用byte地址时，必须指定唯一边界完成转换；本批没有增加新端口或同时放两处转换。
+
+3. 当前固定调度的接受/返回/退休关系
+tile宏命令：HALO → START/RUN → EXPORT → 下一个tile。
+最后halo的真实core_load接受只证明核缓存已装载；源DDR最后读返回已经消费但整帧/邻域仍可能被后续tile复读。
+core_done只表示数值结果完成；输出缓存仍需保持直到最后字节导出接受。
+最后输出字打包后需经过黄金检查/地址登记、请求接受和写响应消费，外层才ADVANCE tile计数。
+当前tile ADVANCE是“最后写接受响应后结束此诊断tile”，不是生产层可见性/输入槽释放屏障。
+输入槽若未来接入，必须等待该槽最后一个实际读响应消费且不存在后续tile复读；本候选没有FREE/READY槽状态或对外release事件。
+固定整层END检查78336写/97564读/221184输出字节及2304/576 tile，不能替代通用任务退休协议。
+
+4. 功能路径与自检路径不能机械整状态删除
+功能可复用：halo坐标、padding、缓存/tag、真实请求与响应、装载接受、核调用、导出打包、写地址和错误闭锁。
+图案源：reg_pattern与ST_PATTERN中的ROM数据是测试专用；但同状态也登记reg_address/reg_write_owner，后续替换图案源必须保留这些功能动作。
+黄金比较：reg_golden、reg_expected、reg_expected_o/reg_actual_o和错误4是测试专用。
+ST_EXPORT_CHECK也登记真实输出写地址，不能为了删golden把整个状态直接删掉导致写错地址。
+flag_final_counts及宏END硬编码属于当前固定三层自检；后续接图执行器需以明确任务/结果退休合同替换，不可直接旁路成done。
+板顶TEST、诊断page、周期图案与黄金ROM不应整包带进最终部署视频模板；原DDR/PLL/HDMI功能由唯一官方模板保留。
+本批仅交以上分离点，不同时重写整个顶层；所有自检保留，以同向量证明S1。
+
+5. 给C7的集成范围
+本候选可替代当前固定前三层序列器的取数周转；现端口完全相同，算术8文件不变。
+尚不是带tile任务描述符的生产DMA模块，不能声称已可直接接任意图/多客户/取消。
+C7接入唯一共享核时，取本文件第1节真实装载/导出握手和第2节布局；当前固定owner/宏计数要由唯一图执行器接管。
+是否外提任务描述符、写可见性、独立取消和视频仲裁，按C9差距单及协调决策另立唯一协议，不在本S1中偷偷添加。
+物理工程闭包已准备在implementation/，命令见physical_preparation.json。本批未启动TD；旧版资源时序不可记到本候选。

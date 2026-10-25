@@ -1,0 +1,29 @@
+{
+  "scope": "Existing training logs and operator-only CPU probe; not new model evaluation",
+  "training_loss_comparison": {
+    "parent_stdout_sha256": "6120f79729b600ac3454951b5a86c30a403a552f17dc1dcb84360a23fe150aeb",
+    "g20_stdout_sha256": "bcf610ae43489c88a74b303b5e8002427379ac74f70e59a2983f36a6a66eb5e6",
+    "paired_orders": 10,
+    "same_sample_keys_and_groups_per_order": true,
+    "parent_first_cycle_mean_pre_update_normalized_loss": 9.438881036598303,
+    "g20_second_cycle_mean_pre_update_normalized_loss": 8.552005696788399,
+    "orders_with_lower_second_cycle_loss": 10,
+    "limitation": "Online pre-update losses at changing weights and SimOTA assignments, not a fixed-checkpoint full training evaluation; validation regression is separate saved same17 evidence"
+  },
+  "ste_operator_probe": {
+    "source": "cnn/hw_validation/production/qat_exact.py:_ste_quantize",
+    "source_sha256": "2c03d9eef2378ee1304e0fe0fe607fd8411f5eb7486058d6f1fb07d6f768821c",
+    "input": [-200, -128, 0, 127, 200],
+    "scale": 1,
+    "minimum": -128,
+    "maximum": 127,
+    "output": [-128, -128, 0, 127, 127],
+    "gradient_of_output_sum_wrt_input": [1, 1, 1, 1, 1],
+    "cuda_initialized": false,
+    "optimizer_updates": 0,
+    "limitation": "Confirms intentional clip-blind surrogate semantics only; does not prove this caused G20 regression"
+  },
+  "new_candidate_optimizer_updates": 0,
+  "global_qat_candidate_updates_unchanged": 30,
+  "formal_acceptance": false
+}

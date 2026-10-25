@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "module": "road_feature_blocks_client",
+  "clock_domain": "100MHz",
+  "legal_blocks": {
+    "2": {
+      "height": 72,
+      "width": 128,
+      "half_channels": 12,
+      "stages": 5
+    },
+    "3": {
+      "height": 36,
+      "width": 64,
+      "half_channels": 24,
+      "stages": 7
+    },
+    "4": {
+      "height": 18,
+      "width": 32,
+      "half_channels": 48,
+      "stages": 7
+    }
+  },
+  "start": "Only i_start && o_start_ready in IDLE latches i_block_id[3:0]; clear line valid.",
+  "busy": "Ignore i_start and i_block_id until after DONE. One owner and one fixed graph case.",
+  "parameter_response": "On consumed response compare i_parameter_response_block_id to latched o_block_id.",
+  "barrier": "On consumed barrier compare i_barrier_block_id to latched o_block_id; advance stage only after old core retires.",
+  "done": "Final matching barrier enters DONE for one cycle: busy=1, done=1, start_ready=0; next cycle IDLE.",
+  "fault": "Accepted illegal ID or wrong response/barrier identity: sticky fault, busy=1, no further traffic until common reset.",
+  "priority": "common reset > fault identity check > matching barrier > held state; DONE ignores start.",
+  "reset": "Common reset clears control, identity and line valid; service cancels old responses and reloads SiLU; arrays not reset.",
+  "storage": {
+    "work_bytes": 3072,
+    "weight_banks": 24,
+    "weight_bits": 192,
+    "quantization_bytes": 31,
+    "read_line_bytes": 16,
+    "total_data_bytes": 3695,
+    "owners": 1,
+    "byte_cache_accesses_per_cycle_max": 1,
+    "eram_mapping": "UNPROVEN"
+  },
+  "widths": {
+    "block": 4,
+    "parameter_channel": 7,
+    "parameter_group": 5,
+    "layer": 3,
+    "window": 3,
+    "byte_address": 32,
+    "read_data": 128
+  },
+  "io": "Single in-flight aligned16 read, exact response address match; existing visibility barrier only.",
+  "limits": [
+    "No arbitrary shape/layer list",
+    "CSP2 Cin12 last mask 0x0f",
+    "CSP4 tail y16/17 only; no y18/19 writes",
+    "No independent reset/late-return guarantee"
+  ],
+  "verification_boundary": "Selector checks control events, not arithmetic/stage duration/cache data/RTL; use frozen CSP vectors for numerical validation."
+}

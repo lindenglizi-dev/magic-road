@@ -1,0 +1,33 @@
+C2+C9 后处理实际RTL联测：要求与执行计划（2026-10-15）
+
+当前分支work/roadyolo。只新增本目录及C9阶段交付文件；保留其他工作区改动，不提交/推送。
+依据：plans/resource_budget_20261015/连续视频1FPS目标与第四批任务_20261015.txt。
+目标：12096项完整112位head流→真实Top128/原址排序/解码→原唯一候选RAM→真实串行NMS→全部FINAL97逐项比较并完成。
+不运行CNN/训练，不写生产/位流/Flash，不启动TD。所有仿真输出在本目录。读原向量，禁止覆盖。
+沿用readable-verilog-generator流程；Ponytail最小化策略：复用三个冻结RTL，不增加通用接口、另一张候选表或无需要的封装。新逻辑仅测试台连接与端点，不改数值。
+
+冻结副本（rtl/）及原件SHA256，联测结束重新比较
+road_candidate_ram.v: c5d80e1ed84c89c1615ec254dabd80437ad3c0edb4abe62f087d2d17f7789eab
+road_head_decode_topk.v: c1560e608dfb571b5c268908734d7b3f694fff25be7db13ca802226ed1c5df02
+road_nms_serial.v: e73ff1879f34cbac59de850d4b9e4bfd72ea6d6e63046fed8c95e3b2aad1b9f1
+前两原件：../head_decode_topk_rtl_20261015/rtl/；后者：../nms_serial_rtl_20261015/。
+
+连接和所有权
+1. 共用时钟、复位；受控joint_cancel同步送C2.i_abort和C9.i_cancel。
+2. C2.o_sealed_valid/frame_token/count_person/count_vehicle→C9.i_sealed_valid/frame_token/count_person/count_vehicle；C9.o_sealed_ready→C2.i_sealed_ready。
+3. C9.o_read_valid/class/index→C2.i_read_req_valid/class/index；C2.o_read_req_ready→C9.i_read_ready。
+4. C2.o_read_rsp_valid/class/index/data/error→C9.i_response_valid/class/index/data/error；C9.o_response_ready→C2.i_read_rsp_ready。
+5. C9.o_done/frame_token→C2.i_finish_valid/frame_token。每次done必须断言C2.o_finish_ready为1；若失败，报告边界问题，不私自改核。
+6. NMS最后读响应接收后C2回ST_NMS，因此当前冻结配对预计允许直连done；验证事实而非假定未来模块都可如此。
+7. 唯一候选存储是C2内部road_candidate_ram的40×1024位数组；扫描、排序、解码写同一位置，封存后只读直到finish。检查封存后写计数不增。
+8. 单LUT受控端点接sigmoid1024项和exp256项；响应回显kind/address/tag/frame/model。不是模型ROM映射或共享ROM仲裁证明。
+9. 出错后测试控制器在受控时钟取消两模块，确认不发done并能恢复；不能将C9 fault组合反馈其cancel形成环。故障前条目不能宣布完整表。清除外部暂存框是后续生产收集器义务，本TB没有实现该收集器；生产控制器及C8发布仍是未集成边界。
+
+测试和证据
+复用冻结Python黄金，测试台不重新实现数值算法。真实图7框、空表、128+128候选/64输出及其他边界；正常和随机输入/LUT/输出停顿，长反压，连续帧后空表，扫描/排序/解码/NMS/输出各位置复位恢复，已收部分条目后出错禁止完成。
+原有128+128完整head向量的NMS为992比较。现已另建assets/worst_comparisons_full_output：12096项完整head，经冻结golden直接计算为128+128候选、6944比较、64输出；与C9独立候选注入例分开，且不覆盖原向量。这是NMS最大比较压力，不等同于所有输入位置反复替换堆顶的TopK最坏扫描压力。
+记录start握手→seal、seal→最后输出接收/done、start→最后输出/done。空表最后输出不存在，不能记为虚构输出。阶段互斥占用相加；LUT/RAM/输出stall为子集，不能叠加。
+后处理共用2,000,000周期管理额度；整帧1FPS为100,000,000周期，不用本段结果证明整网。保留500ms过期要求，未接受2000ms替代。
+交付实际源快照、仿真日志、失败记录、逐场景周期、单RAM证据；严格门及物理未通过分列。
+
+源参考核验：golden.py SHA256 95a386e97b2b73507315032c57f7386c57a2c1d00c7a874eb5602f9ff9ec4453；cnn/integer.py 441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040。verify_vectors.py --check已核对11个冻结场景及1个新增完整head压力场景、共享LUT和B35D4A66参数包；不重新运行CNN。

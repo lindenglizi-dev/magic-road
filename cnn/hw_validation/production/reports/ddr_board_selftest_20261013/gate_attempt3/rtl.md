@@ -1,0 +1,26984 @@
+# Verilog deliverable gate
+
+Root: `E:\project\qiansai\anlogic_topic2_work\lab1_sc500_road_vision\cnn\hw_validation\production\reports\ddr_board_selftest_20261013\rtl`
+Delivery ready: `False`
+Summary: **1039 error(s)**, **18 strict warning(s)**
+
+## Actionable VG findings
+
+<a id="vg-finding-1"></a>
+### VG007: Standard bilingual header with English/Chinese sections is required.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.bilingual
+- source_excerpt: `header.bilingual`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.bilingual
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-2"></a>
+### VG007: English header is missing required field(s): Design Name, Simulations, Referrences, Revision Date, History
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.english_fields
+- source_excerpt: `header.english_fields`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.english_fields
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-3"></a>
+### VG007: Chinese header is missing required field(s): 版权归属, 开发人员, 创建日期, 设计名称, 模块名称, 模块说明, 仿真工程, 参考资料, 依赖文件, 当前版本, 修订日期, 修订历史
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.chinese_fields
+- source_excerpt: `header.chinese_fields`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.chinese_fields
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-4"></a>
+### VG068: Header Description/Simulations fields must use the fixed bilingual path contract (`description/testbench` in English and `Description/TestBench` in Chinese).
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.description_simulations_paths
+- source_excerpt: `header.description_simulations_paths`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.description_simulations_paths
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-5"></a>
+### VG007: Header history must contain at least one dated record with a Vx.y version.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.history_records
+- source_excerpt: `header.history_records`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.history_records
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-6"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:58`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-7"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:59`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-8"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:60`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-9"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:61`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-10"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:65`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-11"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:66`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-12"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:70`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-13"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:71`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-14"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:72`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-15"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:73`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-16"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:74`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-17"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:75`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-18"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:76`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-19"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:77`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-20"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:78`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-21"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:82`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-22"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:83`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-23"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-24"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-25"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:86`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-26"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:87`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-27"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:88`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-28"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:89`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-29"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:104`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-30"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:106`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-31"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:107`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-32"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:109`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-33"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:110`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-34"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:114`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-35"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:115`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-36"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:116`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-37"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:117`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-38"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:118`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-39"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:119`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-40"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:120`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-41"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:121`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-42"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:127`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-43"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:129`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-44"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:135`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-45"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:145`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-46"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:159`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-47"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:170`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-48"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:187`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-49"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:191`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-50"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:195`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-51"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:200`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-52"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:202`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-53"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:211`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-54"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:212`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-55"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:221`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-56"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:229`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-57"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:230`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-58"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:254`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-59"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:255`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-60"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:256`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-61"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:258`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-62"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:259`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-63"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:262`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-64"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:265`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-65"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:276`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-66"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:277`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-67"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:278`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-68"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:281`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-69"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:282`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-70"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:293`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-71"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:296`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-72"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:298`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-73"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:307`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-74"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:309`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-75"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:317`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-76"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:318`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-77"></a>
+### VG060: Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:322`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-78"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:12`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-79"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:14`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-80"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:15`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-81"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:16`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-82"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:17`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-83"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:18`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-84"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:19`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-85"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:20`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-86"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:21`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-87"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:22`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-88"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:23`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-89"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:24`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-90"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:25`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-91"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:26`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-92"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:27`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-93"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:28`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-94"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:29`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-95"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:30`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-96"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:31`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-97"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:32`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-98"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:33`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-99"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:34`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-100"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:35`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-101"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:36`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-102"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:37`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-103"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:38`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-104"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:39`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-105"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:40`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-106"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:44`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-107"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:45`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-108"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:46`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-109"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:47`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-110"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:48`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-111"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:49`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-112"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:50`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-113"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:51`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-114"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:52`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-115"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:53`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-116"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:54`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-117"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:58`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-118"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:59`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-119"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:60`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-120"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:61`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-121"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:65`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-122"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:66`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-123"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:70`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-124"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:71`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-125"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:72`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-126"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:73`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-127"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:74`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-128"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:75`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-129"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:76`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-130"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:77`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-131"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:78`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-132"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:82`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-133"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:83`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-134"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-135"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-136"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:86`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-137"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:87`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-138"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:88`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-139"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:89`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-140"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:93`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-141"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:94`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-142"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:95`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-143"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:96`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-144"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:97`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-145"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:98`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-146"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:99`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-147"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:100`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-148"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:104`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-149"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:105`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-150"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:106`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-151"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:107`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-152"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:108`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-153"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:109`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-154"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:110`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-155"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:111`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-156"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:112`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-157"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:113`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-158"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:114`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-159"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:115`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-160"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:116`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-161"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:117`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-162"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:118`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-163"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:119`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-164"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:120`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-165"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:121`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-166"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:125`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-167"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:126`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-168"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:127`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-169"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:128`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-170"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:129`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-171"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:130`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-172"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:131`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-173"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:134`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-174"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:135`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-175"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:136`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-176"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:138`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-177"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:139`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-178"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:140`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-179"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:141`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-180"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:142`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-181"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:144`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-182"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:145`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-183"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:146`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-184"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:148`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-185"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:149`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-186"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:150`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-187"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:151`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-188"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:152`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-189"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:154`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-190"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:155`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-191"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:156`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-192"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:158`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-193"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:159`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-194"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:160`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-195"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:162`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-196"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:163`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-197"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:164`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-198"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:165`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-199"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:166`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-200"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:168`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-201"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:169`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-202"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:170`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-203"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:171`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-204"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:172`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-205"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:174`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-206"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:175`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-207"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:176`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-208"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:178`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-209"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:179`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-210"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:180`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-211"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:181`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-212"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:182`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-213"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:183`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-214"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:184`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-215"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:186`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-216"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:187`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-217"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:188`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-218"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:190`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-219"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:191`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-220"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:192`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-221"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:194`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-222"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:195`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-223"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:196`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-224"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:197`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-225"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:198`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-226"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:199`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-227"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:200`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-228"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:201`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-229"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:202`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-230"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:203`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-231"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:204`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-232"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:205`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-233"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:209`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-234"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:210`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-235"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:211`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-236"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:212`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-237"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:213`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-238"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:214`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-239"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:215`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-240"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:216`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-241"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:217`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-242"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:218`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-243"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:219`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-244"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:220`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-245"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:221`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-246"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:222`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-247"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:223`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-248"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:224`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-249"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:227`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-250"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:228`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-251"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:229`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-252"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:230`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-253"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:231`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-254"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:232`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-255"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:233`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-256"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:234`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-257"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:235`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-258"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:236`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-259"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:237`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-260"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:238`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-261"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:239`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-262"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:240`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-263"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:241`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-264"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:242`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-265"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:243`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-266"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:244`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-267"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:245`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-268"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:246`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-269"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:247`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-270"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:248`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-271"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:249`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-272"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:252`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-273"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:253`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-274"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:254`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-275"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:255`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-276"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:256`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-277"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:257`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-278"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:258`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-279"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:259`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-280"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:260`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-281"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:261`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-282"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:262`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-283"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:263`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-284"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:264`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-285"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:265`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-286"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:266`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-287"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:267`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-288"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:268`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-289"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:269`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-290"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:270`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-291"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:271`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-292"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:274`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-293"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:275`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-294"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:276`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-295"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:277`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-296"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:278`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-297"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:279`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-298"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:280`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-299"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:281`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-300"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:282`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-301"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:283`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-302"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:284`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-303"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:285`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-304"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:286`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-305"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:287`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-306"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:288`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-307"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:291`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-308"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:292`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-309"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:293`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-310"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:294`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-311"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:295`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-312"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:296`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-313"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:297`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-314"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:298`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-315"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:299`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-316"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:300`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-317"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:301`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-318"></a>
+### VG025: Control statements must use explicit begin/end blocks.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:301`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: control.begin_end
+- source_excerpt: `control.begin_end`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+control.begin_end
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-319"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:302`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-320"></a>
+### VG025: Control statements must use explicit begin/end blocks.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:302`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: control.begin_end
+- source_excerpt: `control.begin_end`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+control.begin_end
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-321"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:303`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-322"></a>
+### VG025: Control statements must use explicit begin/end blocks.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:303`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: control.begin_end
+- source_excerpt: `control.begin_end`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+control.begin_end
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-323"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:304`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-324"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:305`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-325"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:306`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-326"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:307`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-327"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:308`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-328"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:309`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-329"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:310`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-330"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:311`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-331"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:312`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-332"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:315`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-333"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:316`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-334"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:317`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-335"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:318`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-336"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:319`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-337"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:320`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-338"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:321`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-339"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:322`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-340"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:323`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-341"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:324`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-342"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:325`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-343"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:326`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-344"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:327`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-345"></a>
+### VG009: Module `road_ddr_selftest` port list should use Chinese group comments such as 全局信号, 用户接口, or protocol 接口 groups.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ports.group_comments
+- source_excerpt: `ports.group_comments`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ports.group_comments
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-346"></a>
+### VG020: Always block `always@(posedge i_clk or negedge i_rstn)` assigns multiple targets ['reg_index', 'reg_round']; split to one target per always.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: always.single_target
+- source_excerpt: `always.single_target`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+always.single_target
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-347"></a>
+### VG020: Always block `always@(posedge i_clk or negedge i_rstn)` assigns multiple targets ['reg_address', 'reg_expected']; split to one target per always.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: always.single_target
+- source_excerpt: `always.single_target`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+always.single_target
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-348"></a>
+### VG020: Always block `always@(posedge i_clk or negedge i_rstn)` assigns multiple targets ['cnt_writes', 'reg_aw_seen', 'reg_w_seen']; split to one target per always.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: always.single_target
+- source_excerpt: `always.single_target`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+always.single_target
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-349"></a>
+### VG020: Always block `always@(posedge i_clk or negedge i_rstn)` assigns multiple targets ['cnt_reads', 'reg_actual', 'reg_last']; split to one target per always.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: always.single_target
+- source_excerpt: `always.single_target`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+always.single_target
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-350"></a>
+### VG020: Always block `always@(posedge i_clk or negedge i_rstn)` assigns multiple targets ['cnt_cycles', 'cnt_wait']; split to one target per always.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: always.single_target
+- source_excerpt: `always.single_target`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+always.single_target
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-351"></a>
+### VG054: FSM next-state if / else if chain must end with an explicit else branch.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:138`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.next_state_branch_closure
+- source_excerpt: `fsm.next_state_branch_closure`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.next_state_branch_closure
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-352"></a>
+### VG054: FSM next-state if / else if chain must end with an explicit else branch.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:148`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.next_state_branch_closure
+- source_excerpt: `fsm.next_state_branch_closure`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.next_state_branch_closure
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-353"></a>
+### VG054: FSM next-state if / else if chain must end with an explicit else branch.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:162`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.next_state_branch_closure
+- source_excerpt: `fsm.next_state_branch_closure`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.next_state_branch_closure
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-354"></a>
+### VG054: FSM next-state if / else if chain must end with an explicit else branch.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:168`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.next_state_branch_closure
+- source_excerpt: `fsm.next_state_branch_closure`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.next_state_branch_closure
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-355"></a>
+### VG054: FSM next-state if / else if chain must end with an explicit else branch.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:198`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.next_state_branch_closure
+- source_excerpt: `fsm.next_state_branch_closure`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.next_state_branch_closure
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-356"></a>
+### VG054: FSM next-state if / else if chain must end with an explicit else branch.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:197`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.next_state_branch_closure
+- source_excerpt: `fsm.next_state_branch_closure`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.next_state_branch_closure
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-357"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:137`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-358"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:143`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-359"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:147`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-360"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:153`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-361"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:157`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-362"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:161`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-363"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:167`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-364"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:173`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-365"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:177`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-366"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:185`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-367"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:189`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-368"></a>
+### VG063: Case branch comment must have exactly one blank line above unless it follows a region banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:193`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.case_branch_leading_comment
+- source_excerpt: `comments.case_branch_leading_comment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.case_branch_leading_comment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-369"></a>
+### VG031: Region banners appear out of the required order.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.order
+- source_excerpt: `regions.order`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+regions.order
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-370"></a>
+### VG066: Comment for signal `reg_w_seen` repeats or closely reuses comment from signal `reg_aw_seen`; write entity-specific RTL intent.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:77`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.repeated_semantic
+- source_excerpt: `comments.repeated_semantic`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.repeated_semantic
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-371"></a>
+### VG066: Comment for signal `flag_w_accept` repeats or closely reuses comment from signal `flag_aw_accept`; write entity-specific RTL intent.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:83`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.repeated_semantic
+- source_excerpt: `comments.repeated_semantic`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.repeated_semantic
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-372"></a>
+### VG066: Comment for signal `flag_ar_accept` repeats or closely reuses comment from signal `flag_aw_accept`; write entity-specific RTL intent.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.repeated_semantic
+- source_excerpt: `comments.repeated_semantic`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.repeated_semantic
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-373"></a>
+### VG066: Comment for assign `o_wvalid` repeats or closely reuses comment from assign `o_awvalid`; write entity-specific RTL intent.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:108`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.repeated_semantic
+- source_excerpt: `comments.repeated_semantic`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.repeated_semantic
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-374"></a>
+### VG066: Comment for process assignment `reg_w_seen` repeats or closely reuses comment from process assignment `reg_aw_seen`; write entity-specific RTL intent.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest.v:255`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.repeated_semantic
+- source_excerpt: `comments.repeated_semantic`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.repeated_semantic
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-375"></a>
+### VG007: Standard bilingual header with English/Chinese sections is required.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.bilingual
+- source_excerpt: `header.bilingual`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.bilingual
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-376"></a>
+### VG007: English header is missing required field(s): Design Name, Simulations, Referrences, Revision Date, History
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.english_fields
+- source_excerpt: `header.english_fields`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.english_fields
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-377"></a>
+### VG007: Chinese header is missing required field(s): 版权归属, 开发人员, 创建日期, 设计名称, 模块名称, 模块说明, 仿真工程, 参考资料, 依赖文件, 当前版本, 修订日期, 修订历史
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.chinese_fields
+- source_excerpt: `header.chinese_fields`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.chinese_fields
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-378"></a>
+### VG068: Header Description/Simulations fields must use the fixed bilingual path contract (`description/testbench` in English and `Description/TestBench` in Chinese).
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.description_simulations_paths
+- source_excerpt: `header.description_simulations_paths`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.description_simulations_paths
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-379"></a>
+### VG007: Header history must contain at least one dated record with a Vx.y version.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:1`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: header.history_records
+- source_excerpt: `header.history_records`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+header.history_records
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-380"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:34`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-381"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:35`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-382"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:36`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-383"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:37`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-384"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:38`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-385"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:39`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-386"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:40`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-387"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:41`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-388"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:42`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-389"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:43`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-390"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:44`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-391"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:45`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-392"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:46`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-393"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:47`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-394"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:48`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-395"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:49`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-396"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:50`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-397"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:51`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-398"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:52`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-399"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:53`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-400"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:54`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-401"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:55`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-402"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:56`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-403"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:57`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-404"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:58`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-405"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:59`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-406"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:60`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-407"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:61`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-408"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:62`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-409"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:63`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-410"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:64`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-411"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:65`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-412"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:66`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-413"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:67`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-414"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:68`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-415"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:69`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-416"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:70`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-417"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:71`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-418"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:72`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-419"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:75`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-420"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:76`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-421"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:77`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-422"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:78`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-423"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:79`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-424"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:80`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-425"></a>
+### VG060: Inline comment must start at display column 46, aligned from region anchor column 46; got 43.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:81`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-426"></a>
+### VG060: Inline comment must start at display column 48, aligned from region anchor column 48; got 44.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-427"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:94`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-428"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:95`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-429"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:97`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-430"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 45.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:98`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-431"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:103`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-432"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:104`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-433"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:106`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-434"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 47.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:107`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-435"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:112`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-436"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:113`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-437"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:115`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-438"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 49.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:116`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-439"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 41.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:121`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-440"></a>
+### VG060: Inline comment must start at display column 52, aligned from region anchor column 52; got 42.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:123`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.region_anchor
+- source_excerpt: `comments.region_anchor`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.region_anchor
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-441"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:12`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-442"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:13`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-443"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:14`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-444"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:15`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-445"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:16`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-446"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:17`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-447"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:18`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-448"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:19`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-449"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:20`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-450"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:21`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-451"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:22`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-452"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:23`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-453"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:24`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-454"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:25`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-455"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:26`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-456"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:27`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-457"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:28`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-458"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:29`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-459"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:30`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-460"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:31`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-461"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:34`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-462"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:35`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-463"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:36`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-464"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:37`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-465"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:38`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-466"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:39`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-467"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:40`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-468"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:41`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-469"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:42`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-470"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:43`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-471"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:44`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-472"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:45`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-473"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:46`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-474"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:47`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-475"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:48`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-476"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:49`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-477"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:50`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-478"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:51`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-479"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:52`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-480"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:53`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-481"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:54`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-482"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:55`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-483"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:56`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-484"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:57`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-485"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:58`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-486"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:59`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-487"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:60`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-488"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:61`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-489"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:62`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-490"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:63`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-491"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:64`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-492"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:65`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-493"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:66`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-494"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:67`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-495"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:68`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-496"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:69`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-497"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:70`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-498"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:71`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-499"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:72`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-500"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:75`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-501"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:76`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-502"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:77`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-503"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:78`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-504"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:79`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-505"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:80`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-506"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:81`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-507"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-508"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-509"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:86`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-510"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:87`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-511"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:88`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-512"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:92`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-513"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:93`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-514"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:94`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-515"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:95`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-516"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:96`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-517"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:97`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-518"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:98`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-519"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:99`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-520"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:100`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-521"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:101`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-522"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:102`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-523"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:103`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-524"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:104`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-525"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:105`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-526"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:106`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-527"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:107`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-528"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:108`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-529"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:109`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-530"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:110`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-531"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:111`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-532"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:112`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-533"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:113`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-534"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:114`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-535"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:115`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-536"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:116`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-537"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:117`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-538"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:118`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-539"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:119`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-540"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:120`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-541"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:121`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-542"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:122`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-543"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:123`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-544"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:124`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-545"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:125`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-546"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:128`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-547"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:129`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-548"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:130`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-549"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:131`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-550"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:132`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-551"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:133`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-552"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:134`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-553"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:135`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-554"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:136`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-555"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:137`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-556"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:138`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-557"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:139`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-558"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:140`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-559"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:141`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-560"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:142`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-561"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:143`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-562"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:144`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-563"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:145`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-564"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:146`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-565"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:147`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-566"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:148`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-567"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:149`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-568"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:150`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-569"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:151`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-570"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:152`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-571"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:153`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-572"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:154`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-573"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:155`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-574"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:156`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-575"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:157`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-576"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:158`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-577"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:159`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-578"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:160`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-579"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:161`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-580"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:162`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-581"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:163`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-582"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:164`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-583"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:165`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-584"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:166`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-585"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:167`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-586"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:168`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-587"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:169`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-588"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:170`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-589"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:171`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-590"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:172`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-591"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:173`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-592"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:174`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-593"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:175`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-594"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:176`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-595"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:177`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-596"></a>
+### VG004: RTL indentation must use Tab characters, not space indentation.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:178`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: format.tab_indent
+- source_excerpt: `format.tab_indent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+format.tab_indent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-597"></a>
+### VG009: Module `road_ddr_selftest_top` port list should use Chinese group comments such as 全局信号, 用户接口, or protocol 接口 groups.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ports.group_comments
+- source_excerpt: `ports.group_comments`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ports.group_comments
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-598"></a>
+### VG010: output port `ddr_ck_p` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-599"></a>
+### VG010: output port `ddr_ck_n` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-600"></a>
+### VG010: output port `ddr_cke` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-601"></a>
+### VG010: output port `ddr_odt` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-602"></a>
+### VG010: output port `ddr_cs_n` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-603"></a>
+### VG010: output port `ddr_ras_n` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-604"></a>
+### VG010: output port `ddr_cas_n` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-605"></a>
+### VG010: output port `ddr_we_n` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-606"></a>
+### VG010: output port `ddr_ba` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-607"></a>
+### VG010: output port `ddr_addr` must use `o_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-608"></a>
+### VG010: inout port `ddr_dqs_p` must use `io_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-609"></a>
+### VG010: inout port `ddr_dqs_n` must use `io_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-610"></a>
+### VG010: inout port `ddr_dq` must use `io_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-611"></a>
+### VG010: inout port `ddr_dm` must use `io_` prefix.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.port_prefix
+- source_excerpt: `naming.port_prefix`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.port_prefix
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-612"></a>
+### VG013: Flag-like signal `ddrphy_ready` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-613"></a>
+### VG013: Flag-like signal `awvalid` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-614"></a>
+### VG013: Flag-like signal `awready` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-615"></a>
+### VG013: Flag-like signal `wvalid` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-616"></a>
+### VG013: Flag-like signal `wready` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-617"></a>
+### VG013: Flag-like signal `arvalid` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-618"></a>
+### VG013: Flag-like signal `arready` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-619"></a>
+### VG013: Flag-like signal `rvalid` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-620"></a>
+### VG013: Flag-like signal `rready` should use `flag_` prefix unless it is an output bridge.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: naming.flag
+- source_excerpt: `naming.flag`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+naming.flag
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-621"></a>
+### VG015: Internal non-array reg declaration `reg_ref_meta` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:75`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: declaration.internal_reg_default_init
+- source_excerpt: `declaration.internal_reg_default_init`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+declaration.internal_reg_default_init
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-622"></a>
+### VG015: Internal non-array reg declaration `reg_ref_release` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:76`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: declaration.internal_reg_default_init
+- source_excerpt: `declaration.internal_reg_default_init`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+declaration.internal_reg_default_init
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-623"></a>
+### VG015: Internal non-array reg declaration `reg_user_meta` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:77`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: declaration.internal_reg_default_init
+- source_excerpt: `declaration.internal_reg_default_init`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+declaration.internal_reg_default_init
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-624"></a>
+### VG015: Internal non-array reg declaration `reg_user_release` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:78`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: declaration.internal_reg_default_init
+- source_excerpt: `declaration.internal_reg_default_init`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+declaration.internal_reg_default_init
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-625"></a>
+### VG015: Internal non-array reg declaration `reg_pixel_meta` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:79`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: declaration.internal_reg_default_init
+- source_excerpt: `declaration.internal_reg_default_init`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+declaration.internal_reg_default_init
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-626"></a>
+### VG015: Internal non-array reg declaration `reg_pixel_release` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:80`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: declaration.internal_reg_default_init
+- source_excerpt: `declaration.internal_reg_default_init`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+declaration.internal_reg_default_init
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-627"></a>
+### VG015: Internal non-array reg declaration `cnt_page` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:81`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: declaration.internal_reg_default_init
+- source_excerpt: `declaration.internal_reg_default_init`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+declaration.internal_reg_default_init
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-628"></a>
+### VG014: Output port `ddr_addr` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-629"></a>
+### VG014: Output port `ddr_ba` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-630"></a>
+### VG014: Output port `ddr_cas_n` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-631"></a>
+### VG014: Output port `ddr_ck_n` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-632"></a>
+### VG014: Output port `ddr_ck_p` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-633"></a>
+### VG014: Output port `ddr_cke` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-634"></a>
+### VG014: Output port `ddr_cs_n` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-635"></a>
+### VG014: Output port `ddr_odt` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-636"></a>
+### VG014: Output port `ddr_ras_n` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-637"></a>
+### VG014: Output port `ddr_we_n` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-638"></a>
+### VG014: Output port `o_tmds_blue_p` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-639"></a>
+### VG014: Output port `o_tmds_clock_p` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `interface`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-640"></a>
+### VG014: Output port `o_tmds_green_p` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-641"></a>
+### VG014: Output port `o_tmds_red_p` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: output.bridge
+- source_excerpt: `output.bridge`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+output.bridge
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-642"></a>
+### VG020: Always block `always@(posedge clk_ref or negedge raw_rstn)` assigns multiple targets ['reg_ref_meta', 'reg_ref_release']; split to one target per always.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: always.single_target
+- source_excerpt: `always.single_target`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+always.single_target
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-643"></a>
+### VG020: Always block `always@(posedge dhi_clk or negedge user_raw_rstn)` assigns multiple targets ['reg_user_meta', 'reg_user_release']; split to one target per always.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: always.single_target
+- source_excerpt: `always.single_target`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+always.single_target
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-644"></a>
+### VG020: Always block `always@(posedge clk_pixel or negedge raw_rstn)` assigns multiple targets ['reg_pixel_meta', 'reg_pixel_release']; split to one target per always.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: always.single_target
+- source_excerpt: `always.single_target`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+always.single_target
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-645"></a>
+### VG023: FSM must use `state_current` and `state_next` signals.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.three_segment
+- source_excerpt: `fsm.three_segment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.three_segment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-646"></a>
+### VG023: FSM must be generated as at least state-register and next-state combinational blocks.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.three_segment
+- source_excerpt: `fsm.three_segment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.three_segment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-647"></a>
+### VG054: FSM delivery must keep separate state-register and next-state combinational blocks.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: fsm.strict_three_segment
+- source_excerpt: `fsm.strict_three_segment`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+fsm.strict_three_segment
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-648"></a>
+### VG024: Instance `u_PLL` should follow `<module>_Inst_<role>` naming when practical.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: instance.naming
+- source_excerpt: `instance.naming`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+instance.naming
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-649"></a>
+### VG024: Instance `u_ddr2` should follow `<module>_Inst_<role>` naming when practical.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: instance.naming
+- source_excerpt: `instance.naming`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+instance.naming
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-650"></a>
+### VG024: Instance `u_hdmi_vtc` should follow `<module>_Inst_<role>` naming when practical.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: instance.naming
+- source_excerpt: `instance.naming`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+instance.naming
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-651"></a>
+### VG024: Instance `u_hdmi_tx` should follow `<module>_Inst_<role>` naming when practical.
+- Status: `failed`
+- Severity: `warning`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: instance.naming
+- source_excerpt: `instance.naming`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+instance.naming
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-652"></a>
+### VG031: Module instances must stay inside the 模块实例化区域 banner.
+- Status: `failed`
+- Severity: `error`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.instances_last
+- source_excerpt: `regions.instances_last`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+regions.instances_last
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-653"></a>
+### VG061: Item `raw_rstn` must be placed in 其他信号, not `模块实例化信号`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:38`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.declaration
+- source_excerpt: `regions.declaration`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+regions.declaration
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-654"></a>
+### VG061: Item `user_raw_rstn` must be placed in 其他信号, not `模块实例化信号`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:42`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.declaration
+- source_excerpt: `regions.declaration`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+regions.declaration
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-655"></a>
+### VG061: Item `state_value` must be placed in 状态机信号, not `模块实例化信号`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:60`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.declaration
+- source_excerpt: `regions.declaration`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+regions.declaration
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-656"></a>
+### VG061: Item `cnt_page` must be placed in 计数信号, not `寄存器信号`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:81`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.declaration
+- source_excerpt: `regions.declaration`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+regions.declaration
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-657"></a>
+### VG061: Item `u_PLL` must be placed in 模块实例化区域, not `主要任务处理区域`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:128`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.instance
+- source_excerpt: `regions.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+regions.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-658"></a>
+### VG061: Item `u_ddr2` must be placed in 模块实例化区域, not `主要任务处理区域`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:132`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.instance
+- source_excerpt: `regions.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+regions.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-659"></a>
+### VG061: Item `road_ddr_selftest_Inst` must be placed in 模块实例化区域, not `主要任务处理区域`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:147`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.instance
+- source_excerpt: `regions.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+regions.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-660"></a>
+### VG061: Item `u_hdmi_vtc` must be placed in 模块实例化区域, not `主要任务处理区域`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:159`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.instance
+- source_excerpt: `regions.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+regions.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-661"></a>
+### VG061: Item `road_selftest_display_Inst` must be placed in 模块实例化区域, not `主要任务处理区域`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:163`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.instance
+- source_excerpt: `regions.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+regions.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-662"></a>
+### VG061: Item `u_hdmi_tx` must be placed in 模块实例化区域, not `主要任务处理区域`.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:168`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: regions.instance
+- source_excerpt: `regions.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `architecture`; human review required: `True`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+regions.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-663"></a>
+### VG040: Always block `always@(posedge dhi_clk or negedge user_raw_rstn)` should have a nearby leading comment explaining behavior.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:101`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.always
+- source_excerpt: `comments.always`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.always
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-664"></a>
+### VG040: Always block `always@(posedge clk_pixel or negedge raw_rstn)` should have a nearby leading comment explaining behavior.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:110`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.always
+- source_excerpt: `comments.always`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.always
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-665"></a>
+### VG040: Always block `always@(posedge dhi_clk or negedge user_raw_rstn)` should have a nearby leading comment explaining behavior.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:119`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.always
+- source_excerpt: `comments.always`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.always
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-666"></a>
+### VG040: Instance `u_PLL` should have a leading function/connection comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:128`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance
+- source_excerpt: `comments.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-667"></a>
+### VG040: Instance `u_ddr2` should have a leading function/connection comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:132`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance
+- source_excerpt: `comments.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-668"></a>
+### VG040: Instance `road_ddr_selftest_Inst` should have a leading function/connection comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:147`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance
+- source_excerpt: `comments.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-669"></a>
+### VG040: Instance `u_hdmi_vtc` should have a leading function/connection comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:159`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance
+- source_excerpt: `comments.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-670"></a>
+### VG040: Instance `road_selftest_display_Inst` should have a leading function/connection comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:163`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance
+- source_excerpt: `comments.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-671"></a>
+### VG040: Instance `u_hdmi_tx` should have a leading function/connection comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:168`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance
+- source_excerpt: `comments.instance`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-672"></a>
+### VG064: instance mapping `.refclk` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:129`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-673"></a>
+### VG064: instance mapping `.clk4_out` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:130`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-674"></a>
+### VG064: instance mapping `.ref_clk` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:133`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-675"></a>
+### VG064: instance mapping `.apb_prst_n` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:134`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-676"></a>
+### VG064: instance mapping `.apb_penable` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:135`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-677"></a>
+### VG064: instance mapping `.apb_prdata` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:136`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-678"></a>
+### VG064: instance mapping `.ddrphy_rst_n` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:137`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-679"></a>
+### VG064: instance mapping `.paxi_awaddr` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:138`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-680"></a>
+### VG064: instance mapping `.paxi_wdata` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:139`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-681"></a>
+### VG064: instance mapping `.paxi_wready` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:140`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-682"></a>
+### VG064: instance mapping `.paxi_rdata` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:141`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-683"></a>
+### VG064: instance mapping `.ddr_ck_p` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:142`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-684"></a>
+### VG064: instance mapping `.ddr_cs_n` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:143`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-685"></a>
+### VG064: instance mapping `.ddr_ba` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:144`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-686"></a>
+### VG064: instance mapping `.ddr_dqs_n` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:145`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-687"></a>
+### VG064: instance mapping `.i_clk` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:148`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-688"></a>
+### VG064: instance mapping `.i_awready` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:149`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-689"></a>
+### VG064: instance mapping `.i_rvalid` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:150`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-690"></a>
+### VG064: instance mapping `.o_awaddr` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:151`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-691"></a>
+### VG064: instance mapping `.o_wvalid` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:152`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-692"></a>
+### VG064: instance mapping `.o_status` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:153`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-693"></a>
+### VG064: instance mapping `.o_address` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:154`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-694"></a>
+### VG064: instance mapping `.I_vtc_rstn` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:160`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-695"></a>
+### VG064: instance mapping `.O_vtc_hs` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:161`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-696"></a>
+### VG064: instance mapping `.i_clk` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:164`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-697"></a>
+### VG064: instance mapping `.i_pixel_clk` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:165`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-698"></a>
+### VG064: instance mapping `.i_clk` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:164`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-699"></a>
+### VG064: instance mapping `.i_pixel_clk` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:165`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-700"></a>
+### VG064: instance mapping `.o_rgb` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:166`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-701"></a>
+### VG064: instance mapping `.I_pixel_clk` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:169`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-702"></a>
+### VG064: instance mapping `.I_key_in` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:170`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-703"></a>
+### VG064: instance mapping `.I_video_rgb_enable` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:171`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-704"></a>
+### VG064: instance mapping `.I_video_in_user` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:172`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-705"></a>
+### VG064: instance mapping `.O_video_in_ready` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:173`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-706"></a>
+### VG064: instance mapping `.I_audio_left_data` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:174`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-707"></a>
+### VG064: instance mapping `.I_i2s_LRCK` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:175`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-708"></a>
+### VG064: instance mapping `.O_hdmi_clk_p` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:176`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-709"></a>
+### VG064: instance mapping `.O_tmds_ch1_p` should have a same-line semantic comment.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:177`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.instance_mapping
+- source_excerpt: `comments.instance_mapping`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `structure`
+- Bad example:
+```text
+comments.instance_mapping
+```
+- Good example:
+```text
+调整结构关系后重新检查组合锥、实例连接和相关下游节点。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-710"></a>
+### VG066: Comment for signal `wready` repeats or closely reuses comment from signal `awready`; write entity-specific RTL intent.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:50`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.repeated_semantic
+- source_excerpt: `comments.repeated_semantic`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.repeated_semantic
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-711"></a>
+### VG066: Comment for signal `arready` repeats or closely reuses comment from signal `awready`; write entity-specific RTL intent.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:53`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.repeated_semantic
+- source_excerpt: `comments.repeated_semantic`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.repeated_semantic
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-712"></a>
+### VG066: Comment for signal `display_de` repeats or closely reuses comment from signal `display_vs`; write entity-specific RTL intent.
+- Status: `failed`
+- Severity: `error`
+- Location: `road_ddr_selftest_top.v:71`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: comments.repeated_semantic
+- source_excerpt: `comments.repeated_semantic`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+comments.repeated_semantic
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-713"></a>
+### VG073: 建议单个模块仅使用一个时钟域。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:110`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: clk_pixel
+- source_excerpt: `clk_pixel`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+clk_pixel
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-714"></a>
+### VG073: 建议单个模块仅使用一个时钟域。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:92`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: clk_ref
+- source_excerpt: `clk_ref`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+clk_ref
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-715"></a>
+### VG073: 建议单个模块仅使用一个时钟域。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:101`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: dhi_clk
+- source_excerpt: `dhi_clk`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+dhi_clk
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-716"></a>
+### VG082: 复位控制由普通组合表达式生成，无法静态保证无毛刺。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: assign raw_rstn = i_rstn && pll_locked;
+- source_excerpt: `assign raw_rstn = i_rstn && pll_locked;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+assign raw_rstn = i_rstn && pll_locked;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-717"></a>
+### VG082: 复位控制由普通组合表达式生成，无法静态保证无毛刺。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: assign user_raw_rstn = raw_rstn && ddrphy_rst_n;
+- source_excerpt: `assign user_raw_rstn = raw_rstn && ddrphy_rst_n;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+assign user_raw_rstn = raw_rstn && ddrphy_rst_n;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-718"></a>
+### VG084: 存在无法静态确定的 case 控制项或标签位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `run:unknown`
+- Evidence:
+- node_kind: `verilog_project`
+- detail: gate_id=VG084; rule_key=case_item_in_range_width; status=inconclusive; applicable=True; reason=存在无法静态确定的 case 控制项或标签位宽。
+- source_excerpt: `gate_id=VG084; rule_key=case_item_in_range_width; status=inconclusive; applicable=True; reason=存在无法静态确定的 case 控制项或标签位宽。`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+gate_id=VG084; rule_key=case_item_in_range_width; status=inconclusive; applicable=True; reason=存在无法静态确定的 case 控制项或标签位宽。
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-719"></a>
+### VG085: 存在无法静态确定的表达式位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `run:unknown`
+- Evidence:
+- node_kind: `verilog_project`
+- detail: gate_id=VG085; rule_key=op_rel_width_match; status=inconclusive; applicable=True; reason=存在无法静态确定的表达式位宽。
+- source_excerpt: `gate_id=VG085; rule_key=op_rel_width_match; status=inconclusive; applicable=True; reason=存在无法静态确定的表达式位宽。`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+gate_id=VG085; rule_key=op_rel_width_match; status=inconclusive; applicable=True; reason=存在无法静态确定的表达式位宽。
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-720"></a>
+### VG093: 异步复位信号被连接到普通数据赋值右值。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:105`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: o_awvalid = i_rstn && (state_current == ST_WRITE) && !reg_aw_seen
+- source_excerpt: `o_awvalid = i_rstn && (state_current == ST_WRITE) && !reg_aw_seen`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+o_awvalid = i_rstn && (state_current == ST_WRITE) && !reg_aw_seen
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-721"></a>
+### VG093: 异步复位信号被连接到普通数据赋值右值。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:108`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: o_wvalid = i_rstn && (state_current == ST_WRITE) && !reg_w_seen
+- source_excerpt: `o_wvalid = i_rstn && (state_current == ST_WRITE) && !reg_w_seen`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+o_wvalid = i_rstn && (state_current == ST_WRITE) && !reg_w_seen
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-722"></a>
+### VG093: 异步复位信号被连接到普通数据赋值右值。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:111`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: o_arvalid = i_rstn && (state_current == ST_READ_ADDR)
+- source_excerpt: `o_arvalid = i_rstn && (state_current == ST_READ_ADDR)`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+o_arvalid = i_rstn && (state_current == ST_READ_ADDR)
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-723"></a>
+### VG093: 异步复位信号被连接到普通数据赋值右值。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:112`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: o_rready = i_rstn && ((state_current == ST_READ_DATA) || ((state_current == ST_READ_ADDR) && i_arready))
+- source_excerpt: `o_rready = i_rstn && ((state_current == ST_READ_DATA) || ((state_current == ST_READ_ADDR) && i_arready))`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+o_rready = i_rstn && ((state_current == ST_READ_DATA) || ((state_current == ST_READ_ADDR) && i_arready))
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-724"></a>
+### VG093: 异步复位信号被连接到普通数据赋值右值。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: user_raw_rstn = raw_rstn && ddrphy_rst_n
+- source_excerpt: `user_raw_rstn = raw_rstn && ddrphy_rst_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+user_raw_rstn = raw_rstn && ddrphy_rst_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-725"></a>
+### VG097: 缺少外部模块接口定义，无法静态比较端口位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:128`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: PLL u_PLL
+- source_excerpt: `PLL u_PLL`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+PLL u_PLL
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-726"></a>
+### VG097: 命名端口连接为空，无法静态比较位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:132`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr2.apb_pready
+- source_excerpt: `ddr2.apb_pready`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr2.apb_pready
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-727"></a>
+### VG097: 命名端口连接为空，无法静态比较位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:132`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr2.apb_prdata
+- source_excerpt: `ddr2.apb_prdata`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr2.apb_prdata
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-728"></a>
+### VG097: 命名端口连接为空，无法静态比较位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:132`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr2.cfg_clk
+- source_excerpt: `ddr2.cfg_clk`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr2.cfg_clk
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-729"></a>
+### VG097: 命名端口连接为空，无法静态比较位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:132`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr2.cfg_rst_n
+- source_excerpt: `ddr2.cfg_rst_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr2.cfg_rst_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-730"></a>
+### VG097: 缺少外部模块接口定义，无法静态比较端口位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:159`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: uivtc u_hdmi_vtc
+- source_excerpt: `uivtc u_hdmi_vtc`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+uivtc u_hdmi_vtc
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-731"></a>
+### VG097: 命名端口连接为空，无法静态比较位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:163`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: road_selftest_display.o_active_payload
+- source_excerpt: `road_selftest_display.o_active_payload`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+road_selftest_display.o_active_payload
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-732"></a>
+### VG097: 缺少外部模块接口定义，无法静态比较端口位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:168`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: hdmi_tx u_hdmi_tx
+- source_excerpt: `hdmi_tx u_hdmi_tx`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+hdmi_tx u_hdmi_tx
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-733"></a>
+### VG098: FSM 状态必须能从复位初态到达且具有可证明的后继转移。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:51`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ST_CHECK
+- source_excerpt: `ST_CHECK`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ST_CHECK
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-734"></a>
+### VG098: FSM 状态必须能从复位初态到达且具有可证明的后继转移。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:54`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ST_FAIL
+- source_excerpt: `ST_FAIL`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ST_FAIL
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-735"></a>
+### VG098: FSM 状态必须能从复位初态到达且具有可证明的后继转移。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:53`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ST_PASS
+- source_excerpt: `ST_PASS`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ST_PASS
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-736"></a>
+### VG098: FSM 状态必须能从复位初态到达且具有可证明的后继转移。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:48`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ST_PREP_READ
+- source_excerpt: `ST_PREP_READ`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ST_PREP_READ
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-737"></a>
+### VG098: FSM 状态必须能从复位初态到达且具有可证明的后继转移。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:49`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ST_READ_ADDR
+- source_excerpt: `ST_READ_ADDR`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ST_READ_ADDR
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-738"></a>
+### VG098: FSM 状态必须能从复位初态到达且具有可证明的后继转移。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:50`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ST_READ_DATA
+- source_excerpt: `ST_READ_DATA`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ST_READ_DATA
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-739"></a>
+### VG098: FSM 状态必须能从复位初态到达且具有可证明的后继转移。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:52`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ST_STEP_READ
+- source_excerpt: `ST_STEP_READ`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ST_STEP_READ
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-740"></a>
+### VG098: FSM 状态必须能从复位初态到达且具有可证明的后继转移。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:47`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ST_STEP_WRITE
+- source_excerpt: `ST_STEP_WRITE`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ST_STEP_WRITE
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-741"></a>
+### VG099: 复位产生逻辑内联在功能模块中，建议封装为独立复位模块。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: assign raw_rstn = i_rstn && pll_locked;
+- source_excerpt: `assign raw_rstn = i_rstn && pll_locked;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+assign raw_rstn = i_rstn && pll_locked;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-742"></a>
+### VG099: 复位产生逻辑内联在功能模块中，建议封装为独立复位模块。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: assign user_raw_rstn = raw_rstn && ddrphy_rst_n;
+- source_excerpt: `assign user_raw_rstn = raw_rstn && ddrphy_rst_n;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+assign user_raw_rstn = raw_rstn && ddrphy_rst_n;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-743"></a>
+### VG100: 内部生成信号被用作寄存器异步复位。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:110`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: raw_rstn
+- source_excerpt: `raw_rstn`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+raw_rstn
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-744"></a>
+### VG100: 内部生成信号被用作寄存器异步复位。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:119`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: user_raw_rstn
+- source_excerpt: `user_raw_rstn`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+user_raw_rstn
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-745"></a>
+### VG109: 组合逻辑 if 链缺少终止 else。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: if(i_phy_ready)
+- source_excerpt: `if(i_phy_ready)`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+if(i_phy_ready)
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-746"></a>
+### VG109: 组合逻辑 if 链缺少终止 else。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: if(flag_write_complete)
+- source_excerpt: `if(flag_write_complete)`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+if(flag_write_complete)
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-747"></a>
+### VG109: 组合逻辑 if 链缺少终止 else。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: if(flag_ar_accept)
+- source_excerpt: `if(flag_ar_accept)`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+if(flag_ar_accept)
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-748"></a>
+### VG109: 组合逻辑 if 链缺少终止 else。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: if(flag_r_accept)
+- source_excerpt: `if(flag_r_accept)`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+if(flag_r_accept)
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-749"></a>
+### VG109: 组合逻辑 if 链缺少终止 else。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: if(state_current != ST_FAIL)
+- source_excerpt: `if(state_current != ST_FAIL)`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+if(state_current != ST_FAIL)
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-750"></a>
+### VG109: 组合逻辑 if 链缺少终止 else。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: if(flag_timeout && (state_current != ST_PASS))
+- source_excerpt: `if(flag_timeout && (state_current != ST_PASS))`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+if(flag_timeout && (state_current != ST_PASS))
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-751"></a>
+### VG118: 异步复位线路由组合逻辑表达式生成。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: raw_rstn = i_rstn && pll_locked
+- source_excerpt: `raw_rstn = i_rstn && pll_locked`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+raw_rstn = i_rstn && pll_locked
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-752"></a>
+### VG118: 异步复位线路由组合逻辑表达式生成。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest_top.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: user_raw_rstn = raw_rstn && ddrphy_rst_n
+- source_excerpt: `user_raw_rstn = raw_rstn && ddrphy_rst_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+user_raw_rstn = raw_rstn && ddrphy_rst_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-753"></a>
+### VG122: 算术结果位宽超过赋值目标位宽。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:215`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: reg_index <= reg_index + 2'd1;
+- source_excerpt: `reg_index <= reg_index + 2'd1;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+reg_index <= reg_index + 2'd1;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-754"></a>
+### VG122: 算术结果位宽超过赋值目标位宽。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:219`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: reg_index <= reg_index - 2'd1;
+- source_excerpt: `reg_index <= reg_index - 2'd1;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+reg_index <= reg_index - 2'd1;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-755"></a>
+### VG122: 算术结果位宽超过赋值目标位宽。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:268`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: cnt_writes <= cnt_writes + 4'd1;
+- source_excerpt: `cnt_writes <= cnt_writes + 4'd1;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+cnt_writes <= cnt_writes + 4'd1;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-756"></a>
+### VG122: 算术结果位宽超过赋值目标位宽。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:285`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: cnt_reads <= cnt_reads + 4'd1;
+- source_excerpt: `cnt_reads <= cnt_reads + 4'd1;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+cnt_reads <= cnt_reads + 4'd1;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-757"></a>
+### VG122: 算术结果位宽超过赋值目标位宽。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:320`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: cnt_cycles <= cnt_cycles + 32'd1;
+- source_excerpt: `cnt_cycles <= cnt_cycles + 32'd1;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+cnt_cycles <= cnt_cycles + 32'd1;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-758"></a>
+### VG122: 算术结果位宽超过赋值目标位宽。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:324`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: cnt_wait <= cnt_wait + 27'd1;
+- source_excerpt: `cnt_wait <= cnt_wait + 27'd1;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+cnt_wait <= cnt_wait + 27'd1;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-759"></a>
+### VG122: 算术结果位宽超过赋值目标位宽。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:123`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: cnt_page <= cnt_page + 27'd1;
+- source_excerpt: `cnt_page <= cnt_page + 27'd1;`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+cnt_page <= cnt_page + 27'd1;
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-760"></a>
+### VG125: 字面量声明为 2 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:113`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 2'd1
+- source_excerpt: `2'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+2'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-761"></a>
+### VG125: 字面量声明为 2 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:215`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 2'd1
+- source_excerpt: `2'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+2'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-762"></a>
+### VG125: 字面量声明为 2 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:219`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 2'd1
+- source_excerpt: `2'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+2'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-763"></a>
+### VG125: 字面量声明为 2 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:234`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 2'd1
+- source_excerpt: `2'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+2'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-764"></a>
+### VG125: 字面量声明为 25 位，但实际值只需要 4 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:234`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 25'd8
+- source_excerpt: `25'd8`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+25'd8
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-765"></a>
+### VG125: 字面量声明为 25 位，但实际值只需要 5 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:235`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 25'd16
+- source_excerpt: `25'd16`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+25'd16
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-766"></a>
+### VG125: 字面量声明为 25 位，但实际值只需要 5 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:236`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 25'd24
+- source_excerpt: `25'd24`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+25'd24
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-767"></a>
+### VG125: 字面量声明为 3 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:240`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 3'd1
+- source_excerpt: `3'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+3'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-768"></a>
+### VG125: 字面量声明为 3 位，但实际值只需要 2 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:241`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 3'd2
+- source_excerpt: `3'd2`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+3'd2
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-769"></a>
+### VG125: 字面量声明为 3 位，但实际值只需要 2 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:242`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 3'd3
+- source_excerpt: `3'd3`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+3'd3
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-770"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:268`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd1
+- source_excerpt: `4'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-771"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:285`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd1
+- source_excerpt: `4'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-772"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 3 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:296`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd7
+- source_excerpt: `4'd7`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd7
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-773"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:301`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd1
+- source_excerpt: `4'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-774"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 2 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:302`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd2
+- source_excerpt: `4'd2`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd2
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-775"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 2 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:303`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd3
+- source_excerpt: `4'd3`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd3
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-776"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 3 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:304`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd4
+- source_excerpt: `4'd4`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd4
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-777"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 3 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:307`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd6
+- source_excerpt: `4'd6`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd6
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-778"></a>
+### VG125: 字面量声明为 4 位，但实际值只需要 3 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:309`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 4'd5
+- source_excerpt: `4'd5`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+4'd5
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-779"></a>
+### VG125: 字面量声明为 32 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:320`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 32'd1
+- source_excerpt: `32'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+32'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-780"></a>
+### VG125: 字面量声明为 27 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:324`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 27'd1
+- source_excerpt: `27'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+27'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-781"></a>
+### VG125: 字面量声明为 27 位，但实际值只需要 1 位。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:123`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: 27'd1
+- source_excerpt: `27'd1`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+27'd1
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-782"></a>
+### VG132: 时钟信号连接到了非时钟实例端口。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:130`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: .clk4_out(clk_pixel)
+- source_excerpt: `.clk4_out(clk_pixel)`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+.clk4_out(clk_pixel)
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-783"></a>
+### VG132: 时钟信号连接到了非时钟实例端口。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:129`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: .clk0_out(clk_ref)
+- source_excerpt: `.clk0_out(clk_ref)`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+.clk0_out(clk_ref)
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-784"></a>
+### VG137: 存在无法静态确定的表达式位宽。
+- Status: `inconclusive`
+- Severity: `BLOCKER`
+- Location: `run:unknown`
+- Evidence:
+- node_kind: `verilog_project`
+- detail: gate_id=VG137; rule_key=assign_width_match; status=inconclusive; applicable=True; reason=存在无法静态确定的表达式位宽。
+- source_excerpt: `gate_id=VG137; rule_key=assign_width_match; status=inconclusive; applicable=True; reason=存在无法静态确定的表达式位宽。`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+gate_id=VG137; rule_key=assign_width_match; status=inconclusive; applicable=True; reason=存在无法静态确定的表达式位宽。
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-785"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:58`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-786"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:59`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-787"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:60`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-788"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:61`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-789"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:65`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-790"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:66`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-791"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:70`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-792"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:71`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-793"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:72`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-794"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:73`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-795"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:74`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-796"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:75`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-797"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:76`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-798"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:77`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-799"></a>
+### VG138: 常量未显式声明位宽和进制。
+- Status: `failed`
+- Severity: `WARNING`
+- Location: `road_ddr_selftest.v:78`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: = 0
+- source_excerpt: `= 0`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+= 0
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-800"></a>
+### VG145: 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:93`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: flag_aw_accept: 4 sources: i_awready, i_rstn, reg_aw_seen, state_current
+- source_excerpt: `flag_aw_accept: 4 sources: i_awready, i_rstn, reg_aw_seen, state_current`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+flag_aw_accept: 4 sources: i_awready, i_rstn, reg_aw_seen, state_current
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-801"></a>
+### VG145: 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:97`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: flag_r_accept: 4 sources: i_arready, i_rstn, i_rvalid, state_current
+- source_excerpt: `flag_r_accept: 4 sources: i_arready, i_rstn, i_rvalid, state_current`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+flag_r_accept: 4 sources: i_arready, i_rstn, i_rvalid, state_current
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-802"></a>
+### VG145: 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:98`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: flag_unexpected: 4 sources: i_arready, i_rstn, i_rvalid, state_current
+- source_excerpt: `flag_unexpected: 4 sources: i_arready, i_rstn, i_rvalid, state_current`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+flag_unexpected: 4 sources: i_arready, i_rstn, i_rvalid, state_current
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-803"></a>
+### VG145: 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:94`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: flag_w_accept: 4 sources: i_rstn, i_wready, reg_w_seen, state_current
+- source_excerpt: `flag_w_accept: 4 sources: i_rstn, i_wready, reg_w_seen, state_current`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+flag_w_accept: 4 sources: i_rstn, i_wready, reg_w_seen, state_current
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-804"></a>
+### VG145: 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:95`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: flag_write_complete: 6 sources: i_awready, i_rstn, i_wready, reg_aw_seen, reg_w_seen, state_current
+- source_excerpt: `flag_write_complete: 6 sources: i_awready, i_rstn, i_wready, reg_aw_seen, reg_w_seen, state_current`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+flag_write_complete: 6 sources: i_awready, i_rstn, i_wready, reg_aw_seen, reg_w_seen, state_current
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-805"></a>
+### VG145: 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:134`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: state_next: 15 sources: cnt_wait, i_arready, i_awready, i_phy_ready, i_rstn, i_rvalid, i_wready, reg_actual, reg_aw_seen, reg_expected, reg_index, reg_last, reg_round, reg_w_seen, state_current
+- source_excerpt: `state_next: 15 sources: cnt_wait, i_arready, i_awready, i_phy_ready, i_rstn, i_rvalid, i_wready, reg_actual, reg_aw_seen, reg_expected, reg_index, reg_last, reg_round, reg_w_seen, state_current`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+state_next: 15 sources: cnt_wait, i_arready, i_awready, i_phy_ready, i_rstn, i_rvalid, i_wready, reg_actual, reg_aw_seen, reg_expected, reg_index, reg_last, reg_round, reg_w_seen, state_current
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-806"></a>
+### VG145: 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:86`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: payload: 10 sources: actual_data, address, cnt_page[26], cycles, error_kind, expected_data, reads, state_value, status, writes
+- source_excerpt: `payload: 10 sources: actual_data, address, cnt_page[26], cycles, error_kind, expected_data, reads, state_value, status, writes`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+payload: 10 sources: actual_data, address, cnt_page[26], cycles, error_kind, expected_data, reads, state_value, status, writes
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-807"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_reads$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_reads$enable; operation_count=47; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_reads$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_reads$enable; operation_count=47; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_reads$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_reads$enable; operation_count=47; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-808"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_wait$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_wait$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_wait$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_wait$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_wait$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_wait$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-809"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_writes$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_writes$enable; operation_count=15; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_writes$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_writes$enable; operation_count=15; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_writes$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_writes$enable; operation_count=15; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-810"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-811"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-812"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_aw_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_aw_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_aw_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_aw_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_aw_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_aw_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-813"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_error$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_error$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_error$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_error$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_error$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_error$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-814"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_index$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_index$enable; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_index$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_index$enable; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_index$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_index$enable; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-815"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-816"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-817"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_round$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_round$enable; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_round$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_round$enable; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_round$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_round$enable; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-818"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_w_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_w_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_w_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_w_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_w_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_w_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-819"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_current$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_current$D; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_current$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_current$D; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_current$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_current$D; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-820"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:93`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_aw_accept; child_output=road_ddr_selftest.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_aw_accept; child_output=road_ddr_selftest.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_aw_accept; child_output=road_ddr_selftest.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-821"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:93`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_aw_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_aw_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_aw_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-822"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:94`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_w_accept; child_output=road_ddr_selftest.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_w_accept; child_output=road_ddr_selftest.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_w_accept; child_output=road_ddr_selftest.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-823"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:94`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_w_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_w_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_w_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-824"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:95`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_write_complete; child_output=road_ddr_selftest.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_write_complete; child_output=road_ddr_selftest.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_write_complete; child_output=road_ddr_selftest.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-825"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:95`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_write_complete; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_write_complete; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_write_complete; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-826"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:96`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_ar_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_ar_accept; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_ar_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_ar_accept; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_ar_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_ar_accept; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-827"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:97`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_r_accept; child_output=road_ddr_selftest.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_r_accept; child_output=road_ddr_selftest.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_r_accept; child_output=road_ddr_selftest.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-828"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:97`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_r_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_r_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_r_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-829"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:98`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_unexpected; child_output=road_ddr_selftest.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_unexpected; child_output=road_ddr_selftest.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=flag_unexpected; child_output=road_ddr_selftest.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-830"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:98`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_unexpected; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_unexpected; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_unexpected; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-831"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:100`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_phy_lost; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_phy_lost; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_phy_lost; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_phy_lost; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_phy_lost; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_phy_lost; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-832"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:105`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_awvalid; child_output=road_ddr_selftest.o_awvalid; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_awvalid; child_output=road_ddr_selftest.o_awvalid; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_awvalid; child_output=road_ddr_selftest.o_awvalid; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-833"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:105`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-834"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:108`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_wvalid; child_output=road_ddr_selftest.o_wvalid; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_wvalid; child_output=road_ddr_selftest.o_wvalid; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_wvalid; child_output=road_ddr_selftest.o_wvalid; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-835"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:108`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-836"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:109`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_wlast; child_output=road_ddr_selftest.o_wlast; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_wlast; child_output=road_ddr_selftest.o_wlast; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_wlast; child_output=road_ddr_selftest.o_wlast; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-837"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:109`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-838"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:111`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-839"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:112`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_rready; child_output=road_ddr_selftest.o_rready; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_rready; child_output=road_ddr_selftest.o_rready; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_rready; child_output=road_ddr_selftest.o_rready; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-840"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:112`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-841"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:113`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_status; child_output=road_ddr_selftest.o_status; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_status; child_output=road_ddr_selftest.o_status; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=o_status; child_output=road_ddr_selftest.o_status; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-842"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:113`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_status; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_status; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_status; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_status; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_status; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_status; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-843"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:125`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=state_current; child_output=road_ddr_selftest.state_current; operation_count=60; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=state_current; child_output=road_ddr_selftest.state_current; operation_count=60; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=state_current; child_output=road_ddr_selftest.state_current; operation_count=60; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-844"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:134`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=state_next; child_output=road_ddr_selftest.state_next; operation_count=60; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=state_next; child_output=road_ddr_selftest.state_next; operation_count=60; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=state_next; child_output=road_ddr_selftest.state_next; operation_count=60; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-845"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:134`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_next; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_next; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_next; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_next; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_next; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_next; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-846"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:209`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_index; child_output=road_ddr_selftest.reg_index; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_index; child_output=road_ddr_selftest.reg_index; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_index; child_output=road_ddr_selftest.reg_index; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-847"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:209`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_round; child_output=road_ddr_selftest.reg_round; operation_count=8; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_round; child_output=road_ddr_selftest.reg_round; operation_count=8; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_round; child_output=road_ddr_selftest.reg_round; operation_count=8; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-848"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:227`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_address; child_output=road_ddr_selftest.reg_address; operation_count=7; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_address; child_output=road_ddr_selftest.reg_address; operation_count=7; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_address; child_output=road_ddr_selftest.reg_address; operation_count=7; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-849"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:228`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_expected; child_output=road_ddr_selftest.reg_expected; operation_count=11; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_expected; child_output=road_ddr_selftest.reg_expected; operation_count=11; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_expected; child_output=road_ddr_selftest.reg_expected; operation_count=11; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-850"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:252`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_aw_seen; child_output=road_ddr_selftest.reg_aw_seen; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_aw_seen; child_output=road_ddr_selftest.reg_aw_seen; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_aw_seen; child_output=road_ddr_selftest.reg_aw_seen; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-851"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:253`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_w_seen; child_output=road_ddr_selftest.reg_w_seen; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_w_seen; child_output=road_ddr_selftest.reg_w_seen; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_w_seen; child_output=road_ddr_selftest.reg_w_seen; operation_count=10; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-852"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:254`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_writes; child_output=road_ddr_selftest.cnt_writes; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_writes; child_output=road_ddr_selftest.cnt_writes; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_writes; child_output=road_ddr_selftest.cnt_writes; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-853"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:274`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_actual; child_output=road_ddr_selftest.reg_actual; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_actual; child_output=road_ddr_selftest.reg_actual; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_actual; child_output=road_ddr_selftest.reg_actual; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-854"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:275`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_reads; child_output=road_ddr_selftest.cnt_reads; operation_count=65; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_reads; child_output=road_ddr_selftest.cnt_reads; operation_count=65; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_reads; child_output=road_ddr_selftest.cnt_reads; operation_count=65; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-855"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:275`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_last; child_output=road_ddr_selftest.reg_last; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_last; child_output=road_ddr_selftest.reg_last; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_last; child_output=road_ddr_selftest.reg_last; operation_count=19; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-856"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:291`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_error; child_output=road_ddr_selftest.reg_error; operation_count=72; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_error; child_output=road_ddr_selftest.reg_error; operation_count=72; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=reg_error; child_output=road_ddr_selftest.reg_error; operation_count=72; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-857"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:315`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_cycles; child_output=road_ddr_selftest.cnt_cycles; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_cycles; child_output=road_ddr_selftest.cnt_cycles; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_cycles; child_output=road_ddr_selftest.cnt_cycles; operation_count=5; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-858"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:315`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_wait; child_output=road_ddr_selftest.cnt_wait; operation_count=67; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_wait; child_output=road_ddr_selftest.cnt_wait; operation_count=67; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest.v:road_ddr_selftest; instance_path=road_ddr_selftest; specialization=default; target=cnt_wait; child_output=road_ddr_selftest.cnt_wait; operation_count=67; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-859"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=araddr; child_output=road_ddr_selftest_top.araddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=araddr; child_output=road_ddr_selftest_top.araddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=araddr; child_output=road_ddr_selftest_top.araddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-860"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arready; child_output=road_ddr_selftest_top.arready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arready; child_output=road_ddr_selftest_top.arready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arready; child_output=road_ddr_selftest_top.arready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-861"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-862"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awaddr; child_output=road_ddr_selftest_top.awaddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awaddr; child_output=road_ddr_selftest_top.awaddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awaddr; child_output=road_ddr_selftest_top.awaddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-863"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awready; child_output=road_ddr_selftest_top.awready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awready; child_output=road_ddr_selftest_top.awready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awready; child_output=road_ddr_selftest_top.awready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-864"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-865"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_pixel; child_output=road_ddr_selftest_top.clk_pixel; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_pixel; child_output=road_ddr_selftest_top.clk_pixel; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_pixel; child_output=road_ddr_selftest_top.clk_pixel; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-866"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_ref; child_output=road_ddr_selftest_top.clk_ref; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_ref; child_output=road_ddr_selftest_top.clk_ref; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_ref; child_output=road_ddr_selftest_top.clk_ref; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-867"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_serial; child_output=road_ddr_selftest_top.clk_serial; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_serial; child_output=road_ddr_selftest_top.clk_serial; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_serial; child_output=road_ddr_selftest_top.clk_serial; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-868"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_addr; child_output=road_ddr_selftest_top.ddr_addr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_addr; child_output=road_ddr_selftest_top.ddr_addr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_addr; child_output=road_ddr_selftest_top.ddr_addr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-869"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ba; child_output=road_ddr_selftest_top.ddr_ba; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ba; child_output=road_ddr_selftest_top.ddr_ba; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ba; child_output=road_ddr_selftest_top.ddr_ba; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-870"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cas_n; child_output=road_ddr_selftest_top.ddr_cas_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cas_n; child_output=road_ddr_selftest_top.ddr_cas_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cas_n; child_output=road_ddr_selftest_top.ddr_cas_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-871"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_n; child_output=road_ddr_selftest_top.ddr_ck_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_n; child_output=road_ddr_selftest_top.ddr_ck_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_n; child_output=road_ddr_selftest_top.ddr_ck_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-872"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_p; child_output=road_ddr_selftest_top.ddr_ck_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_p; child_output=road_ddr_selftest_top.ddr_ck_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_p; child_output=road_ddr_selftest_top.ddr_ck_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-873"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cke; child_output=road_ddr_selftest_top.ddr_cke; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cke; child_output=road_ddr_selftest_top.ddr_cke; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cke; child_output=road_ddr_selftest_top.ddr_cke; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-874"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cs_n; child_output=road_ddr_selftest_top.ddr_cs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cs_n; child_output=road_ddr_selftest_top.ddr_cs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cs_n; child_output=road_ddr_selftest_top.ddr_cs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-875"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dm; child_output=road_ddr_selftest_top.ddr_dm; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dm; child_output=road_ddr_selftest_top.ddr_dm; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dm; child_output=road_ddr_selftest_top.ddr_dm; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-876"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dq; child_output=road_ddr_selftest_top.ddr_dq; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dq; child_output=road_ddr_selftest_top.ddr_dq; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dq; child_output=road_ddr_selftest_top.ddr_dq; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-877"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_n; child_output=road_ddr_selftest_top.ddr_dqs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_n; child_output=road_ddr_selftest_top.ddr_dqs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_n; child_output=road_ddr_selftest_top.ddr_dqs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-878"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_p; child_output=road_ddr_selftest_top.ddr_dqs_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_p; child_output=road_ddr_selftest_top.ddr_dqs_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_p; child_output=road_ddr_selftest_top.ddr_dqs_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-879"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_odt; child_output=road_ddr_selftest_top.ddr_odt; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_odt; child_output=road_ddr_selftest_top.ddr_odt; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_odt; child_output=road_ddr_selftest_top.ddr_odt; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-880"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ras_n; child_output=road_ddr_selftest_top.ddr_ras_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ras_n; child_output=road_ddr_selftest_top.ddr_ras_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ras_n; child_output=road_ddr_selftest_top.ddr_ras_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-881"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_we_n; child_output=road_ddr_selftest_top.ddr_we_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_we_n; child_output=road_ddr_selftest_top.ddr_we_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_we_n; child_output=road_ddr_selftest_top.ddr_we_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-882"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_ready; child_output=road_ddr_selftest_top.ddrphy_ready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_ready; child_output=road_ddr_selftest_top.ddrphy_ready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_ready; child_output=road_ddr_selftest_top.ddrphy_ready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-883"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_rst_n; child_output=road_ddr_selftest_top.ddrphy_rst_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_rst_n; child_output=road_ddr_selftest_top.ddrphy_rst_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_rst_n; child_output=road_ddr_selftest_top.ddrphy_rst_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-884"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=dhi_clk; child_output=road_ddr_selftest_top.dhi_clk; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=dhi_clk; child_output=road_ddr_selftest_top.dhi_clk; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=dhi_clk; child_output=road_ddr_selftest_top.dhi_clk; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-885"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_de; child_output=road_ddr_selftest_top.display_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_de; child_output=road_ddr_selftest_top.display_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_de; child_output=road_ddr_selftest_top.display_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-886"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_rgb; child_output=road_ddr_selftest_top.display_rgb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_rgb; child_output=road_ddr_selftest_top.display_rgb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_rgb; child_output=road_ddr_selftest_top.display_rgb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-887"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_vs; child_output=road_ddr_selftest_top.display_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_vs; child_output=road_ddr_selftest_top.display_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_vs; child_output=road_ddr_selftest_top.display_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-888"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_blue_p; child_output=road_ddr_selftest_top.o_tmds_blue_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_blue_p; child_output=road_ddr_selftest_top.o_tmds_blue_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_blue_p; child_output=road_ddr_selftest_top.o_tmds_blue_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-889"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_clock_p; child_output=road_ddr_selftest_top.o_tmds_clock_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_clock_p; child_output=road_ddr_selftest_top.o_tmds_clock_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_clock_p; child_output=road_ddr_selftest_top.o_tmds_clock_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-890"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_green_p; child_output=road_ddr_selftest_top.o_tmds_green_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_green_p; child_output=road_ddr_selftest_top.o_tmds_green_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_green_p; child_output=road_ddr_selftest_top.o_tmds_green_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-891"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_red_p; child_output=road_ddr_selftest_top.o_tmds_red_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_red_p; child_output=road_ddr_selftest_top.o_tmds_red_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_red_p; child_output=road_ddr_selftest_top.o_tmds_red_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-892"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=pll_locked; child_output=road_ddr_selftest_top.pll_locked; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=pll_locked; child_output=road_ddr_selftest_top.pll_locked; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=pll_locked; child_output=road_ddr_selftest_top.pll_locked; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-893"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rdata; child_output=road_ddr_selftest_top.rdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rdata; child_output=road_ddr_selftest_top.rdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rdata; child_output=road_ddr_selftest_top.rdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-894"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rlast; child_output=road_ddr_selftest_top.rlast; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rlast; child_output=road_ddr_selftest_top.rlast; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rlast; child_output=road_ddr_selftest_top.rlast; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-895"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-896"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rvalid; child_output=road_ddr_selftest_top.rvalid; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rvalid; child_output=road_ddr_selftest_top.rvalid; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rvalid; child_output=road_ddr_selftest_top.rvalid; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-897"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=status[0]; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.status[0]; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=status[0]; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.status[0]; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=status[0]; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.status[0]; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-898"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=status[1]; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.status[1]; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=status[1]; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.status[1]; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=status[1]; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.status[1]; operation_count=4; limit=3; inconclusive_reason=none; loop_presence=absent
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-899"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_de; child_output=road_ddr_selftest_top.vtc_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_de; child_output=road_ddr_selftest_top.vtc_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_de; child_output=road_ddr_selftest_top.vtc_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-900"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_vs; child_output=road_ddr_selftest_top.vtc_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_vs; child_output=road_ddr_selftest_top.vtc_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_vs; child_output=road_ddr_selftest_top.vtc_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-901"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wdata; child_output=road_ddr_selftest_top.wdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wdata; child_output=road_ddr_selftest_top.wdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wdata; child_output=road_ddr_selftest_top.wdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-902"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-903"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wready; child_output=road_ddr_selftest_top.wready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wready; child_output=road_ddr_selftest_top.wready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wready; child_output=road_ddr_selftest_top.wready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-904"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wstrb; child_output=road_ddr_selftest_top.wstrb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wstrb; child_output=road_ddr_selftest_top.wstrb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wstrb; child_output=road_ddr_selftest_top.wstrb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-905"></a>
+### VG146: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-906"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=raw_rstn; child_output=road_ddr_selftest_top.raw_rstn; operation_count=1; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=raw_rstn; child_output=road_ddr_selftest_top.raw_rstn; operation_count=1; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=raw_rstn; child_output=road_ddr_selftest_top.raw_rstn; operation_count=1; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-907"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=user_raw_rstn; child_output=road_ddr_selftest_top.user_raw_rstn; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=user_raw_rstn; child_output=road_ddr_selftest_top.user_raw_rstn; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=user_raw_rstn; child_output=road_ddr_selftest_top.user_raw_rstn; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-908"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:86`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=payload; child_output=road_ddr_selftest_top.payload; operation_count=1; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=payload; child_output=road_ddr_selftest_top.payload; operation_count=1; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=payload; child_output=road_ddr_selftest_top.payload; operation_count=1; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-909"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:93`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_ref_release; child_output=road_ddr_selftest_top.reg_ref_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_ref_release; child_output=road_ddr_selftest_top.reg_ref_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_ref_release; child_output=road_ddr_selftest_top.reg_ref_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-910"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:102`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_user_release; child_output=road_ddr_selftest_top.reg_user_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_user_release; child_output=road_ddr_selftest_top.reg_user_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_user_release; child_output=road_ddr_selftest_top.reg_user_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-911"></a>
+### VG146: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:111`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_pixel_release; child_output=road_ddr_selftest_top.reg_pixel_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_pixel_release; child_output=road_ddr_selftest_top.reg_pixel_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_pixel_release; child_output=road_ddr_selftest_top.reg_pixel_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-912"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_reads$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_reads$enable; operation_count=47; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_reads$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_reads$enable; operation_count=47; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_reads$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_reads$enable; operation_count=47; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-913"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_wait$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_wait$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_wait$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_wait$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_wait$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_wait$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-914"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_writes$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_writes$enable; operation_count=15; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_writes$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_writes$enable; operation_count=15; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=cnt_writes$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.cnt_writes$enable; operation_count=15; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-915"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-916"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_actual$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_actual$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-917"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_aw_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_aw_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_aw_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_aw_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_aw_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_aw_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-918"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_error$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_error$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_error$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_error$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_error$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_error$enable; operation_count=48; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-919"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$D; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-920"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_last$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_last$enable; operation_count=18; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-921"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_w_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_w_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_w_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_w_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=reg_w_seen$enable; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.reg_w_seen$enable; operation_count=7; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-922"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_current$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_current$D; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_current$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_current$D; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_current$D; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_current$D; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-923"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:93`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_aw_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_aw_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_aw_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_aw_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-924"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:94`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_w_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_w_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_w_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_w_accept; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-925"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:95`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_write_complete; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_write_complete; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_write_complete; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_write_complete; operation_count=13; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-926"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:96`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_ar_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_ar_accept; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_ar_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_ar_accept; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_ar_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_ar_accept; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-927"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:97`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_r_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_r_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_r_accept; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_r_accept; operation_count=6; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-928"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:98`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_unexpected; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_unexpected; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_unexpected; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_unexpected; operation_count=9; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-929"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:100`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_phy_lost; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_phy_lost; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_phy_lost; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_phy_lost; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=flag_phy_lost; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.flag_phy_lost; operation_count=3; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-930"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:105`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-931"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:108`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-932"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:109`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-933"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:111`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-934"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:112`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=o_rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.o_rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-935"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:134`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_next; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_next; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_next; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_next; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top/road_ddr_selftest_Inst; specialization=d837a6a5a741f019bbe3d7e3bebc7e277dac020a282e098f8b2f8bcdae350579; target=state_next; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.state_next; operation_count=44; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-936"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=araddr; child_output=road_ddr_selftest_top.araddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=araddr; child_output=road_ddr_selftest_top.araddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=araddr; child_output=road_ddr_selftest_top.araddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-937"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arready; child_output=road_ddr_selftest_top.arready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arready; child_output=road_ddr_selftest_top.arready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arready; child_output=road_ddr_selftest_top.arready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-938"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=arvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.arvalid; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-939"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awaddr; child_output=road_ddr_selftest_top.awaddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awaddr; child_output=road_ddr_selftest_top.awaddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awaddr; child_output=road_ddr_selftest_top.awaddr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-940"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awready; child_output=road_ddr_selftest_top.awready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awready; child_output=road_ddr_selftest_top.awready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awready; child_output=road_ddr_selftest_top.awready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-941"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=awvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.awvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-942"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_pixel; child_output=road_ddr_selftest_top.clk_pixel; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_pixel; child_output=road_ddr_selftest_top.clk_pixel; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_pixel; child_output=road_ddr_selftest_top.clk_pixel; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-943"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_ref; child_output=road_ddr_selftest_top.clk_ref; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_ref; child_output=road_ddr_selftest_top.clk_ref; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_ref; child_output=road_ddr_selftest_top.clk_ref; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-944"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_serial; child_output=road_ddr_selftest_top.clk_serial; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_serial; child_output=road_ddr_selftest_top.clk_serial; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=clk_serial; child_output=road_ddr_selftest_top.clk_serial; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-945"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_addr; child_output=road_ddr_selftest_top.ddr_addr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_addr; child_output=road_ddr_selftest_top.ddr_addr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_addr; child_output=road_ddr_selftest_top.ddr_addr; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-946"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ba; child_output=road_ddr_selftest_top.ddr_ba; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ba; child_output=road_ddr_selftest_top.ddr_ba; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ba; child_output=road_ddr_selftest_top.ddr_ba; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-947"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cas_n; child_output=road_ddr_selftest_top.ddr_cas_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cas_n; child_output=road_ddr_selftest_top.ddr_cas_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cas_n; child_output=road_ddr_selftest_top.ddr_cas_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-948"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_n; child_output=road_ddr_selftest_top.ddr_ck_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_n; child_output=road_ddr_selftest_top.ddr_ck_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_n; child_output=road_ddr_selftest_top.ddr_ck_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-949"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_p; child_output=road_ddr_selftest_top.ddr_ck_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_p; child_output=road_ddr_selftest_top.ddr_ck_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ck_p; child_output=road_ddr_selftest_top.ddr_ck_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-950"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cke; child_output=road_ddr_selftest_top.ddr_cke; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cke; child_output=road_ddr_selftest_top.ddr_cke; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cke; child_output=road_ddr_selftest_top.ddr_cke; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-951"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cs_n; child_output=road_ddr_selftest_top.ddr_cs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cs_n; child_output=road_ddr_selftest_top.ddr_cs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_cs_n; child_output=road_ddr_selftest_top.ddr_cs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-952"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dm; child_output=road_ddr_selftest_top.ddr_dm; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dm; child_output=road_ddr_selftest_top.ddr_dm; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dm; child_output=road_ddr_selftest_top.ddr_dm; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-953"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dq; child_output=road_ddr_selftest_top.ddr_dq; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dq; child_output=road_ddr_selftest_top.ddr_dq; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dq; child_output=road_ddr_selftest_top.ddr_dq; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-954"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_n; child_output=road_ddr_selftest_top.ddr_dqs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_n; child_output=road_ddr_selftest_top.ddr_dqs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_n; child_output=road_ddr_selftest_top.ddr_dqs_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-955"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_p; child_output=road_ddr_selftest_top.ddr_dqs_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_p; child_output=road_ddr_selftest_top.ddr_dqs_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_dqs_p; child_output=road_ddr_selftest_top.ddr_dqs_p; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-956"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_odt; child_output=road_ddr_selftest_top.ddr_odt; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_odt; child_output=road_ddr_selftest_top.ddr_odt; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_odt; child_output=road_ddr_selftest_top.ddr_odt; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-957"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ras_n; child_output=road_ddr_selftest_top.ddr_ras_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ras_n; child_output=road_ddr_selftest_top.ddr_ras_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_ras_n; child_output=road_ddr_selftest_top.ddr_ras_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-958"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_we_n; child_output=road_ddr_selftest_top.ddr_we_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_we_n; child_output=road_ddr_selftest_top.ddr_we_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddr_we_n; child_output=road_ddr_selftest_top.ddr_we_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-959"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_ready; child_output=road_ddr_selftest_top.ddrphy_ready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_ready; child_output=road_ddr_selftest_top.ddrphy_ready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_ready; child_output=road_ddr_selftest_top.ddrphy_ready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-960"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_rst_n; child_output=road_ddr_selftest_top.ddrphy_rst_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_rst_n; child_output=road_ddr_selftest_top.ddrphy_rst_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=ddrphy_rst_n; child_output=road_ddr_selftest_top.ddrphy_rst_n; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-961"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=dhi_clk; child_output=road_ddr_selftest_top.dhi_clk; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=dhi_clk; child_output=road_ddr_selftest_top.dhi_clk; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=dhi_clk; child_output=road_ddr_selftest_top.dhi_clk; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-962"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_de; child_output=road_ddr_selftest_top.display_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_de; child_output=road_ddr_selftest_top.display_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_de; child_output=road_ddr_selftest_top.display_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-963"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_rgb; child_output=road_ddr_selftest_top.display_rgb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_rgb; child_output=road_ddr_selftest_top.display_rgb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_rgb; child_output=road_ddr_selftest_top.display_rgb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-964"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_vs; child_output=road_ddr_selftest_top.display_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_vs; child_output=road_ddr_selftest_top.display_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=display_vs; child_output=road_ddr_selftest_top.display_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-965"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_blue_p; child_output=road_ddr_selftest_top.o_tmds_blue_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_blue_p; child_output=road_ddr_selftest_top.o_tmds_blue_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_blue_p; child_output=road_ddr_selftest_top.o_tmds_blue_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-966"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_clock_p; child_output=road_ddr_selftest_top.o_tmds_clock_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_clock_p; child_output=road_ddr_selftest_top.o_tmds_clock_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_clock_p; child_output=road_ddr_selftest_top.o_tmds_clock_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-967"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_green_p; child_output=road_ddr_selftest_top.o_tmds_green_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_green_p; child_output=road_ddr_selftest_top.o_tmds_green_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_green_p; child_output=road_ddr_selftest_top.o_tmds_green_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-968"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_red_p; child_output=road_ddr_selftest_top.o_tmds_red_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_red_p; child_output=road_ddr_selftest_top.o_tmds_red_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=o_tmds_red_p; child_output=road_ddr_selftest_top.o_tmds_red_p; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-969"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=pll_locked; child_output=road_ddr_selftest_top.pll_locked; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=pll_locked; child_output=road_ddr_selftest_top.pll_locked; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=pll_locked; child_output=road_ddr_selftest_top.pll_locked; operation_count=0; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-970"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rdata; child_output=road_ddr_selftest_top.rdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rdata; child_output=road_ddr_selftest_top.rdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rdata; child_output=road_ddr_selftest_top.rdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-971"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rlast; child_output=road_ddr_selftest_top.rlast; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rlast; child_output=road_ddr_selftest_top.rlast; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rlast; child_output=road_ddr_selftest_top.rlast; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-972"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rready; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.rready; operation_count=5; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-973"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rvalid; child_output=road_ddr_selftest_top.rvalid; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rvalid; child_output=road_ddr_selftest_top.rvalid; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=rvalid; child_output=road_ddr_selftest_top.rvalid; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-974"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_de; child_output=road_ddr_selftest_top.vtc_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_de; child_output=road_ddr_selftest_top.vtc_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_de; child_output=road_ddr_selftest_top.vtc_de; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-975"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_vs; child_output=road_ddr_selftest_top.vtc_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_vs; child_output=road_ddr_selftest_top.vtc_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=vtc_vs; child_output=road_ddr_selftest_top.vtc_vs; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-976"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wdata; child_output=road_ddr_selftest_top.wdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wdata; child_output=road_ddr_selftest_top.wdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wdata; child_output=road_ddr_selftest_top.wdata; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-977"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wlast; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wlast; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-978"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wready; child_output=road_ddr_selftest_top.wready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wready; child_output=road_ddr_selftest_top.wready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wready; child_output=road_ddr_selftest_top.wready; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-979"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wstrb; child_output=road_ddr_selftest_top.wstrb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wstrb; child_output=road_ddr_selftest_top.wstrb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wstrb; child_output=road_ddr_selftest_top.wstrb; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-980"></a>
+### VG147: 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:11`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=wvalid; child_output=road_ddr_selftest_top/road_ddr_selftest_Inst.wvalid; operation_count=4; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-981"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:84`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=raw_rstn; child_output=road_ddr_selftest_top.raw_rstn; operation_count=1; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=raw_rstn; child_output=road_ddr_selftest_top.raw_rstn; operation_count=1; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=raw_rstn; child_output=road_ddr_selftest_top.raw_rstn; operation_count=1; limit=3; inconclusive_reason=missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-982"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:85`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=user_raw_rstn; child_output=road_ddr_selftest_top.user_raw_rstn; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=user_raw_rstn; child_output=road_ddr_selftest_top.user_raw_rstn; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=user_raw_rstn; child_output=road_ddr_selftest_top.user_raw_rstn; operation_count=2; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-983"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:86`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=payload; child_output=road_ddr_selftest_top.payload; operation_count=1; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=payload; child_output=road_ddr_selftest_top.payload; operation_count=1; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=payload; child_output=road_ddr_selftest_top.payload; operation_count=1; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-984"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:93`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_ref_release; child_output=road_ddr_selftest_top.reg_ref_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_ref_release; child_output=road_ddr_selftest_top.reg_ref_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_ref_release; child_output=road_ddr_selftest_top.reg_ref_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-985"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:102`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_user_release; child_output=road_ddr_selftest_top.reg_user_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_user_release; child_output=road_ddr_selftest_top.reg_user_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_user_release; child_output=road_ddr_selftest_top.reg_user_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-986"></a>
+### VG147: 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:111`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_pixel_release; child_output=road_ddr_selftest_top.reg_pixel_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+- source_excerpt: `definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_pixel_release; child_output=road_ddr_selftest_top.reg_pixel_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `mechanical`; human review required: `False`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+definition_root=road_ddr_selftest_top.v:road_ddr_selftest_top@11:1-179:1; instance_path=road_ddr_selftest_top; specialization=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945; target=reg_pixel_release; child_output=road_ddr_selftest_top.reg_pixel_release; operation_count=0; limit=3; inconclusive_reason=external interface has no implementation | missing module implementation; loop_presence=unknown
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-987"></a>
+### VG151: 公开 parameter 没有适用的参数合同。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest.v:12`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: C_TIMEOUT
+- source_excerpt: `C_TIMEOUT`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `interface`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+C_TIMEOUT
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-988"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:34`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: clk_ref
+- source_excerpt: `clk_ref`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+clk_ref
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-989"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:35`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: clk_pixel
+- source_excerpt: `clk_pixel`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+clk_pixel
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-990"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:36`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: clk_serial
+- source_excerpt: `clk_serial`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+clk_serial
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-991"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:37`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: pll_locked
+- source_excerpt: `pll_locked`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+pll_locked
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-992"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:39`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: dhi_clk
+- source_excerpt: `dhi_clk`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+dhi_clk
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-993"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:40`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddrphy_rst_n
+- source_excerpt: `ddrphy_rst_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddrphy_rst_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-994"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:41`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddrphy_ready
+- source_excerpt: `ddrphy_ready`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddrphy_ready
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-995"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:43`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: awaddr
+- source_excerpt: `awaddr`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+awaddr
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-996"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:44`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: awvalid
+- source_excerpt: `awvalid`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+awvalid
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-997"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:45`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: awready
+- source_excerpt: `awready`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+awready
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-998"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:46`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: wdata
+- source_excerpt: `wdata`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+wdata
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-999"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:47`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: wstrb
+- source_excerpt: `wstrb`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+wstrb
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1000"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:48`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: wvalid
+- source_excerpt: `wvalid`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+wvalid
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1001"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:49`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: wlast
+- source_excerpt: `wlast`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+wlast
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1002"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:50`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: wready
+- source_excerpt: `wready`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+wready
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1003"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:51`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: araddr
+- source_excerpt: `araddr`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+araddr
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1004"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:52`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: arvalid
+- source_excerpt: `arvalid`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+arvalid
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1005"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:53`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: arready
+- source_excerpt: `arready`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+arready
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1006"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:54`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: rdata
+- source_excerpt: `rdata`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+rdata
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1007"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:55`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: rvalid
+- source_excerpt: `rvalid`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+rvalid
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1008"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:56`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: rlast
+- source_excerpt: `rlast`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+rlast
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1009"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:57`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: rready
+- source_excerpt: `rready`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+rready
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1010"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:58`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: status
+- source_excerpt: `status`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+status
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1011"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:59`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: error_kind
+- source_excerpt: `error_kind`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+error_kind
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1012"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:60`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: state_value
+- source_excerpt: `state_value`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+state_value
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1013"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:61`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: writes
+- source_excerpt: `writes`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+writes
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1014"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:62`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: reads
+- source_excerpt: `reads`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+reads
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1015"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:63`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: address
+- source_excerpt: `address`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+address
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1016"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:64`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: expected_data
+- source_excerpt: `expected_data`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+expected_data
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1017"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:65`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: actual_data
+- source_excerpt: `actual_data`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+actual_data
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1018"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:66`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: cycles
+- source_excerpt: `cycles`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+cycles
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1019"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:68`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: vtc_vs
+- source_excerpt: `vtc_vs`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+vtc_vs
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1020"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:69`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: vtc_de
+- source_excerpt: `vtc_de`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+vtc_de
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1021"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:70`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: display_vs
+- source_excerpt: `display_vs`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+display_vs
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1022"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:71`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: display_de
+- source_excerpt: `display_de`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+display_de
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1023"></a>
+### VG153: 信号被读取但没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `road_ddr_selftest_top.v:72`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: display_rgb
+- source_excerpt: `display_rgb`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+display_rgb
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1024"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: o_tmds_blue_p
+- source_excerpt: `o_tmds_blue_p`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+o_tmds_blue_p
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1025"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: o_tmds_green_p
+- source_excerpt: `o_tmds_green_p`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+o_tmds_green_p
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1026"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: o_tmds_red_p
+- source_excerpt: `o_tmds_red_p`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+o_tmds_red_p
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1027"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: o_tmds_clock_p
+- source_excerpt: `o_tmds_clock_p`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+o_tmds_clock_p
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1028"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_ck_p
+- source_excerpt: `ddr_ck_p`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_ck_p
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1029"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_ck_n
+- source_excerpt: `ddr_ck_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_ck_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1030"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_cke
+- source_excerpt: `ddr_cke`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_cke
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1031"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_odt
+- source_excerpt: `ddr_odt`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_odt
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1032"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_cs_n
+- source_excerpt: `ddr_cs_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_cs_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1033"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_ras_n
+- source_excerpt: `ddr_ras_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_ras_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1034"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_cas_n
+- source_excerpt: `ddr_cas_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_cas_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1035"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_we_n
+- source_excerpt: `ddr_we_n`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_we_n
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1036"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_ba
+- source_excerpt: `ddr_ba`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_ba
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+<a id="vg-finding-1037"></a>
+### VG153: 输出端口没有可确认的驱动源。
+- Status: `failed`
+- Severity: `BLOCKER`
+- Location: `file:road_ddr_selftest_top.v:unknown`
+- Evidence:
+- node_kind: `verilog_rtl`
+- detail: ddr_addr
+- source_excerpt: `ddr_addr`
+- How to fix: 修复 evidence 所代表的违规事实，并在修改后重新运行对应 VG 门禁。
+- Steps:
+  1. 打开 location 指向的文件或结构范围，核对 evidence 与当前源码是否一致。
+  2. 按 instruction 修改问题片段，保留模块接口、复位和时序契约。
+  3. 重新运行对应 VG 门禁，并检查示例方向是否适用于当前模块。
+- Risk: `behavioral`; human review required: `True`
+- Example 1 kind: `verilog`
+- Bad example:
+```text
+ddr_addr
+```
+- Good example:
+```text
+按当前模块接口、时序和可综合约束重写该片段，并保留可追溯的结构事实。
+```
+- Example note: 示例表达修改方向，不替代当前模块的接口、时序和综合约束审查。
+
+## Other deliverable findings
+
+| Severity | Code | Path | Line | Message |
+|---|---|---|---:|---|
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:86` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:101` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:110` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:119` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:128` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:132` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:147` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:156` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:163` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `road_ddr_selftest_top.v:168` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |

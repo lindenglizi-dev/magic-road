@@ -1,0 +1,28 @@
+S1修改前交接清单（2026-10-15，C8，工作分支work/roadyolo）
+替代对象：reports/frontend_ddr_full_20261015/rtl/road_stem_ddr_sequence.v的RGB halo取数状态周转。
+唯一功能改动：同像素RGB非末通道、非padding、缓存有效且地址命中、当前lane<15时，下一通道直接复用当前词并lane+1；否则回原MAP/ROW/ADDRESS/CACHE路径。
+算术8模块、层宏加载器、mailbox、板顶层、PAXI参数及共同复位协议冻结。只改候选目录，不提交、不推送、不训练、不生成位流、不上板、不跑重型TD。
+
+当前实际功能：
+  ST_MAP/ROW/ADDRESS/CACHE/READ/READ_RESPONSE/HALO_BYTE：RGB与Stem特征halo读取、单16B缓存、padding、逐字节装核。
+  ST_TABLE/LOAD/SELECT/START/RUN：现共享核表/参数装载、选择及计算。
+  ST_EXPORT/EXPORT_BYTE/WRITE/WRITE_RESPONSE：现核导出、128位打包及DDR请求/接受响应。
+当前诊断常驻项：
+  ST_PATTERN、reg_pattern：周期RGB测试源，部署时由实际采集替换。
+  ST_EXPORT_CHECK、reg_golden、reg_expected/actual及最终计数：黄金自检与TEST故障状态，不是生产检测功能。
+  road_stem_ddr_board_top中的TEST载荷/page计数/HDMI：诊断外壳；不是最终官方视频并发模板。
+  本批仅分类交接，不同时拆分/重写整个顶层；黄金比较与输入图案继续保留以保证同向量回归。
+
+接口事实（不是新生产服务协议）：
+  100MHz同步请求valid/ready，payload在接受前保持，单outstanding；128bit完整词，25bit native半字地址。
+  response valid/ready携带128bit读值/4bit错误；写response只表示原mailbox已接受AW/W，不表示DDR可见或全部退役。
+  o_writes是已消费写接受响应数，o_reads是已消费完整读响应数；不能改名commit/visible。
+  tile输入最后一次core_load握手只表示核缓存装载；core_done是核数值完成；最后导出接受和最后写response是不同事件。
+  当前按tile串行，不独立释放输入槽，不支持多客户owner和独立CNN取消/晚返回排空。
+  共同异步断言/同步释放保留；复位后重新写输入、装满1024项表。禁止借本次S1改变真实外设协议。
+
+地址：byte输入0x03400000、Stem0x03500000、PW0x03600000；native=byte>>1，16B beat native步长8。
+当前sequence直接生成native，mailbox透传native。集成主线必须把byte→native统一在唯一边界，不可在两层各右移一次；本批不新增第二适配器。
+基线：17252079拍；78336写、97564读、221184 PW字节；2304 Stem与576 DW/PW tile。
+验证：原8项适用case及新增lane14/15跨词、编号RGB、长core_load反压；同向量逐项中间值/地址，互斥周期账。
+物理：只交闭包/命令，由协调聊天排期；本批没有新资源、时序或板测通过结论。

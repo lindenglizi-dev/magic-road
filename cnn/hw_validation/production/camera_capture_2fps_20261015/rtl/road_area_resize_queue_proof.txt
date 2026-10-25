@@ -1,0 +1,58 @@
+road_area_resize 128-record queue schedule proof
+Date: 2026-10-15
+
+Scope
+-----
+This is a bounded CPU scheduling proof for the RTL queue shape only.  It does
+not prove Verilog behavior, PH1P ERAM mapping, synthesis resources, timing, a
+camera waveform, DDR visibility, a bitstream, or board operation.
+
+Model
+-----
+- One AWB96 input beat creates exactly one variable-length record.
+- The horizontal schedule repeats record lengths 1,2,1,2,2 pixels.
+- A record is 67 bits: has_second plus two RGB horizontal sums of 33 bits each.
+- The serial worker consumes at most one pixel per clock.
+- If the queue and held-second slot are empty, the first pixel bypasses the
+  queue in the arrival clock.  Otherwise the complete record is written once.
+- A two-pixel record holds its second pixel outside the queue for the following
+  clock after the record is popped.
+- A full queue plus a new record is rejected before read/write pointer update.
+  This deliberately avoids relying on same-address LUTRAM read/write behavior.
+
+Independent PowerShell/.NET queue-model results
+-----------------------------------------------
+Reproduce the same state-machine model with:
+  python road_area_resize_queue_reference.py
+
+line_interval=800, rows=2:
+  max_records=120
+  max_pending_pixels=192
+  bypass_cycles=4
+  simultaneous_push_pop_cycles=396
+  same_address_read_write=0
+  overflow=none
+
+line_interval=512, rows=2:
+  max_records=120
+  max_pending_pixels=192
+  bypass_cycles=4
+  simultaneous_push_pop_cycles=396
+  same_address_read_write=0
+  overflow=none
+
+line_interval=320, rows=2:
+  max_records=128
+  max_pending_pixels=205
+  same_address_read_write=0
+  overflow_cycle=342
+  overflow_source_row=1
+  overflow_source_beat=22
+
+Conclusion
+----------
+The normal 320-active plus 480-blank contract has an eight-record margin in a
+128-record FIFO.  The minimum 192-blank schedule also has the same 120-record
+peak.  Back-to-back active rows are unsupported and are rejected explicitly;
+the failure beat differs from the frozen 192-entry single-pixel FIFO because
+this FIFO stores one variable-length record per AWB beat.

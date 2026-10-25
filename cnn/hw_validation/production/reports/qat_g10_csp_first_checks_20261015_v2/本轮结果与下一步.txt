@@ -1,0 +1,49 @@
+2026-10-15 首残差对抗补测：诊断16/16通过，交付仍未通过
+
+修改范围
+独立csp_first_checks候选及其验证启动/汇总工具，仅cnn/hw_validation/内；分支work/roadyolo，本地保存，无提交推送。
+不训练、不改变模型或量化尺度，不修改五个冻结算术核，不改生产顶层/约束/DDR协议，不综合、不生成位流、不操作板卡。
+新包装模块将原多目标非阻塞过程拆为同拍、单寄存器目标过程，保留复位、写后优先级及原寄存器数量；仅按方向重排新包装的ANSI端口，所有名字/方向/位宽不变，测试台采用具名连接。
+未添加流水级或声明初值。自动formatter的输出没有应用：已发现第二遍会把flag_acc_accept重新归到OUTPUT组，不满足一遍收敛门槛。诊断文本、差异及失败日志保留，没有修改技能工具或关闭规则。
+
+实际仿真结果
+ModelSim编译0错误/0警告；CASE0至15全部达到各自预期，保存在status.json及run/日志中。
+正常、随机气泡、长背压分别为7167、7802、7679周期，和上轮相同；三处复位后完整重跑仍各7167周期。
+每个正常完整重跑核对320组/160任务/384输出；acc、pre、SiLU、post各384项，残差和192项，另核对tag/地址及24个128-bit输出词。
+这些只是左上4×4×12第一残差块、100MHz仿真时钟下的端点周期，不是整网5FPS或真实FPGA时序。
+
+新增覆盖
+CASE10：每个任务第二组毒化mask、tag、地址、pre/post量化参数、旁路、residual和input_fault，再在输出背压时保持毒化输入；共320次元数据检查。实际输出与黄金结果一致，7487周期。
+CASE11：未装表发送首组、空闲发送non-first、拥有开放任务时发送新first/改表、任务关闭且输出背压时发送新first/改表，四种准入均阻断。占有期间表请求未到达冻结量化核。随后复位重载，generation2完整重跑7167周期。
+CASE12/13：首组零输出mask、重复有效tag产生粘滞故障，未发送被闭锁的第二组，无输出。
+CASE14：实际接受257个表项，验证计算仍禁止；共同复位后完整重装1024项表，generation2完整重跑7167周期。
+CASE15：127、128、−129、−128、254、−256六种残差和贯穿真实量化输出、signed9融合、INT8饱和及完整128-bit打包；16输出、6任务、12组、271周期。
+CASE9和CASE15共享增强后的饱和向量，CASE15额外检查六种边界是否全部出现；不冒称两个独立模型精度样本。
+PW仍从真实已接受的DW输出读取；bypass从原输入128-bit词重建。黄金DW结果只做一致性检查，不用来替代实际计算。
+收据解析要求用例、复位代数、逐级计数和补测覆盖数匹配；共3个正例和10个伪收据负例通过。
+结束后重新核对331个原始输入/源码/工具哈希及91个分阶段快照/向量/静态产物哈希，均一致。
+
+保留的失败和修正依据
+qat_g10_csp_first_checks_20261015_v1完整保留。CASE0至10通过，CASE11在idle non-first检查处失败，后续未跑。
+根因是测试假设：完整装表后地址仍为1023，断言却要求table_ready=1。冻结SiLU只允许已装满表在地址0重新开始装载，或未装满健康表继续装载；不是“满表后任何地址都ready”。
+v2在idle检查时明确给出地址0、table_valid=0，不降低握手要求、不修改冻结核心，并增加检查占有时i_table_valid确实被挡在核外。
+共享启动器还改为先报告仿真Fatal/Error原文，再检查成功收据，避免把真实Fatal表述为普通“缺少收据”。
+旧10项探针及v1失败快照不覆盖；旧报告对应当时源码，本轮更新后的启动器不冒充旧源码哈希。
+
+门禁和未通过项
+wrapper-only严格门禁：662错误/3严格警告；compile和profile passed，ast/readability/comment/naming failed，testbench/toolchain not_requested。
+完整候选（显式include-testbench）当前full_gate_corrected.json：1865错误/3严格警告；compile、ast、readability、comment、naming、profile、testbench failed；toolchain not_requested。严格交付delivery_ready=false。
+完整静态compile失败包含TB control parser strict failure，不等于真实ModelSim编译失败；两种证据分别保留，不手工改成八项全通过。
+相比旧完整门禁1429/3，本轮代码拆分及补测增加了行数、注释与解析诊断，数量更高；不宣称严格门禁有所整体改善，更不能把错误计数当成独立数值错误个数。
+实际核心接口由受管external-interface-extract提取，只给静态接口检查使用；仿真始终使用真实冻结核心和厂商RAM模型，未使用stub。未连接的调试输出、组合依赖/操作预算及格式/注释/命名问题仍开放。
+规格及SVG使用canonical write-spec无源码模式，带源码的规格交叉核验未完成，不声明通过。相关Python/脚本严格技能入口未提供，也不声明通过。
+CASE0优化/加载有2条厂商ERAM INIT_FILE越界警告，全部用例还有onerror/onbreak命令提示；没有抑制。编译0警告不是全过程0警告。
+
+后续边界和步骤
+1. 这批功能证据可以作为新包装模块整改的回归基线；尚不能进入生产接入或宣称“网络已转为RTL完成”。
+2. 先集中处理新模块的组合控制路径/接口事实及严格门禁。格式整理不得替代数值、握手或真实时序验证；需要改变可见延迟、II或故障时序时先列明影响，不静默加寄存器。
+3. 门禁收口之后再实现有界tile/DMA：真实ready、返回归属、尾字节mask、复位在途排空、DDR写读可见性。目前这些仍由TB驱动/检查，不是新RTL DMA。
+4. 第二残差必须先补真实halo上下文，不在现4×4输出外补零；右/下/内部tile、整网、DDR/视频闭环、物理资源/时序、上板和正式精度均未在本轮完成。
+
+readable-verilog-generator使规格、逐级对拍与八项门禁分别记录，未通过项阻止交付；Ponytail复用原核及原执行工具，未新增依赖或通用加速器。
+入口：status.json、case_receipts.json、input_binding.json、commands.json、run/、wrapper_gate.json、full_gate_corrected.json、execution_checks.json。

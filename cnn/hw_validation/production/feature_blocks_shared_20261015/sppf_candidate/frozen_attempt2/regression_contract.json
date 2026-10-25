@@ -1,0 +1,478 @@
+{
+  "top": "tb_feature_blocks_client",
+  "language": "Verilog-2001",
+  "parameters": {},
+  "required_plusargs": [
+    "+CASE=<0..5>",
+    "+VECTORS_ROOT=<frozen/reference>"
+  ],
+  "optional_plusargs": [
+    "+NEGATIVE_ACC=1"
+  ],
+  "positive_marker": "FEATURE_BLOCKS_PASS",
+  "fault_marker": "FEATURE_BLOCKS_EXPECTED_FAULT",
+  "stage_marker": "FEAT_BLOCK_STAGE",
+  "raw_state_marker": "FEAT_BLOCK_STATE",
+  "run_marker": "FEAT_BLOCK_RUN",
+  "abort_marker": "FEAT_BLOCK_ABORT",
+  "marker_fields": {
+    "FEATURE_BLOCKS_PASS": [
+      "case",
+      "blocks",
+      "runs",
+      "cycles",
+      "accounted",
+      "sequence_cycles",
+      "overhead_cycles",
+      "outputs",
+      "acc",
+      "pre",
+      "silu",
+      "post",
+      "groups",
+      "tasks",
+      "reads",
+      "parameters",
+      "barriers",
+      "table_loads",
+      "aborted_runs",
+      "aborted_cycles",
+      "aborted_outputs"
+    ],
+    "FEATURE_BLOCKS_EXPECTED_FAULT": [
+      "block",
+      "case",
+      "runs",
+      "cycles",
+      "accounted",
+      "outputs",
+      "acc",
+      "pre",
+      "silu",
+      "post",
+      "groups",
+      "tasks",
+      "reads",
+      "parameters",
+      "barriers"
+    ],
+    "FEAT_BLOCK_RUN": [
+      "block",
+      "case",
+      "run",
+      "cycles",
+      "accounted",
+      "groups",
+      "tasks",
+      "outputs",
+      "acc",
+      "pre",
+      "silu",
+      "post",
+      "reads",
+      "parameters",
+      "barriers"
+    ],
+    "FEAT_BLOCK_STAGE": [
+      "block",
+      "case",
+      "run",
+      "stage",
+      "cycles",
+      "reads",
+      "parameters",
+      "groups",
+      "tasks",
+      "outputs",
+      "barriers"
+    ],
+    "FEAT_BLOCK_STATE": [
+      "block",
+      "case",
+      "run",
+      "state",
+      "cycles"
+    ],
+    "FEAT_BLOCK_ABORT": [
+      "block",
+      "case",
+      "cycles",
+      "outputs"
+    ]
+  },
+  "runner_cases": [
+    {
+      "case": 0,
+      "plusargs": [],
+      "marker": "FEATURE_BLOCKS_PASS",
+      "expected_fields": {
+        "blocks": 3,
+        "runs": 3,
+        "outputs": 1327104,
+        "acc": 1327104,
+        "pre": 1327104,
+        "silu": 1327104,
+        "post": 1327104,
+        "groups": 1612800,
+        "tasks": 520704,
+        "reads": 190858,
+        "parameters": 193920,
+        "barriers": 19,
+        "table_loads": 1,
+        "aborted_runs": 0
+      },
+      "meaning": "Same DUT and arithmetic owner, CSP2 then CSP3 then CSP4, no reset between blocks."
+    },
+    {
+      "case": 1,
+      "plusargs": [],
+      "marker": "FEATURE_BLOCKS_PASS",
+      "expected_fields": {
+        "blocks": 3,
+        "runs": 3,
+        "outputs": 1327104,
+        "acc": 1327104,
+        "pre": 1327104,
+        "silu": 1327104,
+        "post": 1327104,
+        "groups": 1612800,
+        "tasks": 520704,
+        "reads": 190858,
+        "parameters": 193920,
+        "barriers": 19,
+        "table_loads": 1,
+        "aborted_runs": 0
+      },
+      "meaning": "Complete sequence with deterministic parameter/read request delays and core/write backpressure."
+    },
+    {
+      "case": 2,
+      "plusargs": [],
+      "marker": "FEATURE_BLOCKS_PASS",
+      "expected_fields": {
+        "blocks": 3,
+        "runs": 3,
+        "outputs": 1327104,
+        "acc": 1327104,
+        "pre": 1327104,
+        "silu": 1327104,
+        "post": 1327104,
+        "groups": 1612800,
+        "tasks": 520704,
+        "reads": 190858,
+        "parameters": 193920,
+        "barriers": 19,
+        "table_loads": 2,
+        "aborted_runs": 1
+      },
+      "meaning": "Abort CSP2 after at least 128 stage-2 writes; common reset cancels services and reloads LUT; then clean 2->3->4. Aborted counters excluded from all clean totals."
+    },
+    {
+      "case": 3,
+      "plusargs": [],
+      "marker": "FEATURE_BLOCKS_EXPECTED_FAULT",
+      "expected_fields": {
+        "block": 15,
+        "runs": 0,
+        "outputs": 0,
+        "acc": 0,
+        "pre": 0,
+        "silu": 0,
+        "post": 0,
+        "groups": 0,
+        "tasks": 0,
+        "reads": 0,
+        "parameters": 0,
+        "barriers": 0
+      },
+      "meaning": "Accepted block ID15 faults without any traffic and retains ownership."
+    },
+    {
+      "case": 4,
+      "plusargs": [],
+      "marker": "FEATURE_BLOCKS_EXPECTED_FAULT",
+      "expected_fields": {
+        "block": 2,
+        "runs": 0,
+        "outputs": 0,
+        "groups": 0,
+        "tasks": 0,
+        "barriers": 0
+      },
+      "meaning": "First response returns wrong parameter block ID; identity rejected before core traffic."
+    },
+    {
+      "case": 5,
+      "plusargs": [],
+      "marker": "FEATURE_BLOCKS_EXPECTED_FAULT",
+      "expected_fields": {
+        "block": 2,
+        "runs": 0,
+        "outputs": 110592,
+        "acc": 110592,
+        "pre": 110592,
+        "silu": 110592,
+        "post": 110592,
+        "groups": 110592,
+        "tasks": 55296,
+        "reads": 30210,
+        "parameters": 27648,
+        "barriers": 0
+      },
+      "meaning": "Wrong first barrier block after full stage0 write/retirement; rejects visibility and layer advance."
+    },
+    {
+      "case": 99,
+      "plusargs": [
+        "+CASE=0",
+        "+NEGATIVE_ACC=1"
+      ],
+      "marker": "NEGATIVE_ACC injected acc mismatch",
+      "expected_exit": "nonzero",
+      "forbidden_marker": "FEATURE_BLOCKS_PASS",
+      "meaning": "Real first accepted accumulator compared against golden XOR1; must fatal."
+    }
+  ],
+  "block_counts": {
+    "2": {
+      "shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "half_channels": 12,
+      "tile_rows": 18,
+      "tile_cols": 32,
+      "tile_count": 576,
+      "stage_outputs": [
+        110592,
+        110592,
+        110592,
+        110592,
+        221184
+      ],
+      "stage_tasks": [
+        55296,
+        36864,
+        55296,
+        36864,
+        73728
+      ],
+      "stage_groups": [
+        110592,
+        73728,
+        110592,
+        73728,
+        221184
+      ],
+      "stage_reads": [
+        30210,
+        20736,
+        16748,
+        13824,
+        27648
+      ],
+      "stage_parameters": [
+        27648,
+        4608,
+        27648,
+        4608,
+        13824
+      ],
+      "outputs": 663552,
+      "tasks": 258048,
+      "groups": 589824,
+      "reads": 109166,
+      "parameters": 78336,
+      "barriers": 5
+    },
+    "3": {
+      "shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "half_channels": 24,
+      "tile_rows": 9,
+      "tile_cols": 16,
+      "tile_count": 144,
+      "stage_outputs": [
+        55296,
+        55296,
+        55296,
+        55296,
+        55296,
+        55296,
+        110592
+      ],
+      "stage_tasks": [
+        27648,
+        18432,
+        27648,
+        18432,
+        27648,
+        18432,
+        36864
+      ],
+      "stage_groups": [
+        55296,
+        55296,
+        55296,
+        55296,
+        55296,
+        55296,
+        221184
+      ],
+      "stage_reads": [
+        9776,
+        8064,
+        8112,
+        6912,
+        8112,
+        6912,
+        9216
+      ],
+      "stage_parameters": [
+        13824,
+        3456,
+        13824,
+        3456,
+        13824,
+        3456,
+        13824
+      ],
+      "outputs": 442368,
+      "tasks": 175104,
+      "groups": 552960,
+      "reads": 57104,
+      "parameters": 65664,
+      "barriers": 7
+    },
+    "4": {
+      "shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "half_channels": 48,
+      "tile_rows": 5,
+      "tile_cols": 8,
+      "tile_count": 40,
+      "last_tile_valid_rows": 2,
+      "stage_outputs": [
+        27648,
+        27648,
+        27648,
+        27648,
+        27648,
+        27648,
+        55296
+      ],
+      "stage_physical_bytes": [
+        30720,
+        30720,
+        30720,
+        30720,
+        30720,
+        30720,
+        61440
+      ],
+      "stage_tasks": [
+        13824,
+        9216,
+        13824,
+        9216,
+        13824,
+        9216,
+        18432
+      ],
+      "stage_groups": [
+        27648,
+        55296,
+        27648,
+        55296,
+        27648,
+        55296,
+        221184
+      ],
+      "stage_reads": [
+        3588,
+        3456,
+        3588,
+        3456,
+        3588,
+        3456,
+        3456
+      ],
+      "stage_parameters": [
+        7680,
+        3840,
+        7680,
+        3840,
+        7680,
+        3840,
+        15360
+      ],
+      "outputs": 221184,
+      "tasks": 87552,
+      "groups": 470016,
+      "reads": 24588,
+      "parameters": 49920,
+      "barriers": 7
+    }
+  },
+  "sequence_counts": {
+    "blocks": 3,
+    "runs": 3,
+    "outputs": 1327104,
+    "acc": 1327104,
+    "pre": 1327104,
+    "silu": 1327104,
+    "post": 1327104,
+    "groups": 1612800,
+    "tasks": 520704,
+    "reads": 190858,
+    "parameters": 193920,
+    "barriers": 19
+  },
+  "raw_states": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "read_contract": {
+    "request_alignment_bytes": 16,
+    "response_bits": 128,
+    "outstanding": 1,
+    "byte_lane": "data[n*8 +: 8]",
+    "visibility": "Only CPU source or previously written bytes behind an accepted matching block/layer barrier; CSP4 physical padding reads zero."
+  },
+  "busy_contract": "All positive blocks perturb i_block_id and i_start while busy, including DONE; o_block_id and fixed shape remain locked. DONE busy=1 and ready=0; next cycle IDLE. fault retains busy and quiescent traffic for eight checked cycles.",
+  "reset_contract": "Shared reset of client, arithmetic owner and services. Pending responses cancelled; SiLU reloaded. DUT data/weight caches receive no TB prefill or reset.",
+  "cycle_contract": {
+    "block_endpoint": "Accepted start rising edge through rising edge entering DONE, inclusive. run cycles equal 17 mutually exclusive raw state cycles and stage cycles; initial accepted IDLE cycle assigned stage0.",
+    "clean_budget_cycles_exclusive": 100000000,
+    "sequence_endpoint": "First accepted start to final clean idle observation; includes gaps and common reset/LUT reload for CASE2.",
+    "overhead": "sequence_cycles - clean block cycles - aborted_cycles; never added to clean cycles twice.",
+    "lut_load": "Initial LUT load excluded; CASE2 reload included only in sequence overhead.",
+    "abort": "FEAT_BLOCK_ABORT separate partial block; never emits complete RUN/STAGE/STATE or contributes clean totals."
+  },
+  "watchdog_cycles": 130000000,
+  "native_timeout_seconds": 2400,
+  "root_runner_usage": "python run.py prepare --name <frozen>; python run.py gate --name <frozen>; python run.py execute --name <frozen> --case <0..5|99>; root alone executes. No -g parameter.",
+  "evidence_boundary": "Functional component tests only; CSP3/CSP4 inputs bridge CPU-only down3/down4. Not a continuous RTL backbone, physical DDR, resource/timing, full-network throughput, QAT, accuracy, bitstream or board claim."
+}

@@ -1,0 +1,119 @@
+CSP2 scheduled-layer independent RTL/TB review
+Date: 2026-10-15
+Review class: analyze (read-only source inspection)
+Result: PASS_STATIC_CONTRACT_REVIEW_WITH_EVIDENCE_LIMITS
+
+Scope and frozen source identity
+--------------------------------
+Reviewed the frozen candidate and the identical current root copies without editing RTL, TB, specifications, runner, frozen inputs, or status:
+
+  frozen/rtl/road_csp_layer_client.v
+    SHA-256 e4fde0787df87bc30271b4ee5b6476f61b33b754b3f3373bb69c480dbf5b6d4e
+  frozen/rtl/road_csp_layer_client_design_contract.txt
+    SHA-256 342d4e2b3df8de9ae0d032d11678b7675b32cb53c93699a01aa3453052124fe3
+  frozen/tests/tb_csp_layer_client.v
+    SHA-256 8c38d0c5dfd1de801480d1de2d838c38dd0a8ade3b584fdacf7fba06cb7f2368
+  frozen/tests/tb_csp_layer_client_spec.md
+    SHA-256 981331f19bcdbc467291fff959773a064d459f48cd3993ac684a5572efdd45db
+  frozen/tb_contract.json
+    SHA-256 b99bad89dd6886cee25662e3faf67677bbe9c89de0e2e4e457cf3bc913d1d7e5
+  run.py and frozen/run.py (byte-identical; root run.py is the executable runner)
+    SHA-256 02014ee3b13c8416dd2da81e754e68db429a8220b950a57cf9d4594ac6a7b5c8
+  frozen/input_binding.json
+    SHA-256 fa7566e55ea3eaf83977771cd51a664f32bf21954253207a41dd043c20dd1b0c
+  frozen/spec_contract.json
+    SHA-256 a08d61cd4b305b4ca499001bea849cde8960ae49e36c230c97a4378b42026aee
+  frozen/spec/road_csp_layer_client_spec.md
+    SHA-256 3a162a43ffeb622795dcc0bfde56fbb013fb628b15835bd2d213ccf63fa6b9b5
+  frozen/spec/tests/tb_csp_layer_client_spec.md
+    SHA-256 5e99dcc4639fee00a119c13579193684f23997c223d03ebecb7f7fed59e2210d
+
+The corresponding root RTL, design contract, TB, hand-written TB spec, tb_contract.json, spec_contract.json, and run.py were byte-identical to the frozen copies at review time. The binding explicitly records private_MAC_instances=0, arithmetic_changed=false, actual_DDR=false, native_address_conversion=false, and production_delivery_ready=false.
+
+No simulator, synthesis, implementation, timing, utilization, or hardware run was performed by this review. The PASS result therefore means only that no blocking mismatch was found by manual static inspection against the bounded contract and the independent Python reference audit.
+
+Schedule, addresses, and exact counts
+-------------------------------------
+The RTL traverses the complete 72x128 frame as 18x32 = 576 tiles in strict stage-major order:
+
+  DW0   55,296 tasks, 110,592 8-byte groups, 110,592 outputs
+  PW0   36,864 tasks,  73,728 8-byte groups, 110,592 outputs
+  DW1   55,296 tasks, 110,592 8-byte groups, 110,592 outputs
+  PW1   36,864 tasks,  73,728 8-byte groups, 110,592 outputs
+  fuse  73,728 tasks, 221,184 8-byte groups, 221,184 outputs
+  total 258,048 tasks, 589,824 groups, 663,552 outputs
+
+The task loops, output address calculation, tile counters, stage barriers, and TB constants agree with those totals. DW scheduling presents four output rows by two column groups by twelve channels per tile: three normal 5-pixel horizontal windows plus one separately issued 3-pixel tail per row/channel. PW presents sixteen pixels by four output-channel groups per tile; fuse presents sixteen pixels by eight groups.
+
+The inspected address mapping agrees with graph_artifacts/graph.json and the Python audit:
+
+  source / down2.pw.conv  0x035b4000, 221,184 bytes
+  DW0                     0x035ea000, 110,592 bytes
+  PW0 / residual.00       0x03605000, 110,592 bytes
+  DW1                     0x03620000, 110,592 bytes
+  PW1 / residual.01       0x0363b000, 110,592 bytes
+  fuse / csp2.out.conv    0x03656000, 221,184 bytes
+
+The source channel-half aliases, residual aliases, and concatenated fuse view are used semantically rather than allocated as extra physical buffers. The historical diagnostic base 0x03600000 lies inside the DW0 allocation and must not be treated as independent scratch memory.
+
+Cache, parameter, and port behavior
+-----------------------------------
+The single 432-byte activation cache is reused mutually exclusively by all stages. DW fill covers a padded 6x6x12 tile and supplies the normal 3x5 union or the 3x3 tail locally. PW0/PW1/fuse use at most 384 activation bytes per tile. The RTL assembles each 8-byte activation group from one 8-bit local cache read per cycle; it does not expose or imply an eight-byte physical activation-memory read port.
+
+Parameter storage is resident and loaded once per output-channel group per tile before task reuse: four 192-bit weight groups = 96 bytes, one 248-bit parameter group = 31 bytes, plus one 16-byte logical read line. Together with the 432-byte activation cache this is 575 bytes, excluding tags, metadata, control state, and implementation overhead. Four ERAMs equal 10,240 raw bytes only as a capacity comparison; banking, ports, inference, placement, utilization, and timing remain unproved until synthesis/implementation.
+
+The logical memory interface permits one outstanding aligned 16-byte read, registers request and response identity, accepts variable response latency, and faults on response-address or error mismatches. This is a logical cache-line contract, not a claim about the native DDR endpoint. The parameter service is independently backpressured and checked for kind/layer/group identity and data stability. The external core interface is ready/valid; no convolution, bias, activation, or accumulator arithmetic is duplicated inside the client. Each result retires only with the corresponding external write, with address, tag, byte-mask, and duplicate checks.
+
+Lifetime and visibility behavior
+--------------------------------
+The implementation and TB preserve the intended lifetimes: the source remains readable through fuse; DW0/DW1 survive until their following PW stages; residual.00 survives through DW1 and the PW1 bypass; residual.01 survives through fuse. A stage becomes a legal read source only after the matching barrier has made it visible. The TB snapshots written visibility at barriers rather than making golden intermediate tensors live memory sources.
+
+Testbench independence and negative cases
+-----------------------------------------
+The TB loads only the immutable source image into live input memory. Intermediate memories start poisoned and are populated only by accepted DUT writes. Golden arrays are used by scoreboards, not by the live intermediate-read path. Independent per-address write maps, duplicate checks, exact task/group/stage totals, final completeness checks, and visibility checks cover all 663,552 output bytes.
+
+The negative cases are connected to active protocol events:
+
+  * wrong read-response address on an actual returned line;
+  * wrong parameter-response layer on an actual parameter response;
+  * wrong barrier layer on an actual barrier request;
+  * forced wrong core-output address while core_output_valid is asserted.
+
+These cases must prevent normal completion or writes as specified. NEGATIVE_ACC is different: it deliberately corrupts the expected accumulator comparison, not the DUT datapath or DUT input. It is a valid checker-sensitivity regression, but it must not be described as a DUT fault injection.
+
+The TB now counts accepted parameter requests and emits them in each per-stage ledger and CSP_LAYER_RUN record. The statically expected request counts are [27,648, 4,608, 27,648, 4,608, 13,824], total 78,336. It likewise emits the expected logical line-read counts [30,210, 20,736, 16,748, 13,824, 27,648], total 109,166. However, the frozen finish_frame checks do not assert either array against those exact values, and tb_contract.json/runner receipt validation does not declare them as expected fields. Therefore a ModelSim PASS will measure and expose read/parameter reuse, but it does not by itself mechanically prove the exact reuse counts; the emitted ledgers must be compared with these values before making that claim. This is a verification-closure gap, not a static RTL mismatch.
+
+Frozen runner and specification review
+--------------------------------------
+The root run.py is correctly structured to execute a named frozen candidate: it verifies every original and staged SHA-256 before the run, compiles only frozen RTL/TB plus frozen reused cores, requires zero compiler errors and warnings, selects each case uniquely from frozen/tb_contract.json, validates the unique completion marker and required fields, then re-verifies both hash sets before publishing status. CASE99 requires a nonzero checker failure with the exact NEGATIVE_ACC marker and forbids a PASS marker.
+
+The correct execution entry is the root run.py with --name frozen. The byte-identical frozen/run.py is an archival snapshot, not a relocatable self-runner: its ROOT is derived from its own location, so invoking frozen/run.py execute --name frozen would target frozen/frozen and fail. This does not affect the active root-runner path, but should remain explicit in handoff instructions.
+
+The rendered client and TB specs, their timing diagrams, the hand-written TB spec, spec_contract.json, requirements, graph, reused cores, vector package, and runner are all staged under frozen and covered by input_binding.json. Presence/rendering is not itself a strict-gate PASS; the gate report or runner output remains the authority for any later compile/profile/toolchain claim.
+
+Performance and implementation evidence boundary
+------------------------------------------------
+The stated 7,878,288-cycle number is accepted only as a conditional FSM bookkeeping projection under its explicit zero-core-wait assumption, including a result already available on the first write-wait cycle. It is not a measurement, an achievable result, an upper or lower bound for the integrated design, or deployment-performance evidence. The actual frozen core latency and all backpressure add cycles under the client's serialized issue/write behavior.
+
+Likewise, the historical 59,619,664-cycle value is only the old nine-window tile-class mechanical projection, not a full-frame measurement of this RTL. No 8M, FPS, DDR-throughput, synthesis-resource, placement, timing-closure, or board claim follows from either projection.
+
+Readable-Verilog public review gates
+------------------------------------
+  compile:     NOT RUN (no simulator/compiler invocation authorized)
+  ast:         NOT RUN (manual source inspection only)
+  readability: REVIEWED; control/data intent is traceable, but no formatter gate run
+  comment:     REVIEWED; no blocking semantic-comment issue found
+  naming:      REVIEWED; no blocking manual naming issue found
+  profile:     NOT RUN (strict profile gate not executed)
+  testbench:   REVIEWED STATICALLY; not executed
+  toolchain:   NOT RUN (no simulation, synthesis, implementation, or hardware evidence)
+
+Residual risks before a stronger PASS
+-------------------------------------
+  * Execute the full positive case and every negative case with the intended simulator.
+  * Compare emitted per-stage read and parameter ledgers against [30210,20736,16748,13824,27648] and [27648,4608,27648,4608,13824]; the frozen TB records but does not assert these totals.
+  * Confirm the real core's latency/throughput and ready/valid behavior; the conditional FSM projection cannot substitute for this.
+  * Synthesize/implement the cache and parameter arrays to establish actual RAM inference, banking/port feasibility, utilization, fmax, and timing closure.
+  * Validate the logical line protocol against the real native DDR adapter and integration reset/cancel behavior.
+  * Treat division/modulo-rich address/control expressions as timing-unproven until implementation reports exist.
+

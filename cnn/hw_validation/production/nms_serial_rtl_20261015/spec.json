@@ -1,0 +1,52 @@
+{
+  "modules": [{
+    "name": "road_nms_serial", "feature": "nms_serial", "rtl_path": "road_nms_serial.v",
+    "description": "读取唯一候选RAM的整数串行NMS。面积移位加法，无第二份候选RAM。",
+    "interfaces": {"protocol": "ready-valid", "ports": [
+      {"name":"i_clk","direction":"input","width":1,"role":"clock","description":"单一100MHz上升沿时钟"},
+      {"name":"i_rstn","direction":"input","width":1,"role":"reset","description":"低有效异步取消，调用方共同同步释放"},
+      {"name":"i_cancel","direction":"input","width":1,"role":"abort","description":"同域取消；必须同时清候选读服务与未发布结果表"},
+      {"name":"i_sealed_valid","direction":"input","width":1,"role":"metadata valid","description":"排序解码已可读的完整帧元数据有效"},
+      {"name":"i_frame_token","direction":"input","width":32,"role":"frame identity","description":"封存握手时锁存，保持到done或fault"},
+      {"name":"i_count_person","direction":"input","width":8,"role":"person count","description":"行人候选数0..128；大于128置故障"},
+      {"name":"i_count_vehicle","direction":"input","width":8,"role":"vehicle count","description":"车辆候选数0..128；可为零"},
+      {"name":"i_read_ready","direction":"input","width":1,"role":"read accept","description":"接纳当前class/index请求；只有valid且ready才发出"},
+      {"name":"i_response_valid","direction":"input","width":1,"role":"response valid","description":"带身份的完整160bit记录有效，未接受保持"},
+      {"name":"i_response_class","direction":"input","width":1,"role":"response identity","description":"必须等于未决请求类别"},
+      {"name":"i_response_index","direction":"input","width":7,"role":"response index","description":"必须等于未决请求槽号且小于该类数量"},
+      {"name":"i_response_data","direction":"input","width":160,"role":"decoded record","description":"PIF1 DECODED160；geometry_valid=0跳过"},
+      {"name":"i_response_error","direction":"input","width":1,"role":"read error","description":"响应失败，本帧已接收临时结果也全部作废"},
+      {"name":"i_entry_ready","direction":"input","width":1,"role":"entry accept","description":"接收一条FINAL97；不等于整表发布"},
+      {"name":"o_sealed_ready","direction":"output","width":1,"role":"metadata accept","description":"仅空闲、非复位非取消可接受新表"},
+      {"name":"o_read_valid","direction":"output","width":1,"role":"read request","description":"仅一个未决读，背压保持请求"},
+      {"name":"o_read_class","direction":"output","width":1,"role":"read class","description":"先行人0后车辆1"},
+      {"name":"o_read_index","direction":"output","width":7,"role":"read slot","description":"当前或已保留记录的索引"},
+      {"name":"o_response_ready","direction":"output","width":1,"role":"read consume","description":"仅等待响应状态接受；不依赖固定返回延迟"},
+      {"name":"o_entry_valid","direction":"output","width":1,"role":"entry valid","description":"FINAL97在握手前保持；reset/cancel立即撤销"},
+      {"name":"o_entry_data","direction":"output","width":97,"role":"final entry","description":"class/score及四个20bit源图Q8坐标"},
+      {"name":"o_frame_token","direction":"output","width":32,"role":"result identity","description":"当前任务token；reset/cancel清零"},
+      {"name":"o_output_count","direction":"output","width":7,"role":"accepted count","description":"已接受条目数0..64，fault清零，done时为完整数目"},
+      {"name":"o_done","direction":"output","width":1,"role":"complete table","description":"所有输出接受后的一拍完成；零框同样产生"},
+      {"name":"o_fault","direction":"output","width":1,"role":"sticky failure","description":"协议或几何合同错误锁定，直至reset/cancel"}
+    ]},
+    "parameters": [],
+    "clock": {"name":"i_clk","edge":"posedge","frequency_hz":100000000},
+    "reset": {"name":"i_rstn","active":"low","synchronous":false,"values":"状态空闲、计数/token/输出零。已保留索引存储不复位，由零计数使旧内容不可读。共同复位/取消清服务在途；释放后才能接受封存。"},
+    "behavior": [
+      "每类按既有score降序/cell升序处理128项以内，geometry_valid=0直接略过；保留32项即结束该类。",
+      "当前面积每候选一次；旧框面积和交集每比较各一次。唯一20拍20x20移位加法器、40bit面积、42bit比较。",
+      "严格3*intersection>area_current+area_previous才抑制，IoU=0.5保留。类间不比较。",
+      "四坐标各用一次RNE(network_q8*5/512)再左移8；源图舍入塌缩不删除。",
+      "读取错误或身份错误进入粘滞fault，不产生done。C7必须丢弃已接收前缀。"
+    ],
+    "constraints": [
+      "封存候选只读且已经排序；C2拥有唯一整表。该模块仅存两个记录、32个索引和算术状态。",
+      "共同reset/cancel才能保证没有旧响应；不能将片上协议结论推广到DDR排空。",
+      "外部任意背压可无限延迟。0新增DSP/ERAM为目标，尚无综合测量。",
+      "2M周期是全后处理共有额度；整流程50M/备选100M，500ms过期不变。"
+    ],
+    "corner_cases": ["空表、每类128、总64输出、6944比较、相等分数、无效几何、IoU等号、RNE中点、反压、部分表取消和错身份"],
+    "verification_cases": ["ModelSim逐条FINAL97、每次面积/交集/抑制决定对拍；互斥周期计数；reset/cancel后重新运行"],
+    "timing_diagrams": [{"id":"result_hold","title":"输出保持与完成事件","scenario":"result_hold","description":"示意最后一项导出窗口；中间计算省略。done仅在最终握手后的完成状态置位。","wavejson":{"signal":[{"name":"clk","wave":"p......."},{"name":"entry_valid","wave":"01...0.."},{"name":"entry_ready","wave":"0...1..."},{"name":"entry_data","wave":"x2...x..","data":["last FINAL97"]},{"name":"done","wave":"0.....10"}]}}]
+  }]
+}

@@ -1,0 +1,41 @@
+C9 第五批：真实共享查表适配与完整后处理，2026-10-15
+依据：plans/resource_budget_20261015/第五批任务_ROM真实模型接入与后处理闭环_20261015.txt；当前work/roadyolo。
+写入范围仅本目录；旧postprocess_joint_1fps_20261015只读。普通代理gpt-6.1-sol/high；文件独占，不向其他聊天发消息。
+
+目标和顺序
+A. 封存旧22项成功回执和三个计算模块，复制原共享查表服务；Python先核对完整physical包与160bit测试词一一一致，不修改算法。
+B. 真实road_shared_lut_service连接受控160bit ROM字服务。完整12096预测→真实TopK/原址排序/解码→唯一候选RAM→NMS→全部FINAL97。
+C. C2在rom_lut_real_model_20261015交付正确G10初始化及真实PH1P ROM模型闭包后，在本目录复制冻结交付并接实际唯一ROM实例，再跑同向量。B和C分别保存构建/结果，不互相代替。
+D. 以同一start接受→最后entry接受→done窗口报告端点周期、所有ROM读取/请求与返回等待、适配器占用，以及输入/输出停顿。故障退出不作为完成周期。
+
+冻结模块
+road_candidate_ram.v c5d80e1ed84c89c1615ec254dabd80437ad3c0edb4abe62f087d2d17f7789eab
+road_head_decode_topk.v c1560e608dfb571b5c268908734d7b3f694fff25be7db13ca802226ed1c5df02
+road_nms_serial.v e73ff1879f34cbac59de850d4b9e4bfd72ea6d6e63046fed8c95e3b2aad1b9f1
+road_shared_lut_service.v 434110b3ee9116d759704e6a998060c988910060dde011542c4c9d3fe73a51ad
+本轮只接线与测试，保持四模块内部接口/数值/II/复位和冻结五算术文件不变；不再造查表适配器或公共MAC。
+
+模型与存储
+payload SHA256 b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145，model_id B35D4A66。
+physical SHA256 bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417；143360字节、7168个160bit词。
+受控测试词现有文件shared_lut_service_1fps_20261015/verification/assets/physical_words_160.hex SHA256 78220008aefaf3921c20517771c39e310bb7ec8d1b58d1503bd5db97c863522f，直接只读复用。
+旧ROM-R1/artifacts是66284020976ae8a6decd841403a27c09b04ce5bbf4c8c6e3073368d8832abd43，禁止当本模型直接接入。
+sigmoid字节基址137962，1024个UINT16；exp基址140010，256个UINT16，均小端。一个20字节物理词，共享服务自行定位/提取，不绕过适配器查LUT。
+唯一候选RAM仍40×1024位，唯一实际模型ROM由C2交付；受控TB字数组仅为测试端点，不能综合为另一个私有ROM。
+
+接口与取消
+C2原LUT请求/响应全字段直连shared_lut_service。C2.o_lut_cancel驱动服务i_cancel；LUT响应回显kind/index/tag/frame/model。
+ROM请求valid/ready、addr13；返回valid/ready、data160；一个未决无标签请求。受控端点在cancel时继续保留已接受事务，延迟返回必须被服务DRAIN消费，不能通过清空测试端点掩盖晚返回。
+共同reset才清端点/reader在途与粘滞故障。服务排空前不接新LUT；新帧输入允许程度沿C2原接口，不能改核要求。
+C9候选读取/完成连接沿旧22项配对；done断言C2 finish_ready、帧号及全部输出接收。部分输出后故障禁止done；外部表收集器撤销仍需后续生产联调。
+物理ROM不能伪造随机故障；故障注入限独立受控ROM/service可见边界，并单独标注。
+实际分支仅在测试台用同一使能同步门控两端握手来施加气泡，正常模式直连；不修改reader、服务或候选RAM。随机服务侧响应等待包含测试门控延迟，不冒充reader固有延迟。
+
+验证和门槛
+复用旧7数值场景的完整12096项head及FINAL97：真实图7框、空表、992比较64框、6944比较64框、阈值、跨类同框、重复抑制；正常/随机气泡/长反压、复位取消、部分输出后故障。
+针对新语义增加取消已接受ROM读后晚返回、服务排空后恢复；不重复与变化无关的历史算术/格式审计。
+整个解码/TopK/NMS仍共用2M周期管理目标，包含ROM等待。功能正确性与周期是否满足分别记录；若超预算保留实测并定位，不以调低目标或故障早退宣布通过。
+整帧1FPS/100M规划、500ms过期不变；资源硬限21216Slice/40DSP/108ERAM、管理19000/38/107。本段仿真不证明这些物理/整网门槛。
+依readable-verilog-generator保留门禁真状态；已有Python/脚本配套技能缺失不安装、不声称已通过。Ponytail最小化复用旧测试，不泛化加速器。
+不训练、不改生产、不生成位流、不上板/Flash、不新增时序例外、不自行TD/commit/push。
+已导入C2实际通过快照vendor_rom/source_receipt.json（SHA9f9ebad3a901947e07c36932b69493e255abdbc276deecdc9d1a2251d7e56db0），实际ROM分支首次优化有112条加密厂商模型INIT_FILE/vopt-2697警告。警告如实保留，功能对拍与警告未闭合分列；不修改厂商模型、静态门禁或添加警告屏蔽参数。

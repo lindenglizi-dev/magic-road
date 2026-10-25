@@ -1,0 +1,1975 @@
+{
+  "status": "TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED",
+  "scope": "CPU-only CSP3 seven-stage reference; source is existing downsample PW output",
+  "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "rgb_npy_sha256": "cb8a0f3cbdecdf52b480d3dc42d800b5fbcc9758fc1ef1ed8cab7bb7e57104e3",
+  "family": {
+    "family": "csp3",
+    "tag": 0,
+    "height": 36,
+    "width": 64,
+    "half_channels": 24,
+    "full_channels": 48,
+    "tile_rows": 9,
+    "tile_cols": 16,
+    "last_tile_valid_rows": 4,
+    "last_tile_valid_cols": 4,
+    "source_tensor": "down3.pw.conv",
+    "source_shape_hwc": [
+      36,
+      64,
+      48
+    ],
+    "source_producers": [
+      {
+        "dtype": "int8",
+        "groups": 24,
+        "index": 12,
+        "input_shape_hwc": [
+          72,
+          128,
+          24
+        ],
+        "inputs": [
+          "csp2.out.conv"
+        ],
+        "kernel": [
+          3,
+          3
+        ],
+        "macs": 497664,
+        "name": "down3.dw.conv",
+        "op": "conv",
+        "operator_padding_value": 0,
+        "output": "down3.dw.conv",
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "storage": {
+          "allocated_bytes": 57344,
+          "base": 57196544,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 57253888,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "stride": [
+          2,
+          2
+        ],
+        "weights": 216
+      },
+      {
+        "dtype": "int8",
+        "groups": 1,
+        "index": 13,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "inputs": [
+          "down3.dw.conv"
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "macs": 2654208,
+        "name": "down3.pw.conv",
+        "op": "conv",
+        "operator_padding_value": 0,
+        "output": "down3.pw.conv",
+        "output_shape_hwc": [
+          36,
+          64,
+          48
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "storage": {
+          "allocated_bytes": 110592,
+          "base": 57253888,
+          "bytes_per_element": 1,
+          "channels_stored": 48,
+          "end": 57364480,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 110592
+        },
+        "stride": [
+          1,
+          1
+        ],
+        "weights": 1152
+      }
+    ],
+    "split_node": {
+      "allocation": null,
+      "axis": "C",
+      "index": 14,
+      "inputs": [
+        "down3.pw.conv"
+      ],
+      "name": "split.01",
+      "op": "split_view",
+      "outputs": [
+        {
+          "channel_offset": 0,
+          "channels": 24,
+          "output": "split.01.0"
+        },
+        {
+          "channel_offset": 24,
+          "channels": 24,
+          "output": "split.01.1"
+        }
+      ]
+    },
+    "residual_nodes": [
+      {
+        "allocation": null,
+        "dtype": "int8",
+        "index": 17,
+        "inputs": [
+          "split.01.1",
+          "csp3.blocks.0.pw.conv"
+        ],
+        "name": "residual.02",
+        "op": "residual_view",
+        "output": "residual.02",
+        "shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "storage_alias": "csp3.blocks.0.pw.conv"
+      },
+      {
+        "allocation": null,
+        "dtype": "int8",
+        "index": 20,
+        "inputs": [
+          "residual.02",
+          "csp3.blocks.1.pw.conv"
+        ],
+        "name": "residual.03",
+        "op": "residual_view",
+        "output": "residual.03",
+        "shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "storage_alias": "csp3.blocks.1.pw.conv"
+      },
+      {
+        "allocation": null,
+        "dtype": "int8",
+        "index": 23,
+        "inputs": [
+          "residual.03",
+          "csp3.blocks.2.pw.conv"
+        ],
+        "name": "residual.04",
+        "op": "residual_view",
+        "output": "residual.04",
+        "shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "storage_alias": "csp3.blocks.2.pw.conv"
+      }
+    ],
+    "concat_node": {
+      "allocation": null,
+      "dtype": "int8",
+      "index": 24,
+      "inputs": [
+        "split.01.0",
+        "residual.04"
+      ],
+      "name": "concat.01",
+      "op": "concat_view",
+      "output": "concat.01",
+      "shape_hwc": [
+        36,
+        64,
+        48
+      ]
+    },
+    "stages": [
+      {
+        "stage": 0,
+        "graph_node_index": 15,
+        "name": "csp3.blocks.0.dw.conv",
+        "kind": "dw",
+        "kernel": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "groups": 24,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "source_views": [
+          {
+            "tensor": "split.01.1",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57253888,
+            "stored_channels": 48,
+            "physical_channel_offset": 24
+          }
+        ],
+        "destination": {
+          "allocated_bytes": 57344,
+          "base": 57364480,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 57421824,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "destination_valid_address_min": 57364480,
+        "destination_valid_address_max": 57419775,
+        "residual": false,
+        "bypass_tensor": null,
+        "bypass_views": [],
+        "output_group_count": 8,
+        "input_group_count": 3,
+        "task_count": 27648,
+        "accepted_core_groups": 55296,
+        "accepted_core_groups_per_task": 2,
+        "expected_parameter_requests": 13824,
+        "expected_parameter_responses": 13824,
+        "dw_parameter_records_per_tile_channel": 4,
+        "expected_read_requests": 9776,
+        "read_line_address_min": 57253904,
+        "read_line_address_max": 57364464,
+        "logical_output_elements": 55296,
+        "tile_rows": 9,
+        "tile_cols": 16,
+        "last_tile_valid_rows": 4,
+        "last_tile_valid_cols": 4,
+        "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+        "vector_files": {
+          "acc": "vectors/stage0_acc.hex",
+          "pre": "vectors/stage0_pre.hex",
+          "silu": "vectors/stage0_silu.hex",
+          "post": "vectors/stage0_post.hex",
+          "sum": "vectors/stage0_sum.hex",
+          "output": "vectors/stage0_output.hex"
+        },
+        "parameter_files": {
+          "weights": "parameters/stage0_weights.hex",
+          "bias": "parameters/stage0_bias.hex",
+          "pre_multiplier": "parameters/stage0_pre_multiplier.hex",
+          "pre_shift": "parameters/stage0_pre_shift.hex",
+          "post_multiplier": "parameters/stage0_post_multiplier.hex",
+          "post_shift": "parameters/stage0_post_shift.hex"
+        }
+      },
+      {
+        "stage": 1,
+        "graph_node_index": 16,
+        "name": "csp3.blocks.0.pw.conv",
+        "kind": "pw",
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "groups": 1,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "source_views": [
+          {
+            "tensor": "csp3.blocks.0.dw.conv",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57364480,
+            "stored_channels": 24,
+            "physical_channel_offset": 0
+          }
+        ],
+        "destination": {
+          "allocated_bytes": 57344,
+          "base": 57421824,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 57479168,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "destination_valid_address_min": 57421824,
+        "destination_valid_address_max": 57477119,
+        "residual": true,
+        "bypass_tensor": "split.01.1",
+        "bypass_views": [
+          {
+            "tensor": "split.01.1",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57253888,
+            "stored_channels": 48,
+            "physical_channel_offset": 24
+          }
+        ],
+        "output_group_count": 8,
+        "input_group_count": 3,
+        "task_count": 18432,
+        "accepted_core_groups": 55296,
+        "accepted_core_groups_per_task": 3,
+        "expected_parameter_requests": 3456,
+        "expected_parameter_responses": 3456,
+        "dw_parameter_records_per_tile_channel": null,
+        "expected_read_requests": 8064,
+        "read_line_address_min": 57253904,
+        "read_line_address_max": 57419760,
+        "logical_output_elements": 55296,
+        "tile_rows": 9,
+        "tile_cols": 16,
+        "last_tile_valid_rows": 4,
+        "last_tile_valid_cols": 4,
+        "dw_spatial_tasks_per_4wide_row": null,
+        "vector_files": {
+          "acc": "vectors/stage1_acc.hex",
+          "pre": "vectors/stage1_pre.hex",
+          "silu": "vectors/stage1_silu.hex",
+          "post": "vectors/stage1_post.hex",
+          "sum": "vectors/stage1_sum.hex",
+          "output": "vectors/stage1_output.hex"
+        },
+        "parameter_files": {
+          "weights": "parameters/stage1_weights.hex",
+          "bias": "parameters/stage1_bias.hex",
+          "pre_multiplier": "parameters/stage1_pre_multiplier.hex",
+          "pre_shift": "parameters/stage1_pre_shift.hex",
+          "post_multiplier": "parameters/stage1_post_multiplier.hex",
+          "post_shift": "parameters/stage1_post_shift.hex"
+        }
+      },
+      {
+        "stage": 2,
+        "graph_node_index": 18,
+        "name": "csp3.blocks.1.dw.conv",
+        "kind": "dw",
+        "kernel": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "groups": 24,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "source_views": [
+          {
+            "tensor": "residual.02",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57421824,
+            "stored_channels": 24,
+            "physical_channel_offset": 0
+          }
+        ],
+        "destination": {
+          "allocated_bytes": 57344,
+          "base": 57479168,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 57536512,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "destination_valid_address_min": 57479168,
+        "destination_valid_address_max": 57534463,
+        "residual": false,
+        "bypass_tensor": null,
+        "bypass_views": [],
+        "output_group_count": 8,
+        "input_group_count": 3,
+        "task_count": 27648,
+        "accepted_core_groups": 55296,
+        "accepted_core_groups_per_task": 2,
+        "expected_parameter_requests": 13824,
+        "expected_parameter_responses": 13824,
+        "dw_parameter_records_per_tile_channel": 4,
+        "expected_read_requests": 8112,
+        "read_line_address_min": 57421824,
+        "read_line_address_max": 57477104,
+        "logical_output_elements": 55296,
+        "tile_rows": 9,
+        "tile_cols": 16,
+        "last_tile_valid_rows": 4,
+        "last_tile_valid_cols": 4,
+        "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+        "vector_files": {
+          "acc": "vectors/stage2_acc.hex",
+          "pre": "vectors/stage2_pre.hex",
+          "silu": "vectors/stage2_silu.hex",
+          "post": "vectors/stage2_post.hex",
+          "sum": "vectors/stage2_sum.hex",
+          "output": "vectors/stage2_output.hex"
+        },
+        "parameter_files": {
+          "weights": "parameters/stage2_weights.hex",
+          "bias": "parameters/stage2_bias.hex",
+          "pre_multiplier": "parameters/stage2_pre_multiplier.hex",
+          "pre_shift": "parameters/stage2_pre_shift.hex",
+          "post_multiplier": "parameters/stage2_post_multiplier.hex",
+          "post_shift": "parameters/stage2_post_shift.hex"
+        }
+      },
+      {
+        "stage": 3,
+        "graph_node_index": 19,
+        "name": "csp3.blocks.1.pw.conv",
+        "kind": "pw",
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "groups": 1,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "source_views": [
+          {
+            "tensor": "csp3.blocks.1.dw.conv",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57479168,
+            "stored_channels": 24,
+            "physical_channel_offset": 0
+          }
+        ],
+        "destination": {
+          "allocated_bytes": 57344,
+          "base": 57536512,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 57593856,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "destination_valid_address_min": 57536512,
+        "destination_valid_address_max": 57591807,
+        "residual": true,
+        "bypass_tensor": "residual.02",
+        "bypass_views": [
+          {
+            "tensor": "residual.02",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57421824,
+            "stored_channels": 24,
+            "physical_channel_offset": 0
+          }
+        ],
+        "output_group_count": 8,
+        "input_group_count": 3,
+        "task_count": 18432,
+        "accepted_core_groups": 55296,
+        "accepted_core_groups_per_task": 3,
+        "expected_parameter_requests": 3456,
+        "expected_parameter_responses": 3456,
+        "dw_parameter_records_per_tile_channel": null,
+        "expected_read_requests": 6912,
+        "read_line_address_min": 57421824,
+        "read_line_address_max": 57534448,
+        "logical_output_elements": 55296,
+        "tile_rows": 9,
+        "tile_cols": 16,
+        "last_tile_valid_rows": 4,
+        "last_tile_valid_cols": 4,
+        "dw_spatial_tasks_per_4wide_row": null,
+        "vector_files": {
+          "acc": "vectors/stage3_acc.hex",
+          "pre": "vectors/stage3_pre.hex",
+          "silu": "vectors/stage3_silu.hex",
+          "post": "vectors/stage3_post.hex",
+          "sum": "vectors/stage3_sum.hex",
+          "output": "vectors/stage3_output.hex"
+        },
+        "parameter_files": {
+          "weights": "parameters/stage3_weights.hex",
+          "bias": "parameters/stage3_bias.hex",
+          "pre_multiplier": "parameters/stage3_pre_multiplier.hex",
+          "pre_shift": "parameters/stage3_pre_shift.hex",
+          "post_multiplier": "parameters/stage3_post_multiplier.hex",
+          "post_shift": "parameters/stage3_post_shift.hex"
+        }
+      },
+      {
+        "stage": 4,
+        "graph_node_index": 21,
+        "name": "csp3.blocks.2.dw.conv",
+        "kind": "dw",
+        "kernel": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "groups": 24,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "source_views": [
+          {
+            "tensor": "residual.03",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57536512,
+            "stored_channels": 24,
+            "physical_channel_offset": 0
+          }
+        ],
+        "destination": {
+          "allocated_bytes": 57344,
+          "base": 57593856,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 57651200,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "destination_valid_address_min": 57593856,
+        "destination_valid_address_max": 57649151,
+        "residual": false,
+        "bypass_tensor": null,
+        "bypass_views": [],
+        "output_group_count": 8,
+        "input_group_count": 3,
+        "task_count": 27648,
+        "accepted_core_groups": 55296,
+        "accepted_core_groups_per_task": 2,
+        "expected_parameter_requests": 13824,
+        "expected_parameter_responses": 13824,
+        "dw_parameter_records_per_tile_channel": 4,
+        "expected_read_requests": 8112,
+        "read_line_address_min": 57536512,
+        "read_line_address_max": 57591792,
+        "logical_output_elements": 55296,
+        "tile_rows": 9,
+        "tile_cols": 16,
+        "last_tile_valid_rows": 4,
+        "last_tile_valid_cols": 4,
+        "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+        "vector_files": {
+          "acc": "vectors/stage4_acc.hex",
+          "pre": "vectors/stage4_pre.hex",
+          "silu": "vectors/stage4_silu.hex",
+          "post": "vectors/stage4_post.hex",
+          "sum": "vectors/stage4_sum.hex",
+          "output": "vectors/stage4_output.hex"
+        },
+        "parameter_files": {
+          "weights": "parameters/stage4_weights.hex",
+          "bias": "parameters/stage4_bias.hex",
+          "pre_multiplier": "parameters/stage4_pre_multiplier.hex",
+          "pre_shift": "parameters/stage4_pre_shift.hex",
+          "post_multiplier": "parameters/stage4_post_multiplier.hex",
+          "post_shift": "parameters/stage4_post_shift.hex"
+        }
+      },
+      {
+        "stage": 5,
+        "graph_node_index": 22,
+        "name": "csp3.blocks.2.pw.conv",
+        "kind": "pw",
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "groups": 1,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "source_views": [
+          {
+            "tensor": "csp3.blocks.2.dw.conv",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57593856,
+            "stored_channels": 24,
+            "physical_channel_offset": 0
+          }
+        ],
+        "destination": {
+          "allocated_bytes": 57344,
+          "base": 57651200,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 57708544,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "destination_valid_address_min": 57651200,
+        "destination_valid_address_max": 57706495,
+        "residual": true,
+        "bypass_tensor": "residual.03",
+        "bypass_views": [
+          {
+            "tensor": "residual.03",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57536512,
+            "stored_channels": 24,
+            "physical_channel_offset": 0
+          }
+        ],
+        "output_group_count": 8,
+        "input_group_count": 3,
+        "task_count": 18432,
+        "accepted_core_groups": 55296,
+        "accepted_core_groups_per_task": 3,
+        "expected_parameter_requests": 3456,
+        "expected_parameter_responses": 3456,
+        "dw_parameter_records_per_tile_channel": null,
+        "expected_read_requests": 6912,
+        "read_line_address_min": 57536512,
+        "read_line_address_max": 57649136,
+        "logical_output_elements": 55296,
+        "tile_rows": 9,
+        "tile_cols": 16,
+        "last_tile_valid_rows": 4,
+        "last_tile_valid_cols": 4,
+        "dw_spatial_tasks_per_4wide_row": null,
+        "vector_files": {
+          "acc": "vectors/stage5_acc.hex",
+          "pre": "vectors/stage5_pre.hex",
+          "silu": "vectors/stage5_silu.hex",
+          "post": "vectors/stage5_post.hex",
+          "sum": "vectors/stage5_sum.hex",
+          "output": "vectors/stage5_output.hex"
+        },
+        "parameter_files": {
+          "weights": "parameters/stage5_weights.hex",
+          "bias": "parameters/stage5_bias.hex",
+          "pre_multiplier": "parameters/stage5_pre_multiplier.hex",
+          "pre_shift": "parameters/stage5_pre_shift.hex",
+          "post_multiplier": "parameters/stage5_post_multiplier.hex",
+          "post_shift": "parameters/stage5_post_shift.hex"
+        }
+      },
+      {
+        "stage": 6,
+        "graph_node_index": 25,
+        "name": "csp3.out.conv",
+        "kind": "fuse",
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "groups": 1,
+        "input_shape_hwc": [
+          36,
+          64,
+          48
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          48
+        ],
+        "source_views": [
+          {
+            "tensor": "split.01.0",
+            "logical_channel_offset": 0,
+            "channels": 24,
+            "base": 57253888,
+            "stored_channels": 48,
+            "physical_channel_offset": 0
+          },
+          {
+            "tensor": "residual.04",
+            "logical_channel_offset": 24,
+            "channels": 24,
+            "base": 57651200,
+            "stored_channels": 24,
+            "physical_channel_offset": 0
+          }
+        ],
+        "destination": {
+          "allocated_bytes": 110592,
+          "base": 57708544,
+          "bytes_per_element": 1,
+          "channels_stored": 48,
+          "end": 57819136,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 110592
+        },
+        "destination_valid_address_min": 57708544,
+        "destination_valid_address_max": 57819135,
+        "residual": false,
+        "bypass_tensor": null,
+        "bypass_views": [],
+        "output_group_count": 16,
+        "input_group_count": 6,
+        "task_count": 36864,
+        "accepted_core_groups": 221184,
+        "accepted_core_groups_per_task": 6,
+        "expected_parameter_requests": 13824,
+        "expected_parameter_responses": 13824,
+        "dw_parameter_records_per_tile_channel": null,
+        "expected_read_requests": 9216,
+        "read_line_address_min": 57253888,
+        "read_line_address_max": 57706480,
+        "logical_output_elements": 110592,
+        "tile_rows": 9,
+        "tile_cols": 16,
+        "last_tile_valid_rows": 4,
+        "last_tile_valid_cols": 4,
+        "dw_spatial_tasks_per_4wide_row": null,
+        "vector_files": {
+          "acc": "vectors/stage6_acc.hex",
+          "pre": "vectors/stage6_pre.hex",
+          "silu": "vectors/stage6_silu.hex",
+          "post": "vectors/stage6_post.hex",
+          "sum": "vectors/stage6_sum.hex",
+          "output": "vectors/stage6_output.hex"
+        },
+        "parameter_files": {
+          "weights": "parameters/stage6_weights.hex",
+          "bias": "parameters/stage6_bias.hex",
+          "pre_multiplier": "parameters/stage6_pre_multiplier.hex",
+          "pre_shift": "parameters/stage6_pre_shift.hex",
+          "post_multiplier": "parameters/stage6_post_multiplier.hex",
+          "post_shift": "parameters/stage6_post_shift.hex"
+        }
+      }
+    ],
+    "totals": {
+      "stages": 7,
+      "logical_output_elements": 442368,
+      "all_acc_pre_silu_post_sum_output_values": 2654208,
+      "task_count": 175104,
+      "accepted_core_groups": 552960,
+      "expected_parameter_requests": 65664,
+      "expected_read_requests": 57104
+    },
+    "tail_rule": "only y < height is written; physical 4x4 tail padding rows are not expected writes"
+  },
+  "files": {
+    "vectors": {
+      "source.hex": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage0_acc.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32
+      },
+      "stage0_pre.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage0_silu.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage0_post.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage0_sum.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage0_output.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage1_acc.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32
+      },
+      "stage1_pre.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage1_silu.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage1_post.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage1_sum.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage1_output.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage2_acc.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32
+      },
+      "stage2_pre.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage2_silu.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage2_post.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage2_sum.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage2_output.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage3_acc.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32
+      },
+      "stage3_pre.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage3_silu.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage3_post.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage3_sum.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage3_output.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage4_acc.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32
+      },
+      "stage4_pre.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage4_silu.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage4_post.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage4_sum.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage4_output.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage5_acc.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32
+      },
+      "stage5_pre.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage5_silu.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage5_post.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage5_sum.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage5_output.hex": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage6_acc.hex": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int32",
+        "bits": 32
+      },
+      "stage6_pre.hex": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage6_silu.hex": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage6_post.hex": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int8",
+        "bits": 8
+      },
+      "stage6_sum.hex": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int16",
+        "bits": 16
+      },
+      "stage6_output.hex": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int8",
+        "bits": 8
+      }
+    },
+    "npy": {
+      "source.npy": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int8"
+      },
+      "stage0_acc.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32"
+      },
+      "stage0_pre.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage0_silu.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage0_post.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage0_sum.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage0_output.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage1_acc.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32"
+      },
+      "stage1_pre.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage1_silu.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage1_post.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage1_sum.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage1_output.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage2_acc.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32"
+      },
+      "stage2_pre.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage2_silu.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage2_post.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage2_sum.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage2_output.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage3_acc.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32"
+      },
+      "stage3_pre.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage3_silu.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage3_post.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage3_sum.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage3_output.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage4_acc.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32"
+      },
+      "stage4_pre.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage4_silu.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage4_post.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage4_sum.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage4_output.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage5_acc.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int32"
+      },
+      "stage5_pre.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage5_silu.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage5_post.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage5_sum.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int16"
+      },
+      "stage5_output.npy": {
+        "shape": [
+          36,
+          64,
+          24
+        ],
+        "dtype": "int8"
+      },
+      "stage6_acc.npy": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int32"
+      },
+      "stage6_pre.npy": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int16"
+      },
+      "stage6_silu.npy": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int16"
+      },
+      "stage6_post.npy": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int8"
+      },
+      "stage6_sum.npy": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int16"
+      },
+      "stage6_output.npy": {
+        "shape": [
+          36,
+          64,
+          48
+        ],
+        "dtype": "int8"
+      }
+    },
+    "parameters": {
+      "silu.hex": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int16",
+        "bits": 16,
+        "layout": "LUT"
+      },
+      "stage0_weights.hex": {
+        "shape": [
+          24,
+          1,
+          3,
+          3
+        ],
+        "dtype": "int8",
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage0_bias.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage0_pre_multiplier.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage0_pre_shift.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "C"
+      },
+      "stage0_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "scalar"
+      },
+      "stage0_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "scalar"
+      },
+      "stage1_weights.hex": {
+        "shape": [
+          24,
+          24,
+          1,
+          1
+        ],
+        "dtype": "int8",
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage1_bias.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage1_pre_multiplier.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage1_pre_shift.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "C"
+      },
+      "stage1_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "scalar"
+      },
+      "stage1_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "scalar"
+      },
+      "stage2_weights.hex": {
+        "shape": [
+          24,
+          1,
+          3,
+          3
+        ],
+        "dtype": "int8",
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage2_bias.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage2_pre_multiplier.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage2_pre_shift.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "C"
+      },
+      "stage2_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "scalar"
+      },
+      "stage2_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "scalar"
+      },
+      "stage3_weights.hex": {
+        "shape": [
+          24,
+          24,
+          1,
+          1
+        ],
+        "dtype": "int8",
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage3_bias.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage3_pre_multiplier.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage3_pre_shift.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "C"
+      },
+      "stage3_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "scalar"
+      },
+      "stage3_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "scalar"
+      },
+      "stage4_weights.hex": {
+        "shape": [
+          24,
+          1,
+          3,
+          3
+        ],
+        "dtype": "int8",
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage4_bias.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage4_pre_multiplier.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage4_pre_shift.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "C"
+      },
+      "stage4_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "scalar"
+      },
+      "stage4_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "scalar"
+      },
+      "stage5_weights.hex": {
+        "shape": [
+          24,
+          24,
+          1,
+          1
+        ],
+        "dtype": "int8",
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage5_bias.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage5_pre_multiplier.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage5_pre_shift.hex": {
+        "shape": [
+          24
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "C"
+      },
+      "stage5_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "scalar"
+      },
+      "stage5_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "scalar"
+      },
+      "stage6_weights.hex": {
+        "shape": [
+          48,
+          48,
+          1,
+          1
+        ],
+        "dtype": "int8",
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage6_bias.hex": {
+        "shape": [
+          48
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage6_pre_multiplier.hex": {
+        "shape": [
+          48
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "C"
+      },
+      "stage6_pre_shift.hex": {
+        "shape": [
+          48
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "C"
+      },
+      "stage6_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "int32",
+        "bits": 32,
+        "layout": "scalar"
+      },
+      "stage6_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "dtype": "uint8",
+        "bits": 8,
+        "layout": "scalar"
+      }
+    }
+  },
+  "full_scalar_conv2d_oracle_checked": true,
+  "rtl_or_simulation_or_training_run": false
+}

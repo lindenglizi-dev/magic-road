@@ -1,0 +1,187 @@
+{
+  "modules": [
+    {
+      "name": "road_age_overlay",
+      "feature": "source_sof_identity",
+      "rtl_path": "road_age_overlay.v",
+      "description": "复用固定字形的结果年龄文字",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_clk",
+            "description": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "i_sof",
+            "description": "i_sof"
+          },
+          {
+            "name": "i_vsync",
+            "direction": "input",
+            "width": 1,
+            "role": "i_vsync",
+            "description": "i_vsync"
+          },
+          {
+            "name": "i_hsync",
+            "direction": "input",
+            "width": 1,
+            "role": "i_hsync",
+            "description": "i_hsync"
+          },
+          {
+            "name": "i_de",
+            "direction": "input",
+            "width": 1,
+            "role": "i_de",
+            "description": "i_de"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": 24,
+            "role": "i_rgb",
+            "description": "i_rgb"
+          },
+          {
+            "name": "i_age_upper_ms",
+            "direction": "input",
+            "width": 64,
+            "role": "i_age_upper_ms",
+            "description": "i_age_upper_ms"
+          },
+          {
+            "name": "i_table_draw_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "i_table_draw_valid",
+            "description": "i_table_draw_valid"
+          },
+          {
+            "name": "o_vsync",
+            "direction": "output",
+            "width": 1,
+            "role": "o_vsync",
+            "description": "o_vsync"
+          },
+          {
+            "name": "o_hsync",
+            "direction": "output",
+            "width": 1,
+            "role": "o_hsync",
+            "description": "o_hsync"
+          },
+          {
+            "name": "o_de",
+            "direction": "output",
+            "width": 1,
+            "role": "o_de",
+            "description": "o_de"
+          },
+          {
+            "name": "o_rgb",
+            "direction": "output",
+            "width": 24,
+            "role": "o_rgb",
+            "description": "o_rgb"
+          },
+          {
+            "name": "o_draw_permit",
+            "direction": "output",
+            "width": 1,
+            "role": "o_draw_permit",
+            "description": "o_draw_permit"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "time_hz": 100000000,
+        "camera_nominal_hz": 60000000,
+        "hdmi_hz": 75000000,
+        "camera_clock_is_measured": false,
+        "single_absolute_counter": "frozen road_time_snapshot.o_src_now_ms",
+        "epoch": "stable for each coordinated reset interval; never hot-switch"
+      },
+      "reset": {
+        "assertion": "common asynchronous cancellation",
+        "release": "identity two local release edges; overlay uses supplied pixel-domain released reset"
+      },
+      "behavior": [
+        "Reuse fixed 5x7 row-bitmaps and one-clock RGB/VS/HS/DE output register, not a general text engine.",
+        "Eleven 12x16 cells at x16..147,y16..31: AGE xxxx ms, or AGE_INVALID. Numeric ages 0..9999 only; UINT64_MAX and larger values display INVALID, never 0.",
+        "Latch the current table age on the first blanking edge AFTER i_sof, so a table active-bank switch on i_sof is visible. i_sof must be in blanking; first active pixel must follow that latch edge.",
+        "Latched text/digits remain stable for the rest of the frame; o_draw_permit always equals live i_table_draw_valid AND reset, not the latched age.",
+        "A normal empty table can still show its known age while draw permission is zero. An expired known age can be displayed, but cannot re-enable boxes.",
+        "Existing table computes conservative snapshot-capture+4ms. New demo table instances use approved2000ms; old500ms baseline remains untouched."
+      ],
+      "constraints": [
+        "Actual admission credit/slot association and full pixel DMA are NOT connected by an identity event.",
+        "No production integration, TD, physical CDC/MTBF/bundled timing signoff, bitstream or board proof in this batch.",
+        "The descriptor contains source identity/time only; task_id, model_id and slot metadata are owned by the application scheduler.",
+        "No independent hot reset or real DDR late-return drain is proved."
+      ],
+      "corner_cases": [
+        "SOF during reset, no time, busy, no credit, long stall, common reset, unknown age"
+      ],
+      "verification_cases": [
+        "Python reference first",
+        "actual local ModelSim",
+        "strict eight gates kept separate"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "source_frame",
+          "title": "源帧接纳或帧边界年龄切换",
+          "scenario": "normal",
+          "description": "Digital waveform only; no physical CDC signoff.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "pixel_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "sof_blank",
+                "wave": "010....."
+              },
+              {
+                "name": "table_age",
+                "wave": "=.=.....",
+                "data": [
+                  "old",
+                  "new"
+                ]
+              },
+              {
+                "name": "text_latch",
+                "wave": "0.10...."
+              },
+              {
+                "name": "live_draw",
+                "wave": "1....0.."
+              },
+              {
+                "name": "draw_permit",
+                "wave": "1....0.."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

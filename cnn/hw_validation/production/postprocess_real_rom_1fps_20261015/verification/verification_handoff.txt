@@ -1,0 +1,53 @@
+角色：verify（gpt-6.1-sol/high）
+任务边界：仅新目录verification/；复用冻结C2 head/唯一candidate RAM/C9 NMS/shared LUT服务。没有修改旧postprocess_joint、功能RTL、算术、时序约束或生产顶层。
+
+完成：受控真实G10字图像25/25功能通过；实际单reader/56lane PH1P模式24/24功能通过。两组均完整12096 cell到FINAL97逐条对拍、共用2,000,000周期预算通过、输入/源码运行前后哈希不变。
+受控最终收据：runs/20261015_220545_593_cdb98def/summary.json
+实际最终收据：runs/20261015_221542_797_02bf7376/summary.json
+汇总及文件SHA256：final_verification_receipt.json
+
+关键周期（start接受→done，100MHz；并另报最后接受条目）：
+真实7框：受控正常1,413,419；受控随机1,523,074；实际正常1,577,513；实际随机1,591,283。
+实际24项中最大已完成完整帧1,591,477拍（reset_sort_recover），距整个后处理2M额度剩408,523拍；这不是整网1FPS余量。
+6944比较/64输出：受控正常1,168,655；受控随机1,170,694；实际正常1,171,727；实际随机1,171,949。
+实际accepted-ROM取消后完整恢复：1,591,243，27349新读=27350消费-1旧排空；恰好一次ST_DRAIN消费，旧字不复用到新查询。
+实际accepted-ROM共同复位后完整恢复：1,591,241，27349读/返回/查询相等。
+实际正常27,349查询，每次adapter接受→响应握手30拍；reader等待计数218,792=27,349*8。随机response_wait包含服务边界门等待，不能称为reader本征延迟。
+真实图正常start→最后接受输出1,577,511；start→seal1,576,004；seal→done1509。整个扫描/排序/解码/ROM等待/NMS在同一管理窗口，未给各子段各2M额度。
+
+验证矩阵：
+七个原数值用例各正常/随机：real7、empty、128ties/每类32/总64/992比较、duplicate、threshold、cross-class、6944stress。
+原22项包括连续real→empty、SCAN/SORT/DECODE/NMS乘法/held-output五处共同复位、128拍输出暂停、已有输出后的候选RAM响应错误及取消/完整恢复。
+新增受控mode9已接受ROM读取消晚返回；mode10已接受读共同复位；mode11受控ROM故障→service/C2 fault→共同复位。
+实际模式仅新增mode9/10，不伪造PH1P ROM故障。部分输出后的故障始终是原候选RAM响应边界注入，不称真实ROM故障。
+
+接口/存储：
+只有C2内部一份candidate RAM。USE_VENDOR_ROM时不编译受控整图数组，只有一个冻结reader和其56条物理lane；共同cancel不接reader reset。相同门同时约束握手两侧，只增加外部等待。
+真实物理图像SHA78220008aefaf3921c20517771c39e310bb7ec8d1b58d1503bd5db97c863522f；重建physical143360字节SHA bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417；payload b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+实际闭包采用协调者vendor_rom/source_receipt.json，每个文件先与稳定C2实际最终快照哈希比较，56lane+manifest原样复制到运行cwd/artifacts。reader/group/vendor源原样编译，shared LUT服务SHA434110b3ee9116d759704e6a998060c988910060dde011542c4c9d3fe73a51ad。
+受控25项使用的旧check_inputs.py已由协调者保存为../check_inputs_controlled_v1.py，SHAff8a735d936a0645d8841e89baba1c642647bbd33880bf53c1da335e6892b24f，与历史收据一致。当前带实际闭包检查版本SHA98cc5b610b5501e0925f24a625de89a132b039693962bcedf230af0602db82e7。
+
+执行入口：
+项目根目录下运行cnn/hw_validation/production/postprocess_real_rom_1fps_20261015/verification/run_real_rom.ps1（25项；-Smoke只跑real正常）。
+项目根目录下运行cnn/hw_validation/production/postprocess_real_rom_1fps_20261015/verification/run_vendor_rom.ps1（24项；-Smoke只跑real正常）。
+本机ModelSim沙箱启动曾报DLL重定位，授权本地沙箱外执行后成功；所有运行均在独立runs时间戳目录，未重用活动仿真。启动及输出、编译源码快照、输入/工具哈希在每个收据保留。
+
+保留的失败：
+215932_296_5f979c1e：旧向量检查器路径含未规范化..，修为GetFullPath。
+220003_985_86a1b2cb：沙箱ModelSim DLL重定位启动失败。
+220240_231_d33c2484：原22项通过，mode9新balance断言未扣除跨帧旧排空而报137；实际FINAL97正确，修checker单列carried drain后全25通过。
+221325_442_e2e1e32d：actual normal/random功能均通过，但新warning检查错误要求每个缓存仿真重复112警告；日志证明vsim-8009加载同一优化缓存。修为新优化112，明确缓存加载0后全24通过。
+未改RTL/端点来迎合上述检查器失败。
+
+八门及文档：
+gates/tb_gate_final.json/.md：compile、ast、readability、naming、profile通过；comment失败212项（沿用旧TB并小改后的注释位置）；testbench/toolchain在静态gate为not_requested。ModelSim编译/执行证据由实际运行独立提供，不把not_requested写成模拟通过。
+受管write-spec真实返回ports must be non-empty；不添加虚假端口。提供tb_road_postprocess_real_rom_spec.md、tb_spec.json和受管renderer成功生成的spec/...cancel_drain.json5/.svg。受管portless规格交叉检查未过，不隐瞒。
+新编译分支加入后受控smoke221100_809_75a981fe复现1,413,419；受控25完整候选保留自身不可变源码快照。实际24源码TB SHA70e3ac446513530f1ff8067d79f4d1cfc05af3f6014b86749d682a3526b7ff1c，实际runner SHAb6a38850558e2abd2d57da063f2a84d9c0d6f82bcfa9ea0ff8a2ed35f21731df。
+
+没有覆盖的风险：
+实际模式首轮优化保留112条已知加密PH1P_LOGIC_ERAM.v(165) vopt-2697：INIT_FILE MSB167999/LSB167928越界。后续23轮明确缓存加载而0条新警告；无意外警告。功能通过不解决该厂商模型告警；总体warning_status仍UNRESOLVED_ENCRYPTED_VENDOR_INIT_FILE_BOUNDS。
+没有TD/综合/物理资源/实际时序/真实DDR/整网CNN/生产C8 collector/板卡/位流/Flash证据。0新增DSP/无重复候选RAM中，后者有源码/实例证据，DSP实际映射仍待TD。没有训练、commit、push或外部聊天消息。
+
+下一角色读取：
+final_verification_receipt.json、上述actual/controlled最终summary、tb_road_postprocess_real_rom_spec.md、gates/tb_gate_final.json和协调者vendor_rom/source_receipt.json。
+

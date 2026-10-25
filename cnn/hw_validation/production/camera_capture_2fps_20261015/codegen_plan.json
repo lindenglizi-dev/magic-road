@@ -1,0 +1,15 @@
+{
+  "task_class": ["generate", "validate"],
+  "record_scope": "consolidated plan receipt after implementation; not a fabricated pre-edit timestamp",
+  "requirements": "requirements.txt",
+  "interfaces": "interfaces.json",
+  "specifications": "specifications/source/spec/camera_capture/",
+  "python_before_rtl": ["reference/generate.py", "reference_slots.py", "rtl/road_area_resize_queue_reference.py"],
+  "rtl": ["rtl/road_area_resize.v", "rtl/road_capture_slots.v"],
+  "checks": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"],
+  "functional_evidence": "verification/suite_manifest.json",
+  "test_order": "CPU numeric/lane/queue reference; RTL; ModelSim vendor-RAM full-frame comparison; exact slot event tests; gates and closure receipt",
+  "resource_policy": "Two explicit ERAM instances plus LUTRAM queue; no mapped cost or physical timing claim",
+  "scope_exclusions": ["training", "production", "frozen arithmetic changes", "real PAXI integration", "timing exceptions", "TD", "bitstream", "board", "Flash"],
+  "missing_skill_boundary": "readable-python-generator and readable-script-generator unavailable; no strict Python/script readiness claim"
+}

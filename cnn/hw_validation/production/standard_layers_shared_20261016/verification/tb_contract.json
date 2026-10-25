@@ -1,0 +1,86 @@
+{
+  "name": "standard_tile_verification",
+  "modules": [
+    {
+      "name": "tb_standard_tile_client",
+      "rtl_path": "tb_standard_tile_client.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "verification_completion",
+            "description": "全部真实自检通过后置位"
+          }
+        ]
+      },
+      "behavior": [
+        "实例化唯一冻结24MAC和动态pre/SiLU/post owner，外部WIF1为明确行为端点",
+        "每通道最多一个未退休事务，随机请求ready与响应延迟，实际握手才推进",
+        "逐个WIF请求轨迹、signed33部分和、最终acc/pre/SiLU/post以及输出字节地址核验"
+      ],
+      "constraints": [
+        "数组只在testbench用于行为存储，不代表物理4ERAM",
+        "CPU来源仅证明本层代表tile，未证明实际完整前缀、DDR或整网",
+        "冻结五核接口、II、复位及数值不修改"
+      ],
+      "corner_cases": [
+        "四角/内部、H18底部两有效行、mask1尾输出",
+        "非法layer/tile、错误参数身份、取消占有、共同reset未退休请求/响应"
+      ],
+      "verification_cases": [
+        "20真实G10参数tile全数值比对",
+        "随机反压载荷保持",
+        "实际acc检查器注入1bit负例必须失败",
+        "窄协议故障只由共同reset解除"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "retire",
+          "title": "WIF1请求接受与响应消费分开",
+          "scenario": "wif_retirement",
+          "description": "请求和响应各自保持至握手，组发射前响应已消费；示意不规定native延迟",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p........"
+              },
+              {
+                "name": "req_valid",
+                "wave": "01.0....."
+              },
+              {
+                "name": "req_ready",
+                "wave": "0.10....."
+              },
+              {
+                "name": "rsp_valid",
+                "wave": "0...1.0.."
+              },
+              {
+                "name": "rsp_ready",
+                "wave": "0....10.."
+              },
+              {
+                "name": "core_accept",
+                "wave": "0......10"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

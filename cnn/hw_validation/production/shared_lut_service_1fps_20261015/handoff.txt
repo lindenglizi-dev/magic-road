@@ -1,0 +1,66 @@
+RoadYOLO C2 共享LUT服务交接（2026-10-15，第四批1FPS主线）
+
+一、候选和边界
+RTL：rtl/road_shared_lut_service.v；端口、位宽和取消合同见requirements.json。
+主代理独立复核闭包收据final_receipt.json；复跑reference.py --finalize只做CPU核对，不启动仿真/训练。
+本候选只实现动态sigmoid/exp查询→既有ROM-R1读口，不实例化或复制ROM，不做NMS/CNN/DDR。
+唯一生产模型ID：B35D4A66，payload SHA256：
+b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+0新增ERAM/0新增DSP是设计目标；RTL无表数组、乘法器或除法运算符，不是TD实际资源映射。
+未运行TD/综合/布局布线/训练/位流/板卡，不改五冻结算术核、生产源、reader等待或II。
+
+二、实际冻结地址
+读取cnn/reports/qat_frozen_stem_g10_20261014_v1/package/manifest.json：
+shared.sigmoid：起点137962，1024×UINT16_LE；共享表SHA256
+042f42f5d7b40affed80be77e643968666c82dfd241dba239b39b458a8b05dcc。
+shared.exp：起点140010，256×UINT16_LE；共享表SHA256
+982fde20067b10496b2f40718e61c1c0d9d66471a538845583b915e935e4eb74。
+byte_offset=base+2*index；word=byte_offset//20，lane=byte_offset%20。
+18步恢复除法严格等价于divmod，不采用组合除法宏；随后注册词号和提取偏移。
+lane0..18：读一个160bit词，显式提取16位；lane19：先保存最高字节，再读word+1的最低字节。
+当前真实包两表均偶数对齐，生产条目没有跨词；分支保留并在TB奇数基址19/39独立验证。
+奇数测试读取受控字节位置，只证明提取/聚合，不能解释为生产模型的sigmoid/exp数值。
+
+三、C7实际接线（尚未完成）
+客户端可直接接C2头部o_lut_req_*及i_lut_rsp_*；i_cancel接同域取消，i_rstn与reader共同复位。
+ROM请求侧：o_rom_request_valid/addr → 原reader i_request_valid/addr，
+原reader o_request_ready → i_rom_request_ready。
+返回侧：原reader o_response_valid/data/fault → i_rom_response_valid/data/fault，
+o_rom_response_ready → 原reader i_response_ready。
+如与卷积参数客户共用reader，C7仲裁必须按每个实际valid&&ready登记拥有者，并只向拥有者返回。
+本组件只允许一个未决客户端查询；跨词的两个ROM读分别握手，不能把第一词完成当完整LUT响应。
+所有请求字段kind/address/tag/frame_token/model_id锁定后完整回显；响应等待ready时保持。
+模型不符或exp索引256..1023：原身份+error1+data0，绝不读ROM。
+reader fault：拥有请求得到错误响应，o_fault粘滞；只能共同复位恢复，不自动重试。
+
+四、取消和复位（关键）
+i_cancel立即屏蔽客户端valid和新的ROM请求，但不复位reader。
+取消之前已被reader接受的读必须进入DRAIN，消费并丢弃旧响应后才重新o_lut_req_ready。
+取消与ROM响应同拍时仍消费旧响应；未接受的跨词第二读被抑制，不能发布半条结果。
+不得只清控制state就把无标签reader转交新帧，也不得用固定超时猜测旧读已排空。
+共同异步断言/本组件两级同步释放；无共同reader复位的单侧热复位恢复不在证明范围。
+本组件不声明任何外部DDR排空、摄像头SOF或全系统epoch已经闭合。
+
+五、实际验证与周期
+Python reference.py：冻结1280项逐项一致；399个合成字节offset全部一致；不进行推理或训练。
+reference/receipt.json绑定manifest、payload、physical与Python哈希。
+RTL受控端点正式摘要：verification/reports/final_summary.json；同目录保留编译、仿真、参数及工具/源/输入hash。
+旧summary.json是COMPILE_FAILED失败收据，保留而不覆盖；不能只读它把最新成功判断为仍失败。
+沙箱Icarus前两次返回3221225477，失败保留；同源本地授权第三次编译返回0、vvp返回0。
+默认sigmoid1024+exp256：1280项/1280次ROM读，TB无额外等待时query接受→响应有效23拍。
+奇数基址两表另1280项：129项跨词，共1409次读；延迟23..26拍，平均23.30拍。
+完整测试包括请求气泡、reader请求23拍反压、返回17拍延迟、客户端响应保持、3次取消、
+2种共同复位及reader故障；精确覆盖以verification最终交接和日志为准。
+上述周期仅受控ROM端点，不是原reader固定等待、真实共享仲裁、整网或DDR端到端。
+整个解码/TopK/NMS仍共用2M预算；本周整帧100M/1FPS是目标，不是已达到；500ms过期不变。
+
+六、规格、八门、未测边界
+canonical文档及SVG在specification/spec/road_shared_lut_service/。
+spec_checked/spec/road_shared_lut_service/另含实际RTL端口交叉核对后生成的同名规范与SVG。
+gates/attempt_01.json：compile passed、AST failed、readability failed、comment passed、
+naming failed、profile passed；testbench/toolchain在该静态调用中not_requested。
+严格526错误/0警告，含格式模板、命名、控制锥、参数合同及宽度诊断，不能只称格式问题或正式通过。
+TB门另报105项注释诊断；其余compile/AST/readability/naming/profile passed。
+外部编译/功能仿真通过不覆盖以上失败；本候选非strict-delivery-ready，不是物理签核或生产交付。
+未安装readable-python-generator/readable-script-generator，不虚报其通过；未新增依赖。
+下一责任边界：C7接唯一真实ROM-R1和仲裁；C9联合真实head+NMS；再同源完整周期与物理资源/时序。

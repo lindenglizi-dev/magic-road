@@ -1,0 +1,308 @@
+{
+  "modules": [
+    {
+      "name": "road_stem_ddr_sequence",
+      "feature": "frontend_rgb_reuse",
+      "rtl_path": "road_stem_ddr_sequence.v",
+      "description": "完整前三层RGB同像素缓存地址复用；核和DDR接口保持。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "100MHz计算时钟",
+            "description": "100MHz计算时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "与整个DDR共同断言并在本域同步释放",
+            "description": "与整个DDR共同断言并在本域同步释放"
+          },
+          {
+            "name": "i_phy_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "已同步到本域的初始化许可",
+            "description": "已同步到本域的初始化许可"
+          },
+          {
+            "name": "i_ddr_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "邮箱的本域粘滞故障",
+            "description": "邮箱的本域粘滞故障"
+          },
+          {
+            "name": "i_req_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "邮箱可保管唯一请求",
+            "description": "邮箱可保管唯一请求"
+          },
+          {
+            "name": "i_rsp_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "完整响应已跨域冻结",
+            "description": "完整响应已跨域冻结"
+          },
+          {
+            "name": "i_rsp_data",
+            "direction": "input",
+            "width": 128,
+            "role": "实际DDR返回字",
+            "description": "实际DDR返回字"
+          },
+          {
+            "name": "i_rsp_error",
+            "direction": "input",
+            "width": 4,
+            "role": "写接受或读请求错误",
+            "description": "写接受或读请求错误"
+          },
+          {
+            "name": "o_req_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "载荷保持到本域接受",
+            "description": "载荷保持到本域接受"
+          },
+          {
+            "name": "o_req_write",
+            "direction": "output",
+            "width": 1,
+            "role": "写接受与读返回分型",
+            "description": "写接受与读返回分型"
+          },
+          {
+            "name": "o_req_addr",
+            "direction": "output",
+            "width": 25,
+            "role": "按冻结布局转换的native地址",
+            "description": "按冻结布局转换的native地址"
+          },
+          {
+            "name": "o_req_data",
+            "direction": "output",
+            "width": 128,
+            "role": "实际核导出打包的128位字",
+            "description": "实际核导出打包的128位字"
+          },
+          {
+            "name": "o_rsp_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "完整响应只消费一次",
+            "description": "完整响应只消费一次"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": 2,
+            "role": "零等待、一通过、二失败",
+            "description": "零等待、一通过、二失败"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 4,
+            "role": "首个失败类型",
+            "description": "首个失败类型"
+          },
+          {
+            "name": "o_phase",
+            "direction": "output",
+            "width": 5,
+            "role": "可观测调度状态",
+            "description": "可观测调度状态"
+          },
+          {
+            "name": "o_writes",
+            "direction": "output",
+            "width": 32,
+            "role": "已收到接受回执的唯一写字数",
+            "description": "已收到接受回执的唯一写字数"
+          },
+          {
+            "name": "o_reads",
+            "direction": "output",
+            "width": 32,
+            "role": "实际已消费的读响应数",
+            "description": "实际已消费的读响应数"
+          },
+          {
+            "name": "o_output_bytes",
+            "direction": "output",
+            "width": 32,
+            "role": "已核对的最终PW字节数",
+            "description": "已核对的最终PW字节数"
+          },
+          {
+            "name": "o_cycles",
+            "direction": "output",
+            "width": 32,
+            "role": "含初始化的端点总周期",
+            "description": "含初始化的端点总周期"
+          },
+          {
+            "name": "o_cycle_bins",
+            "direction": "output",
+            "width": 320,
+            "role": "十项互斥分类，低32位为初始化",
+            "description": "十项互斥分类，低32位为初始化"
+          },
+          {
+            "name": "o_address",
+            "direction": "output",
+            "width": 25,
+            "role": "当前读写的完整native地址",
+            "description": "当前读写的完整native地址"
+          },
+          {
+            "name": "o_expected",
+            "direction": "output",
+            "width": 128,
+            "role": "最近比较的完整期望字",
+            "description": "最近比较的完整期望字"
+          },
+          {
+            "name": "o_actual",
+            "direction": "output",
+            "width": 128,
+            "role": "最近比较的完整实读或导出字",
+            "description": "最近比较的完整实读或导出字"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "CNN100MHz; DDR133.33MHz; HDMI75/375MHz"
+      },
+      "reset": {
+        "assertion": "Entire DDR and arithmetic jointly asserted asynchronously",
+        "release": "Two-flop release in each domain, reload all 1024 SiLU entries before start"
+      },
+      "behavior": [
+        "10800个宏命令；2304 Stem块和576下采样块，真实输出写DDR再作为下一层输入。",
+        "图像从48词周期图案写满DDR；算术激活必须来自DDR实读或定义的padding。",
+        "单16B缓存每tile失效，命中省读；完整写/读/导出计数必须一致才PASS。",
+        "计算与DDR共同复位；所有旧计数、缓存和valid取消，重新写输入并装满1024表。",
+        "RGB非padding、channel<2、cache有效且tag匹配、lane<15时，core_load握手后lane+1并留HALO_BYTE。",
+        "lane15、padding或cache无效回原MAP→ROW→ADDRESS→CACHE；末B通道换像素仍回原路径。",
+        "反压不推进lane/channel/halo索引；整个DDR/CNN共同复位，重新装满1024项表。",
+        "W响应只表示原mailbox接受AW/W，不是存储可见或提交保证。"
+      ],
+      "constraints": [
+        "Read-only ROM initialization is checked separately from board readback.",
+        "No new timing exceptions for mailbox; existing bounded display CDC retained.",
+        "TEST_ONLY coefficients, no deployed-model precision or full CNN FPS claim."
+      ],
+      "corner_cases": [
+        "顶左padding、右下末tile、行列进位、cache跨字节边界、请求背压、读延迟、复位与故障"
+      ],
+      "verification_cases": [
+        "全帧逐项数值与地址、真实中间值、正常及随机背压、共同复位、实际TD资源时序",
+        "原八例同向量，lane14/15跨词，RGB通道编号，真实子核装载长反压"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "rgb_boundary",
+          "title": "R14/G15直达与B跨词回退",
+          "scenario": "rgb_word_boundary",
+          "description": "例示响应延迟仅为图示；真实READ_RESPONSE等待valid。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p.........."
+              },
+              {
+                "name": "state",
+                "wave": "===========",
+                "data": [
+                  "HALO_R",
+                  "HALO_G",
+                  "MAP_B",
+                  "ROW_B",
+                  "ADDR_B",
+                  "CACHE_B",
+                  "READ_B",
+                  "WAIT_B",
+                  "HALO_B",
+                  "MAP_R",
+                  "ROW_R"
+                ]
+              },
+              {
+                "name": "lane",
+                "wave": "===..=.....",
+                "data": [
+                  "14",
+                  "15",
+                  "15",
+                  "0"
+                ]
+              },
+              {
+                "name": "load_accept",
+                "wave": "1.0.....10."
+              },
+              {
+                "name": "read_request",
+                "wave": "0.....10..."
+              }
+            ]
+          }
+        },
+        {
+          "id": "rgb_stall",
+          "title": "装载反压保持游标",
+          "scenario": "rgb_load_stall",
+          "description": "ready为零期间同一HALO字节保持，接受后才换下一通道。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "load_valid",
+                "wave": "01......"
+              },
+              {
+                "name": "load_ready",
+                "wave": "10...1.."
+              },
+              {
+                "name": "channel",
+                "wave": "=.....=.",
+                "data": [
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "name": "lane",
+                "wave": "=.....=.",
+                "data": [
+                  "14",
+                  "15"
+                ]
+              },
+              {
+                "name": "data",
+                "wave": "=.....=.",
+                "data": [
+                  "R[x,y]",
+                  "G[x,y]"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

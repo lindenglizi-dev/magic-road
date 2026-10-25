@@ -1,0 +1,10 @@
+任务：modify/generate/validate；从已上板BANKS四tile基线建立固定循环取指候选，再准备整层DDR调度。
+当前子阶段：先替换6092条命令的存储表示，命令逐位、取指延迟、13例结果及周期必须保持一致。
+模块：road_frontend_load_sequence；输入i_clk/i_rstn、i_fetch、i_advance，输出64位o_command。
+i_fetch为原ST_FETCH的单拍许可，沿后提供命令并保持；i_advance仅在原命令完成的ST_ADVANCE推进一次。停顿中不推进任何阶段/地址。复位清空阶段/计数，下一FETCH开始重新装1024项表。
+数据：1024x16 SiLU表、2048x32参数ROM、4096x9像素ROM；仅固定原四tile内容。像素最高位表示原padding kind，其余8位RGB。不存在编译期固定操作数替代MAC。
+范围：原顶层、mailbox、8个算术/调度核、数值/II/故障/复位/PAXI/SDC不变；不扩CRC，不训练，不改生产，不操作板卡或Flash。新临时位流须在新真实实现通过后生成。
+后续整层：独立子阶段使用完整张量DDR和计数地址生成，不把完整RGB/黄金张量堆成片上ROM；需要修改外部核接口等既有决定边界时再集中说明。
+成功判据：6092条命令逐位/顺序一致，随机停顿保持，半程复位后从头重装表；原13例及100/133MHz mailbox测试一致；实际包含新loader的顶层资源及全量适用时序。
+八门：compile、ast、readability、comment、naming、profile、testbench、toolchain；保留修改前后全部记录，诊断范围沿既有批准，不将严格失败宣布为交付通过。
+依赖：沿已安装ModelSim/TD/WaveDrom；缺失readable-python-generator及readable-script-generator入口沿原记录，不声明其门通过。

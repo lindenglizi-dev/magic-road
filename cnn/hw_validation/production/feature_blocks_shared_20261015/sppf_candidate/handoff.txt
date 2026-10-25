@@ -1,0 +1,77 @@
+第六批 C4 第二里程碑：共享客户端 CSP4→SPPF
+日期：2026-10-15；分支 work/roadyolo；仅本地保存。
+
+1. 交付范围与选定候选
+选定 frozen_attempt2；原 frozen 失败候选保留，不覆盖。
+RTL：rtl/road_feature_blocks_client.v
+SHA256：9311eceda255a4206b6d78955689114f243dd8bc8af4d63520f6d5cdb5ec0d72
+同一运行时客户端接受 block_id=2/3/4/5；仅 start&&start_ready 锁存身份。
+一个FSM、一个3072×8工作缓存、一个24×192权重bank、一个外部算术owner。
+保留原算术五文件、wrapper、端口、II、数值和共同复位语义；无三套并排客户端。
+本阶段SPPF与原CSP2/3/4回归使用同一份新RTL，分别选测试台top，不是两个算术owner并行实例。
+
+2. 真实内存依赖与数值
+唯一CPU输入是CSP4原始输入0x0372c000..0x0373b000。
+CSP4输出0x0376b000只由真实DUT写接受产生；匹配屏障后可读，跨block4→5保留。
+SPPF不预填CPU中间结果；其squeeze、三次pool和out都从前级实际写回读取。
+block5：18×32，PW96→24；三次5×5/stride1 signed INT8 max；四路C24 concat；PW96→96。
+各阶段输出基址：0x0377a000、0x0377e000、0x03782000、0x03786000、0x0378a000。
+算法图外padding=-128；物理尾tile y18/19填0，不把尾部当逻辑像素，不写逻辑范围外。
+pool不经过MAC/SiLU；signed9写和为max符号扩展；非法旧core输出在pool写时抑制写并故障。
+每轮SPPF：110592个输出；其中69120个卷积输出逐项核对acc/pre/SiLU/post，41472个pool输出逐项核对。
+四路concat实际读取逐项核对1769472次，负数pool输出1628个。
+独立坐标读模型与TB一致：五阶段16B读请求3456/3060/3060/3060/4608，总17244。
+pool每输出25次READ和25次COMPARE；每种状态总1036800周期。写退休单独计数。
+读请求/参数请求分别单未决，返回地址与block/layer身份核对；写与屏障按真实ready握手。
+
+3. 实际ModelSim结果
+case0 正常：CSP4 9204840，SPPF 6322166，干净总15527006周期。
+       sequence15527015，额外9周期；100MHz下干净约155.27006ms。
+case1 随机背压：CSP4 9592242，SPPF 6531203，干净总16123445周期。
+       sequence16123454，额外9周期；不是实际DDR延迟测量。
+case2 共同复位重跑：干净总15527006；sequence26378924。
+       被取消前缀10850876周期、248960次写；复位/重装等额外1042周期。
+       被取消前缀不计入完整运行及干净周期。
+case3 首个pool写保持64拍：CSP4 9204840，SPPF 6322230，总15527070。
+       sequence15527079；增加的64拍只计POOL_WRITE。
+case99 真实首个pool写期望值XOR1：命中真实Fatal NEGATIVE_POOL，不允许成功标志。
+       原生vsim退出码0（quit -code 0），runner按Fatal日志判validated_returncode=1，负例验证通过。
+       先完成的CSP4只是负例前缀，不算完整CSP4→SPPF通过。
+regression_case0：原CSP2→3→4同实例复测通过；正常43343642，sequence43343656周期。
+六个case目录合计：四条完整CSP4→SPPF共8个完整块，原CSP回归3个，共11个正常完整块。
+各完整块20种互斥状态（旧回归17种）周期之和=阶段周期之和=起止端点；不把重叠事件累加成周期。
+每条完整CSP4→SPPF：331776输出、290304组四级卷积数值检查、746496输入组、110592任务、41832读、69120参数、12屏障。
+busy期间ID/start持续扰动未改变锁存任务；共同复位后重装同包LUT。
+
+4. 已定位失败与最小修复
+原frozen/case0停在首个pool输出，RTL实际05恰等于CPU正确05。
+原因是ModelSim的%02d产生空格文件名pool. 0.hex，三份pool黄金数据未加载，不是模型/RTL错误。
+只修TB为pool.00/01/02.hex固定路径并先fopen检查；runner拒绝缺文件、词数不匹配及VECTOR_FILE_OPEN_REJECTED。
+原失败日志、状态、源哈希保留；真实旧失败日志已由新检查器拒绝，干净文本正例接受。
+失败与修复候选RTL和全部黄金向量相同；只允许TB与run_sppf.py这两项源绑定例外，具体由finalize.py验证。
+
+5. 静态门禁与物理限制
+原完整严格门禁：5215 errors/5 warnings；修复后：5225 errors/5 warnings，均未通过。
+不能用ModelSim功能通过替代compile/ast/readability/comment/naming/profile/testbench/toolchain八门通过。
+真实vlog 0 errors/0 warnings；修复候选仿真12条既有elaboration/vendor警告（非缺向量）。
+保持格式失败与数值/握手/位宽问题分别列示，不降门禁，不为清格式重写冻结核。
+可读Python/脚本生成技能未安装；仅声明实际执行的本地脚本检查，不冒称其严格门禁通过。
+
+存储仍是源级唯一owner，不是4ERAM物理签核：缓存3072B、权重bank576B、量化31B、读行16B，共3695B，另有控制和流水寄存器。
+参考官方已有PH1P_LOGIC_ERAM 2048×8组织，缓存可考虑2个bank（第二bank只用1024B）；这只是方案。
+必须处理真实同步读延迟并复测，权重192bit宽读口也需映射；容量合适不等于端口/资源/时序已通过。
+详细端口/生命周期见上级PAN_存储交接.txt；本阶段不更改已封存上级交付。
+
+6. 尚未完成与下一阶段
+SPPF两个卷积独立覆盖新增，但down3/down4仍未实际衔接，不是连续完整骨干。
+下一小阶段：lateral4→nearest/concat→fuse3_td，再lateral3→nearest/concat→fuse2_td。
+PAN每块只有reduce PW→DW→PW残差三卷积，不加out.conv；沿冻结图地址和旁路生命周期。
+底部PAN缺down3_bu/down4_bu真实生产者，不能用CPU填充冒充接通。
+未做实际DDR、ERAM映射、TD资源/布局布线、完整67层、整网1FPS/5FPS、QAT或精度验收。
+管理/硬资源限不变；本轮不训练、不改生产、不生成bitstream、不上板/Flash、不加时序例外、不提交推送。
+新演示2秒保留和显示年龄是另一路已批准配置；本计算客户端未编辑显示或旧500ms正式基线。
+
+7. 可复核入口
+run_sppf.py：spec/prepare/gate/execute/self-check；不要对已存在case目录重复运行。
+finalize.py：核验实际日志/命令/绑定/计数/周期/失败候选后发布cycle_ledger.json、integration_sources.json、final_checks.json、status.json、delivery_manifest.json。
+最终状态以这些实际生成且哈希核验通过的文件为准；本文不是独立物理或正式精度证明。

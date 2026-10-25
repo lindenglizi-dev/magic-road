@@ -1,0 +1,350 @@
+`timescale 1ps / 1ps
+
+// 原厂DDR控制器端口级观察；没有DDR器件模型，不进行存储内容验收。
+module tb_ddr_real_handshake;
+    localparam integer C_CHANNEL_LIMIT = 2048;
+    localparam integer C_OBSERVE_CYCLES = 64;
+
+    reg ref_clk = 1'b0;
+    reg sys_rst_n = 1'b0;
+    reg [24:0] awaddr = 25'd0;
+    reg awvalid = 1'b0;
+    reg [127:0] wdata = 128'd0;
+    reg [15:0] wstrb = 16'd0;
+    reg wvalid = 1'b0;
+    reg wlast = 1'b0;
+    reg [24:0] araddr = 25'd0;
+    reg arvalid = 1'b0;
+    reg rready = 1'b0;
+
+    wire dhi_clk, cfg_clk, cfg_rst_n, ddrphy_rst_n, ddrphy_rdy;
+    wire apb_pready, awready, wready, arready;
+    wire [127:0] rdata;
+    wire rlast, rvalid;
+    wire [31:0] apb_prdata;
+    wire ddr_ck_p, ddr_ck_n, ddr_cke, ddr_odt, ddr_cs_n;
+    wire ddr_ras_n, ddr_cas_n, ddr_we_n;
+    wire [1:0] ddr_ba;
+    wire [12:0] ddr_addr;
+    wire [1:0] ddr_dqs_p;
+    wire [1:0] ddr_dqs_n;
+    wire [15:0] ddr_dq;
+    wire [1:0] ddr_dm;
+
+    // 只读层次观察：不驱动、不force、不改变原厂端口或参数。
+    wire internal_bvalid;
+    wire [1:0] internal_bresp;
+    wire [3:0] internal_dhi_cmd_vld;
+    wire [127:0] internal_dhi_cmd_code;
+    wire internal_dhi_wdata_en;
+    wire [127:0] internal_dhi_wdata;
+    wire [15:0] internal_dhi_wmask;
+
+    integer dhi_cycle = 0, active_case = -1;
+    integer aw_accepts = 0, w_accepts = 0, ar_accepts = 0, r_accepts = 0;
+    integer b_accepts = 0, b_unknown_cycles = 0;
+    integer dhi_write_commands = 0, dhi_read_commands = 0, dhi_wdata_requests = 0;
+    integer pin_write_commands = 0, pin_read_commands = 0;
+    integer read_outstanding = 0, read_data_unknown = -1, read_last_observed = -1;
+    integer summary_emitted = 0;
+    reg [1:0] last_bresp = 2'bxx;
+
+    reg previous_awvalid = 1'b0, previous_awready = 1'b0;
+    reg [24:0] previous_awaddr = 25'd0;
+    reg previous_wvalid = 1'b0, previous_wready = 1'b0;
+    reg [127:0] previous_wdata = 128'd0;
+    reg [15:0] previous_wstrb = 16'd0;
+    reg previous_wlast = 1'b0;
+    reg previous_arvalid = 1'b0, previous_arready = 1'b0;
+    reg [24:0] previous_araddr = 25'd0;
+
+    ddr2 dut (
+        .ref_clk(ref_clk), .sys_rst_n(sys_rst_n),
+        .apb_pclk(ref_clk), .apb_prst_n(sys_rst_n), .apb_pready(apb_pready),
+        .apb_psel(1'b0), .apb_penable(1'b0), .apb_pwrite(1'b0),
+        .apb_paddr(16'd0), .apb_pwdata(32'd0), .apb_prdata(apb_prdata),
+        .dhi_clk(dhi_clk), .cfg_clk(cfg_clk), .cfg_rst_n(cfg_rst_n),
+        .ddrphy_rst_n(ddrphy_rst_n), .ddrphy_rdy(ddrphy_rdy),
+        .paxi_awaddr(awaddr), .paxi_awvalid(awvalid), .paxi_awready(awready),
+        .paxi_wdata(wdata), .paxi_wstrb(wstrb), .paxi_wvalid(wvalid),
+        .paxi_wlast(wlast), .paxi_wready(wready),
+        .paxi_araddr(araddr), .paxi_arvalid(arvalid), .paxi_arready(arready),
+        .paxi_rdata(rdata), .paxi_rlast(rlast), .paxi_rvalid(rvalid), .paxi_rready(rready),
+        .ddr_ck_p(ddr_ck_p), .ddr_ck_n(ddr_ck_n), .ddr_cke(ddr_cke), .ddr_odt(ddr_odt),
+        .ddr_cs_n(ddr_cs_n), .ddr_ras_n(ddr_ras_n), .ddr_cas_n(ddr_cas_n),
+        .ddr_we_n(ddr_we_n), .ddr_ba(ddr_ba), .ddr_addr(ddr_addr),
+        .ddr_dqs_p(ddr_dqs_p), .ddr_dqs_n(ddr_dqs_n), .ddr_dq(ddr_dq), .ddr_dm(ddr_dm)
+    );
+
+    assign internal_bvalid = dut.ph1p_ddrmc_wrapper.ph1p_ddrmc_top.u_alc_mc_top.paxi_bvalid;
+    assign internal_bresp = dut.ph1p_ddrmc_wrapper.ph1p_ddrmc_top.u_alc_mc_top.paxi_bresp;
+    assign internal_dhi_cmd_vld = dut.ph1p_ddrmc_wrapper.ph1p_ddrmc_top.dhi_cmd_vld;
+    assign internal_dhi_cmd_code = dut.ph1p_ddrmc_wrapper.ph1p_ddrmc_top.dhi_cmd_code;
+    assign internal_dhi_wdata_en = dut.ph1p_ddrmc_wrapper.ph1p_ddrmc_top.dhi_wdata_en;
+    assign internal_dhi_wdata = dut.ph1p_ddrmc_wrapper.ph1p_ddrmc_top.dhi_wdata;
+    assign internal_dhi_wmask = dut.ph1p_ddrmc_wrapper.ph1p_ddrmc_top.dhi_wmask;
+
+    always #5000 ref_clk = ~ref_clk;
+
+    // 在有效沿采样握手；激励只在负沿更新，不能用NBA更新后的READY替代沿前值。
+    always @(posedge dhi_clk) begin : p_paxi_monitor
+        integer lane;
+        dhi_cycle = dhi_cycle + 1;
+
+        if (previous_awvalid && !previous_awready &&
+            (!awvalid || awaddr !== previous_awaddr)) begin
+            $display("REAL_ERROR kind=AW_NOT_HELD dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+            $fatal(1, "AW payload changed before acceptance");
+        end
+        if (previous_wvalid && !previous_wready &&
+            (!wvalid || wdata !== previous_wdata || wstrb !== previous_wstrb || wlast !== previous_wlast)) begin
+            $display("REAL_ERROR kind=W_NOT_HELD dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+            $fatal(1, "W payload changed before acceptance");
+        end
+        if (previous_arvalid && !previous_arready &&
+            (!arvalid || araddr !== previous_araddr)) begin
+            $display("REAL_ERROR kind=AR_NOT_HELD dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+            $fatal(1, "AR payload changed before acceptance");
+        end
+        if ((awvalid && (awready !== 1'b0) && (awready !== 1'b1)) ||
+            (wvalid && (wready !== 1'b0) && (wready !== 1'b1)) ||
+            (arvalid && (arready !== 1'b0) && (arready !== 1'b1))) begin
+            $display("REAL_ERROR kind=UNKNOWN_READY dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+            $fatal(1, "Ready is unknown while valid is asserted");
+        end
+        if (wvalid && (wstrb !== 16'h0000 || wlast !== 1'b1)) begin
+            $display("REAL_ERROR kind=BAD_SINGLE_BEAT_W dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+            $fatal(1, "Write mask or last changed from the frozen single-beat contract");
+        end
+
+        if (awvalid && awready) begin
+            aw_accepts = aw_accepts + 1;
+            $display("REAL_EVENT kind=AW_ACCEPT case=%0d dhi_cycle=%0d time_ps=%0d addr=%h",
+                active_case, dhi_cycle, $time, awaddr);
+        end
+        if (wvalid && wready) begin
+            w_accepts = w_accepts + 1;
+            $display("REAL_EVENT kind=W_ACCEPT case=%0d dhi_cycle=%0d time_ps=%0d data=%h",
+                active_case, dhi_cycle, $time, wdata);
+        end
+        if (arvalid && arready) begin
+            ar_accepts = ar_accepts + 1;
+            read_outstanding = 1;
+            $display("REAL_EVENT kind=AR_ACCEPT case=%0d dhi_cycle=%0d time_ps=%0d addr=%h",
+                active_case, dhi_cycle, $time, araddr);
+        end
+        if ((rvalid === 1'b1) && !read_outstanding && !(arvalid && arready)) begin
+            $display("REAL_ERROR kind=R_WITHOUT_OWNER dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+            $fatal(1, "Read return appeared without an accepted owner");
+        end
+        if (rvalid && rready) begin
+            r_accepts = r_accepts + 1;
+            read_data_unknown = (^rdata === 1'bx);
+            read_last_observed = (rlast === 1'b1);
+            read_outstanding = 0;
+            $display("REAL_EVENT kind=R_ACCEPT case=%0d dhi_cycle=%0d time_ps=%0d rlast=%b data_has_x=%0d data=%h",
+                active_case, dhi_cycle, $time, rlast, read_data_unknown, rdata);
+        end
+        if (internal_bvalid === 1'b1) begin
+            b_accepts = b_accepts + 1;
+            last_bresp = internal_bresp;
+            $display("REAL_EVENT kind=INTERNAL_BVALID window_case=%0d dhi_cycle=%0d time_ps=%0d bresp=%b",
+                active_case, dhi_cycle, $time, internal_bresp);
+        end else if ((internal_bvalid !== 1'b0) && ddrphy_rdy) begin
+            b_unknown_cycles = b_unknown_cycles + 1;
+        end
+
+        if (ddrphy_rdy) begin
+            for (lane = 0; lane < 4; lane = lane + 1) begin
+                if (internal_dhi_cmd_vld[lane] === 1'b1) begin
+                    // 取实际cmd_decode使用的编码，不采用上层未使用的WR/RD枚举。
+                    if (internal_dhi_cmd_code[lane*32+28 +: 4] == 4'hc) begin
+                        dhi_write_commands = dhi_write_commands + 1;
+                        $display("REAL_EVENT kind=DHI_WRITE window_case=%0d dhi_cycle=%0d time_ps=%0d lane=%0d code=%h",
+                            active_case, dhi_cycle, $time, lane, internal_dhi_cmd_code[lane*32 +: 32]);
+                    end else if (internal_dhi_cmd_code[lane*32+28 +: 4] == 4'hd) begin
+                        dhi_read_commands = dhi_read_commands + 1;
+                        $display("REAL_EVENT kind=DHI_READ window_case=%0d dhi_cycle=%0d time_ps=%0d lane=%0d code=%h",
+                            active_case, dhi_cycle, $time, lane, internal_dhi_cmd_code[lane*32 +: 32]);
+                    end
+                end
+            end
+            if (internal_dhi_wdata_en === 1'b1) begin
+                dhi_wdata_requests = dhi_wdata_requests + 1;
+                $display("REAL_EVENT kind=DHI_WDATA_REQUEST window_case=%0d dhi_cycle=%0d time_ps=%0d mask=%h data=%h",
+                    active_case, dhi_cycle, $time, internal_dhi_wmask, internal_dhi_wdata);
+            end
+        end
+
+        previous_awvalid = awvalid;
+        previous_awready = awready;
+        previous_awaddr = awaddr;
+        previous_wvalid = wvalid;
+        previous_wready = wready;
+        previous_wdata = wdata;
+        previous_wstrb = wstrb;
+        previous_wlast = wlast;
+        previous_arvalid = arvalid;
+        previous_arready = arready;
+        previous_araddr = araddr;
+    end
+
+    // DDR2命令脚只作为命令发出证据，不代表器件接受或数据落存。
+    always @(posedge ddr_ck_p) begin
+        if (ddrphy_rdy && ddr_cke === 1'b1 && ddr_cs_n === 1'b0) begin
+            if ({ddr_ras_n, ddr_cas_n, ddr_we_n} === 3'b100) begin
+                pin_write_commands = pin_write_commands + 1;
+                $display("REAL_EVENT kind=DDR_PIN_WRITE window_case=%0d dhi_cycle=%0d time_ps=%0d bank=%h addr=%h",
+                    active_case, dhi_cycle, $time, ddr_ba, ddr_addr);
+            end else if ({ddr_ras_n, ddr_cas_n, ddr_we_n} === 3'b101) begin
+                pin_read_commands = pin_read_commands + 1;
+                $display("REAL_EVENT kind=DDR_PIN_READ window_case=%0d dhi_cycle=%0d time_ps=%0d bank=%h addr=%h",
+                    active_case, dhi_cycle, $time, ddr_ba, ddr_addr);
+            end
+        end
+    end
+
+    task automatic fail_case;
+        input integer case_id;
+        input [8*32-1:0] reason;
+        begin
+            $display("REAL_ERROR case=%0d kind=%0s dhi_cycle=%0d time_ps=%0d",
+                case_id, reason, dhi_cycle, $time);
+            $fatal(1, "Bounded real-interface case failed");
+        end
+    endtask
+
+    task automatic send_write;
+        input integer case_id, gap_cycles;
+        input [24:0] address;
+        input [127:0] data;
+        integer base_aw, base_w, base_b;
+        integer base_dhi_write, base_pin_write, waited;
+        begin
+            if (gap_cycles < 0 || gap_cycles > 2) fail_case(case_id, "INVALID_GAP");
+            active_case = case_id;
+            base_aw = aw_accepts;
+            base_w = w_accepts;
+            base_b = b_accepts;
+            base_dhi_write = dhi_write_commands;
+            base_pin_write = pin_write_commands;
+            @(negedge dhi_clk);
+            awaddr = address;
+            wdata = data;
+            wstrb = 16'h0000;
+            wlast = 1'b1;
+            awvalid = 1'b1;
+            wvalid = (gap_cycles == 0);
+            $display("REAL_EVENT kind=AW_PRESENT case=%0d dhi_cycle=%0d time_ps=%0d ready=%b", case_id, dhi_cycle, $time, awready);
+            if (gap_cycles == 0) $display("REAL_EVENT kind=W_PRESENT case=%0d dhi_cycle=%0d time_ps=%0d ready=%b", case_id, dhi_cycle, $time, wready);
+            waited = 0;
+            while (((aw_accepts == base_aw) || ((gap_cycles == 0) && (w_accepts == base_w))) &&
+                   (waited < C_CHANNEL_LIMIT)) begin
+                @(negedge dhi_clk);
+                waited = waited + 1;
+                if (aw_accepts != base_aw) awvalid = 1'b0;
+                if ((gap_cycles == 0) && (w_accepts != base_w)) wvalid = 1'b0;
+            end
+            if (aw_accepts == base_aw) fail_case(case_id, "AW_TIMEOUT");
+            awvalid = 1'b0;
+
+            if (gap_cycles != 0) begin
+                if (gap_cycles == 2) @(negedge dhi_clk);
+                wvalid = 1'b1;
+                $display("REAL_EVENT kind=W_PRESENT case=%0d dhi_cycle=%0d time_ps=%0d ready=%b", case_id, dhi_cycle, $time, wready);
+            end
+            waited = 0;
+            while ((w_accepts == base_w) && (waited < C_CHANNEL_LIMIT)) begin
+                @(negedge dhi_clk);
+                waited = waited + 1;
+                if (w_accepts != base_w) wvalid = 1'b0;
+            end
+            if (w_accepts == base_w) fail_case(case_id, "W_TIMEOUT");
+            wvalid = 1'b0;
+            wlast = 1'b0;
+
+            repeat (C_OBSERVE_CYCLES) @(negedge dhi_clk);
+            $display("REAL_CASE case=%0d kind=WRITE gap=%0d addr=%h aw_accept=1 w_accept=1 observation_only=1 b=%0d dhi_write=%0d pin_write=%0d",
+                case_id, gap_cycles, address, b_accepts-base_b,
+                dhi_write_commands-base_dhi_write, pin_write_commands-base_pin_write);
+        end
+    endtask
+
+    task automatic send_read;
+        input integer case_id;
+        input [24:0] address;
+        integer base_ar, base_r;
+        integer base_dhi_read, base_pin_read, waited;
+        begin
+            active_case = case_id;
+            base_ar = ar_accepts;
+            base_r = r_accepts;
+            base_dhi_read = dhi_read_commands;
+            base_pin_read = pin_read_commands;
+            @(negedge dhi_clk);
+            araddr = address;
+            arvalid = 1'b1;
+            rready = 1'b1;
+            $display("REAL_EVENT kind=AR_PRESENT case=%0d dhi_cycle=%0d time_ps=%0d ready=%b", case_id, dhi_cycle, $time, arready);
+
+            waited = 0;
+            while ((ar_accepts == base_ar) && (waited < C_CHANNEL_LIMIT)) begin
+                @(negedge dhi_clk);
+                waited = waited + 1;
+                if (ar_accepts != base_ar) arvalid = 1'b0;
+            end
+            if (ar_accepts == base_ar) fail_case(case_id, "AR_TIMEOUT");
+            arvalid = 1'b0;
+
+            waited = 0;
+            while ((r_accepts == base_r) && (waited < C_CHANNEL_LIMIT)) begin
+                @(negedge dhi_clk);
+                waited = waited + 1;
+            end
+            if (r_accepts == base_r) begin
+                rready = 1'b0;
+                $display("REAL_READ_RETURN_NOT_OBSERVED case=%0d dhi_cycle=%0d time_ps=%0d limit=%0d owner_retained=%0d",
+                    case_id, dhi_cycle, $time, C_CHANNEL_LIMIT, read_outstanding);
+            end else begin
+                rready = 1'b0;
+            end
+            repeat (C_OBSERVE_CYCLES) @(negedge dhi_clk);
+            $display("REAL_CASE case=%0d kind=READ addr=%h ar_accept=1 r_accept=%0d rlast=%0d data_has_x=%0d dhi_read=%0d pin_read=%0d",
+                case_id, address, r_accepts-base_r, read_last_observed, read_data_unknown,
+                dhi_read_commands-base_dhi_read, pin_read_commands-base_pin_read);
+        end
+    endtask
+
+    initial begin
+        #2000000;
+        @(negedge ref_clk);
+        sys_rst_n = 1'b1;
+        wait (ddrphy_rdy === 1'b1);
+        $display("REAL_EVENT kind=PHY_READY dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+        repeat (4) @(negedge dhi_clk);
+
+        send_write(0, 0, 25'd0, 128'h00112233445566778899aabbccddeeff);
+        send_write(1, 1, 25'd8, 128'h102132435465768798a9bacbdcedfe0f);
+        send_write(2, 2, 25'd16, 128'hffeeddccbbaa99887766554433221100);
+        send_read(3, 25'd0);
+
+        if (aw_accepts != 3 || w_accepts != 3 || ar_accepts != 1)
+            fail_case(4, "HANDSHAKE_COUNT");
+        $display("REAL_OBSERVATION_COMPLETE memory_model=ABSENT memory_pass=0 dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+        $display("REAL_SUMMARY aw=%0d w=%0d ar=%0d r=%0d b=%0d b_unknown=%0d last_bresp=%b dhi_write=%0d dhi_read=%0d dhi_wdata_req=%0d pin_write=%0d pin_read=%0d rlast=%0d data_has_x=%0d owner=%0d memory_pass=0",
+            aw_accepts, w_accepts, ar_accepts, r_accepts, b_accepts, b_unknown_cycles,
+            last_bresp, dhi_write_commands, dhi_read_commands, dhi_wdata_requests,
+            pin_write_commands, pin_read_commands, read_last_observed, read_data_unknown,
+            read_outstanding);
+        summary_emitted = 1;
+        $finish;
+    end
+
+    initial begin
+        #1000000000;
+        if (!summary_emitted) begin
+            $display("REAL_ERROR kind=GLOBAL_TIMEOUT dhi_cycle=%0d time_ps=%0d", dhi_cycle, $time);
+            $fatal(1, "One millisecond global watchdog");
+        end
+    end
+endmodule

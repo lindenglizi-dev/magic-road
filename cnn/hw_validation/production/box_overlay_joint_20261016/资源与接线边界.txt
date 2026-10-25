@@ -1,0 +1,54 @@
+第七批C8：接线与资源预估（物理未通过）
+本文件不是综合资源报告，C8本批不运行TD。
+
+1. 实际设计组成
+road_box_line_overlay：唯一active97异步读口 -> 五拍串行准备 -> 一份1280×18bit分布式RAM行事件图 -> 两类9bit有符号前缀/点事件 -> 单拍RGB/VS/HS/DE/SOF。
+road_box_age_overlay：上述模块 -> 只读复用旧road_age_overlay -> 总两拍RGB/VS/HS/DE；同时原始RGB两拍影子。最终许可失效直接回退等延迟原图，但保留AGE白墨点。
+没有第四张完整框表、64套全xy四边比较树、DDR接口、视频反压、UART、源帧发布器或新增输入槽逻辑。
+
+2. 接入实际表
+table.o_dst_active_valid -> i_table_active_valid
+table.o_dst_metadata[134:128] -> i_table_count（不能截成6位）
+table.o_dst_entry[96:0] -> i_table_entry
+o_table_read_index[5:0] -> table.i_dst_read_index
+table.o_dst_draw_valid -> i_table_draw_valid（活动读数据不受其门控，所以必须连接）
+table.o_dst_age_upper_ms -> i_age_upper_ms
+统一像素clk与已同步释放rstn；renderer和table.i_dst_sof使用同一mixer输出VS上升沿消隐事件。
+AGE使用renderer已经延迟一拍的SOF，再在随后消隐边沿锁新表年龄；不能把未对齐VTC USER或首活动像素当这个SOF。
+
+3. 原视频插入点
+cnn/template/design_top_wrapper.v内u_hdmi_mixer的S_hdmi_out_data/vsync/hsync/de -> 新road_box_age_overlay -> 原hdmi_tx RGB/VS/DE（HS仍等延迟导出）。
+新增固定两拍视频寄存；原mixer已有三拍，不能只延迟颜色不延迟时序。
+旧AGE白墨点、框固定绿/青且非白，最终实时无效mux正是利用此固定合同；如以后改变文字/框色，必须同步重新验证遮罩，不能默改成白框。
+本批只提供独立候选与TB，没有修改此生产或模板顶层。
+
+4. 实际官方周期窗口
+timing_probe/attempt_attempt2复用未改官方uivtc与hdmi_mixer完成局部ModelSim：
+1438条普通行间隔均为370个DE低采样；1440条完整有效行均为1280像素。
+mixer输出VS转换到下一DE转换=39971拍。
+同域SOF被消费者采样到下一DE转换=39970拍；到首有效像素被消费者采样=39971拍。
+interfaces.json的39970作为保守可用准备窗口；其consumption字段名称应结合此明确观察口径，不能拿转换/采样相差一拍宣称加速。
+正常64框扫描320拍；从DEfall开始到外部line_ready被观察的端点实测323拍，370-323=47拍余量。
+首行SOF全清1280项加64框扫描，受控TB实测1601拍，使用垂直消隐窗口，不把1280清图混入每行370拍预算。
+上述是功能周期，不是布局布线时序裕量；75MHz路径是否满足setup/hold仍未签核。
+
+5. 几何与安全
+真实NMS已RNE得到源整数像素再<<8，FINAL97低8位应为零。画框不二次舍入、缩放或改变原表。
+半开矩形[左,右)×[上,下)的一像素边缘；右/下在x1-1/y1-1，1×1合法；裁边后塌缩及带非零fractional的显示测试输入仅不绘该框。
+person绿色优先vehicle青色，AGE白字最后优先，不按score重排原表。
+超过64是非法计数：fault、该行不扫描不绘，绝不截成64继续绘制。没有降低合法64框容量。
+每帧/SOF显式清1280项，活动期每个x消费后下一拍清它，DEfall清1279。即使draw无效也照常消费/清，不能把上一行端点遗留下一行。
+所有被驱动RAM地址均合法；读阶段不写，写阶段用异或一的dummy读地址；不依赖同地址读写碰撞模式。无效端点也不能触发屏外异步读。
+准备迟到取消未完成builder写入并整行透传，不反压或中途补画。
+
+6. 必须诚实保留的资源风险
+行事件存储23040bit；按原生64bit/Slice容量理想为360Slice，只是存储容量下界式推算。
+1280深异步选择、写译码、FIFO之外的小寄存状态、计数/几何及AGE常数除法和点阵逻辑仍消耗资源。没有真实映射就不能宣布总增量<=600Slice。
+新ERAM/DSP目标0，Slice管理目标<=600；原生分布式RAM意图不等于综合已经0ERAM/0DSP。预算紧张风险应由C7真实顶层报告决定，不自动加ERAM或降64框。
+全机硬限21216Slice/40DSP/108ERAM与管理19000/38/107不变。
+还未获得setup/hold、物理CDC、整机帧率、摄像头DDR环或67层通过证据。
+
+7. 资格
+真实7框场景仍从保存的HEAD112开始，不包含摄像头像素到完整67层CNN计算；正确厂商ROM、解码/NMS、publisher、三表和本叠加链实际运行。
+注入0/1/32/33/64与边界框只测试显示/事务，不是识别演示。
+数值包保持PTQ诊断资格，不宣称QAT、正式精度或板测1FPS通过。

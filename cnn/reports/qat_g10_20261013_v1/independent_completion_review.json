@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "role": "independent_completion_review",
+  "reviewed_at": "2026-10-13",
+  "scope": "CPU-only read-only verification of the completed protected 10-update QAT artifacts, all committed checkpoints, source closure, optimizer/history state, exported integer package, support receipts, watchdog telemetry, and the already-completed development17 result. No evaluator, training, CUDA, or GPU operation was run by this review.",
+  "verdict": {
+    "artifact_integrity": "PASS",
+    "protected_execution": "PASS",
+    "checkpoint_and_package_equivalence": "PASS",
+    "development17_restoration": "FAIL",
+    "continue_training": false,
+    "old256_continuation_eligible": false,
+    "production_release": false,
+    "formal_acceptance": false,
+    "summary": "The ten-update run is internally complete, source-bound, finite, and exactly exported, but it materially worsened the frozen same-17 development metrics and failed the predeclared restoration gate. Artifact correctness does not rescue the candidate's failed quality result."
+  },
+  "findings": [
+    {
+      "id": "QAT-COMPLETE-001",
+      "severity": "PASS",
+      "finding": "The protected worker completed exactly ten updates with exit code 0 and no automatic retry or continuation.",
+      "evidence": {
+        "status": "completed_qat_G10",
+        "saved_updates": 10,
+        "presentations": 220,
+        "last_checkpoint_sha256": "5208f3363257dd524e889e1622d3bc3334bc8d7564334208ec4f9e799fcaac56",
+        "elapsed_seconds": 380.32873930002097,
+        "worker_exit_code": 0
+      }
+    },
+    {
+      "id": "QAT-COMPLETE-002",
+      "severity": "PASS",
+      "finding": "All committed candidate states validate against the frozen dataset, replay schedule, identity, protocol, cursor, presentation count, candidate kind, and formal-acceptance flag. Histories are exact prefixes and all recorded losses, foreground counts, pre-clip gradient norms, update durations, model tensors, optimizer tensors, and RNG tensors are finite.",
+      "evidence": {
+        "candidate_states_checked": 11,
+        "update_checkpoints_checked": 10,
+        "history_updates": 10,
+        "actual_samples_per_update": 22,
+        "groups_per_update": {"new": 11, "replay": 11},
+        "model_state_tensors": 201,
+        "optimizer_state_entries": {"update_0000": 0, "updates_0001_through_0010": 134},
+        "loss_range": [8.807643585956743, 10.322509979461884],
+        "foreground_range": [1571, 2828],
+        "gradient_norm_before_clip_range": [214.74468994140625, 460.7267150878906],
+        "update_seconds_range": [34.95625699998345, 37.02471149992198]
+      }
+    },
+    {
+      "id": "QAT-COMPLETE-003",
+      "severity": "PASS",
+      "finding": "The corrected CPU integration artifact is a non-candidate state and validates only with expected_candidate=false; every actual run checkpoint is candidate=true and validates with expected_candidate=true. The older root-level CPU receipt is explicitly superseded and was not used.",
+      "evidence": {
+        "corrected_gate": "integration_check_v2/CPU_resume_check.json",
+        "corrected_gate_passed": true,
+        "corrected_gate_candidate": false,
+        "corrected_gate_cuda_initialized": false,
+        "actual_candidate_states": true,
+        "superseded_gate": "CPU_resume_check.json",
+        "disposition": "INITIAL_CPU_CHECK_SUPERSEDED_DO_NOT_USE"
+      }
+    },
+    {
+      "id": "QAT-COMPLETE-004",
+      "severity": "PASS",
+      "finding": "The final checkpoint re-encodes exactly to every actual integer parameter array loaded from the exported package.",
+      "evidence": {
+        "integer_layers": 67,
+        "parameter_fields_compared": 390,
+        "parameter_elements_compared": 120725,
+        "array_mismatches": 0,
+        "package_payload_sha256": "6c8f8740ddedc0f305be59f15a928d809a80239cc20085b5a64102dbbd7452a4",
+        "manifest_sha256": "64e1adc19336b1946147dc7cb1b9a9265f4c7a65b15e891855cdf8885cb6a0e0",
+        "export_trace_tensors": 181,
+        "export_values_compared": 18275904
+      }
+    },
+    {
+      "id": "QAT-COMPLETE-005",
+      "severity": "PASS",
+      "finding": "The training identity closes over all current sources and immutable execution snapshots, and all support receipts bind to the same identity.",
+      "evidence": {
+        "current_source_hashes_matched": 20,
+        "execution_source_snapshots_matched": 20,
+        "original_checkpoint_unchanged": true,
+        "sources_unchanged": true,
+        "CPU_tests": {"passed": true, "tests_run": 17},
+        "GPU_check": {"passed": true, "trace_tensors": 181, "finite_gradient_tensors": 134, "nonzero_gradient_elements": 111933, "optimizer_updates": 0},
+        "export_parity_passed": true
+      }
+    },
+    {
+      "id": "QAT-COMPLETE-006",
+      "severity": "PASS",
+      "finding": "The independent watchdog remained bound to the intended RTX 4060 UUID and did not approach the 75 C stop threshold.",
+      "evidence": {
+        "telemetry_rows": 72,
+        "gpu_uuid": "GPU-a85887e6-358e-1ebb-cf09-81b558fa321a",
+        "temperature_range_c": [37.0, 40.0],
+        "temperature_stop_c": 75,
+        "warnings": 0,
+        "actions": 0,
+        "thermal_slowdowns": 0
+      }
+    },
+    {
+      "id": "QAT-COMPLETE-007",
+      "severity": "QUALITY_BLOCKER",
+      "finding": "The already-completed same-17 integer evaluation is correctly bound to the final checkpoint/package and identical GT, ignores, postprocess settings, validation manifest, FP32 baseline, and maxabs-PTQ baseline, but both class AP50 values fell below maxabs PTQ and far below FP32.",
+      "evidence": {
+        "gate_status": "FAIL_QAT_G10_DEVELOPMENT17_RESTORATION",
+        "image_count": 17,
+        "truth_objects": 179,
+        "ignore_regions": 2,
+        "same_truth_as_FP32_and_PTQ": true,
+        "same_ignores_as_FP32_and_PTQ": true,
+        "same_postprocess_as_FP32_and_PTQ": true,
+        "validation_dataset_sha256": "6af48b5ec8da6550a5d0af31db8b8f58d1fc8c9960df0eda9a66ad7c94f5f5e1",
+        "evaluated_image_content_sha256": "373af83998b9cf08f9ba3715416415486c82ec050df8cbab2aefb5835876e3d0",
+        "ap50": {
+          "QAT": {"person": 0.07761890185067755, "vehicle": 0.011194739617321802},
+          "maxabs_PTQ": {"person": 0.16244145025957737, "vehicle": 0.07103807964852216},
+          "FP32": {"person": 0.4749525491632374, "vehicle": 0.5081552124143437}
+        },
+        "mean_ap50_gain_pp_vs_maxabs_PTQ": -7.2332944220050095,
+        "mean_ap50_drop_pp_vs_FP32": 44.71470600547909,
+        "restoration_passed": false,
+        "old256_continuation_eligible": false,
+        "formal_acceptance": false
+      },
+      "required_disposition": "Stop this candidate path. Do not continue training, revive the old256 continuation, or label the package deployment-ready from these artifacts."
+    }
+  ],
+  "checkpoint_sha256": {
+    "update_0000.pt": "c01ec217f0863ecf133009dd91052bd094131dc4f11cb7f4df3737989fcaf830",
+    "update_0001.pt": "5f2e25a4ee6370b07fa799d113511cf11b4050846ae4ec702a0911841697412f",
+    "update_0002.pt": "a20638c3d48787498e80112e3136fa3fb8de6bd5be4889160d8e0809e89950fe",
+    "update_0003.pt": "7d96be20e7779c8316e107cdd3ea4e1f7eac0286650782b04aaa3c04aa46d087",
+    "update_0004.pt": "71ed5158b36fe91a2eb1eca0baeb4b245c9688632837f9f4b7c24a7438b5e530",
+    "update_0005.pt": "ad4f618298ebf0b2632b27ba76ba3637375bb6b072a77f0ba601886e0c1a60b9",
+    "update_0006.pt": "4fac9027bcde7c21abd893946ca9c455d8f9c1c2298628c2930d56ed3b17bd49",
+    "update_0007.pt": "fa25c17fb594de9d55e2c1e15995fbafb4ebd0736773afeb786fb4d526bbdea6",
+    "update_0008.pt": "9ef62dd7645d2bdc5666f606a91d09d417afcc9bc1007817357278543a4475cd",
+    "update_0009.pt": "601e4989e1e1cdb1487b4c83ee7d048804d1cb271ee3fe03c422addd251645c9",
+    "update_0010.pt": "5208f3363257dd524e889e1622d3bc3334bc8d7564334208ec4f9e799fcaac56",
+    "last.pt": "5208f3363257dd524e889e1622d3bc3334bc8d7564334208ec4f9e799fcaac56"
+  },
+  "receipt_sha256": {
+    "training_contract.json": "ad64156a6ae57281858f17236d39b3441b5941123005fc005c8e2483888966ed",
+    "execution/report.json": "ad44238dcc584064b06e243b9e84631389d65f6de9b299b455713a8dedb0eb2f",
+    "integration_check_v2/CPU_resume_check.json": "4fdbff59e6f83a5dd35094b167e401a9b8b1835e5e38882c262d9d4e57334bcd",
+    "CPU_test_receipt.json": "c9e13fac4ca8feca5ca84d1e426c74e63128b47ac3d0db8bc0ce4ec44b0c20d0",
+    "GPU_check.json": "5d93a897751595c697236a7ebc95c357ab7f9ba0d477c31f9a0a78f459efadef",
+    "export_parity.json": "6d05d2fa1a21132c733fb7197dc805937334864414402897a9d124ed7f1b690c",
+    "package/manifest.json": "64e1adc19336b1946147dc7cb1b9a9265f4c7a65b15e891855cdf8885cb6a0e0",
+    "evaluation/development17.json": "a10ba1a2b9e3dc185fc2ef59af8622193fe605ed62ba858462b82d9984509175",
+    "evaluation/evaluation_gate.json": "1cc29737a15025b50fd3f65991dd4257c55516d53fd9a7dc0f401499accf04f0",
+    "evaluation/status.json": "1fc3421a37c3ecccacd912721180f0e17adefe9a31a8b20e3d33f7f8bcc9b302"
+  },
+  "verification": {
+    "environment": {
+      "python": "E:/project/qiansai/.tools/road_yolo_venv/Scripts/python.exe",
+      "CUDA_VISIBLE_DEVICES": "",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "torch_threads": 2,
+      "cuda_initialized_before": false,
+      "cuda_initialized_after": false
+    },
+    "methods": [
+      "Rebuilt the current identity with train_qat.prepare on CPU and matched training_contract identity/protocol.",
+      "Applied train_qat.validate_state to update_0000 through update_0010 with expected_candidate=true and to the corrected CPU checkpoint with expected_candidate=false.",
+      "Checked complete history prefixes, finite model/optimizer/RNG state, per-update sample/group/count fields, and checkpoint hashes.",
+      "Loaded the final state into QATExactModel, re-encoded integer_parameters, loaded the exported package through its strict loader, and compared every layer/field with numpy exact equality.",
+      "Recomputed current-source, execution-snapshot, receipt/log, package, validation, FP32 baseline, and PTQ baseline hashes.",
+      "Compared evaluation truth, ignores, and postprocess contracts exactly with both frozen baselines."
+    ],
+    "not_run": [
+      "No development17 evaluator rerun.",
+      "No training, optimizer step, forward pass, CUDA query, or GPU operation.",
+      "No source, checkpoint, package, cache, evaluation, or prior receipt modification."
+    ]
+  }
+}

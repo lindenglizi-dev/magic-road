@@ -1,0 +1,27 @@
+扩展独占 DDR 板测候选；前一版本 ddr_display_cdc_20261013 冻结保留。
+generate/modify/validate；门禁 compile/ast/readability/comment/naming/profile/testbench/toolchain 分别报告。
+
+复用固定 194 地址和 1056 个合法命令：528 写、528 读；剔除 46 个非法请求。
+地址单位保持 native16 位字；范围 native 0x1a00000..0x1fffff8，对应 byte52..64MiB。
+命令 ROM 192 位、2048 深度，同步读取；每个命令含 magic=A5、自身索引和保留零，装载时检查。
+命令 fields: data[127:0], mask[143:128], native[168:144], write[169], index[180:170], magic[188:181], zero[191:189]。
+write 命令 data 为写数据，read 命令 data 为完整期望值；mask=1禁止该字节写入。
+
+保持原生 PAXI 端口、单读在途、AW/W 同时呈现分别接受、反压稳定、AR 同拍 R 支持。
+继续使用公共复位重置控制器与请求器；首错锁定，不自行重试，不制造 commit 信号。
+请求器 o_writes/o_reads 扩至10位；增加初始化、运行和互斥等待计数输出。
+四种命令准备状态：WAIT=0、FETCH=1、LOAD=2、ISSUE=3；WRITE=4、READ_ADDR=5、READ_DATA=6、CHECK=7、ADVANCE=8、PASS=9、FAIL=10。
+FETCH 时钟沿读ROM；LOAD 沿寄存完整命令；ISSUE 校验后转发协议，任何请求必须在LOAD完成以后出现。
+每等待阶段超时 27'h7ffffff；仿真可以覆盖 C_TIMEOUT。
+错误码沿原约定1初始化、2写接受、3读地址、4返回超时、5数据、6RLAST、7意外返回、8PHY失效；新增9命令ROM/地址不合法、10结束计数错误。
+运行周期包含命令读取/检查/推进与等待；初始化周期单独计数；终态停止计数。
+WRITE未成对完成的每拍分为both/AW-only/W-only；AR等待、R等待另计；类别互斥，不重复相加。
+
+显示复用原冻结payload/req/ack协议及同样精确首级与7.5ns约束；根据新网表重新映射，不能复用旧物理引脚。
+高128位字段：status2,page2,state4,error4,writes10,reads10,address25,run_cycles32,marker39。
+低128位四页：0 expected；1 actual；2 {both,aw,w,ar}；3 {init,run,rwait,32'd0}。
+marker=39'h4444523242；物理端口、DDR/HDMI IP、时钟、板级引脚保持不变。
+
+测试必须检查逐命令地址/掩码/写数据和最终读比较，支持受控端点存储/掩码及带独立AW/W背压；包含立即返回、随机气泡、长等待、读错误、错误RLAST、初始化/写/读超时、意外返回、PHY丢失、部分写和读等待中复位、ROM损坏及结束计数检查。
+这套候选只证明自身访问序列；不是通用写完成屏障，不与视频并发，不是CNN部署。
+在独立目录执行Python参考、RTL对拍、真实TD实现，必要时做最小局部修复，保留失败记录。

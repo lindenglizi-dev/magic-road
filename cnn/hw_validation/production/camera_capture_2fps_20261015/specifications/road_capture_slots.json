@@ -1,0 +1,329 @@
+{
+  "modules": [
+    {
+      "name": "road_capture_slots",
+      "feature": "camera_capture",
+      "rtl_path": "road_capture_slots.v",
+      "description": "完整输入帧双槽生命周期控制",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "i_clk",
+            "description": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "i_rstn",
+            "description": "i_rstn"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "i_sof",
+            "description": "i_sof"
+          },
+          {
+            "name": "i_epoch",
+            "direction": "input",
+            "width": 32,
+            "role": "i_epoch",
+            "description": "i_epoch"
+          },
+          {
+            "name": "i_frame_id",
+            "direction": "input",
+            "width": 32,
+            "role": "i_frame_id",
+            "description": "i_frame_id"
+          },
+          {
+            "name": "i_timestamp",
+            "direction": "input",
+            "width": 64,
+            "role": "i_timestamp",
+            "description": "i_timestamp"
+          },
+          {
+            "name": "i_capture_end",
+            "direction": "input",
+            "width": 1,
+            "role": "i_capture_end",
+            "description": "i_capture_end"
+          },
+          {
+            "name": "i_capture_bytes",
+            "direction": "input",
+            "width": 19,
+            "role": "i_capture_bytes",
+            "description": "i_capture_bytes"
+          },
+          {
+            "name": "i_frame_error",
+            "direction": "input",
+            "width": 1,
+            "role": "i_frame_error",
+            "description": "i_frame_error"
+          },
+          {
+            "name": "i_write_visible",
+            "direction": "input",
+            "width": 1,
+            "role": "i_write_visible",
+            "description": "i_write_visible"
+          },
+          {
+            "name": "i_visible_slot",
+            "direction": "input",
+            "width": 1,
+            "role": "i_visible_slot",
+            "description": "i_visible_slot"
+          },
+          {
+            "name": "i_visible_epoch",
+            "direction": "input",
+            "width": 32,
+            "role": "i_visible_epoch",
+            "description": "i_visible_epoch"
+          },
+          {
+            "name": "i_visible_frame_id",
+            "direction": "input",
+            "width": 32,
+            "role": "i_visible_frame_id",
+            "description": "i_visible_frame_id"
+          },
+          {
+            "name": "i_read_claim_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "i_read_claim_valid",
+            "description": "i_read_claim_valid"
+          },
+          {
+            "name": "i_read_claim_slot",
+            "direction": "input",
+            "width": 1,
+            "role": "i_read_claim_slot",
+            "description": "i_read_claim_slot"
+          },
+          {
+            "name": "i_read_claim_epoch",
+            "direction": "input",
+            "width": 32,
+            "role": "i_read_claim_epoch",
+            "description": "i_read_claim_epoch"
+          },
+          {
+            "name": "i_read_claim_frame_id",
+            "direction": "input",
+            "width": 32,
+            "role": "i_read_claim_frame_id",
+            "description": "i_read_claim_frame_id"
+          },
+          {
+            "name": "i_last_read_consumed",
+            "direction": "input",
+            "width": 1,
+            "role": "i_last_read_consumed",
+            "description": "i_last_read_consumed"
+          },
+          {
+            "name": "i_release_slot",
+            "direction": "input",
+            "width": 1,
+            "role": "i_release_slot",
+            "description": "i_release_slot"
+          },
+          {
+            "name": "i_release_epoch",
+            "direction": "input",
+            "width": 32,
+            "role": "i_release_epoch",
+            "description": "i_release_epoch"
+          },
+          {
+            "name": "i_release_frame_id",
+            "direction": "input",
+            "width": 32,
+            "role": "i_release_frame_id",
+            "description": "i_release_frame_id"
+          },
+          {
+            "name": "o_claim_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "o_claim_ready",
+            "description": "o_claim_ready"
+          },
+          {
+            "name": "o_capture_active",
+            "direction": "output",
+            "width": 1,
+            "role": "o_capture_active",
+            "description": "o_capture_active"
+          },
+          {
+            "name": "o_capture_slot",
+            "direction": "output",
+            "width": 1,
+            "role": "o_capture_slot",
+            "description": "o_capture_slot"
+          },
+          {
+            "name": "o_capture_base",
+            "direction": "output",
+            "width": 32,
+            "role": "o_capture_base",
+            "description": "o_capture_base"
+          },
+          {
+            "name": "o_capture_accepted",
+            "direction": "output",
+            "width": 1,
+            "role": "o_capture_accepted",
+            "description": "o_capture_accepted"
+          },
+          {
+            "name": "o_frame_skipped",
+            "direction": "output",
+            "width": 1,
+            "role": "o_frame_skipped",
+            "description": "o_frame_skipped"
+          },
+          {
+            "name": "o_free_mask",
+            "direction": "output",
+            "width": 2,
+            "role": "o_free_mask",
+            "description": "o_free_mask"
+          },
+          {
+            "name": "o_ready_mask",
+            "direction": "output",
+            "width": 2,
+            "role": "o_ready_mask",
+            "description": "o_ready_mask"
+          },
+          {
+            "name": "o_reading_mask",
+            "direction": "output",
+            "width": 2,
+            "role": "o_reading_mask",
+            "description": "o_reading_mask"
+          },
+          {
+            "name": "o_quarantine_mask",
+            "direction": "output",
+            "width": 2,
+            "role": "o_quarantine_mask",
+            "description": "o_quarantine_mask"
+          },
+          {
+            "name": "o_slot_epochs",
+            "direction": "output",
+            "width": 64,
+            "role": "o_slot_epochs",
+            "description": "o_slot_epochs"
+          },
+          {
+            "name": "o_slot_frame_ids",
+            "direction": "output",
+            "width": 64,
+            "role": "o_slot_frame_ids",
+            "description": "o_slot_frame_ids"
+          },
+          {
+            "name": "o_slot_timestamps",
+            "direction": "output",
+            "width": 128,
+            "role": "o_slot_timestamps",
+            "description": "o_slot_timestamps"
+          },
+          {
+            "name": "o_protocol_error",
+            "direction": "output",
+            "width": 1,
+            "role": "o_protocol_error",
+            "description": "o_protocol_error"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "single i_clk domain; no CDC supplied"
+      },
+      "reset": {
+        "assertion": "i_rstn low asynchronously cancels state and transactions",
+        "release": "caller supplies locally synchronized release; external DDR drain is not implemented"
+      },
+      "behavior": [
+        "FREE -> CAPTURING -> WAIT_VISIBLE -> READY -> READING -> FREE.",
+        "SOF allocates only pre-edge FREE, slot0 first; no free means whole frame skipped.",
+        "442368-byte successful end is not READY until external matching write_visible.",
+        "Matching same-edge full capture_end and write_visible may publish.",
+        "Claim consumes pre-edge READY only; release consumes matched pre-edge READING only.",
+        "Malformed capture quarantines its slot until reset; another slot remains independent.",
+        "SOF during active capture quarantines old capture and skips new; independent other-slot events still apply.",
+        "External visibility and last-read facts are controlled TB events, not physical DDR proof."
+      ],
+      "constraints": [
+        "Do not modify production, arithmetic, timing exceptions or real peripheral protocol.",
+        "No physical mapping, bitstream, board or real DDR visibility claim."
+      ],
+      "corner_cases": [
+        "reset, simultaneous events, partial input, stale events, overload"
+      ],
+      "verification_cases": [
+        "double-slot lifecycle, same-edge end/visible, stale identity, quarantine, release"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "visible_boundary",
+          "title": "整帧结束不等于写入可见",
+          "scenario": "normal",
+          "description": "Events sampled at rising edges; one illustrated wait is not a real DDR latency guarantee.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "SOF",
+                "wave": "010......."
+              },
+              {
+                "name": "capture_end",
+                "wave": "0..10....."
+              },
+              {
+                "name": "write_visible",
+                "wave": "0.....10.."
+              },
+              {
+                "name": "claim",
+                "wave": "0.......10"
+              },
+              {
+                "name": "state_after_edge",
+                "wave": "==..=..=.=",
+                "data": [
+                  "FREE",
+                  "CAPTURING",
+                  "WAIT_VISIBLE",
+                  "READY",
+                  "READING"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

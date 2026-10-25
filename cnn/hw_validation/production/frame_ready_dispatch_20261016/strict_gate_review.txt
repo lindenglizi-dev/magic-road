@@ -1,0 +1,29 @@
+当前严格门诊断说明（2026-10-16，unique修复候选）
+
+RTL SHA256 07defcc9d78d37029d68757bda97fec2b39e55f85d17658f55a709352e9be9bd
+原报告gates/dispatcher.json：209 error / 1 strict warning；保留，不覆盖。
+本候选gates/dispatcher_unique.json：209 error / 0 strict warning；delivery_ready=false。
+compile、comment、profile通过；ast、readability、naming未过。此命令中testbench/toolchain=not_requested，不将它们算成实际工具执行通过；真实ModelSim日志另列。
+
+一、已定位且最小修复的真实语义问题
+运行期双槽唯一性：原本只在输入身份入队时检查，后来另一槽被贴同epoch/frame会误claim。已以一个共享flag_slot_ambiguous覆盖选择/preclaim/owned检查，不加队列，不改冻结核。
+同四态参考负例旧失败4/4、修后失败0/4；RTL新增晚到重复身份负例和既有所有权故障检查。详见review_issue.txt及最终功能收据。
+状态任务段显式ST_IDLE条件与原flag_select条件等价；原VG023/VG144不再出现，但总数未因此归零，不能声称八门通过。
+
+二、需要保留的语义类或组合预算检查
+VG085×3：报告把所选128位context整体宽度用于比较诊断；实际两个epoch/frame选段各32位，timestamp选段64位。源码逐项核对，不截断有效载荷；不能以此解释所有未来位宽问题。
+VG093×8：i_rstn只参与取消接口许可/控制，不进入算术数据。设计明确异步即时取消、调用者同步释放；仿真通过不证明恢复/移除或亚稳态，物理检查待统一顶层。
+VG122×1：32位task加一有cnt!=FFFFFFFF和job实际握手双门；FFFFFFFF只锁wrap不相加，无合法回绕。极值测试需明确内部计数状态注入，不伪称跑过四十亿任务。
+VG137×1：计数表达式的静态宽度推断提示保留；实际计数器32位及饱和门见上述原码和回归，不静默压掉规则。
+VG153×2：两个2位flag向量均逐位连续赋值，位0、1有实际驱动；报告未从bit-select聚合证明。真实编译和协议回归另为证据，不改检查器通用规则。
+VG145×35、VG146×51：组合来源/操作锥预算未闭合。它们不等同于已测setup失败，也不能用功能仿真否认实际长路径；后续实际顶层综合/时序才能决定是否需要局部寄存。此批不凭静态计数添加流水、改变接口或声称100MHz通过。
+
+三、格式/模板/字面量策略单列
+VG068×1、VG060×75、VG063×1、VG031×1、VG061×12、VG066×1、VG125×1、VG138×15、FORMATTER_TEMPLATE_MISMATCH×1。
+共108项格式/模板/声明字面量政策诊断；其中声明初始化与模板规则有约束，未经复核不称全部误报。其余101项是上述语义/取消控制/组合预算提示。
+不做整库重排或为降低计数更改数值/接口/冻结核；原门记录、真失败和修复前快照均保留。物理诊断与生产严格交付分别管理。
+
+四、测试文件
+fixture/protocol/joint初门分别79/38/326 error、0 strict warning，全部为COMMENT_COMMENT_PLACEMENT；最终对应源hash和门数以verification/runs内各自收据为准。
+最终verification/gates/*_final.json分别80/38/326 error、0 strict warning，仍全为COMMENT_COMMENT_PLACEMENT。fixture增加一条诊断随新增负例probe注释而来，不是多一个功能故障；原79条记录保留。
+TB注释门失败不表示已运行RTL有326个功能故障；同样不能因仿真PASS删除这些严格交付失败。真实vlog编译/运行与静态门逐项分开。

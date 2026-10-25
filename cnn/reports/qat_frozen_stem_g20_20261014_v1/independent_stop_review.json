@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "role": "independent_stop_review",
+  "reviewed_at": "2026-10-14",
+  "repository": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "branch": "work/roadyolo",
+  "scope": "Final read-only review of the explicitly authorized v3 CPU-gate diagnostic and stop decision. This review used only existing files and PowerShell metadata. It did not run Python, create an environment, install or change dependencies, start a CPU gate, initialize CUDA, use a GPU, train, or evaluate.",
+  "verdict": {
+    "stop_continuation": "APPROPRIATE_AND_REQUIRED",
+    "CPU_gate": "FAILED_NO_PASS_RECEIPT",
+    "GPU_or_training_authorized": false,
+    "formal_acceptance": false,
+    "cause": "UNRESOLVED_NATIVE_RUNTIME_CRASH",
+    "summary": "The explicit v3 diagnostic reproduced a native Windows access-violation termination before the CPU continuation gate completed. The source and captured snapshots match, the parent checkpoint is unchanged, and no G20 run exists. Because no CPU_resume_check.json was produced, stopping without another retry or GPU launch is the correct evidence-preserving decision."
+  },
+  "frozen_state": {
+    "runner_sha256": "f65c4f9884af8985d6d8ff02369e283d9c8db3d67ce536b7d5aebbcb75e3ac4f",
+    "test_sha256": "ccfe6de7957777999cdd55624635d5af8b49c59e1db8112d607d8a6ac2f3e9a0",
+    "runner_check_dir": "cnn/reports/qat_frozen_stem_g20_20261014_v1/integration_check_v3",
+    "parent_checkpoint": "cnn/runs/qat_frozen_stem_g10_20261014_v1/last.pt",
+    "parent_checkpoint_sha256": "f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd",
+    "parent_checkpoint_unchanged": true,
+    "G20_run_directory_exists": false,
+    "candidate_training_started": false,
+    "GPU_started": false
+  },
+  "snapshot_verification": {
+    "runner_live_matches_CPU_retry_diagnostic_snapshot": true,
+    "test_live_matches_CPU_retry_diagnostic_snapshot": true,
+    "retry_driver_live_matches_CPU_retry_diagnostic_snapshot": true,
+    "retry_driver_sha256": "1b6ca9b5841b1c190b822cc2a5cc0373d580521d85926b1cec32051af1c83c7a",
+    "sources_unchanged_reported_by_diagnostic": true
+  },
+  "diagnostic_result": {
+    "result_json_sha256": "a21acebd2400d4f48fa1710e8cd508510ae3d2afe084fba524ade6a75e76d0ac",
+    "pre_run_json_sha256": "c3a5c61ca46a97cb27149d6658fad32c0ed5cf77540167b083496ec5a75664de",
+    "stderr_sha256": "04202f28b20ff8a815cd1ef4e4be56fa74096fbe173e7cc0cfa67dc687b8a934",
+    "command_python": "D:/Python313/python.exe",
+    "pid": 48792,
+    "exit_code_unsigned": 3221226505,
+    "exit_code_hex": "0xC0000409",
+    "seconds": 30.0962206000695,
+    "peak_rss_bytes": 1161703424,
+    "stdout_bytes": 0,
+    "pass_receipt_exists": false,
+    "stderr": "Windows fatal exception: access violation; faulthandler shows importlib._bootstrap _get_module_lock, _lock_unlock_module, then an invalid frame.",
+    "CPU_only": true,
+    "explicit_retry": true,
+    "automatic_retry": false
+  },
+  "gate_artifacts": {
+    "integration_check_v2_exists": true,
+    "integration_check_v2_entries": 0,
+    "integration_check_v3_exists": true,
+    "integration_check_v3_entries": 0,
+    "CPU_resume_check_present": false,
+    "failure_history_receipt": "cnn/reports/qat_frozen_stem_g20_20261014_v1/failed_CPU_gate.json",
+    "failure_history_receipt_sha256": "2ddbc4150bd7c68a2d21f41355372b7814ecff64e9fe5cb4aabb035495dc5ec6"
+  },
+  "causal_boundary": {
+    "established": [
+      "A native Windows access violation terminated the real base-Python process.",
+      "The termination occurred before any CPU gate pass receipt, G20 candidate run, CUDA training, or GPU launch.",
+      "The diagnostic source snapshots match the current frozen files, and the parent checkpoint remains unchanged."
+    ],
+    "not_established": [
+      "Peak RSS of 1161703424 bytes does not establish memory exhaustion.",
+      "The faulthandler importlib module-lock frames do not establish importlib as the root cause.",
+      "The evidence does not establish a NumPy, PyTorch, dataset, optimizer, RNG, or continuation-logic defect.",
+      "The evidence does not establish that sandbox or job-control limits caused the crash."
+    ]
+  },
+  "minimal_next_diagnostic": {
+    "when": "Only after a separate explicit authorization; do not retry this training gate automatically.",
+    "environment_policy": "Use the already installed venv and base interpreter only. Do not create a new environment, install packages, or modify dependency versions.",
+    "steps": [
+      "First collect the Windows Application Error or crash-dump record for PID 48792, if read permission can be granted, to identify the faulting native module and exception offset.",
+      "Then run a fresh diagnostic-only process that records sys.executable, sys._base_executable, loaded native DLL versions, thread limits, exit code, RSS, and faulthandler output while stopping at staged boundaries: imports only; parent checkpoint/package load only; one forward/backward microbatch only.",
+      "Run the same staged diagnostic once through the existing venv executable and once through its existing base interpreter, without optimizer.step, checkpoint publication, CUDA, or model export. Stop at the first stage that reproduces the native crash."
+    ],
+    "success_condition": "A stable minimal reproducer or a native crash record naming the faulting module. Neither outcome by itself authorizes continuation training; the full v3 CPU continuity/resume gate must later pass under a newly authorized evidence path."
+  },
+  "evidence_boundary": "The previous independent continuation source review remains preserved. This stop review supersedes no source finding; it records that the execution prerequisite failed and the G20 branch remains unstarted."
+}

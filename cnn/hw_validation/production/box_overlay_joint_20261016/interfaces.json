@@ -1,0 +1,66 @@
+{
+  "renderer": {
+    "module": "road_box_line_overlay",
+    "ports": {
+      "i_clk": 1, "i_rstn": 1, "i_sof": 1, "i_vsync": 1, "i_hsync": 1, "i_de": 1, "i_rgb": 24,
+      "i_table_active_valid": 1, "i_table_count": 7, "i_table_entry": 97, "i_table_draw_valid": 1,
+      "o_table_read_index": 6, "o_vsync": 1, "o_hsync": 1, "o_de": 1, "o_rgb": 24, "o_sof": 1,
+      "o_line_ready": 1, "o_prepare_busy": 1, "o_last_prepare_cycles": 9, "o_fault": 1
+    }
+  },
+  "combined": {
+    "module": "road_box_age_overlay",
+    "ports": {
+      "i_clk": 1, "i_rstn": 1, "i_sof": 1, "i_vsync": 1, "i_hsync": 1, "i_de": 1, "i_rgb": 24,
+      "i_table_active_valid": 1, "i_table_count": 7, "i_table_entry": 97, "i_table_draw_valid": 1,
+      "i_age_upper_ms": 64,
+      "o_table_read_index": 6, "o_vsync": 1, "o_hsync": 1, "o_de": 1, "o_rgb": 24,
+      "o_line_ready": 1, "o_prepare_busy": 1, "o_last_prepare_cycles": 9, "o_fault": 1
+    }
+  },
+  "timing": {
+    "pixel_hz": 75000000, "width": 1280, "height": 720, "line_pixels": 1650, "frame_lines": 750,
+    "normal_line_blank_samples": 370, "scan_cycles_per_entry": 5, "worst_scan_cycles": 320,
+    "line_prepare_conservative_budget": 330,
+    "sof_to_next_first_active_consumption_cycles": 39970,
+    "sof_map_clear_cycles": 1280,
+    "renderer_video_registers": 1, "combined_video_registers": 2,
+    "source_of_sof": "rising mixer-output VS in blanking; table and renderer share same qualified edge"
+  },
+  "geometry": [
+    "FINAL97 source coordinates each20bit, integer12bit<<8; frozen NMS already RNE scales once. No second rounding.",
+    "Field layout: class[0],score[16:1],x0[36:17],y0[56:37],x1[76:57],y1[96:77].",
+    "Nonzero fractional bits are malformed display input: skip that box only, never modify original table or invent rounded geometry.",
+    "Clamp integer ends to width1280/height720. x0>=x1 or y0>=y1 means no paint, not table error or removed result.",
+    "Half-open1px outline: x0/x1-1 verticals, y0/y1-1 horizontals; width1/height1 remain valid.",
+    "person0 green00ff00, vehicle1 cyan00ffff; person wins cross-class overlap; white AGE glyphs have final priority."
+  ],
+  "line_events": [
+    "Only one1280x18 per-line endpoint map: word{point_vehicle,point_person,delta_vehicle_signed8,delta_person_signed8}. Not a fourth97x64 full table.",
+    "On horizontal-border rows add+1 at x0 and-1 at x1; skip x1==1280 terminal event. Other inside rows OR point bits at x0 and x1-1, dedup if equal.",
+    "Each entry FETCH->READ0->WRITE0->READ1->WRITE1, even skipped entries; at most64 entries. Async table read, one owner.",
+    "Native distributed RAM async read. Read stages never write; write stages read dummy(write_address XOR1), so no same-address read/write semantics or forwarding assumed.",
+    "Every active pixel consumes current x event then uses9bit signed prefix sum (range0..64). Clear previous x after that read; DEfall clears the last pixel. This occurs even when draw_valid=0.",
+    "Cold/common reset and each SOF explicitly clear all1280 words in vertical blank, no bitstream initialization. No painting before clear and complete preparation.",
+    "SOF resets display coordinates and row-ready; wait a blank edge after table NBA bank switch before scanning. Normal next rows start after DEfall last-pixel clear.",
+    "If preparation is late at DErise, cancel its writes, suppress the entire line and set sticky fault; never stall video or resume painting midrow.",
+    "Preparation completeness is independent of draw permission; current live table.draw_valid controls paint, not a SOF-latched copy."
+  ],
+  "age_and_live_gating": [
+    "Reuse frozen road_age_overlay unchanged; feed renderer registered SOF and equal-delay video. It latches table age on the following blank edge.",
+    "Combined RGB/VS/HS/DE have exactly two pixel registers; preserve raw RGB alongside the same two registers.",
+    "After AGE, live permission loss must remove even a previously queued box color immediately. With fixed nonwhite box colors and white-only transparent AGE, final live-invalid mux retains white pixels and otherwise selects equally delayed raw RGB. This preserves AGE and ordinary white background without duplicating glyph logic.",
+    "Known finite age remains text when boxes expire; UINT64_MAX/10000+ renders AGE_INVALID. New table instance2000ms; old500ms sources untouched."
+  ],
+  "resource_intent": {
+    "new_DSP": 0, "new_ERAM": 0, "incremental_Slice_management_target": 600,
+    "line_event_bits": 23040, "ideal_64bit_per_Slice_storage": 360,
+    "qualification": "capacity estimate only; native packing, deep mux, control and AGE must be measured by C7 TD; no resource pass claim"
+  },
+  "boundaries": [
+    "Only independent box_overlay_joint_20261016 writes. No production/video chain replacement, TD, training, bitstream, board, Flash or timing exceptions.",
+    "No new source identity/publisher/slotcredit/DDR implementation. Existing actual C9 pipeline/table/time reused read-only in joint test.",
+    "Injected boxes test renderer, not recognition. Real7box path uses frozen HEAD112 -> correct vendor ROM -> actual postprocess/publisher/table -> renderer.",
+    "Functional pass does not prove physical mapping/timing, full67 layers, DDR loop,1FPS or precision."
+  ]
+}

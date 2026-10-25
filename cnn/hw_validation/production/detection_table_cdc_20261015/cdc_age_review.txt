@@ -1,0 +1,41 @@
+SRIF1 age telemetry 补充只读审查（2026-10-15）
+================================================
+
+复核对象
+--------
+- 保留旧版：retained_before_age_invalid/road_detection_table_cdc.v
+  SHA256 = 4cf6c0ab45c40c0718519ca6aba93dd3c5b60a7edba13f1beb01a66547d0d599
+- 当前新版：rtl/road_detection_table_cdc.v
+  SHA256 = 48a2cbfcd71f586bb4c616c7cca71365569e265b50854bfd49377ac1981209d3
+
+未覆盖旧 cdc_review.txt，未修改 RTL/门禁，未运行仿真、综合、TD、位流或板测。
+
+结论
+----
+逐行 diff 只有 o_dst_age_upper_ms 的组合输出 mux 改动，没有其他 RTL 文本差异。该改动修复了计划第五节的遥测歧义：没有 active 表、快照无效、epoch 不符或时间顺序非法时，年龄输出不再伪装为 0 ms，而统一输出 UINT64_MAX（64'hFFFFFFFFFFFFFFFF）作为 unknown sentinel。未发现由该改动引入的新语义缺陷或接口变化。
+
+精确差异与逐项判定
+------------------
+1. 新版第 326--333 行仅把 age 输出条件改为：
+   - !flag_active_present_dst -> UINT64_MAX；
+   - !i_dst_time_valid -> UINT64_MAX；
+   - active epoch != i_dst_time_epoch -> UINT64_MAX；
+   - !flag_timestamp_order_valid -> UINT64_MAX；
+   - 其余合法输入继续输出 65-bit age upper 的低64位，若 bit64=1 则饱和为 UINT64_MAX。
+
+2. flag_timestamp_order_valid 的定义未变，仍是 `capture<=completion && completion<=now`。因此 capture 在未来、completion 在未来、或 capture>completion 都落入 unknown sentinel，不会显示为 0 年龄。
+
+3. 合法 age 算术未变：先以 65 bit 计算 `{0,now}-{0,capture}`，再加 65'd4。合法时间顺序下 subtraction 不会下溢；若 64-bit 年龄加4产生 carry，bit64=1，输出继续饱和为 UINT64_MAX。正常未溢出值保持逐位相同。
+
+4. o_dst_draw_valid 逻辑没有改动，仍分别要求 nonempty active、time_valid、epoch/model/status/count 合法、timestamp order 合法和 age upper 合法。sentinel 只是遥测表达，不会把任何原本不可绘制状态变成可绘制。
+
+5. model/status 不符但时间快照、epoch、时间顺序均合法时，age 仍报告可计算的真实年龄；draw 仍为0。这与本次明确要求的 unknown 条件集合一致，没有额外扩大遥测无效范围。
+
+6. 改动不触及时钟、复位、同步器、request/ack、source/pending/active 所有权、RAM、计数、端口宽度或时序状态，因此之前 CDC 状态语义不受影响。新增的三个 OR 条件只位于组合 telemetry 输出锥。
+
+证据边界
+--------
+- age_telemetry_reference.py 与新版 mux 语义一致，覆盖 no-active、time-invalid、epoch mismatch、两类时间顺序错误、正常 delta+4、64+4 饱和；协调者报告该小参考自检 PASS，本审查未重跑。
+- 当前 verification 下未找到绑定新 hash 48a2...09d3 的 receipt；现有功能收据绑定旧 hash 4cf6...d599，不能倒填为新版运行证据。
+- 当前 gate/gate_attempt2 也绑定旧 hash；对新版的 compile、ast、readability、comment、naming、profile、testbench、toolchain 八项均为本次 NOT_RUN/无新 hash 报告。
+- 本结论是精确单处文本 diff 加组合逻辑人工复核，不替代后续同 hash 的仿真、严格门禁、物理 CDC/MTBF、综合/实现或 TD。

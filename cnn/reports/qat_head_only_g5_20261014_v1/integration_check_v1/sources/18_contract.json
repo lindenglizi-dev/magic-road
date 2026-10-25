@@ -1,0 +1,21 @@
+{
+  "name": "RoadYOLO-S4-512",
+  "contract_version": 1,
+  "input": {"source_shape": [720, 1280, 3], "shape": [288, 512, 3], "layout": "NHWC", "source_dtype": "uint8", "conv_zero_point": 128, "resize": "area_5_to_2_single_round_nearest_even"},
+  "classes": {"0": "person", "1": "vehicle"},
+  "vehicle_subtypes": ["bicycle", "car", "motorcycle", "bus", "truck"],
+  "rider_policy": "person_and_vehicle_separate_boxes",
+  "strides": [4, 8, 16],
+  "raw_channels": ["tx", "ty", "tw", "th", "objectness", "person", "vehicle"],
+  "backbone_channels": [16, 24, 48, 96],
+  "csp_repeats": [2, 3, 3],
+  "sppf_squeeze_channels": 24,
+  "head_channels": 48,
+  "expected": {"conv_layers": 67, "silu_layers": 61, "conv_weights": 113100, "folded_bias_values": 2501, "mac_per_frame": 214465536, "raw_cells": 12096, "numeric_blob_bytes": 140522},
+  "arithmetic": {"rounding": "nearest_even", "overflow": "saturate", "weights": "int8_per_output_channel", "activation": "int8_per_tensor_zero_point_zero", "accumulator": "int32", "pre_silu": "int16_scale_1_over_256", "requant_multiplier": "int32_nonnegative", "requant_shift": "uint8_0_to_62", "silu_table": {"entries": 1024, "start": -8, "step": 0.015625, "dtype": "int16", "scale": 0.00390625, "negative_tail": 0, "positive_tail": "identity", "upper_rounded_endpoint": "hardwired_silu_at_8"}, "sigmoid_table": {"entries": 1024, "start": -8, "step": 0.015625, "dtype": "uint16", "scale": 0.0000152587890625, "negative_tail": 0, "positive_tail": 65535, "upper_rounded_endpoint": "hardwired_sigmoid_at_8"}, "exp_table": {"entries": 256, "start": -4, "end": 3.5, "dtype": "uint16", "scale": 0.0009765625}},
+  "postprocess": {"top_k_per_class": 128, "nms_iou": 0.5, "max_boxes_per_class": 32, "thresholds": null, "tie_break": "ascending_stride_then_row_major_cell", "bbox_network_scale": 0.00390625, "bbox_convention": "continuous_half_open_xyxy", "source_coordinate_scale": 2.5},
+  "memory": {"input_bases_bytes": [54525952, 55050240], "input_slot_bytes": 524288, "feature_begin_bytes": 55574528, "arena_end_bytes": 67108864, "address_unit": "UNVERIFIED_do_not_enable_dma", "rom_word_bits": 160, "rom_word_bytes": 20, "rom_group_bytes": 10240, "rom_groups": 14},
+  "hardware_budget_estimate_only": {"clock_hz": 100000000, "mac_lanes": 24, "requant_dsp": 6, "whole_dsp": 38, "whole_eram": 106, "chip_dsp": 40, "chip_eram": 108, "chip_slices": 21216},
+  "criteria": {"iou_match_min": 0.5, "precision_per_class_min": 0.95, "recall_per_class_min": 0.85, "map50_quantization_drop_max": 0.01, "detection_fps_min": 5, "result_age_limit_ms": 500, "train_scenes_min": 6, "val_scenes_min": 3, "new_test_scenes_min": 3, "decorrelated_test_groups_per_class_min": 300, "test_requires_frozen_artifacts": true},
+  "status": "diagnostic_float_training_only_not_accuracy_or_hardware_accepted"
+}

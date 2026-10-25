@@ -1,0 +1,54 @@
+{
+  "modules": [{
+    "name": "tb_road_postprocess_joint",
+    "feature": "postprocess_joint",
+    "rtl_path": "tb_road_postprocess_joint.v",
+    "description": "C2 decode/TopK and C9 serial NMS joint simulation testbench; not synthesizable.",
+    "interfaces": {"protocol": "simulation only", "ports": []},
+    "parameters": [],
+    "clock": {"name": "i_clk", "edge": "posedge", "frequency_hz": 100000000},
+    "reset": {
+      "name": "i_rstn", "active": "low", "synchronous": false,
+      "values": "Reset clears both frozen RTL blocks, the controlled LUT endpoint, and temporary scoreboard state."
+    },
+    "behavior": [
+      "Streams exactly 12096 saved 112-bit head words into C2, uses C2's sole internal candidate RAM, and directly connects the sealed/read/response/finish handshakes to C9.",
+      "Provides one controlled outstanding sigmoid/exp lookup and compares every accepted FINAL97 entry with the frozen golden table.",
+      "Measures start-to-seal, seal-to-last-entry/done, start-to-last-entry/done, C2 phase counters, and mutually exclusive C9 phase occupancy with true stall subcounts."
+    ],
+    "constraints": [
+      "The checker may store expected FINAL97 words but does not instantiate a second functional candidate RAM.",
+      "This testbench does not include the production C8 collector, CNN inference, synthesis, timing closure, bitstream, board, or Flash operations.",
+      "The 2000000-cycle limit applies only to decode plus TopK plus NMS; 100000000 cycles remains a whole-frame planning allowance."
+    ],
+    "corner_cases": [
+      "empty table, inclusive threshold, cross-class identical boxes, same-class suppression, 128 candidates per class, 64 outputs, 992 and 6944 NMS comparisons",
+      "random input/LUT/output stalls, at least 128 cycles of output backpressure, consecutive real then empty frames",
+      "reset in scan/sort/decode/NMS multiply/held output and response error after an accepted entry followed by cancel and full rerun"
+    ],
+    "verification_cases": [
+      "Seven saved head streams in normal and randomized modes, one consecutive-frame run, five reset/recovery runs, one late-error cancel/recovery run, and one long-backpressure run.",
+      "Every successful run checks all FINAL97 entries, frame token, counts, finish readiness, stable held handshakes, seal-time RAM write freeze, and the 2000000-cycle postprocess allowance."
+    ],
+    "timing_diagrams": [{
+      "id": "joint_flow",
+      "title": "C2 to C9 direct joint flow",
+      "scenario": "joint_flow",
+      "description": "The sealed handshake transfers ownership to NMS; candidate reads return through C2, FINAL97 may stall, and done is accepted by C2 finish in the same cycle.",
+      "wavejson": {
+        "signal": [
+          {"name": "clk", "wave": "p..........."},
+          {"name": "sealed_valid", "wave": "010........."},
+          {"name": "sealed_ready", "wave": "010........."},
+          {"name": "read_valid", "wave": "0..10......."},
+          {"name": "read_ready", "wave": "1..........."},
+          {"name": "response_valid", "wave": "0....10....."},
+          {"name": "response_ready", "wave": "1..........."},
+          {"name": "entry_valid", "wave": "0......1..0."},
+          {"name": "entry_ready", "wave": "1......0.1.."},
+          {"name": "done/finish", "wave": "0..........1"}
+        ]
+      }
+    }]
+  }]
+}

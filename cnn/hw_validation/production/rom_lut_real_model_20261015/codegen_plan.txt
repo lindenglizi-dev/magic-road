@@ -1,0 +1,12 @@
+第五批 C2：generate（纯接线）+ validate（真实PH1P模型），regular路线。
+requirements → 本文件 → 已冻结模块规格复用/新top规格 → Python包绑定 → 接线RTL → 厂商模型仿真及八门。
+先验证旧R1 payload与G10不同，旧文件只读；不把表相同当作全模型包相同。
+复用trained_integer.write_package已经导出的56lane，先逐文件hash和反向重建验证，再原字节冻结导入。
+不重新调用TEST_FIXTURE numeric_package.write_package，不重新量化/编码权重，不新造第二拆分器。
+只复制reader/group/service三个已冻结源，hash必须相同；新增top只连接一个reader与一个service。
+不新增时延、缓存、计数器硬件、ROM仲裁、故障注入或复位协议；真实ROM错误只能由真实接口观测。
+verify代理gpt-6.1-sol/high独占verification/；主代理拥有其余。两种TB各单独一个reader实例。
+先全7168词对照，后真实LUT1280项；受控服务故障沿旧收据单列，不假造真实ROM随机fault。
+ModelSim厂商模型执行，普通沙箱DLL异常保留并本地授权运行；不得把异常编译当通过，不运行TD。
+规格/周期图、八门和实际功能分别记录，历史严格格式失败不由此假装通过，不重写旧候选。
+不commit/push/跨聊天消息；1FPS100M及2M后处理为预算，500ms年龄不变。

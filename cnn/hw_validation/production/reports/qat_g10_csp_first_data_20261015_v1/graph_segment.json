@@ -1,0 +1,142 @@
+{
+  "nodes": [
+    {
+      "name": "split.00",
+      "op": "split_view",
+      "inputs": [
+        "down2.pw.conv"
+      ],
+      "outputs": [
+        {
+          "output": "split.00.0",
+          "channel_offset": 0,
+          "channels": 12
+        },
+        {
+          "output": "split.00.1",
+          "channel_offset": 12,
+          "channels": 12
+        }
+      ],
+      "axis": "C",
+      "allocation": null,
+      "index": 3
+    },
+    {
+      "name": "csp2.blocks.0.dw.conv",
+      "op": "conv",
+      "inputs": [
+        "split.00.1"
+      ],
+      "output": "csp2.blocks.0.dw.conv",
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "operator_padding_value": 0,
+      "groups": 12,
+      "weights": 108,
+      "macs": 995328,
+      "dtype": "int8",
+      "storage": {
+        "base": 56532992,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 56643584,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 12,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 4
+    },
+    {
+      "name": "csp2.blocks.0.pw.conv",
+      "op": "conv",
+      "inputs": [
+        "csp2.blocks.0.dw.conv"
+      ],
+      "output": "csp2.blocks.0.pw.conv",
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 144,
+      "macs": 1327104,
+      "dtype": "int8",
+      "storage": {
+        "base": 56643584,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 56754176,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 12,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 5,
+      "write_transform": {
+        "op": "post_silu_output_requant_add_sat8",
+        "bypass": "split.00.1",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "name": "residual.00",
+      "op": "residual_view",
+      "inputs": [
+        "split.00.1",
+        "csp2.blocks.0.pw.conv"
+      ],
+      "output": "residual.00",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "dtype": "int8",
+      "storage_alias": "csp2.blocks.0.pw.conv",
+      "allocation": null,
+      "index": 6
+    }
+  ],
+  "graph_sha256": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738"
+}

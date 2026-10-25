@@ -1,0 +1,15 @@
+{
+  "modules": [{
+    "name":"tb_road_nms_serial", "feature":"nms_serial", "rtl_path":"tb_road_nms_serial.v",
+    "description":"独立候选RAM服务与逐项scoreboard；不是可综合模块。",
+    "interfaces":{"protocol":"simulation only","ports":[]},
+    "parameters":[],
+    "clock":{"name":"i_clk","edge":"posedge","frequency_hz":100000000},
+    "reset":{"name":"i_rstn","active":"low","synchronous":false,"values":"测试驱动共同清除DUT、服务在途和临时scoreboard；再运行完整用例。"},
+    "behavior":["从reference.py输出的candidate/expected/comparisons/decisions十六进制文件载入，全部FINAL97、136bit比较记录和10bit决定逐项核对。","模拟单在途读服务，随机请求/响应/输出停顿；异常响应、超限计数与部分表取消后完整重跑。","从封存接受后到done采样按互斥类别统计端点、读等待、输出等待、乘法占用和其他控制。"],
+    "constraints":["TB内完整RAM仅为受控端点，不是被综合NMS候选的一部分。","不证明真实C2 ERAM端口和物理布局，不代替整后处理时序。"],
+    "corner_cases":["空表、64输出、6944比较、IoU等号、RNE边界、错误身份/数据、请求/响应等待、乘法中断和部分输出取消"],
+    "verification_cases":["16基础向量及2个附加大面积/最大输出向量，正常与随机停顿各一次；8初始异常输入加1个部分输出后故障；8复位/取消位置；128拍输出反压；全局超时失败不得记为加速。"],
+    "timing_diagrams":[{"id":"read_pause","title":"受控读服务停顿","scenario":"read_pause","description":"请求和响应各自保持到接受，响应消费前不允许第二个请求。","wavejson":{"signal":[{"name":"clk","wave":"p......."},{"name":"read_valid","wave":"01..0..."},{"name":"read_ready","wave":"0..1...."},{"name":"response_valid","wave":"0....10."},{"name":"response_ready","wave":"0...1.0."}]}}]
+  }]
+}

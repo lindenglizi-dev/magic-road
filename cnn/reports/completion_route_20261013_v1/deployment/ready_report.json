@@ -1,0 +1,365 @@
+{
+  "schema_version": 1,
+  "report_kind": "deployment_readiness_snapshot",
+  "checked_at": "2026-10-13T16:19:54+08:00",
+  "scope": "read-only review of existing reports; no RTL/source review, synthesis, training, bitstream generation, board access, or Flash write",
+  "repository": {
+    "root": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+    "branch": "work/roadyolo",
+    "commit_observed": "46083305"
+  },
+  "deadline_context": {
+    "competition_date": "2026-10-25",
+    "functional_freeze_date": "2026-10-22",
+    "assessment": "The saved evidence does not support promising a complete 67-layer RoadYOLO deployment by the functional freeze. The remaining work includes the true deployment model, 64 convolutions and non-convolution graph control, full DDR DMA, FPGA decode/NMS, whole-system implementation, and board acceptance."
+  },
+  "overall": {
+    "deployment_ready": false,
+    "whole_network_ready": false,
+    "whole_system_resource_measured": false,
+    "five_fps_measured": false,
+    "board_detection_tested": false,
+    "summary": "Reusable arithmetic and a three-convolution Stem/down2 front end exist with strong local simulation evidence. Separate small-core and four-address DDR diagnostics have also passed user-observed board checks. No report proves a true-model, 67-convolution, DDR-to-postprocess-to-video closed loop."
+  },
+  "evidence_selection": {
+    "latest_report_pointer": {
+      "path": "cnn/hw_validation/production/latest_report.json",
+      "modified_at": "2026-10-05T13:41:16+08:00",
+      "value": "reports/20261005T054038Z/report.json",
+      "status": "blocked_no_hardware_release",
+      "usable_as_current_summary": false,
+      "reason": "The pointer predates the 2026-10-13 report directories. Current conclusions use the newest saved status and summary files directly."
+    },
+    "excluded": [
+      "blind",
+      "reserve",
+      "newtest",
+      "historical v5 ACL retained-input trees"
+    ]
+  },
+  "fp32_candidate": {
+    "name": "ac_replay_g10_20261013_v1",
+    "checkpoint": "cnn/runs/ac_replay_g10_20261013_v1/last.pt",
+    "sha256": "e7e6a0f514b39417451ff90cec32e7f5adc862136bdf3adeac988c4d454fa262",
+    "status": "bounded_replay_G10_complete_candidate_retained_not_promoted",
+    "numeric_development_gates_pass": true,
+    "per_camera_trends_consistent": false,
+    "formal_acceptance": false,
+    "deployment_equivalent": false,
+    "boundary": "FP32 student plus fixed-point software postprocess only; not INT8/QAT, not an FPGA parameter package, and not an independent formal test result."
+  },
+  "completed_rtl_assets": [
+    {
+      "asset": "24-lane signed33 MAC, round-to-nearest-even path, shared SiLU, and dynamic scalar requantization",
+      "status": "local functional assets exist",
+      "evidence": [
+        "cnn/hw_validation/production/reports/functional_completion_20261008/功能闭环执行状态.md",
+        "cnn/hw_validation/production/reports/runtime_layer_integration_20261009/status.json"
+      ],
+      "boundary": "Verified with deterministic or fixed test parameters; not a deployment-QAT model and not a whole network."
+    },
+    {
+      "asset": "Stem plus down2 DW plus down2 PW shared-core front end",
+      "status": "full-tensor and handoff simulations pass",
+      "evidence": [
+        "cnn/hw_validation/production/reports/down2_full_tensor_20261010/status.json",
+        "cnn/hw_validation/production/reports/stem_down2_handoff_20261011/status.json",
+        "cnn/hw_validation/production/reports/frontend_shared_core_20261011/status.json"
+      ],
+      "measured": {
+        "stem_tiles": 2304,
+        "down2_tiles": 576,
+        "tensor_mismatches": 0
+      },
+      "boundary": "This is 3 of 67 convolutions. The latest reports explicitly list the remaining 64 convolutions and graph control as unfinished."
+    },
+    {
+      "asset": "Runtime parameters, table-command isolation, and parameter-prefetch ownership",
+      "status": "functional regression passes; latest physical candidate has timing violations",
+      "evidence": [
+        "cnn/hw_validation/production/reports/runtime_layer_integration_20261009/status.json",
+        "cnn/hw_validation/production/reports/table_command_isolation_20261013/status.json",
+        "cnn/hw_validation/production/reports/parameter_prefetch_20261013/status.json"
+      ],
+      "measured": {
+        "coefficients": "TEST_ONLY, not deployment QAT",
+        "latest_internal_setup_wns_ns": -0.142,
+        "latest_internal_hold_wns_ns": 0.054,
+        "latest_internal_setup_failed_endpoints": 1
+      },
+      "boundary": "No current 100 MHz internal timing closure and no external/reset signoff."
+    },
+    {
+      "asset": "Autonomous three-case DW/PW diagnostic with official HDMI path",
+      "status": "placed/routed diagnostic and bitstream generated",
+      "evidence": [
+        "cnn/hw_validation/production/reports/board_selftest_20261010/status.json",
+        "cnn/hw_validation/production/reports/board_key4_c7_20261010/HX1P35A_C7复位候选实测报告.txt",
+        "cnn/hw_validation/production/reports/selftest_jtag_bitstream_20261010/bitstream_receipt.json",
+        "cnn/hw_validation/board_test_20261010/板测记录_20261012.txt"
+      ],
+      "measured": {
+        "bitstream_sha256": "57e675018a96fb3e360733c84bc56bacf3cd29f4806843f2d39d77c09dd293c",
+        "user_observed_board_pass": true,
+        "reset_recovery_count": 3,
+        "stable_display_minutes": 10,
+        "continuous_compute": false,
+        "flash_written": false
+      },
+      "boundary": "The generation receipt's board_tested=false was superseded by the later user-observation record. The pass still covers fixed test vectors and a small compute block only, not a CNN model bitstream or sustained computation."
+    },
+    {
+      "asset": "Direct vendor-DDR requester, bounded display CDC, and temporary DDR diagnostic bitstream",
+      "status": "request/CDC diagnostics and a small-range board write/read test pass; full DDR tensor use is absent",
+      "evidence": [
+        "cnn/hw_validation/production/reports/ddr_real_handshake_20261013/status.json",
+        "cnn/hw_validation/production/reports/ddr_board_selftest_20261013/status.json",
+        "cnn/hw_validation/production/reports/ddr_display_cdc_20261013/status.json",
+        "cnn/hw_validation/board_test_20261013_ddr/board_result.json",
+        "cnn/hw_validation/board_test_20261013_ddr/板测记录与下一步.txt"
+      ],
+      "measured": {
+        "vendor_handshake_observed": true,
+        "vendor_simulation_read_return_observed": false,
+        "vendor_simulation_memory_pass": false,
+        "board_status": "SMALL_RANGE_DDR_BOARD_SELFTEST_PASS",
+        "native_addresses": [
+          0,
+          8,
+          16,
+          24
+        ],
+        "writes_per_run": 8,
+        "reads_per_run": 8,
+        "unique_test_bytes": 64,
+        "compared_bytes": 128,
+        "reset_recovery_count": 3,
+        "stable_display_minutes_user_reported": 10,
+        "reviewed_video_seconds": 33.133333,
+        "continuous_ddr_stress": false,
+        "diagnostic_bitstream_sha256": "9250eadc204e53da4bf4d211dc7d662c3937c251b49433875be869e2a0b3ffdc"
+      },
+      "boundary": "The old board_readback=NOT_RUN field was a pre-board historical snapshot and is superseded for this bitstream by board_result.json. The pass remains a four-address, non-stress diagnostic; no address/mask expansion, real tensor round trip, CNN/video concurrency, capacity boundary, or general write-visibility release proof."
+    }
+  ],
+  "readiness_matrix": {
+    "true_deployment_model": {
+      "ready": false,
+      "state": "FP32 candidate retained, not promoted; hardware coefficients are test-only",
+      "missing": [
+        "chosen and frozen competition checkpoint",
+        "deployment-equivalent quantization or QAT",
+        "complete exported 67-layer parameter package and manifest",
+        "end-to-end integer golden result and accuracy report"
+      ]
+    },
+    "all_67_convolutions": {
+      "ready": false,
+      "state": "3 convolutions exercised in the shared front end",
+      "missing": [
+        "remaining 64 convolutions",
+        "pool/residual/split/concat/nearest operations",
+        "fixed-graph sequencer and layer/tile control",
+        "full-tensor per-layer bit-exact comparison"
+      ]
+    },
+    "ddr_loop": {
+      "ready": false,
+      "state": "four-address small-range board write/read selftest passes; full deployment loop does not",
+      "missing": [
+        "expanded address, carry, capacity-boundary, and byte-mask board checks",
+        "non-repeating real CNN tensor round trip",
+        "write visibility and slot-release contract",
+        "synthesizable whole-tensor DMA",
+        "full CNN feature-map movement",
+        "video and CNN arbitration/concurrency"
+      ]
+    },
+    "fpga_postprocess": {
+      "ready": false,
+      "state": "arithmetic postprocess primitives exist",
+      "missing": [
+        "true-model INT16 prediction outputs",
+        "decode",
+        "score thresholding",
+        "Top-K",
+        "NMS",
+        "bounded result table and end-to-end comparison"
+      ]
+    },
+    "video_system": {
+      "ready": false,
+      "state": "official HDMI and a diagnostic display CDC have been implemented separately",
+      "missing": [
+        "camera-to-DDR-to-CNN continuous path",
+        "frame identity and result-table SOF commit",
+        "overlay driven by CNN detections",
+        "continuous video latency and dropped-frame measurement"
+      ]
+    },
+    "board_acceptance": {
+      "ready": false,
+      "state": "small-core and small-range DDR diagnostic bitstreams have user-observed board passes; whole-network detection has not been tested",
+      "missing": [
+        "expanded DDR address/mask board coverage",
+        "real CNN tensor DDR round trip",
+        "whole-network bitstream",
+        "real camera/video run",
+        "30-minute stability and detection-FPS acceptance",
+        "autonomous-start evidence if required by the competition"
+      ]
+    }
+  },
+  "resource_and_throughput": {
+    "whole_system_measured": false,
+    "five_fps_measured": false,
+    "target": {
+      "clock_mhz": 100,
+      "fps": 5,
+      "cycles_per_frame_limit": 20000000
+    },
+    "latest_frontend_physical_candidate": {
+      "source": "cnn/hw_validation/production/reports/parameter_prefetch_20261013/status.json",
+      "scope": "Stem plus down2 and shared diagnostic front end; test coefficients; no full ROM, DDR, video, or full network",
+      "slice": 10088,
+      "dsp": 30,
+      "eram": 4,
+      "normal_core_cycles": 11883456,
+      "stalled_core_cycles": 14573305,
+      "internal_setup_wns_ns": -0.142,
+      "internal_timing_pass": false
+    },
+    "separate_ddr_hdmi_diagnostic": {
+      "source": "cnn/hw_validation/production/reports/ddr_display_cdc_20261013/DDR显示CDC_时序闭合与板测交付报告.md",
+      "scope": "DDR and HDMI diagnostic; no CNN",
+      "slice": 3922,
+      "dsp": 0,
+      "eram": 5
+    },
+    "interpretation": "The component-top figures overlap and cannot be added into a whole-system estimate. The three-convolution front end alone consumes 11.883456M normal core cycles before the remaining 64 convolutions, DDR, non-convolution operators, decode/NMS, and video, so the reports do not prove 5 FPS and show a severe schedule/performance risk."
+  },
+  "minimum_required_path": [
+    {
+      "order": 1,
+      "gate": "Freeze one competition FP32 checkpoint and a lowered, explicit acceptance floor",
+      "deliverable": "model ID/hash, fixed validation sources, confidence/NMS/output-cap policy, and go/no-go record",
+      "note": "Do not keep both E7 and replay-G10 open-ended. replay-G10 is currently retained but not promoted because camera trends are inconsistent."
+    },
+    {
+      "order": 2,
+      "gate": "Create the true deployment parameter package",
+      "deliverable": "BN-folded weights, per-output-channel scales, INT32 bias, pre/post requant parameters, exact SiLU table, INT16 heads, tensor-scale alignment, saturation/tw-th rules, graph/model manifest, and hashes",
+      "note": "A short QAT or calibration-recovery run is necessary only to recover the chosen quantized model. Distillation is optional and should not enter the critical path unless one bounded A/B run clearly beats the frozen checkpoint before this gate closes."
+    },
+    {
+      "order": 3,
+      "gate": "Close the software integer golden model",
+      "deliverable": "all 67 convolutions and non-convolution nodes, per-layer tensor comparisons, true decode/Top-K/NMS, and selected-video end-to-end metrics from the exact exported package"
+    },
+    {
+      "order": 4,
+      "gate": "Complete the fixed 67-layer RTL graph",
+      "deliverable": "remaining 64 convolutions, pool/residual/split/concat/upsample, fixed-graph sequencer, true parameter loading, and full-tensor bit-exact regression",
+      "note": "If RTL source review or modification is requested, use the readable-verilog-generator workflow; this snapshot did not inspect RTL bodies."
+    },
+    {
+      "order": 5,
+      "gate": "Close the real DDR loop",
+      "deliverable": "extend the passed four-address board test to address carry, byte masks and planned tensor boundaries; then prove a non-repeating real CNN tensor round trip, whole-tensor DMA, ownership/commit/release, and video/CNN arbitration",
+      "note": "The 64-byte test and user-reported 10-minute green display are valid board evidence, but the test stops in PASS and is not continuous DDR stress."
+    },
+    {
+      "order": 6,
+      "gate": "Complete FPGA postprocess and video integration",
+      "deliverable": "INT16 prediction decode, threshold, Top-K, NMS, frame-stable result table, HDMI overlay, and frame identity checks"
+    },
+    {
+      "order": 7,
+      "gate": "Measure the actual whole-system top",
+      "deliverable": "100 MHz setup/hold and external-interface reports, complete resource report, real cycles/frame including stalls and DDR, and a release decision",
+      "note": "H24 remains the only approved topology fallback, but it still needs measured accuracy and whole-path cycle evidence; it is not automatically selected by the current small-front-end result."
+    },
+    {
+      "order": 8,
+      "gate": "Board and competition acceptance",
+      "deliverable": "whole-network bitstream, real camera/video detection, effective FPS, dropped frames, result age, 30-minute stability, accuracy under the frozen policy, and autonomous-start evidence if required"
+    }
+  ],
+  "deadline_triage": {
+    "must_finish_before_2026_10_22": [
+      "one frozen model and one exact deployment package",
+      "software integer end-to-end golden",
+      "expanded DDR address/mask board checks and a real tensor round trip",
+      "credible decision whether full 67-layer RTL can be completed at all",
+      "a measured whole-top resource/timing/cycle result if the full graph exists"
+    ],
+    "defer_unless_blocking": [
+      "distillation",
+      "generic accelerator work",
+      "broad strict-format cleanup",
+      "extra networks beyond the approved H48/H24 choice",
+      "non-critical audits"
+    ],
+    "honest_fallback": "If the full graph, full DDR tensor loop, and board detection are not closed by the freeze, retain the verified small-core and small-range DDR board demonstrations but do not label them a completed RoadYOLO deployment."
+  },
+  "not_verified": [
+    "complete 67-convolution execution",
+    "deployment-QAT or equivalent quantized model accuracy",
+    "true-model FPGA parameters",
+    "full DDR tensor loop or write visibility",
+    "FPGA decode/Top-K/NMS",
+    "camera-to-detection-to-overlay continuous video",
+    "whole-system resources",
+    "whole-system 5 FPS",
+    "board detection",
+    "30-minute continuous operation"
+  ],
+  "primary_evidence": [
+    {
+      "path": "cnn/hw_validation/production/reports/parameter_prefetch_20261013/status.json",
+      "modified_at": "2026-10-13T14:21:10+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/production/reports/table_command_isolation_20261013/status.json",
+      "modified_at": "2026-10-13T13:36:07+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/production/reports/ddr_real_handshake_20261013/status.json",
+      "modified_at": "2026-10-13T12:36:25+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/production/reports/ddr_display_cdc_20261013/status.json",
+      "modified_at": "2026-10-13T10:08:24+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/production/reports/ddr_board_selftest_20261013/status.json",
+      "modified_at": "2026-10-13T01:45:30+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/production/reports/frontend_shared_core_20261011/status.json",
+      "modified_at": "2026-10-11T13:43:13+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/production/reports/stem_down2_handoff_20261011/status.json",
+      "modified_at": "2026-10-11T01:47:59+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/production/reports/down2_full_tensor_20261010/status.json",
+      "modified_at": "2026-10-10T22:55:08+08:00"
+    },
+    {
+      "path": "cnn/reports/ac_optimization_20261013_v1/decision.json",
+      "modified_at": "2026-10-13T14:30:42+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/board_test_20261013_ddr/board_result.json",
+      "modified_at": "2026-10-13T14:22:06+08:00"
+    },
+    {
+      "path": "cnn/hw_validation/production/reports/placement_seed_20261013/status.json",
+      "modified_at": "2026-10-13T16:14:59+08:00",
+      "status_at_check": "RUNNING_ONE_SEED_DIAGNOSTIC",
+      "interpretation": "in progress; not a passed expanded-board candidate"
+    }
+  ]
+}

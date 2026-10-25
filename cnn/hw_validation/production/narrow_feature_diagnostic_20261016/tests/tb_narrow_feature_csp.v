@@ -1,0 +1,972 @@
+`timescale 1ns / 1ps
+// CSP2/3/4同实例顺序自检；真实中间存储只接收DUT写回并在匹配屏障后可见。
+module tb_narrow_feature_csp(output o_test_complete);
+    // 形状仅由测试期望块选择，DUT只接收4位固定块ID。
+    integer selected_block = 2;
+    integer HEIGHT, WIDTH, HALF_CHANNELS, FULL_CHANNELS;
+    integer TILE_COLUMNS, TILE_ROWS, TILE_COUNT, STAGE_COUNT;
+    integer HALF_LOGICAL, FULL_LOGICAL, HALF_PHYSICAL, FULL_PHYSICAL;
+    integer TOTAL_OUTPUTS, TOTAL_TASKS, TOTAL_GROUPS;
+    localparam integer MAX_LOGICAL = 221184;
+    localparam integer MAX_PHYSICAL = 221184;
+    localparam integer MAX_WEIGHT = 9216;
+    localparam integer MAX_CHANNEL = 96;
+    localparam integer WATCHDOG_CYCLES = 750000000;
+    // 功能watchdog并非1FPS证明；计时端点和原事务计数保持。
+    reg [31:0] BASE_SOURCE;
+    reg [31:0] stage_bases [0:6];
+    reg [3:0] input_block_id = 0;
+    wire [3:0] block_id;
+    reg [3:0] parameter_response_block_id = 0;
+    reg [3:0] saved_parameter_block_id = 0;
+    reg [3:0] barrier_block_id = 0;
+    reg [4095:0] vectors_root;
+    integer sequence_start = 0;
+    integer clean_cycles = 0;
+    integer clean_accounted = 0;
+    integer clean_outputs = 0;
+    integer clean_acc = 0;
+    integer clean_pre = 0;
+    integer clean_silu = 0;
+    integer clean_post = 0;
+    integer clean_groups = 0;
+    integer clean_tasks = 0;
+    integer clean_reads = 0;
+    integer clean_parameters = 0;
+    integer clean_barriers = 0;
+    integer aborted_cycles = 0;
+    integer aborted_outputs = 0;
+    integer aborted_runs = 0;
+    integer sequence_block;
+    integer load_stage;
+    reg [4095:0] stage_path;
+
+    reg clk = 0;
+    reg rstn = 0;
+    reg start = 0;
+    reg cancel = 0;
+    wire start_ready;
+    wire busy;
+    wire done;
+    wire fault;
+    wire [2:0] layer;
+    wire [6:0] tile_y;
+    wire [7:0] tile_x;
+
+    wire parameter_valid;
+    wire [6:0] parameter_channel;
+    wire [4:0] parameter_group;
+    wire [2:0] parameter_window;
+    reg parameter_ready = 0;
+    reg parameter_response_valid = 0;
+    reg [2:0] parameter_response_layer = 0;
+    reg [6:0] parameter_response_channel = 0;
+    reg [4:0] parameter_response_group = 0;
+    reg [2:0] parameter_response_window = 0;
+    reg [191:0] parameter_response_weight = 0;
+    reg [247:0] parameter_response_data = 0;
+    reg parameter_error = 0;
+    wire parameter_response_ready;
+
+    wire read_valid;
+    wire [31:0] read_address;
+    reg read_ready = 0;
+    reg read_response_valid = 0;
+    reg [31:0] read_response_address = 0;
+    reg [127:0] read_response_data = 0;
+    reg read_error = 0;
+    wire read_response_ready;
+
+    wire write_valid;
+    wire [31:0] write_address;
+    wire [7:0] write_data;
+    wire signed [8:0] write_sum;
+    reg write_ready = 0;
+    wire barrier_valid;
+    reg barrier_ready = 0;
+    reg [2:0] barrier_layer = 0;
+
+    wire core_valid;
+    wire core_ready;
+    wire owner_core_ready;
+    reg owner_admit = 0;
+    wire core_first;
+    wire core_last;
+    wire [7:0] core_input_mask;
+    wire [63:0] core_activation;
+    wire [191:0] core_weight;
+    wire [95:0] core_bias;
+    wire [2:0] core_output_mask;
+    wire [47:0] core_tags;
+    wire [95:0] core_addresses;
+    wire [95:0] core_pre_multiplier;
+    wire [17:0] core_pre_shift;
+    wire [31:0] core_post_multiplier;
+    wire [5:0] core_post_shift;
+    wire core_residual;
+    wire [23:0] core_bypass;
+    wire core_output_valid;
+    wire core_output_ready;
+    wire signed [7:0] core_output_data;
+    wire [15:0] core_output_tag;
+    wire [31:0] core_output_address;
+    wire signed [8:0] core_output_sum;
+    wire core_fault;
+
+    // WIF1两个独立端点连接同一真实四ERAM工作仓。
+    wire byte_req_valid, byte_req_ready, byte_req_write, byte_rsp_valid, byte_rsp_ready, byte_rsp_error;
+    wire [11:0] byte_req_addr;
+    wire [7:0] byte_req_data, byte_rsp_data;
+    wire weight_req_valid, weight_req_ready, weight_req_write, weight_rsp_valid, weight_rsp_ready, weight_rsp_error;
+    wire [4:0] weight_req_group;
+    wire [191:0] weight_req_data, weight_rsp_data;
+    wire workstore_fault;
+
+
+    reg table_valid = 0;
+    reg [9:0] table_address = 0;
+    reg signed [15:0] table_data = 0;
+    wire table_ready;
+    wire table_loaded;
+    reg signed [15:0] silu_table [0:1023];
+
+    // 扁平数组避免为七阶段复制访问逻辑；每阶段仍有独立固定槽位。
+    reg signed [7:0] source_hwc [0:MAX_LOGICAL-1];
+    reg signed [7:0] live_memory [0:7*MAX_PHYSICAL-1];
+    reg [7*MAX_PHYSICAL-1:0] written;
+    reg [7*MAX_PHYSICAL-1:0] visible;
+    reg signed [7:0] weights [0:7*MAX_WEIGHT-1];
+    reg signed [31:0] biases [0:7*MAX_CHANNEL-1];
+    reg signed [31:0] premuls [0:7*MAX_CHANNEL-1];
+    reg [7:0] preshifts [0:7*MAX_CHANNEL-1];
+    reg signed [31:0] postmuls [0:6];
+    reg [7:0] postshifts [0:6];
+    reg signed [31:0] gold_acc [0:7*MAX_LOGICAL-1];
+    reg signed [15:0] gold_pre [0:7*MAX_LOGICAL-1];
+    reg signed [15:0] gold_silu [0:7*MAX_LOGICAL-1];
+    reg signed [7:0] gold_post [0:7*MAX_LOGICAL-1];
+    reg signed [15:0] gold_sum [0:7*MAX_LOGICAL-1];
+    reg signed [7:0] gold_output [0:7*MAX_LOGICAL-1];
+    reg [7*MAX_LOGICAL-1:0] seen_acc;
+    reg [7*MAX_LOGICAL-1:0] seen_pre;
+    reg [7*MAX_LOGICAL-1:0] seen_silu;
+    reg [7*MAX_LOGICAL-1:0] seen_post;
+    reg [7*576-1:0] tile_seen;
+
+    reg parameter_pending = 0;
+    reg [7:0] parameter_delay = 0;
+    reg [2:0] saved_parameter_layer = 0;
+    reg [6:0] saved_parameter_channel = 0;
+    reg [4:0] saved_parameter_group = 0;
+    reg [2:0] saved_parameter_window = 0;
+    reg read_pending = 0;
+    reg [7:0] read_delay = 0;
+    reg [31:0] saved_read_address = 0;
+    reg [127:0] generated_read_data = 0;
+    reg [31:0] lfsr = 32'h75bcd15a;
+    reg complete = 0;
+    reg active = 0;
+    reg random_mode = 0;
+    reg [4095:0] vector_path;
+    reg [191:0] expected_weight;
+    reg [247:0] expected_parameter;
+
+    reg held_parameter_request, held_parameter_response, held_read_request, held_read_response;
+    reg held_core, held_core_output, held_write, held_barrier;
+    reg [21:0] held_parameter_request_payload;
+    reg [462:0] held_parameter_response_payload;
+    reg [31:0] held_read_request_payload;
+    reg [160:0] held_read_response_payload;
+    reg [685:0] held_core_payload;
+    reg [65:0] held_core_output_payload;
+    reg [48:0] held_write_payload;
+    reg [6:0] held_barrier_payload;
+
+    integer test_case;
+            integer negative_acc;
+    integer cycles = 0;
+    integer run_start = 0;
+    integer final_cycles = 0;
+    integer groups = 0;
+    integer tasks = 0;
+    integer retires = 0;
+    integer outputs = 0;
+    integer accumulators = 0;
+    integer pres = 0;
+    integer silus = 0;
+    integer posts = 0;
+    integer reads = 0;
+    integer parameters = 0;
+    integer barriers = 0;
+    integer runs = 0;
+    integer table_loads = 0;
+    integer accounted_cycles = 0;
+    integer stage_cycles [0:6];
+    integer stage_reads [0:6];
+    integer stage_parameters [0:6];
+    integer stage_outputs [0:6];
+    integer stage_groups [0:6];
+    integer stage_tasks [0:6];
+    integer stage_barriers [0:6];
+    localparam integer STATE_COUNT = 28;
+    integer state_cycles [0:STATE_COUNT-1];
+    integer counter_index;
+    integer cycle_sum;
+    integer memory_index;
+    integer poison_index;
+    integer lane;
+    integer score_index;
+    integer score_tag;
+    integer tile_index;
+    integer core_group_index = 0;
+    integer core_channel;
+    integer core_window;
+    integer core_position;
+    integer core_expected_groups;
+    integer core_expected_inputs;
+    integer core_seen_inputs;
+    integer physical_index;
+
+    assign o_test_complete = complete;
+    // Arithmetic ready/valid are read-only observations of the frozen instance.
+    always #5 clk = ~clk;
+
+    function integer flag_dw_stage;
+        input integer stage;
+        begin flag_dw_stage = stage < STAGE_COUNT-1 && (stage == 0 || stage == 2 || stage == 4); end
+    endfunction
+
+    function integer stage_channels;
+        input integer stage;
+        begin stage_channels = stage == STAGE_COUNT-1 ? FULL_CHANNELS : HALF_CHANNELS; end
+    endfunction
+
+    function integer stage_logical_size;
+        input integer stage;
+        begin stage_logical_size = stage == STAGE_COUNT-1 ? FULL_LOGICAL : HALF_LOGICAL; end
+    endfunction
+
+    function integer stage_physical_size;
+        input integer stage;
+        begin stage_physical_size = stage == STAGE_COUNT-1 ? FULL_PHYSICAL : HALF_PHYSICAL; end
+    endfunction
+
+    function [31:0] stage_base;
+        input integer stage;
+        begin
+            stage_base=stage_bases[stage];
+        end
+    endfunction
+
+    function integer physical_to_hwc;
+        input integer index;
+        input integer channels;
+        integer pixel_index, intra_index, physical_tile, y_value, x_value, channel_value;
+        begin
+            channel_value=index%channels;
+            pixel_index=index/channels;
+            intra_index=pixel_index%16;
+            physical_tile=pixel_index/16;
+            y_value=(physical_tile/TILE_COLUMNS)*4+intra_index/4;
+            x_value=(physical_tile%TILE_COLUMNS)*4+intra_index%4;
+            if(y_value>=HEIGHT) physical_to_hwc=-2;
+            else physical_to_hwc=(y_value*WIDTH+x_value)*channels+channel_value;
+        end
+    endfunction
+
+    function integer hwc_to_physical;
+        input integer index;
+        input integer channels;
+        integer pixel_index, y_value, x_value, channel_value;
+        begin
+            channel_value=index%channels;
+            pixel_index=index/channels;
+            y_value=pixel_index/WIDTH;
+            x_value=pixel_index%WIDTH;
+            hwc_to_physical=(((y_value/4)*TILE_COLUMNS+x_value/4)*16+(y_value%4)*4+x_value%4)*channels+channel_value;
+        end
+    endfunction
+
+    function integer address_to_hwc;
+        input integer stage;
+        input [31:0] address;
+        integer offset;
+        begin
+            offset=address-stage_base(stage);
+            if(offset<0 || offset>=stage_physical_size(stage)) address_to_hwc=-1;
+            else address_to_hwc=physical_to_hwc(offset,stage_channels(stage));
+        end
+    endfunction
+
+    function integer expected_stage_tasks;
+        input integer stage;
+        integer pixels, output_groups;
+        begin
+            pixels=HEIGHT*WIDTH;
+            if(flag_dw_stage(stage)) expected_stage_tasks=HEIGHT*TILE_COLUMNS*2*HALF_CHANNELS;
+            else begin
+                output_groups=stage_channels(stage)/3;
+                expected_stage_tasks=pixels*output_groups;
+            end
+        end
+    endfunction
+
+    function integer expected_stage_groups;
+        input integer stage;
+        integer input_groups;
+        begin
+            if(flag_dw_stage(stage)) expected_stage_groups=expected_stage_tasks(stage)*2;
+            else begin
+                input_groups=((stage==STAGE_COUNT-1 ? FULL_CHANNELS : HALF_CHANNELS)+7)/8;
+                expected_stage_groups=expected_stage_tasks(stage)*input_groups;
+            end
+        end
+    endfunction
+
+    function integer expected_stage_parameters;
+        input integer stage;
+        begin
+            if(flag_dw_stage(stage)) expected_stage_parameters=TILE_COUNT*HALF_CHANNELS*4;
+            else expected_stage_parameters=TILE_COUNT*(stage_channels(stage)/3)*(((stage==STAGE_COUNT-1 ? FULL_CHANNELS : HALF_CHANNELS)+7)/8);
+        end
+    endfunction
+
+    function integer expected_stage_reads;
+        input integer stage;
+        begin
+            if(selected_block==2)begin
+                case(stage)
+                    0:expected_stage_reads=30210; 1:expected_stage_reads=20736; 2:expected_stage_reads=16748;
+                    3:expected_stage_reads=13824; default:expected_stage_reads=27648;
+                endcase
+            end else if(selected_block==3)begin
+                case(stage)
+                    0:expected_stage_reads=9776; 1:expected_stage_reads=8064; 2:expected_stage_reads=8112;
+                    3:expected_stage_reads=6912; 4:expected_stage_reads=8112; 5:expected_stage_reads=6912;
+                    default:expected_stage_reads=9216;
+                endcase
+            end else begin
+                case(stage)
+                    0:expected_stage_reads=3588; 1:expected_stage_reads=3456; 2:expected_stage_reads=3588;
+                    3:expected_stage_reads=3456; 4:expected_stage_reads=3588; 5:expected_stage_reads=3456;
+                    default:expected_stage_reads=3456;
+                endcase
+            end
+        end
+    endfunction
+
+    function integer count_mask_bits;
+        input [7:0] mask;
+        integer bit_index;
+        begin
+            count_mask_bits=0;
+            for(bit_index=0;bit_index<8;bit_index=bit_index+1)count_mask_bits=count_mask_bits+mask[bit_index];
+        end
+    endfunction
+
+    // 参数服务按冻结包原布局打包，不计算任何golden算术结果。
+    task build_parameter;
+        input [2:0] stage;
+        input [6:0] channel;
+        input [4:0] group_number;
+        input [2:0] window;
+        output [191:0] packed_weight;
+        output [247:0] packed_parameter;
+        integer output_lane, input_lane, union_index, kernel_y, kernel_x;
+        integer output_channel, input_channel, input_channels, weight_index, parameter_index;
+        reg [7:0] weight_value;
+        begin
+            packed_weight=0;
+            packed_parameter=0;
+            input_channels=stage==STAGE_COUNT-1 ? FULL_CHANNELS : HALF_CHANNELS;
+            for(output_lane=0;output_lane<3;output_lane=output_lane+1)begin
+                output_channel=flag_dw_stage(stage) ? channel : channel+output_lane;
+                parameter_index=stage*MAX_CHANNEL+output_channel;
+                packed_parameter[output_lane*32 +: 32]=biases[parameter_index];
+                packed_parameter[96+output_lane*32 +: 32]=premuls[parameter_index];
+                packed_parameter[192+output_lane*6 +: 6]=preshifts[parameter_index][5:0];
+                for(input_lane=0;input_lane<8;input_lane=input_lane+1)begin
+                    weight_value=0;
+                    if(flag_dw_stage(stage))begin
+                        union_index=group_number*8+input_lane;
+                        kernel_y=union_index/window;
+                        kernel_x=union_index%window-output_lane;
+                        if(union_index<window*3 && kernel_y<3 && kernel_x>=0 && kernel_x<3)begin
+                            weight_index=stage*MAX_WEIGHT+channel*9+kernel_y*3+kernel_x;
+                            weight_value=weights[weight_index];
+                        end
+                    end else begin
+                        input_channel=group_number*8+input_lane;
+                        if(output_channel<stage_channels(stage) && input_channel<input_channels)begin
+                            weight_index=stage*MAX_WEIGHT+output_channel*input_channels+input_channel;
+                            weight_value=weights[weight_index];
+                        end
+                    end
+                    packed_weight[output_lane*64+input_lane*8 +: 8]=weight_value;
+                end
+            end
+            packed_parameter[241:210]=postmuls[stage];
+            packed_parameter[247:242]=postshifts[stage][5:0];
+        end
+    endtask
+
+    // 128位行服务只暴露源或已过屏障的真实写回；物理尾行字节返回零。
+    task build_read_line;
+        input [31:0] line_address;
+        output [127:0] line_data;
+        integer byte_lane, byte_offset, hwc_index, region, found;
+        reg [31:0] byte_address;
+        begin
+            line_data=0;
+            if(line_address[3:0]!=0) $fatal(1,"read address is not 16-byte aligned block=%0d address=%h",selected_block,line_address);
+            for(byte_lane=0;byte_lane<16;byte_lane=byte_lane+1)begin
+                byte_address=line_address+byte_lane;
+                found=0;
+                if(byte_address>=BASE_SOURCE && byte_address<BASE_SOURCE+FULL_PHYSICAL)begin
+                    byte_offset=byte_address-BASE_SOURCE;
+                    hwc_index=physical_to_hwc(byte_offset,FULL_CHANNELS);
+                    line_data[byte_lane*8 +: 8]=hwc_index<0 ? 0 : source_hwc[hwc_index];
+                    found=1;
+                end
+                for(region=0;region<STAGE_COUNT-1;region=region+1)begin
+                    if(byte_address>=stage_base(region) && byte_address<stage_base(region)+stage_physical_size(region))begin
+                        byte_offset=byte_address-stage_base(region);
+                        hwc_index=physical_to_hwc(byte_offset,stage_channels(region));
+                        if(hwc_index>=0 && !visible[region*MAX_PHYSICAL+byte_offset])
+                            $fatal(1,"read byte not visible block=%0d stage=%0d address=%h",selected_block,region,byte_address);
+                        line_data[byte_lane*8 +: 8]=hwc_index<0 ? 0 : live_memory[region*MAX_PHYSICAL+byte_offset];
+                        found=1;
+                    end
+                end
+                if(!found) $fatal(1,"read byte outside legal regions block=%0d address=%h",selected_block,byte_address);
+            end
+        end
+    endtask
+
+    task mark_seen;
+        input integer kind;
+        input integer stage;
+        input integer position;
+        integer slot;
+        begin
+            slot=stage*MAX_LOGICAL+position;
+            case(kind)
+                0:begin if(seen_acc[slot])$fatal(1,"duplicate acc"); seen_acc[slot]=1; end
+                1:begin if(seen_pre[slot])$fatal(1,"duplicate pre"); seen_pre[slot]=1; end
+                2:begin if(seen_silu[slot])$fatal(1,"duplicate silu"); seen_silu[slot]=1; end
+                default:begin if(seen_post[slot])$fatal(1,"duplicate post"); seen_post[slot]=1; end
+            endcase
+        end
+    endtask
+
+    task clear_scoreboard;
+        begin
+            groups=0; tasks=0; retires=0; outputs=0; accumulators=0; pres=0; silus=0; posts=0;
+            reads=0; parameters=0; barriers=0; accounted_cycles=0; core_group_index=0; core_seen_inputs=0;
+            for(counter_index=0;counter_index<7;counter_index=counter_index+1)begin
+                stage_cycles[counter_index]=0; stage_reads[counter_index]=0; stage_parameters[counter_index]=0;
+                stage_outputs[counter_index]=0; stage_groups[counter_index]=0; stage_tasks[counter_index]=0;
+                stage_barriers[counter_index]=0;
+            end
+            for(counter_index=0;counter_index<STATE_COUNT;counter_index=counter_index+1)state_cycles[counter_index]=0;
+            written=0; visible=0; seen_acc=0; seen_pre=0; seen_silu=0; seen_post=0; tile_seen=0;
+            held_parameter_request=0; held_parameter_response=0; held_read_request=0; held_read_response=0;
+            held_core=0; held_core_output=0; held_write=0; held_barrier=0;
+            for(poison_index=0;poison_index<7*MAX_PHYSICAL;poison_index=poison_index+1)
+                live_memory[poison_index]=8'ha5^(poison_index&8'hff);
+        end
+    endtask
+
+    task reset_and_load_table;
+        begin
+            active=0; start=0; cancel=0; table_valid=0; host_control_valid=0; host_control=0;
+            @(negedge clk); rstn=0;
+            repeat(3)@(negedge clk);
+            rstn=1; repeat(3)@(negedge clk);
+            if(block_id!==0 || table_loaded || start_ready || done || fault)
+                $fatal(1,"reset retained protocol state");
+            host_begin;
+            // Partial LUT words cannot start the client; reset discards the parser and LUT.
+            host_word(16'h8000); host_word(silu_table[0]); host_word(silu_table[1]);
+            repeat(3)@(negedge clk);
+            if(table_loaded || busy || start_ready || tx_valid)$fatal(1,"partial LUT enabled a frame");
+            host_control_valid=0; host_control=0; rstn=0;
+            repeat(3)@(negedge clk); rstn=1;
+            repeat(3)@(negedge clk);
+            host_table_start=cycles;
+            host_begin; host_word(16'h8000);
+            for(memory_index=0;memory_index<1024;memory_index=memory_index+1)
+                host_word(silu_table[memory_index]);
+            host_end;
+            wait(table_loaded); repeat(2)@(negedge clk);
+            if(!start_ready)$fatal(1,"serialized LUT did not become active");
+            host_table_cycles=host_table_cycles+cycles-host_table_start;
+            table_loads=table_loads+1;
+        end
+    endtask
+
+    task launch_frame;
+        begin
+            clear_scoreboard;
+            host_begin;
+            if(!start_ready)$fatal(1,"full-frame start blocked block=%0d",selected_block);
+            host_word(16'h8001);
+            // Partial start command must not change the frozen owner.
+            if(busy)$fatal(1,"partial start enabled a frame");
+            run_start=cycles; active=1;
+            if(sequence_start==0)sequence_start=cycles;
+            host_word({12'd0,selected_block[3:0]});
+            host_end;
+        end
+    endtask
+
+    task finish_frame;
+        integer stage_number, logical, physical, slot;
+        begin
+            wait(done); @(negedge clk); #1;
+            final_cycles=cycles-run_start;
+            if(final_cycles!=accounted_cycles)$fatal(1,"cycle endpoint mismatch block=%0d endpoint=%0d accounted=%0d",selected_block,final_cycles,accounted_cycles);
+            if(fault || !busy || outputs!=TOTAL_OUTPUTS || tasks!=TOTAL_TASKS || retires!=TOTAL_TASKS ||
+                groups!=TOTAL_GROUPS || accumulators!=TOTAL_OUTPUTS || pres!=TOTAL_OUTPUTS ||
+                silus!=TOTAL_OUTPUTS || posts!=TOTAL_OUTPUTS || barriers!=STAGE_COUNT)
+                $fatal(1,"incomplete block=%0d groups=%0d tasks=%0d retires=%0d outputs=%0d acc=%0d pre=%0d silu=%0d post=%0d barriers=%0d",
+                    selected_block,groups,tasks,retires,outputs,accumulators,pres,silus,posts,barriers);
+            for(stage_number=0;stage_number<STAGE_COUNT;stage_number=stage_number+1)begin
+                for(logical=0;logical<stage_logical_size(stage_number);logical=logical+1)begin
+                    slot=stage_number*MAX_LOGICAL+logical;
+                    physical=stage_number*MAX_PHYSICAL+hwc_to_physical(logical,stage_channels(stage_number));
+                    if(!written[physical] || !seen_acc[slot] || !seen_pre[slot] || !seen_silu[slot] || !seen_post[slot])
+                        $fatal(1,"logical coverage incomplete block=%0d stage=%0d index=%0d",selected_block,stage_number,logical);
+                end
+                for(physical=0;physical<stage_physical_size(stage_number);physical=physical+1)
+                    if(physical_to_hwc(physical,stage_channels(stage_number))<0 && written[stage_number*MAX_PHYSICAL+physical])
+                        $fatal(1,"padding row was written block=%0d stage=%0d physical=%0d",selected_block,stage_number,physical);
+                for(tile_index=0;tile_index<TILE_COUNT;tile_index=tile_index+1)
+                    if(!tile_seen[stage_number*576+tile_index])$fatal(1,"tile coverage incomplete block=%0d stage=%0d tile=%0d",selected_block,stage_number,tile_index);
+            end
+            cycle_sum=0;
+            for(counter_index=0;counter_index<STATE_COUNT;counter_index=counter_index+1)begin
+                cycle_sum=cycle_sum+state_cycles[counter_index];
+                $display("FEAT_BLOCK_STATE block=%0d case=%0d run=%0d state=%0d cycles=%0d",selected_block,test_case,runs+1,counter_index,state_cycles[counter_index]);
+            end
+            if(cycle_sum!=accounted_cycles)$fatal(1,"raw state ledger mismatch block=%0d sum=%0d accounted=%0d",selected_block,cycle_sum,accounted_cycles);
+            cycle_sum=0;
+            for(counter_index=0;counter_index<STAGE_COUNT;counter_index=counter_index+1)begin
+                cycle_sum=cycle_sum+stage_cycles[counter_index];
+                if(stage_outputs[counter_index]!=stage_logical_size(counter_index) ||
+                    stage_tasks[counter_index]!=expected_stage_tasks(counter_index) ||
+                    stage_groups[counter_index]!=expected_stage_groups(counter_index) ||
+                    stage_reads[counter_index]!=expected_stage_reads(counter_index) ||
+                    stage_parameters[counter_index]!=expected_stage_parameters(counter_index) ||
+                    stage_barriers[counter_index]!=1)$fatal(1,"stage ledger mismatch block=%0d stage=%0d",selected_block,counter_index);
+                $display("FEAT_BLOCK_STAGE block=%0d case=%0d run=%0d stage=%0d cycles=%0d reads=%0d parameters=%0d groups=%0d tasks=%0d outputs=%0d barriers=%0d",
+                    selected_block,test_case,runs+1,counter_index,stage_cycles[counter_index],stage_reads[counter_index],stage_parameters[counter_index],
+                    stage_groups[counter_index],stage_tasks[counter_index],stage_outputs[counter_index],stage_barriers[counter_index]);
+            end
+            if(cycle_sum!=accounted_cycles)$fatal(1,"stage cycle ledger mismatch block=%0d",selected_block);
+            runs=runs+1; active=0;
+            clean_cycles=clean_cycles+final_cycles; clean_accounted=clean_accounted+accounted_cycles;
+            clean_outputs=clean_outputs+outputs; clean_acc=clean_acc+accumulators;
+            clean_pre=clean_pre+pres; clean_silu=clean_silu+silus; clean_post=clean_post+posts;
+            clean_groups=clean_groups+groups; clean_tasks=clean_tasks+tasks;
+            clean_reads=clean_reads+reads; clean_parameters=clean_parameters+parameters;
+            clean_barriers=clean_barriers+barriers;
+            $display("FEAT_BLOCK_RUN block=%0d case=%0d run=%0d cycles=%0d accounted=%0d groups=%0d tasks=%0d outputs=%0d acc=%0d pre=%0d silu=%0d post=%0d reads=%0d parameters=%0d barriers=%0d",
+                selected_block,test_case,runs,final_cycles,accounted_cycles,groups,tasks,outputs,accumulators,pres,silus,posts,reads,parameters,barriers);
+            @(posedge clk); @(negedge clk); start=0; #1;
+            if(done || busy || write_valid || fault || !start_ready)$fatal(1,"frame did not retire to clean idle block=%0d",selected_block);
+            repeat(3)@(negedge clk);
+            if(done || busy || write_valid || fault || !start_ready)$fatal(1,"frame emitted stale completion block=%0d",selected_block);
+        end
+    endtask
+
+    `include "narrow_host_bridge.vh"
+    assign block_id=dut.core_Inst.o_block_id;
+    assign start_ready=dut.core_Inst.o_start_ready;
+    assign layer=dut.core_Inst.o_layer;
+    assign tile_y=dut.core_Inst.o_tile_y;
+    assign tile_x=dut.core_Inst.o_tile_x;
+    assign table_ready=dut.core_Inst.o_table_ready;
+    assign workstore_fault=dut.core_Inst.flag_store_fault;
+    assign core_valid=dut.core_Inst.link_o_core_valid;
+    assign core_first=dut.core_Inst.link_o_core_first;
+    assign core_last=dut.core_Inst.link_o_core_last;
+    assign core_input_mask=dut.core_Inst.link_o_core_input_mask;
+    assign core_activation=dut.core_Inst.link_o_core_activation;
+    assign core_weight=dut.core_Inst.link_o_core_weight;
+    assign core_bias=dut.core_Inst.link_o_core_bias;
+    assign core_output_mask=dut.core_Inst.link_o_core_output_mask;
+    assign core_tags=dut.core_Inst.link_o_core_tags;
+    assign core_addresses=dut.core_Inst.link_o_core_addresses;
+    assign core_pre_multiplier=dut.core_Inst.link_o_core_pre_multiplier;
+    assign core_pre_shift=dut.core_Inst.link_o_core_pre_shift;
+    assign core_post_multiplier=dut.core_Inst.link_o_core_post_multiplier;
+    assign core_post_shift=dut.core_Inst.link_o_core_post_shift;
+    assign core_residual=dut.core_Inst.link_o_core_residual;
+    assign core_bypass=dut.core_Inst.link_o_core_bypass;
+    assign core_ready=dut.core_Inst.link_i_core_ready;
+    assign core_output_valid=dut.core_Inst.link_i_core_output_valid;
+    assign core_output_tag=dut.core_Inst.link_i_core_output_tag;
+    assign core_output_address=dut.core_Inst.link_i_core_output_address;
+    assign core_output_data=dut.core_Inst.link_i_core_output_data;
+    assign core_output_sum=dut.core_Inst.link_i_core_output_sum;
+    assign core_fault=dut.core_Inst.link_i_core_fault;
+    assign core_output_ready=dut.core_Inst.link_o_core_output_ready;
+    always @(posedge clk) if(rstn && workstore_fault)$fatal(1,"workstore illegal request during narrow chain");
+
+    // 单在途参数/读服务以及写回可见性屏障。
+    always @(posedge clk or negedge rstn)begin
+        if(!rstn)begin
+            parameter_pending<=0; parameter_response_valid<=0; parameter_error<=0;
+            read_pending<=0; read_response_valid<=0; read_error<=0; written<=0; visible<=0;
+        end else begin
+            if(parameter_response_valid && parameter_response_ready)begin parameter_response_valid<=0; parameter_error<=0; end
+            if(parameter_valid && parameter_ready)begin
+                if(parameter_pending || parameter_response_valid)$fatal(1,"multiple parameter requests block=%0d",selected_block);
+                parameters=parameters+1; stage_parameters[layer]=stage_parameters[layer]+1;
+                saved_parameter_block_id<=block_id; saved_parameter_layer<=layer; saved_parameter_channel<=parameter_channel;
+                saved_parameter_group<=parameter_group; saved_parameter_window<=parameter_window;
+                parameter_delay<=random_mode ? lfsr[7:5] : 2; parameter_pending<=1;
+            end
+            if(parameter_pending)begin
+                if(parameter_delay!=0)parameter_delay<=parameter_delay-1'b1;
+                else if(!parameter_response_valid)begin
+                    parameter_response_block_id<=saved_parameter_block_id; parameter_response_layer<=saved_parameter_layer; parameter_response_channel<=saved_parameter_channel;
+                    parameter_response_group<=saved_parameter_group; parameter_response_window<=saved_parameter_window;
+                    build_parameter(saved_parameter_layer,saved_parameter_channel,saved_parameter_group,saved_parameter_window,
+                        parameter_response_weight,parameter_response_data);
+                    parameter_error<=0;
+                    if(test_case==4 && outputs==0)parameter_response_block_id<=saved_parameter_block_id+1'b1;
+                    parameter_response_valid<=1; parameter_pending<=0;
+                end
+            end
+            if(read_response_valid && read_response_ready)begin read_response_valid<=0; read_error<=0; end
+            if(read_valid && read_ready)begin
+                if(read_pending || read_response_valid)$fatal(1,"multiple read requests block=%0d",selected_block);
+                if(read_address[3:0]!=0)$fatal(1,"unaligned block read block=%0d address=%h",selected_block,read_address);
+                saved_read_address<=read_address; read_delay<=random_mode ? lfsr[11:9] : 2; read_pending<=1;
+                reads=reads+1; stage_reads[layer]=stage_reads[layer]+1;
+            end
+            if(read_pending)begin
+                if(read_delay!=0)read_delay<=read_delay-1'b1;
+                else if(!read_response_valid)begin
+                    build_read_line(saved_read_address,generated_read_data);
+                    read_response_address<=saved_read_address; read_response_data<=generated_read_data; read_error<=0;
+                    
+                    read_response_valid<=1; read_pending<=0;
+                end
+            end
+            if(write_valid && write_ready)begin
+                score_index=address_to_hwc(layer,write_address);
+                if(score_index<0)$fatal(1,"write address outside logical image block=%0d stage=%0d address=%h",selected_block,layer,write_address);
+                if(write_data!==gold_output[layer*MAX_LOGICAL+score_index] ||
+                    $signed(write_sum)!=$signed(gold_sum[layer*MAX_LOGICAL+score_index]))
+                    $fatal(1,"write mismatch block=%0d stage=%0d index=%0d data=%h sum=%0d",selected_block,layer,score_index,write_data,$signed(write_sum));
+                memory_index=write_address-stage_base(layer);
+                physical_index=layer*MAX_PHYSICAL+memory_index;
+                if(written[physical_index])$fatal(1,"duplicate write block=%0d stage=%0d index=%0d",selected_block,layer,memory_index);
+                written[physical_index]=1; live_memory[physical_index]=write_data;
+                outputs=outputs+1; stage_outputs[layer]=stage_outputs[layer]+1;
+            end
+            if(barrier_valid && barrier_ready && barrier_layer==layer && barrier_block_id==block_id)begin
+                if(stage_outputs[layer]!=stage_logical_size(layer) || stage_tasks[layer]!=expected_stage_tasks(layer) ||
+                    stage_groups[layer]!=expected_stage_groups(layer) || stage_reads[layer]!=expected_stage_reads(layer) ||
+                    stage_parameters[layer]!=expected_stage_parameters(layer))
+                    $fatal(1,"barrier before exact stage completion block=%0d stage=%0d",selected_block,layer);
+                for(memory_index=0;memory_index<stage_physical_size(layer);memory_index=memory_index+1)
+                    visible[layer*MAX_PHYSICAL+memory_index]<=written[layer*MAX_PHYSICAL+memory_index];
+                barriers=barriers+1; stage_barriers[layer]=stage_barriers[layer]+1;
+                $display("FEAT_BLOCK_PROGRESS block=%0d case=%0d run=%0d stage=%0d cycles=%0d reads=%0d parameters=%0d groups=%0d tasks=%0d outputs=%0d",
+                    selected_block,test_case,runs+1,layer,cycles-run_start,stage_reads[layer],stage_parameters[layer],stage_groups[layer],stage_tasks[layer],stage_outputs[layer]);
+            end
+        end
+    end
+
+    // CASE1从启动起采用确定性停顿，其他正例使用最短服务延迟。
+    always @(negedge clk)begin
+        if(!rstn)begin
+            parameter_ready=0; read_ready=0; write_ready=0; barrier_ready=0; barrier_layer=0; barrier_block_id=0; owner_admit=0;
+        end else begin
+            parameter_ready=1; read_ready=1; write_ready=1; owner_admit=1;
+            barrier_ready=barrier_valid; barrier_layer=layer; barrier_block_id=block_id;
+            if(active && busy)begin
+                // 忙时交错合法/非法ID和start脉冲，DONE周期也保持start。
+                input_block_id=lfsr[19:16]; start=done ? 1 : lfsr[12];
+            end
+            if(random_mode)begin
+                parameter_ready=lfsr[0]||lfsr[3]; read_ready=lfsr[1]||lfsr[5];
+                write_ready=lfsr[2]||lfsr[7]; owner_admit=lfsr[4]||lfsr[6];
+            end
+            if(test_case==5 && barrier_valid && barriers==0)begin
+                barrier_ready=1; barrier_block_id=block_id+1'b1;
+            end
+        end
+    end
+
+    // 全部计数只观察真实握手；accepted group序号由TB独立维护。
+    always @(posedge clk)begin
+        cycles=cycles+1;
+        if(rstn)lfsr<={lfsr[30:0],lfsr[31]^lfsr[21]^lfsr[1]^lfsr[0]};
+        if(cycles>WATCHDOG_CYCLES)$fatal(1,"sequence watchdog block=%0d case=%0d",selected_block,test_case);
+        if(active && rstn)begin
+            if(dut.core_Inst.client_Inst.state_current>=STATE_COUNT)$fatal(1,"unknown raw state block=%0d state=%0d",selected_block,dut.core_Inst.client_Inst.state_current);
+            state_cycles[dut.core_Inst.client_Inst.state_current]=state_cycles[dut.core_Inst.client_Inst.state_current]+1;
+            if(dut.core_Inst.i_start && start_ready)stage_cycles[0]=stage_cycles[0]+1;
+            else stage_cycles[layer]=stage_cycles[layer]+1;
+            accounted_cycles=accounted_cycles+1;
+            if(busy && block_id!==selected_block[3:0])$fatal(1,"busy owner switched expected=%0d actual=%0d",selected_block,block_id);
+            if(busy && start_ready)$fatal(1,"busy admitted another start");
+            if(busy && selected_block!=15 && layer>=STAGE_COUNT)$fatal(1,"active layer outside fixed block shape");
+            if(busy && selected_block!=15 && (tile_y>=HEIGHT || tile_x>=WIDTH || tile_y[1:0]!=0 || tile_x[1:0]!=0))
+                $fatal(1,"invalid tile block=%0d stage=%0d y=%0d x=%0d",selected_block,layer,tile_y,tile_x);
+            if(busy && selected_block!=15)begin
+                tile_index=(tile_y/4)*TILE_COLUMNS+tile_x/4;
+                tile_seen[layer*576+tile_index]=1;
+            end
+        end
+        if(active && fault && test_case<=2)$fatal(1,"unexpected fault block=%0d case=%0d",selected_block,test_case);
+        if(done && barriers!=STAGE_COUNT)$fatal(1,"done before seven accepted barriers block=%0d",selected_block);
+        if(dut.core_Inst.client_Inst.flag_task_done)retires=retires+1;
+        if(core_valid && core_ready)begin
+            core_position=address_to_hwc(layer,core_addresses[31:0]);
+            if(core_position<0)$fatal(1,"core address decode failed block=%0d stage=%0d address=%h",selected_block,layer,core_addresses[31:0]);
+            core_channel=core_position%stage_channels(layer);
+            if(flag_dw_stage(layer))begin
+                if(core_output_mask==3'b111)begin core_window=5; core_expected_inputs=15; end
+                else if(core_output_mask==3'b001)begin core_window=3; core_expected_inputs=9; end
+                else $fatal(1,"illegal DW output mask block=%0d mask=%b",selected_block,core_output_mask);
+                core_expected_groups=(core_expected_inputs+7)/8;
+                if(core_input_mask!==(core_group_index==0 ? 8'hff : (core_window==5 ? 8'h7f : 8'h01)))
+                    $fatal(1,"DW mask mismatch block=%0d stage=%0d group=%0d mask=%h",selected_block,layer,core_group_index,core_input_mask);
+            end else begin
+                core_window=0;
+                core_expected_inputs=layer==STAGE_COUNT-1 ? FULL_CHANNELS : HALF_CHANNELS;
+                core_expected_groups=(core_expected_inputs+7)/8;
+                if(core_output_mask!=3'b111 || core_input_mask!==
+                    (core_group_index==core_expected_groups-1 && core_expected_inputs%8!=0 ? 8'h0f : 8'hff))
+                    $fatal(1,"PW mask mismatch block=%0d stage=%0d group=%0d mask=%h",selected_block,layer,core_group_index,core_input_mask);
+            end
+            if(core_first)begin
+                if(core_group_index!=0)$fatal(1,"core first mid-task block=%0d group=%0d",selected_block,core_group_index);
+                core_seen_inputs=0;
+            end else if(core_group_index==0)$fatal(1,"core task omitted first block=%0d",selected_block);
+            if(core_last!=(core_group_index==core_expected_groups-1))
+                $fatal(1,"core last/group mismatch block=%0d stage=%0d group=%0d expected=%0d",selected_block,layer,core_group_index,core_expected_groups);
+            core_seen_inputs=core_seen_inputs+count_mask_bits(core_input_mask);
+            build_parameter(layer,core_channel,core_group_index,core_window,expected_weight,expected_parameter);
+            for(lane=0;lane<3;lane=lane+1)begin
+                if(core_output_mask[lane])begin
+                    if(core_weight[lane*64 +: 64]!==expected_weight[lane*64 +: 64] ||
+                        core_bias[lane*32 +: 32]!==expected_parameter[lane*32 +: 32] ||
+                        core_pre_multiplier[lane*32 +: 32]!==expected_parameter[96+lane*32 +: 32] ||
+                        core_pre_shift[lane*6 +: 6]!==expected_parameter[192+lane*6 +: 6])
+                        $fatal(1,"core parameter mapping mismatch block=%0d stage=%0d",selected_block,layer);
+                end else if(core_weight[lane*64 +: 64]!==0 || core_bias[lane*32 +: 32]!==0 ||
+                    core_pre_multiplier[lane*32 +: 32]!==0 || core_pre_shift[lane*6 +: 6]!==0)
+                    $fatal(1,"masked output lane not zero block=%0d stage=%0d",selected_block,layer);
+            end
+            if(core_post_multiplier!==expected_parameter[241:210] || core_post_shift!==expected_parameter[247:242] ||
+                core_tags!==48'h000200010000 || core_residual!==(layer<STAGE_COUNT-1 && (layer==1 || layer==3 || layer==5)))
+                $fatal(1,"core shared metadata mismatch block=%0d stage=%0d",selected_block,layer);
+            for(lane=0;lane<8;lane=lane+1)
+                if(!core_input_mask[lane] && core_activation[lane*8 +: 8]!==0)$fatal(1,"tail input lane not zero block=%0d",selected_block);
+            groups=groups+1; stage_groups[layer]=stage_groups[layer]+1;
+            if(core_last)begin
+                if(core_seen_inputs!=core_expected_inputs)$fatal(1,"accepted input count mismatch block=%0d stage=%0d seen=%0d expected=%0d",selected_block,layer,core_seen_inputs,core_expected_inputs);
+                tasks=tasks+1; stage_tasks[layer]=stage_tasks[layer]+1; core_group_index=0;
+            end else core_group_index=core_group_index+1;
+        end
+        if(dut.core_Inst.arithmetic_Inst.flag_acc_accept)begin
+            for(lane=0;lane<3;lane=lane+1)if(dut.core_Inst.arithmetic_Inst.reg_output_mask[lane])begin
+                score_index=address_to_hwc(layer,(dut.core_Inst.arithmetic_Inst.reg_addresses>>(lane*32))&32'hffffffff);
+                if(score_index<0)$fatal(1,"acc address decode failed block=%0d",selected_block);
+                mark_seen(0,layer,score_index);
+                if(negative_acc!=0 && accumulators==0)begin
+                    if(dut.core_Inst.arithmetic_Inst.mac_data[lane*32 +: 32]!== (gold_acc[layer*MAX_LOGICAL+score_index]^32'd1))
+                        $fatal(1,"NEGATIVE_ACC injected acc mismatch block=%0d stage=%0d index=%0d",selected_block,layer,score_index);
+                end else if(dut.core_Inst.arithmetic_Inst.mac_data[lane*32 +: 32]!==gold_acc[layer*MAX_LOGICAL+score_index])
+                    $fatal(1,"acc mismatch block=%0d stage=%0d index=%0d",selected_block,layer,score_index);
+                accumulators=accumulators+1;
+            end
+        end
+        if(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.flag_silu_accept)begin
+            score_tag=(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.reg_retire_tags[dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.pre_result_tag[4:2]] >>
+                (dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.pre_result_tag[1:0]*16))&65535;
+            score_index=address_to_hwc(layer,(dut.core_Inst.arithmetic_Inst.reg_addresses>>(score_tag*32))&32'hffffffff);
+            if(score_tag>2 || score_index<0)$fatal(1,"pre tag/address invalid block=%0d",selected_block);
+            mark_seen(1,layer,score_index);
+            if(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.pre_result_data!==gold_pre[layer*MAX_LOGICAL+score_index])
+                $fatal(1,"pre mismatch block=%0d stage=%0d index=%0d",selected_block,layer,score_index);
+            pres=pres+1;
+        end
+        if(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.flag_post_accept)begin
+            score_tag=(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.reg_retire_tags[dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.reg_meta_tags[dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.reg_meta_read][4:2]] >>
+                (dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.reg_meta_tags[dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.reg_meta_read][1:0]*16))&65535;
+            score_index=address_to_hwc(layer,(dut.core_Inst.arithmetic_Inst.reg_addresses>>(score_tag*32))&32'hffffffff);
+            if(score_tag>2 || score_index<0)$fatal(1,"silu tag/address invalid block=%0d",selected_block);
+            mark_seen(2,layer,score_index);
+            if(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.silu_output_data!==gold_silu[layer*MAX_LOGICAL+score_index])
+                $fatal(1,"silu mismatch block=%0d stage=%0d index=%0d",selected_block,layer,score_index);
+            silus=silus+1;
+        end
+        if(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.flag_post_complete)begin
+            score_tag=(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.reg_retire_tags[dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.post_result_tag[4:2]] >>
+                (dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.post_result_tag[1:0]*16))&65535;
+            score_index=address_to_hwc(layer,(dut.core_Inst.arithmetic_Inst.reg_addresses>>(score_tag*32))&32'hffffffff);
+            if(score_tag>2 || score_index<0)$fatal(1,"post tag/address invalid block=%0d",selected_block);
+            mark_seen(3,layer,score_index);
+            if(dut.core_Inst.arithmetic_Inst.road_dynamic_postprocess_Inst_core.wire_post_saturated!==$signed(gold_post[layer*MAX_LOGICAL+score_index]))
+                $fatal(1,"post mismatch block=%0d stage=%0d index=%0d",selected_block,layer,score_index);
+            posts=posts+1;
+        end
+        if(!rstn)begin
+            held_parameter_request=0; held_parameter_response=0; held_read_request=0; held_read_response=0;
+            held_core=0; held_core_output=0; held_write=0; held_barrier=0;
+        end else begin
+            if(held_parameter_request && {block_id,layer,parameter_channel,parameter_group,parameter_window}!==held_parameter_request_payload)
+                $fatal(1,"parameter request changed under backpressure block=%0d",selected_block);
+            held_parameter_request=parameter_valid&&!parameter_ready;
+            held_parameter_request_payload={block_id,layer,parameter_channel,parameter_group,parameter_window};
+            if(held_parameter_response && {parameter_error,parameter_response_block_id,parameter_response_layer,parameter_response_channel,parameter_response_group,
+                parameter_response_window,parameter_response_weight,parameter_response_data}!==held_parameter_response_payload)
+                $fatal(1,"parameter response changed under backpressure block=%0d",selected_block);
+            held_parameter_response=parameter_response_valid&&!parameter_response_ready;
+            held_parameter_response_payload={parameter_error,parameter_response_block_id,parameter_response_layer,parameter_response_channel,parameter_response_group,
+                parameter_response_window,parameter_response_weight,parameter_response_data};
+            if(held_read_request && read_address!==held_read_request_payload)$fatal(1,"read request changed under backpressure block=%0d",selected_block);
+            held_read_request=read_valid&&!read_ready; held_read_request_payload=read_address;
+            if(held_read_response && {read_error,read_response_address,read_response_data}!==held_read_response_payload)
+                $fatal(1,"read response changed under backpressure block=%0d",selected_block);
+            held_read_response=read_response_valid&&!read_response_ready;
+            held_read_response_payload={read_error,read_response_address,read_response_data};
+            if(held_core && {core_first,core_last,core_input_mask,core_activation,core_weight,core_bias,core_output_mask,core_tags,
+                core_addresses,core_pre_multiplier,core_pre_shift,core_post_multiplier,core_post_shift,core_residual,core_bypass}!==held_core_payload)
+                $fatal(1,"core group changed under backpressure block=%0d",selected_block);
+            held_core=core_valid&&!core_ready;
+            held_core_payload={core_first,core_last,core_input_mask,core_activation,core_weight,core_bias,core_output_mask,core_tags,
+                core_addresses,core_pre_multiplier,core_pre_shift,core_post_multiplier,core_post_shift,core_residual,core_bypass};
+            if(held_core_output && {core_fault,core_output_tag,core_output_address,core_output_data,core_output_sum}!==held_core_output_payload)
+                $fatal(1,"core output changed under backpressure block=%0d",selected_block);
+            held_core_output=core_output_valid&&!core_output_ready;
+            held_core_output_payload={core_fault,core_output_tag,core_output_address,core_output_data,core_output_sum};
+            if(held_write && {write_sum,write_address,write_data}!==held_write_payload)$fatal(1,"write changed under backpressure block=%0d",selected_block);
+            held_write=write_valid&&!write_ready; held_write_payload={write_sum,write_address,write_data};
+            if(held_barrier && {block_id,layer}!==held_barrier_payload)$fatal(1,"barrier layer changed under backpressure block=%0d",selected_block);
+            held_barrier=barrier_valid&&!barrier_ready; held_barrier_payload={block_id,layer};
+        end
+    end
+
+    // 每块源由独立CPU夹具生成；下采样尚未接成RTL依赖链。
+    task load_reference;
+        input integer requested_block;
+        begin
+            selected_block=requested_block;
+            HEIGHT=requested_block==2 ? 72 : requested_block==3 ? 36 : 18;
+            WIDTH=requested_block==2 ? 128 : requested_block==3 ? 64 : 32;
+            HALF_CHANNELS=requested_block==2 ? 12 : requested_block==3 ? 24 : 48;
+            FULL_CHANNELS=HALF_CHANNELS*2;
+            STAGE_COUNT=requested_block==2 ? 5 : 7;
+            TILE_COLUMNS=WIDTH/4; TILE_ROWS=(HEIGHT+3)/4; TILE_COUNT=TILE_ROWS*TILE_COLUMNS;
+            HALF_LOGICAL=HEIGHT*WIDTH*HALF_CHANNELS; FULL_LOGICAL=HALF_LOGICAL*2;
+            HALF_PHYSICAL=TILE_COUNT*16*HALF_CHANNELS; FULL_PHYSICAL=HALF_PHYSICAL*2;
+            TOTAL_OUTPUTS=requested_block==2 ? 663552 : requested_block==3 ? 442368 : 221184;
+            TOTAL_TASKS=requested_block==2 ? 258048 : requested_block==3 ? 175104 : 87552;
+            TOTAL_GROUPS=requested_block==2 ? 589824 : requested_block==3 ? 552960 : 470016;
+            if(requested_block==2)begin
+                vector_path={vectors_root,"/csp2"};
+                BASE_SOURCE=32'h035b4000;
+                stage_bases[0]=32'h035ea000; stage_bases[1]=32'h03605000;
+                stage_bases[2]=32'h03620000; stage_bases[3]=32'h0363b000; stage_bases[4]=32'h03656000;
+            end else if(requested_block==3)begin
+                vector_path={vectors_root,"/csp3"};
+                BASE_SOURCE=32'h0369a000;
+                stage_bases[0]=32'h036b5000; stage_bases[1]=32'h036c3000;
+                stage_bases[2]=32'h036d1000; stage_bases[3]=32'h036df000;
+                stage_bases[4]=32'h036ed000; stage_bases[5]=32'h036fb000; stage_bases[6]=32'h03709000;
+            end else begin
+                vector_path={vectors_root,"/csp4"};
+                BASE_SOURCE=32'h0372c000;
+                stage_bases[0]=32'h0373b000; stage_bases[1]=32'h03743000;
+                stage_bases[2]=32'h0374b000; stage_bases[3]=32'h03753000;
+                stage_bases[4]=32'h0375b000; stage_bases[5]=32'h03763000; stage_bases[6]=32'h0376b000;
+            end
+            $readmemh({vector_path,"/parameters/silu.hex"},silu_table);
+            $readmemh({vector_path,"/vectors/source.hex"},source_hwc,0,FULL_LOGICAL-1);
+            for(load_stage=0;load_stage<STAGE_COUNT;load_stage=load_stage+1)begin
+                $sformat(stage_path,"%0s/parameters/stage%0d",vector_path,load_stage);
+                $readmemh({stage_path,"_weights.hex"},weights,load_stage*MAX_WEIGHT,
+                    load_stage*MAX_WEIGHT+(flag_dw_stage(load_stage) ? HALF_CHANNELS*9 :
+                    stage_channels(load_stage)*stage_channels(load_stage))-1);
+                $readmemh({stage_path,"_bias.hex"},biases,load_stage*MAX_CHANNEL,load_stage*MAX_CHANNEL+stage_channels(load_stage)-1);
+                $readmemh({stage_path,"_pre_multiplier.hex"},premuls,load_stage*MAX_CHANNEL,load_stage*MAX_CHANNEL+stage_channels(load_stage)-1);
+                $readmemh({stage_path,"_pre_shift.hex"},preshifts,load_stage*MAX_CHANNEL,load_stage*MAX_CHANNEL+stage_channels(load_stage)-1);
+                $readmemh({stage_path,"_post_multiplier.hex"},postmuls,load_stage,load_stage);
+                $readmemh({stage_path,"_post_shift.hex"},postshifts,load_stage,load_stage);
+                $sformat(stage_path,"%0s/vectors/stage%0d",vector_path,load_stage);
+                $readmemh({stage_path,"_acc.hex"},gold_acc,load_stage*MAX_LOGICAL,load_stage*MAX_LOGICAL+stage_logical_size(load_stage)-1);
+                $readmemh({stage_path,"_pre.hex"},gold_pre,load_stage*MAX_LOGICAL,load_stage*MAX_LOGICAL+stage_logical_size(load_stage)-1);
+                $readmemh({stage_path,"_silu.hex"},gold_silu,load_stage*MAX_LOGICAL,load_stage*MAX_LOGICAL+stage_logical_size(load_stage)-1);
+                $readmemh({stage_path,"_post.hex"},gold_post,load_stage*MAX_LOGICAL,load_stage*MAX_LOGICAL+stage_logical_size(load_stage)-1);
+                $readmemh({stage_path,"_sum.hex"},gold_sum,load_stage*MAX_LOGICAL,load_stage*MAX_LOGICAL+stage_logical_size(load_stage)-1);
+                $readmemh({stage_path,"_output.hex"},gold_output,load_stage*MAX_LOGICAL,load_stage*MAX_LOGICAL+stage_logical_size(load_stage)-1);
+            end
+        end
+    endtask
+
+    // 共用一个实例连续跑三个块；清理的是TB账本，DUT工作缓存绝不由TB预填。
+    initial begin
+        if(!$value$plusargs("CASE=%d",test_case))test_case=0;
+        if(!$value$plusargs("NEGATIVE_ACC=%d",negative_acc))negative_acc=0;
+        if(!$value$plusargs("VECTORS_ROOT=%s",vectors_root))$fatal(1,"VECTORS_ROOT missing");
+        if(test_case==99)begin test_case=0; negative_acc=1; end
+        if(test_case<0 || test_case>5)$fatal(1,"unsupported CASE=%0d",test_case);
+        load_reference(2);
+        reset_and_load_table;
+        if(test_case==1)random_mode=1;
+        if(test_case==2)begin
+            launch_frame;
+            wait(layer==2 && busy && stage_outputs[2]>=128);
+            @(negedge clk);
+            rstn=0; // 中止计时端点就是共同复位实际断言沿，不再把下一拍归到wrapper开销。
+            aborted_cycles=cycles-run_start; aborted_outputs=outputs; aborted_runs=1;
+            $display("FEAT_BLOCK_ABORT block=2 case=2 cycles=%0d outputs=%0d",aborted_cycles,aborted_outputs);
+            reset_and_load_table;
+        end
+        if(test_case<=2)begin
+            for(sequence_block=2;sequence_block<=4;sequence_block=sequence_block+1)begin
+                load_reference(sequence_block); launch_frame; finish_frame;
+            end
+            if(runs!=3 || clean_outputs!=1327104 || clean_acc!=1327104 || clean_pre!=1327104 ||
+                clean_silu!=1327104 || clean_post!=1327104 || clean_groups!=1612800 ||
+                clean_tasks!=520704 || clean_reads!=190858 || clean_parameters!=193920 || clean_barriers!=19)
+                $fatal(1,"sequence exact count mismatch");
+            if(clean_cycles!=clean_accounted)$fatal(1,"clean sequence cycle budget/ledger mismatch");
+            if(table_loads!=(test_case==2 ? 2 : 1))$fatal(1,"common reset LUT reload count mismatch");
+            $display("FEATURE_BLOCKS_PASS case=%0d blocks=3 runs=%0d cycles=%0d accounted=%0d sequence_cycles=%0d overhead_cycles=%0d outputs=%0d acc=%0d pre=%0d silu=%0d post=%0d groups=%0d tasks=%0d reads=%0d parameters=%0d barriers=%0d table_loads=%0d aborted_runs=%0d aborted_cycles=%0d aborted_outputs=%0d",
+                test_case,runs,clean_cycles,clean_accounted,cycles-sequence_start,
+                cycles-sequence_start-clean_cycles-aborted_cycles,clean_outputs,clean_acc,clean_pre,clean_silu,clean_post,
+                clean_groups,clean_tasks,clean_reads,clean_parameters,clean_barriers,table_loads,aborted_runs,aborted_cycles,aborted_outputs);
+        end else begin
+            if(test_case==3)selected_block=15;
+            launch_frame;
+            wait(fault); @(negedge clk); active=0; start=0;
+            repeat(8)begin
+                host_begin; host_word(16'h8001); host_word(16'd3); host_end; #1;
+                if(!fault || !busy || done || start_ready || read_valid || parameter_valid ||
+                    core_valid || write_valid || barrier_valid)$fatal(1,"fault failed sticky ownership/no-traffic rule");
+            end
+            start=0;
+            if(block_id!==selected_block[3:0])$fatal(1,"fault owner changed");
+            if((test_case==3 || test_case==4) && outputs!=0)$fatal(1,"early fault wrote data");
+            if(test_case==3 && (reads!=0 || parameters!=0 || groups!=0 || tasks!=0 || barriers!=0))
+                $fatal(1,"illegal ID generated traffic");
+            if(test_case==5 && (outputs!=HALF_LOGICAL || barriers!=0))$fatal(1,"wrong barrier boundary mismatch");
+            $display("FEATURE_BLOCKS_EXPECTED_FAULT block=%0d case=%0d runs=%0d cycles=%0d accounted=%0d outputs=%0d acc=%0d pre=%0d silu=%0d post=%0d groups=%0d tasks=%0d reads=%0d parameters=%0d barriers=%0d",
+                selected_block,test_case,runs,cycles-run_start,accounted_cycles,outputs,accumulators,pres,silus,posts,groups,tasks,reads,parameters,barriers);
+        end
+        $display("NARROW_LEDGER table_preload_cycles=%0d frame_wall_cycles=%0d tx_export_cycles=%0d tx_service_cycles=%0d rx_service_cycles=%0d overlapping_ledgers=1 busy_start_packets=%0d",host_table_cycles,clean_cycles,host_export_cycles,host_service_cycles,host_rx_cycles,host_busy_starts);
+        complete=1;
+        $finish;
+    end
+endmodule
+

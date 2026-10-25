@@ -1,0 +1,234 @@
+{
+  "modules": [
+    {
+      "name": "road_ddr_selftest_top",
+      "feature": "ddr_extended_board",
+      "rtl_path": "road_ddr_selftest_top.v",
+      "description": "固定1056条命令的独占DDR边界与字节掩码自检；临时SRAM诊断。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_sys_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "C4板载50MHz",
+            "description": "C4板载50MHz"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "C7按键同时复位DDR和测试器",
+            "description": "C7按键同时复位DDR和测试器"
+          },
+          {
+            "name": "o_tmds_blue_p",
+            "direction": "output",
+            "width": 1,
+            "role": "HDMI1蓝色正端",
+            "description": "HDMI1蓝色正端"
+          },
+          {
+            "name": "o_tmds_green_p",
+            "direction": "output",
+            "width": 1,
+            "role": "HDMI1绿色正端",
+            "description": "HDMI1绿色正端"
+          },
+          {
+            "name": "o_tmds_red_p",
+            "direction": "output",
+            "width": 1,
+            "role": "HDMI1红色正端",
+            "description": "HDMI1红色正端"
+          },
+          {
+            "name": "o_tmds_clock_p",
+            "direction": "output",
+            "width": 1,
+            "role": "HDMI1时钟正端",
+            "description": "HDMI1时钟正端"
+          },
+          {
+            "name": "ddr_ck_p",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂IP封装内DDR专用端口",
+            "description": "原厂IP封装内DDR专用端口"
+          },
+          {
+            "name": "ddr_ck_n",
+            "direction": "output",
+            "width": 1,
+            "role": "沿原厂IP固定物理位置",
+            "description": "沿原厂IP固定物理位置"
+          },
+          {
+            "name": "ddr_cke",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR时钟使能",
+            "description": "DDR时钟使能"
+          },
+          {
+            "name": "ddr_odt",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR终端控制",
+            "description": "DDR终端控制"
+          },
+          {
+            "name": "ddr_cs_n",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR片选",
+            "description": "DDR片选"
+          },
+          {
+            "name": "ddr_ras_n",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR行命令",
+            "description": "DDR行命令"
+          },
+          {
+            "name": "ddr_cas_n",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR列命令",
+            "description": "DDR列命令"
+          },
+          {
+            "name": "ddr_we_n",
+            "direction": "output",
+            "width": 1,
+            "role": "DDR写命令",
+            "description": "DDR写命令"
+          },
+          {
+            "name": "ddr_ba",
+            "direction": "output",
+            "width": 2,
+            "role": "DDR bank地址",
+            "description": "DDR bank地址"
+          },
+          {
+            "name": "ddr_addr",
+            "direction": "output",
+            "width": 13,
+            "role": "DDR行列复用地址",
+            "description": "DDR行列复用地址"
+          },
+          {
+            "name": "ddr_dqs_p",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR双向差分选通",
+            "description": "DDR双向差分选通"
+          },
+          {
+            "name": "ddr_dqs_n",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR双向差分选通负端",
+            "description": "DDR双向差分选通负端"
+          },
+          {
+            "name": "ddr_dq",
+            "direction": "inout",
+            "width": 16,
+            "role": "DDR物理数据总线",
+            "description": "DDR物理数据总线"
+          },
+          {
+            "name": "ddr_dm",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR数据掩码物理端口",
+            "description": "DDR数据掩码物理端口"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "DDR user ~133.33MHz; top ref100MHz/pixel75MHz/serial375MHz"
+      },
+      "reset": {
+        "assertion": "Async assertion resets requester and entire controller together",
+        "release": "Top two-flop release; requester additionally waits PHY permission"
+      },
+      "behavior": [
+        "同步ROM读取：FETCH沿读，LOAD沿锁存，ISSUE核对魔数/索引/对齐/范围，然后才发请求。",
+        "1056个合法命令，528写和528读；194地址，两轮别名检查及140组掩码写读。",
+        "AW/W同拍呈现，各自保持至ready；一个读在途，支持AR同拍返回。",
+        "掩码为一保留原字节；128位逐项比较和RLAST正确才计入成功读。",
+        "首错锁定；初始化与核心窗口分别统计；WRITE的both/AW-only/W-only与AR/R等待互斥。",
+        "显示最高两位为状态，四页携带期望、实际和等待计数；冻结payload直到ack，SOF接收。"
+      ],
+      "constraints": [
+        "native地址单位2字节，范围0x1a00000到0x1fffff8；ROM有效字1056、总深度2048、每字192位。",
+        "C_TIMEOUT=27h7ffffff；不从AW/W接受虚构写完成，不赋予CNN输入槽READY语义。",
+        "保留原显示CDC两级与已批准精确首级/7.5ns最大数据延迟处理；无全局false path。"
+      ],
+      "corner_cases": [
+        "独立AW/W背压、即时读返回、错数据/末拍、超时、PHY丢失、异常返回、指令损坏、部分事务中公共复位。"
+      ],
+      "verification_cases": [
+        "24项受控端点计划、完整命令scoreboard、真实TD实现和独立板测。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "command_write",
+          "title": "命令读取与独立接受",
+          "scenario": "split_write",
+          "description": "阶段图非控制器固定延迟；AW先接受时W继续保持，所有请求在ISSUE检查后。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........"
+              },
+              {
+                "name": "state",
+                "wave": "=========",
+                "data": [
+                  "FETCH",
+                  "LOAD",
+                  "ISSUE",
+                  "WRITE",
+                  "WRITE",
+                  "WRITE",
+                  "ADVANCE",
+                  "FETCH",
+                  "LOAD"
+                ]
+              },
+              {
+                "name": "AWVALID",
+                "wave": "0..10...."
+              },
+              {
+                "name": "AWREADY",
+                "wave": "0..10...."
+              },
+              {
+                "name": "WVALID",
+                "wave": "0..1..0.."
+              },
+              {
+                "name": "WREADY",
+                "wave": "0....10.."
+              },
+              {
+                "name": "payload",
+                "wave": "x.=......",
+                "data": [
+                  "address/data/mask held"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

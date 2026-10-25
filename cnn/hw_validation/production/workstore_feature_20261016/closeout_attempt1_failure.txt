@@ -1,0 +1,3 @@
+2026-10-16 closeout.py首次只读收口校验失败，未发布latest_status，未调用或重跑TD。
+原因：将命令记录中的Windows反斜杠可执行路径与正斜杠字符串直接比较，AssertionError；真实指向同一TD文件。
+修正：保持build.tcl参数精确比较，执行路径用Path.resolve规范化比较；工具/输入manifest SHA256仍逐文件验证，不降低哈希检查。

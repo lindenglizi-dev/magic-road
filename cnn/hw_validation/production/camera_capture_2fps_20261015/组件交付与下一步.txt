@@ -1,0 +1,61 @@
+彩色缩放与双输入槽组件交付；2026-10-15；C8
+
+一、当前未通过的具体事项
+1. 尚未综合/布局布线，未测真实Slice/DSP/ERAM及setup/hold；2个ERAM只是实际仿真使用的逻辑实例，不能写成物理资源通过。
+2. 真实PAXI的RAW/长背压及旧事务排空仍缺厂商依据。槽READY仅接受受控外部write_visible，未替代为AW/W accepted、内部B或固定等待。
+3. 严格交付门未闭合：缩放1426错误/0严格警告，槽控制464错误/7严格警告；不是1890个仿真数值错误。完整原始报告在gate_attempt3/，不删记录、不放宽门禁。
+4. 真实摄像头行间隔、DMA/CDC、直播共享DDR与完整67层尚未集成，本轮无位流、无上板、无识别精度/FPS结论。
+
+二、本轮完成的位置
+官方AWB彩色旁路 → [精确2/5缩放：已独立对拍] → [整帧双槽控制：已独立对拍]
+→ 实际采集写DMA/唯一PAXI服务：未接 → S1前三层：沿既有证据 → 后续网络/后处理/显示：另行集成。
+没有重跑S1，也没有修改生产工程、现核、训练或原测试位流。
+
+三、修改代码与规格
+rtl/road_area_resize.v：高lane先RGB96输入，11bit水平加权，2个40×512 PH1P ERAM保存13bit纵向累加，最后一次RNE /25。
+rtl/road_capture_slots.v：FREE→CAPTURING→WAIT_VISIBLE→READY→READING→FREE；异常帧QUARANTINE，仅复位清除。
+规格与周期图：specifications/source/spec/camera_capture/road_area_resize_spec.md、road_capture_slots_spec.md及waveforms/。
+明确没有新增真实DDR桥、通用加速器、第二视频链、动态系数或时序例外。
+
+四、真实功能结果
+ModelSim SE-64 2020.4；仿真编译0错误/0警告。缩放使用真实安路PH1P_LOGIC_ERAM模型，不使用接口stub代替模型。
+三个完整向量：编号彩条、固定种子20261015随机、全255。
+每帧147456个像素、442368字节，逐项匹配；有效mask01，低byte依次R/G/B；SOF/EOL/EOF位置一致。
+三帧各576004个TB周期，首/末输出相对首valid为1606/575717。
+CPU调度对应1600/575711，RTL数值流水净增加6拍；首/末窗口并非完整CNN周期。
+短行、长行/EOL错、重入SOF、中途复位后全255恢复通过；恢复测试576573拍，3次预期错误。
+无行空闲输入明确过载，offset343报错，零输出/无EOF。不会反压摄像头，也不发布半帧。
+槽四组回归19/29/25/25拍：完整生命周期、同拍EOF+visible、无FREE整帧跳过、旧/早/重复visible、错身份claim/release、半帧隔离、复位及另一槽同时末读释放通过。
+protocol_error是sticky，报告中的高电平周期数不当作错误事件数。
+全部9例最终收据及源/向量/工具哈希：verification/suite_manifest.json、component_results.json。
+
+五、输入时序与资源边界
+每源行320拍四像素输入，常规fixture行间480空拍；最短参考空拍192，对应行周期512。
+128条×67bit变长记录FIFO，CPU高水位120条、192个待处理像素；证明脚本rtl/road_area_resize_queue_reference.py可重跑。
+不以2FPS平均流量替代实际AWB行突发约束；真实摄像头还需测量行间隔，过载时明确整帧作废。
+FIFO8576bit，2个ERAM逻辑实例和其余控制/常数除法流水全部计入共享D组，而非额外资源额度。
+实际映射未知；不能以源码无乘法符号直接宣布DSP=0。常数10486的移位加减除25在0..6375全范围CPU穷举相符。
+vendor vopt有4条固定INIT_FILE警告，保留原始日志；未依赖RAM初始化，行相位0/2先完整覆盖累加行。
+
+六、严格门与失败的具体性质
+两RTL的compile静态语法门通过；ast/readability/comment/naming/profile未通过；testbench/toolchain未请求。真实ModelSim结果另列，不改写静态门。
+槽：generate展开导致12条VG153驱动未知，人工复核各bank切片无漏位/冲突，但不据此销门。还包括reset作为组合门控、位宽推断/字面量、源锥/操作预算及格式注释项。
+缩放：PH1P实例参数静态解析未决、RAM驱动边界、组合锥与操作预算、多处默认赋值/覆盖式选择诊断、位宽/字面量和格式注释项。
+已从真实厂商模型提取vendor_interface.v仅作静态声明。提取器没有保留全部字符串参数，VG097仍不可解析；该文件不进入仿真或未来综合。
+不为降低门禁数字增加无意义流水，也不把功能通过等同于严格生产交付通过。后续物理展开后优先核查真实语义和资源，再单列格式整改。
+首次slots测试3例失败根因是TB在posedge NBA更新前观察注册脉冲；改negedge采样并统一重跑4例通过。旧失败目录完整保留，非核时序加速或修改功能掩盖错误。
+原Windows Icarus在数组展开崩溃，不把它记为RTL编译通过；最终功能证据使用已授权ModelSim。
+
+七、唯一地址账与性能预算
+新组件输出base是字节地址：slot0 0x03400000，slot1 0x03480000；未来唯一PAXI边界byte>>1一次。
+graph_address_ledger.json核查冻结graph的70个物理分配互不重叠，视频正常payload与CNN槽/特征区不重叠；仍未证明异常视频地址/预取上界。
+down2.pw.conv真实图基址0x035B4000。旧诊断PW 0x03600000会覆盖图中的csp2.blocks.0.dw.conv、csp2.blocks.0.pw.conv、csp2.blocks.1.dw.conv，禁止直接沿用。
+split/concat仅view；residual storage_alias须按生产者完成、逐元素读后原址写的生命周期实现；本组件无DMA，不宣称别处的实际调度已完成该证明。
+2FPS为50M整流程周期预算；1FPS仅100M备选，500ms结果过期不改。S1前缀15848967拍沿旧收据，占50M的31.70%，剩34151033；在100M备选中占15.85%，剩84151033。两者均未计完整后续网络、真实视频竞争和结果年龄。
+1FPS下若结果间隔约1s且源年龄A>0，保持500ms撤框必有空窗；不能把重复旧表算新检测，也不能自动放宽过期阈值。
+
+八、下一步及冻结
+本轮组件收口后准备97bit×64完整结果表source-held→pending→active协议；源表保持到最后复制ack，pending只在SOF成为active，count0有效清框。
+实际CDC实施前须对齐协调统一265bit元数据的具体字段位段，以及共享时间安全快照来源/最大误差；本轮不猜位段、不直接同步动态64bit计数。
+真实采集DMA接入等待厂商Q1/Q2/Q3/Q4正式依据；正常读的逻辑可见与异常重用的drain分开，避免再扩CRC/DHI探针。
+源依赖59项和旧S1冻结174项只读核验均无变化。旧报告/失败/位流不覆盖，不提交推送。

@@ -1,0 +1,20 @@
+--- 
++++ 
+@@ -162,7 +162,6 @@
+ 	assign pp_output_ready = i_rstn && !o_fault && (!flag_valid_o || i_output_ready); // 单槽允许同拍出入
+ 	assign flag_pp_accept = pp_valid && pp_output_ready; // 量化输出进入写回槽
+ 	assign flag_write_accept = o_output_valid && i_output_ready; // 最终所有权释放事件
+-	assign flag_acc_accept = mac_valid && flag_owned && flag_closed && pp_ready && !o_fault; // 结果只移交一次
+ 	assign wire_pp_match[0] = reg_output_mask[0] && pp_tag == reg_tags[15:0]; // 甲路标识命中
+ 	assign wire_pp_match[1] = reg_output_mask[1] && pp_tag == reg_tags[31:16]; // 乙路标识命中
+ 	assign wire_pp_match[2] = reg_output_mask[2] && pp_tag == reg_tags[47:32]; // 丙路标识命中
+@@ -176,6 +175,9 @@
+ 	assign flag_sum_high = wire_sum > 9'sd127;  // INT8上界判定
+ 	assign flag_sum_low = wire_sum < -9'sd128;  // INT8下界判定
+ 	assign wire_saturated = flag_sum_high ? 8'sd127 : flag_sum_low ? -8'sd128 : wire_sum[7:0]; // 饱和而不回绕
++
++	//OUTPUT接口
++	assign flag_acc_accept = mac_valid && flag_owned && flag_closed && pp_ready && !o_fault; // 结果只移交一次
+ 
+ 	//---------------输出信号连线---------------//
+ 	//用户接口

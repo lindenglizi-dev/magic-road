@@ -1,0 +1,97 @@
+{
+  "modules": [
+    {
+      "name": "tb_road_postprocess_real_rom",
+      "feature": "postprocess_real_rom",
+      "rtl_path": "tb_road_postprocess_real_rom.v",
+      "description": "Full C2 candidate RAM and C9 FINAL97 simulation through the frozen shared LUT service, using either a controlled true-model word endpoint or one actual PH1P reader.",
+      "interfaces": {
+        "protocol": "simulation only",
+        "ports": []
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "values": "Common reset clears head, candidate RAM, NMS, LUT service and endpoint; common cancel preserves an accepted endpoint word until drain."
+      },
+      "behavior": [
+        "Streams exactly 12096 saved 112-bit head words into C2, uses C2's sole internal candidate RAM, and directly connects the sealed/read/response/finish handshakes to C9.",
+        "Instantiates the actual frozen road_shared_lut_service; a simulation-only 7168-word true G10 physical image backs exactly one pending word request. Compares every accepted FINAL97 entry to existing frozen vectors.",
+        "Measures start-to-seal, seal-to-last-entry/done, start-to-last-entry/done, C2 phase counters, and mutually exclusive C9 phase occupancy with true stall subcounts.",
+        "Reports adapter accept-to-response-handshake latency, physical word accepted/consumed counts and request/response wait counters. Function and shared total 2000000-cycle budget are separate outcomes.",
+        "USE_VENDOR_ROM excludes the controlled image array and response process, instantiates one unchanged road_numeric_rom_reader with 56 PH1P lanes, and applies symmetric external handshake gates for random stalls. Common cancel never resets the real reader."
+      ],
+      "constraints": [
+        "The checker may store expected FINAL97 words but does not instantiate a second functional candidate RAM.",
+        "This testbench does not include the production C8 collector, CNN inference, synthesis, timing closure, bitstream, board, or Flash operations.",
+        "One shared 2000000-cycle total start-accept to done budget covers scan/TopK/decode/ROM waits/NMS; report budget failure independently of functional correctness."
+      ],
+      "corner_cases": [
+        "empty table, inclusive threshold, cross-class identical boxes, same-class suppression, 128 candidates per class, 64 outputs, 992 and 6944 NMS comparisons",
+        "random input/LUT/output stalls, at least 128 cycles of output backpressure, consecutive real then empty frames",
+        "reset in scan/sort/decode/NMS multiply/held output and response error after an accepted entry followed by cancel and full rerun",
+        "Cancel after accepted ROM request retains endpoint ownership, drains exactly one old word and restarts a new frame; common reset flushes accepted read; controlled reader fault during owned LUT query requires common reset."
+      ],
+      "verification_cases": [
+        "Seven saved head streams in normal/random modes, original eight recovery/edge runs, plus accepted-ROM cancel, reset and controlled-fault recovery: 25 controlled runs.",
+        "Every successful run checks all FINAL97 entries, frame token, counts, finish readiness, stable held handshakes, seal-time RAM write freeze, and the 2000000-cycle postprocess allowance.",
+        "The actual PH1P mode runs 24 cases: original 22 plus accepted-ROM cancel and reset recovery; controlled ROM fault injection is excluded. Vendor warnings remain a separate unresolved status."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "cancel_drain",
+          "title": "Accepted ROM read cancellation and drain",
+          "scenario": "cancel_drain",
+          "description": "At the rising edge with cancel high, the accepted word retains endpoint ownership. The late word is consumed in drain before a fresh LUT request can be accepted.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p..........."
+              },
+              {
+                "name": "rom_request_valid",
+                "wave": "010........."
+              },
+              {
+                "name": "rom_request_ready",
+                "wave": "110........."
+              },
+              {
+                "name": "endpoint_pending",
+                "wave": "0.1.....0..."
+              },
+              {
+                "name": "cancel",
+                "wave": "0..10......."
+              },
+              {
+                "name": "lut_request_ready",
+                "wave": "0.........1."
+              },
+              {
+                "name": "rom_response_valid",
+                "wave": "0.......10.."
+              },
+              {
+                "name": "rom_response_ready",
+                "wave": "0...1.....0."
+              },
+              {
+                "name": "new_lut_request_valid",
+                "wave": "0....1.....0"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

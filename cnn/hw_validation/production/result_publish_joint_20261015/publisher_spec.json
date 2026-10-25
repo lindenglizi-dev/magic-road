@@ -1,0 +1,597 @@
+{
+  "modules": [
+    {
+      "name": "road_result_publisher",
+      "feature": "result_publish_joint",
+      "rtl_path": "rtl/road_result_publisher.v",
+      "description": "C9结果事务控制，连接原NMS FINAL97与C8原source/pending/active三表。只保存265位SRIF1上下文、7位计数、五态FSM和两拍reset释放许可；无FINAL97数组。",
+      "interfaces": {
+        "protocol": "ready-valid with one-cycle done and copy acknowledgement",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "唯一100MHz上升沿时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "共同低有效异步断言；本地两拍释放许可，最早第三边沿接收",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_cancel",
+            "direction": "input",
+            "width": 1,
+            "role": "cancel",
+            "description": "同域取消；seal前立即撤销，WAIT_ACK忽略",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "start valid",
+            "description": "完整描述符有效，等待ready期间保持所有字段",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start_epoch",
+            "direction": "input",
+            "width": 32,
+            "role": "epoch",
+            "description": "任务epoch",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start_task_id",
+            "direction": "input",
+            "width": 32,
+            "role": "task identity",
+            "description": "任务标识，同时作为pipeline frame_token",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start_source_frame_id",
+            "direction": "input",
+            "width": 32,
+            "role": "source identity",
+            "description": "物理源帧标识，跳帧不重编号",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start_model_id",
+            "direction": "input",
+            "width": 32,
+            "role": "model identity",
+            "description": "模型包标识",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start_capture_ms",
+            "direction": "input",
+            "width": 64,
+            "role": "capture timestamp",
+            "description": "同源road_time_snapshot时间戳，不跨域直采",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_now_ms",
+            "direction": "input",
+            "width": 64,
+            "role": "completion timestamp",
+            "description": "唯一road_time_snapshot.o_src_now_ms；合法done边沿锁存",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pipeline_start_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "start ready",
+            "description": "原C2启动许可；不能用于组合门控o_pipeline_start_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_entry_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "entry valid",
+            "description": "原NMS的FINAL97有效，等待ready期间保持",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_entry",
+            "direction": "input",
+            "width": 97,
+            "role": "final entry",
+            "description": "FINAL97原样直通，不保存第四张表",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_result_frame_token",
+            "direction": "input",
+            "width": 32,
+            "role": "result identity",
+            "description": "NMS当前任务token，每条entry及done检查",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_result_count",
+            "direction": "input",
+            "width": 7,
+            "role": "result count",
+            "description": "NMS已接受数；done必须等于本模块实际接受计数且至多64",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_result_done",
+            "direction": "input",
+            "width": 1,
+            "role": "result complete",
+            "description": "NMS完成脉冲；不得与entry_valid同拍",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pipeline_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "pipeline failure",
+            "description": "C2/NMS/LUT/reader故障聚合；不能组合反馈到pipeline_cancel",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_entry_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "table entry ready",
+            "description": "C8 source条目接收许可；start时也需可写",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_meta_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "table metadata ready",
+            "description": "C8 source seal许可",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_copy_ack",
+            "direction": "input",
+            "width": 1,
+            "role": "copy acknowledgement",
+            "description": "已seal完整表复制确认；唯一正常退休事件",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_busy",
+            "direction": "input",
+            "width": 1,
+            "role": "table ownership",
+            "description": "C8 source非空/忙指示；启动需要其为0",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_error",
+            "direction": "input",
+            "width": 1,
+            "role": "table failure",
+            "description": "C8源端错误，seal前撤销",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_start_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "start ready",
+            "description": "released且IDLE且无cancel/fault/error且C8 source空/可写且pipeline ready",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pipeline_start_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "start valid",
+            "description": "i_start_valid且can_accept_except_pipeline_ready；独立于pipeline ready，双方同边沿接受",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pipeline_frame_token",
+            "direction": "output",
+            "width": 32,
+            "role": "pipeline identity",
+            "description": "IDLE直通start_task_id，非IDLE输出锁存task",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pipeline_model_id",
+            "direction": "output",
+            "width": 32,
+            "role": "pipeline model",
+            "description": "IDLE直通start_model_id，非IDLE输出锁存model",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pipeline_cancel",
+            "direction": "output",
+            "width": 1,
+            "role": "pipeline cancellation",
+            "description": "released && (stateABORT || (i_cancel && state!=WAIT_ACK))；故障只能经ABORT寄存边界驱动",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_entry_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "entry ready",
+          "description": "仅RUN且无RUN失败，回传C8 entry_ready；计数只随entry valid&&ready增加。裸ready不构成接受，token检查由entry_valid或done触发",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_entry_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "table entry valid",
+            "description": "仅RUN且无RUN失败，直通i_entry_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_entry",
+            "direction": "output",
+            "width": 97,
+            "role": "table entry data",
+            "description": "始终直接连接i_entry，不寄存、不建数组",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_meta_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "table metadata valid",
+            "description": "仅META且无META失败；与末entry分拍，ready前保持",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_metadata",
+            "direction": "output",
+            "width": 265,
+            "role": "SRIF1 metadata",
+            "description": "完整锁存上下文；成功done锁count/completion，保持到退休/下一任务，reset清零",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_abort",
+            "direction": "output",
+            "width": 1,
+            "role": "table source abort",
+            "description": "released且ABORT或RUN/META本拍失败；WAIT_ACK为0",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "transaction busy",
+            "description": "released且state!=IDLE，从start接受后至copy_ack退休或ABORT结束",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 1,
+            "role": "error pulse",
+            "description": "released且ABORT，单拍错误，无新增粘滞诊断",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "parameters": [],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000,
+        "domain": "all ports are in i_clk; C8 owns downstream CDC"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "assertion": "共同异步断言，所有事务控制输出立即撤销；直通entry数据无valid时无语义",
+        "release": "本地两级许可；复位释放后的前两边沿均不接受，最早第三边沿接受",
+        "values": "state=IDLE, accepted_count=0, metadata=0, release=0; all valid/ready/cancel/abort/busy/error control outputs=0"
+      },
+      "behavior": [
+        "定义 released 为本地两拍释放许可。can_accept_except_pipeline_ready = released && IDLE && !cancel && !pipeline_fault && !table_error && !table_busy && table_entry_ready。o_pipeline_start_valid=i_start_valid&&can_accept_except_pipeline_ready；o_start_ready=can_accept_except_pipeline_ready&&i_pipeline_start_ready。valid不依赖downstream ready，避免valid-waits-ready死锁。",
+        "IDLE仅在i_start_valid&&o_start_ready边沿转RUN并锁SRIF1{completion0,capture,status0,count0,model,source_frame,task,epoch}，计数清零。IDLE pipeline token/model直通start字段，其余状态取锁存值。source busy初始0不足以绕过发布器非IDLE所有权。",
+        "RUN common_failure=cancel||pipeline_fault||table_error；entry_valid且token错误或accepted_count>=64为失败。仅无RUN失败时entry_valid直通C8，C8 entry_ready回传NMS；实际valid&&ready计数加一，数值0..64。",
+        "RUN done必须没有entry_valid、result token匹配、result_count==accepted_count<=64且now_ms>=capture_ms。任一失败优先撤销，不转发同拍entry。合法done边沿锁count及同源now为completion，转META；本拍meta_valid仍0。",
+        "META metadata全部265位保持。cancel/pipeline_fault/table_error/意外entry_valid优先，立即压低meta_valid并转ABORT。否则meta_valid保持至meta_ready边沿，seal后转WAIT_ACK。i_now_ms变化不再改变completion。",
+        "WAIT_ACK为提交边界；忽略迟到cancel/fault/error/entry/done，o_table_abort和o_pipeline_cancel始终0，metadata保持。只在copy_ack边沿清计数并回IDLE；同拍迟到cancel不撤销已seal表。共同reset可取消已发布事务。",
+        "RUN/META失败本拍o_table_abort=1并转ABORT；o_pipeline_cancel不组合依赖i_pipeline_fault，因为NMS fault受!cancel门控。精确o_pipeline_cancel=released&&(stateABORT||(i_cancel&&state!=WAIT_ACK))。",
+        "ABORT保持一拍o_table_abort/o_pipeline_cancel/o_error=1，计数清零并回IDLE。持续cancel继续阻止启动。原LUT DRAIN排空已接受ROM读；不得以reader reset或伪造完成替代。",
+        "o_busy=released&&(state!=IDLE)；o_error仅ABORT单拍；o_table_entry始终i_entry直通。metadata在ack/abort后可保留旧无效值，下一start全量覆盖；仅reset强制metadata零。",
+        "SRIF1布局：epoch[31:0],task[63:32],source_frame[95:64],model[127:96],count[134:128],status[136:135]=0,capture[200:137],completion[264:201]。成功包括0条；失败不seal假空表。"
+      ],
+      "constraints": [
+        "仅新result_publish_joint_20261015目录内新增；冻结C2/NMS/LUT/reader/C8/time/ROM原文件不得修改。",
+        "Verilog-2001、单100MHz域、三段FSM IDLE/RUN/META/WAIT_ACK/ABORT；265位metadata、7位count；无第四表、无新FIFO、无FINAL97数组。",
+        "i_start_valid等待ready期间描述符保持；entry payload由NMS在valid等待ready期间保持；publisher负责无失败的直通反压。",
+        "i_now_ms与capture_ms必须来自唯一coherent road_time_snapshot；不跨域直采宽总线，完成时间不使用TB加速计数冒充真实时间。",
+        "共同reset覆盖C2/NMS/LUT/C8；publisher局部取消不复位ROM reader，已接受读由原LUT DRAIN排空。",
+        "source/pending/active复制与SOF切表仍由冻结C8拥有；seal非显示生效、copy_ack非新检测SOF；组件功能不证明DDR/67层CNN/资源/时序/板卡。",
+        "新C8实例AGE_LIMIT_MS=2000；旧默认500不改。age_upper=snapshot-capture+4，1996差允许画、1997差禁画；未知年龄为全1AGE_INVALID。",
+        "整帧1FPS/100M周期规划、Slice<=21216/DSP<=40/ERAM<=108硬限不变；无TD、训练、生产、bitstream、board、Flash或时序例外。"
+      ],
+      "corner_cases": [
+        "0/1/64条合法成功；第65个valid即失败，即使C8 ready为0也不能默默等待。",
+        "done与entry_valid同拍、count不符/65、错误token、now<capture均撤销；now==capture合法。",
+        "启动被pipeline ready/table writable/busy/reset/cancel/fault/error阻塞；pipeline valid不能依赖pipeline ready。",
+        "长entry反压不增计数；长META反压上下文和completion保持；意外META entry撤销。",
+        "preseal cancel与entry/meta ready同拍必须压低有效并撤销；postseal cancel/fault与copy_ack同拍必须正常退休。",
+        "各状态共同reset及两拍同步许可；连续不同token无上下文混串。",
+        "NMS fault组合反馈风险：当拍table_abort，下一ABORT拍pipeline_cancel，不能使fault自消失。"
+      ],
+      "verification_cases": [
+        "reference.py stdlib断言：0/1/64，启动许可各项阻塞、entry及meta长背压、计数/token/time/done协议错误、取消seal边界、copy_ack及各状态reset；reference/self_check_receipt.json绑定模型SHA256与逐周期trace。",
+        "新publisher RTL与同一参考事务逐拍/字段对拍；检查状态、actual accepted count及完整265位metadata，不只最终busy。",
+        "真实12096cell→唯一正确PH1P ROM→LUT/TopK/NMS→C8 source/pending/active：真实7框、空表、64框/6944比较、长背压、部分输出故障、各阶段reset、连续不同token。",
+        "正常100MHz/75MHz、1650x750模板，每1237500像素拍SOF=16.5ms；实际time_snapshot链；长年龄/1秒更新另以显式受控coherent时基分组，不宣称摄像头闭环或实测FPS。",
+        "实际测start→meta_accept→copy_ack→下一SOF active，互斥区间相加；等待子计数不重叠累加；旧表保留不计新检测。",
+        "严格compile/ast/readability/comment/naming/profile/testbench/toolchain八门状态逐项保留；真实功能通过不替代未闭合门禁或部署验收。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "complete_single_result",
+          "title": "一条结果的完整事务及全部端口",
+          "scenario": "complete_single_result",
+          "description": "每格表示上升沿前值。前两拍reset释放许可，第三拍start接受；entry反压一拍后接受，done下一拍进入META；meta反压一拍后seal；WAIT_ACK忽略cancel/fault，copy_ack退休。所有35个端口均具名。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..........."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "1..........."
+              },
+              {
+                "name": "i_cancel",
+                "wave": "0.......10.."
+              },
+              {
+                "name": "i_start_valid",
+                "wave": "0.10........"
+              },
+              {
+                "name": "i_start_epoch",
+                "wave": "=...........",
+                "data": [
+                  "3"
+                ]
+              },
+              {
+                "name": "i_start_task_id",
+                "wave": "=...........",
+                "data": [
+                  "17"
+                ]
+              },
+              {
+                "name": "i_start_source_frame_id",
+                "wave": "=...........",
+                "data": [
+                  "29"
+                ]
+              },
+              {
+                "name": "i_start_model_id",
+                "wave": "=...........",
+                "data": [
+                  "41"
+                ]
+              },
+              {
+                "name": "i_start_capture_ms",
+                "wave": "=...........",
+                "data": [
+                  "100"
+                ]
+              },
+              {
+                "name": "i_now_ms",
+                "wave": "=...........",
+                "data": [
+                  "123"
+                ]
+              },
+              {
+                "name": "i_pipeline_start_ready",
+                "wave": "1..........."
+              },
+              {
+                "name": "i_entry_valid",
+                "wave": "0..1.0......"
+              },
+              {
+                "name": "i_entry",
+                "wave": "=...........",
+                "data": [
+                  "FINAL97#0"
+                ]
+              },
+              {
+                "name": "i_result_frame_token",
+                "wave": "=...........",
+                "data": [
+                  "17"
+                ]
+              },
+              {
+                "name": "i_result_count",
+                "wave": "=....=......",
+                "data": [
+                  "0",
+                  "1"
+                ]
+              },
+              {
+                "name": "i_result_done",
+                "wave": "0....10....."
+              },
+              {
+                "name": "i_pipeline_fault",
+                "wave": "0.......10.."
+              },
+              {
+                "name": "i_table_entry_ready",
+                "wave": "1..01......."
+              },
+              {
+                "name": "i_table_meta_ready",
+                "wave": "1.....01...."
+              },
+              {
+                "name": "i_table_copy_ack",
+                "wave": "0.........10"
+              },
+              {
+                "name": "i_table_busy",
+                "wave": "0....1.....0"
+              },
+              {
+                "name": "i_table_error",
+                "wave": "0..........."
+              },
+              {
+                "name": "o_start_ready",
+                "wave": "0.10.......1"
+              },
+              {
+                "name": "o_pipeline_start_valid",
+                "wave": "0.10........"
+              },
+              {
+                "name": "o_pipeline_frame_token",
+                "wave": "=...........",
+                "data": [
+                  "17"
+                ]
+              },
+              {
+                "name": "o_pipeline_model_id",
+                "wave": "=...........",
+                "data": [
+                  "41"
+                ]
+              },
+              {
+                "name": "o_pipeline_cancel",
+                "wave": "0..........."
+              },
+              {
+                "name": "o_entry_ready",
+                "wave": "0...1.0....."
+              },
+              {
+                "name": "o_table_entry_valid",
+                "wave": "0..1.0......"
+              },
+              {
+                "name": "o_table_entry",
+                "wave": "=...........",
+                "data": [
+                  "FINAL97#0"
+                ]
+              },
+              {
+                "name": "o_table_meta_valid",
+                "wave": "0.....1.0..."
+              },
+              {
+                "name": "o_table_metadata",
+                "wave": "=..=..=.....",
+                "data": [
+                  "0",
+                  "ctx(count0,complete0)",
+                  "sealed(count1,complete123)"
+                ]
+              },
+              {
+                "name": "o_table_abort",
+                "wave": "0..........."
+              },
+              {
+                "name": "o_busy",
+                "wave": "0..1.......0"
+              },
+              {
+                "name": "o_error",
+                "wave": "0..........."
+              }
+            ],
+            "config": {
+              "hscale": 1
+            }
+          }
+        },
+        {
+          "id": "fault_feedback_abort",
+          "title": "故障取消的寄存边界",
+          "scenario": "fault_feedback_abort",
+          "description": "RUN出现pipeline fault时立即table_abort，但pipeline_cancel仍0；下一ABORT拍pipeline_cancel和error为1，避免NMS故障受cancel门控形成组合回路。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p...."
+              },
+              {
+                "name": "state",
+                "wave": "===..",
+                "data": [
+                  "RUN",
+                  "ABORT",
+                  "IDLE"
+                ]
+              },
+              {
+                "name": "i_pipeline_fault",
+                "wave": "10..."
+              },
+              {
+                "name": "i_cancel",
+                "wave": "0...."
+              },
+              {
+                "name": "o_table_abort",
+                "wave": "1.0.."
+              },
+              {
+                "name": "o_pipeline_cancel",
+                "wave": "010.."
+              },
+              {
+                "name": "o_error",
+                "wave": "010.."
+              },
+              {
+                "name": "o_table_entry_valid",
+                "wave": "0...."
+              },
+              {
+                "name": "o_table_meta_valid",
+                "wave": "0...."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2355 @@
+SALPHOENIX®1A 系列 FPGA
+   DDR IP 用户手册
+
+ 上海安路信息科技股份有限公司
+
+
+
+IPUG_035（v1.4）2025 年 07 月
+                                                              ®
+                                                    SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+                                        目      录
+     目 录 ..................................................... I
+
+     1 概述 ..................................................... 4
+
+          1.1 特性与规格 ................................................................ 4
+
+             1.1.1 DDR4 ................................................................ 4
+
+             1.1.2 DDR3 ................................................................ 5
+
+             1.1.3 IP Feature .......................................................... 6
+
+          1.2 系统解决方案 .............................................................. 7
+
+             1.2.1 Standard PHY 和 Ping-Pong PHY ....................................... 7
+
+             1.2.2 MC and Standard PHY ................................................. 8
+
+          1.3 资源与性能 ................................................................ 9
+
+             1.3.1 资源使用 ............................................................ 9
+
+             1.3.2 读写效率 ............................................................ 9
+
+
+     2 IP 使用 ................................................. 11
+
+          2.1 定制化 IP 工程步骤 ........................................................ 11
+
+             2.1.1 新建 DDR SDRAM IP ................................................... 11
+
+             2.1.2 General 配置 ........................................................ 11
+
+             2.1.3 PHY Controller Option 配置 .......................................... 12
+
+             2.1.4 Memory Option 配置 .................................................. 15
+
+             2.1.5 IO Planning 配置 .................................................... 16
+
+             2.1.6 Summary 介绍 ........................................................ 18
+
+          2.2 IP 输出文件 ............................................................... 19
+
+
+     3 IP 介绍 ................................................. 20
+
+          3.1 顶层端口描述 ............................................................. 21
+
+            3.1.1 PHY 端口 ............................................................ 21
+IPUG035_1.4                           www.anlogic.com                               I
+
+2025.07
+                                                               ®
+                                                     SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+              3.1.2 MC 端口 ............................................................. 28
+
+          3.2 PPC ...................................................................... 31
+
+          3.3 DDR BANK ................................................................. 31
+
+          3.4 DDR PAD .................................................................. 31
+
+          3.5 时钟与复位 ............................................................... 31
+
+          3.6 DFI ...................................................................... 32
+
+              3.6.1 DFI 写操作 ......................................................... 33
+
+              3.6.2 DFI 读操作 ......................................................... 35
+
+          3.7 Memory Controller ........................................................ 37
+
+              3.7.1 地址映射 ........................................................... 37
+
+              3.7.2 AXI4 ............................................................... 41
+
+              3.7.3 pAXI ............................................................... 41
+
+
+     4 参考设计 ................................................ 43
+
+          4.1 仿真设置 ................................................................. 43
+
+              4.1.1 宏定义 ............................................................. 43
+
+              4.1.2 仿真模型 ........................................................... 43
+
+          4.2 双控制器应用 ............................................................. 44
+
+              4.2.1 非共享 BANK ......................................................... 44
+
+              4.2.2 共享 BANK ........................................................... 45
+
+
+     5 功能调试 ................................................ 46
+
+          5.1 UART ..................................................................... 46
+
+          5.2 用户交互 RAM .............................................................. 49
+
+
+     附录一：兼容说明 .......................................... 50
+
+     版本信息 .................................................. 52
+
+
+IPUG035_1.4                              www.anlogic.com                               II
+
+2025.07
+                                                ®
+                                        SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+     免责声明 .................................................. 53
+
+
+
+
+IPUG035_1.4                 www.anlogic.com                          III
+
+2025.07
+                                                               ®
+                                                      SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+1 概述
+
+   本手册主要介绍 SALPHOENIX®1A（以下简称 PH1A）系列 FPGA 的 DDR3/4 接口功能，描述 IP Core 的
+核心架构、提供定制 IP 的流程和使用细节。该手册适用于 PH1A400、PH1A180 和 PH1A90。
+
+
+1.1 特性与规格
+
+1.1.1 DDR4
+
+         Supports configurable data bus width from 8bits to 72bits with increment of 8bits
+          for SDRAM.
+
+         Supports 8:1 mode (BL8 only).
+
+         Supports max 3 HPIO Banks, max 72bits DQ usage.
+
+         Supports hard Programmable PHY Controller (PPC).
+
+         Supports x8 or x16 memory device types.
+
+         Supports ODT calibration and dynamic enable and disable.
+
+         Supports ZQ for HPIOs.
+
+         Supports slew-rate control for output driver.
+
+         Supports optional internal VREF calibration for optimum data reception.
+
+         Supports mounted SDRAMs with fly-by topology.
+
+         Supports DDR PHY Interface（DFI） 3.1.
+
+         Supports maximum 2 Ranks for hard PPC.
+
+         Supports 2T mode.
+
+         Supports background delay line calibration and VT compensation.
+
+         Supports write data mask, write DBI and read DBI.
+
+         Supports Built-in-self-test (BIST) loopback.
+
+         Supports DDR4 Ping-Pong PHY (Shared-AC mode).
+
+         Supports PHY initialization and Write leveling, Gate training, Read data eye
+          training, Write data eye training, Vref training.
+
+         Support DDR4 MPR reads when PPC access mode only.
+
+IPUG035_1.4                               www.anlogic.com                             4
+
+2025.07
+                                                                 ®
+                                                      SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+         Support Memory Controller(MC) and Standard PHY mode.
+
+         Support AXI4 interface.
+
+         Support Error Correction Code (ECC) function.
+
+         Support User Address Mapping function.
+
+         Support Strict and Normal reorder modes.
+
+
+1.1.2 DDR3
+
+         Supports memory device of DDR3, DDR3L SDRAMs.
+
+         Supports configurable data bus width from 8bits to 72bits with increment of 8bits
+          for SDRAM.
+
+         Supports 8:1 mode (BL8 only).
+
+         Supports max 3 HPIO Banks, max 72bit DQ usage.
+
+         Supports hard PPC.
+
+         Supports x8 or x16 memory device types.
+
+         Supports ODT calibration and dynamic enable and disable.
+
+         Supports ZQ for HP IOs.
+
+         Supports slew-rate control for output driver.
+
+         Supports optional internal VREF calibration for optimum data reception.
+
+         Supports mounted SDRAMs with fly-by topology.
+
+         Supports DDR PHY Interface（DFI） 3.1.
+
+         Supports 2T mode.
+
+         Supports background delay line calibration and VT compensation.
+
+         Supports Built-in-self-test (BIST) loopback.
+
+         Supports PHY initialization and Write leveling, Gate training, Read data eye
+          training, Write data eye training, Vref training.
+
+         Support Memory Controller(MC) and Standard PHY mode.
+
+         Support AXI4 interface.
+
+         Support Error Correction Code (ECC) function.
+
+IPUG035_1.4                               www.anlogic.com                             5
+
+2025.07
+                                                               ®
+                                                      SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+         Support User Address Mapping function.
+
+         Support Strict and Normal reorder modes.
+
+
+1.1.3 IP Feature
+
+         Support DDR4, DDR3 and DDR3L SDRAM.
+
+         Supports configurable data bus width from 8bits to 72bits with increment of 8bits
+          for SDRAM.
+
+         Supports 8:1 mode (BL8 only).
+
+         Supports max 3 HPIO Banks, max 72bits DQ usage.
+
+         Supports hard Programmable PHY Controller (PPC).
+
+         Supports x8 or x16 memory device types.
+
+         Supports ODT calibration.
+
+         Supports ZQ for HPIOs.
+
+         Supports slew-rate control for output driver.
+
+         Supports optional internal VREF calibration for optimum data reception.
+
+         Supports mounted SDRAMs with fly-by topology.
+
+         Supports DDR PHY Interface（DFI） 3.1.
+
+         Supports maximum 2 Ranks for hard PPC.
+
+         Supports background delay line calibration and VT compensation.
+
+         Supports write data mask, write DBI and read DBI.
+
+         Supports DDR4 Ping-Pong PHY (Shared-AC mode).
+
+         Supports customized SDRAM timing parameters.
+
+         Support Memory Controller and Standard PHY mode.
+
+         Support AXI4 interface.
+
+         Support Error Correction Code (ECC) function.
+
+         Support User Address Mapping function.
+
+         Support Strict and Normal reorder modes.
+
+
+
+IPUG035_1.4                               www.anlogic.com                             6
+
+2025.07
+                                                                        ®
+                                                        SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+1.2 系统解决方案
+
+   本 IP 支持 DRAM 标准协议 JESD79-3F（DDR3 SDRAM Standard）和 JESD79-4（DDR4 SDRAM Standard），
+提供 3 种工作模式：Standard PHY、Ping-Pong PHY 以及 Memory Cnotroller and Standard PHY。其
+中，Standard PHY 模式支持的位宽范围为 8-72 bit DQ，以 8 的倍数递增；Ping-Pong PHY 支持数据位
+宽为 8、16 和 32 bit DQ。上述两种模式均提供标准的 DFI 接口与用户逻辑对接。MC and Standard PHY
+模式在 Standard PHY 模式的基础上增加了 Memory Controller 功能，支持 AXI4 和 pAXI 接口与用户逻
+                                              ，pAXI 接口支持用户端
+辑对接，其中 AXI4 支持用户端的数据位宽最高 512bit（对应颗粒端 64bit DQ）
+                            。
+数据最大位宽 576bit（对应颗粒端 72bit DQ）
+
+   本 IP 支持双控制器应用，双控制器的数据位宽总和最大为 64bits（即可设为 x32+x32 或 x16+x48，
+                      。双控制器的应用，可通过例化两个 IP Core 实现。
+其中 x32+x32 需要共享 Bank32）
+
+
+1.2.1 Standard PHY 和 Ping-Pong PHY
+
+   下图为 PH1A FPGA 在 Standard PHY 和 Ping-Pong PHY 模式下的存储器接口方案，包括用户逻辑
+（User FPGA Logic）                                             。
+                 、物理层硬核控制器（PPC）、总线矩阵（Bus Matrix）和物理层模块（DDR PHY）
+
+   用户逻辑通过标准总线接口 DFI 与 PPC 相连。PPC 通过 Bus Matrix 实现对 DDR PHY 的灵活对接。
+
+   MCU 通过 APB 总线（Advanced Peripheral Bus）对 PPC 和 DDR PHY 完成初始化和校准功能。
+
+   Bus Matrix 实现 PPC 到 DDR PHY 的信号互连和映射。
+
+   DDR PHY 包括 DDR Bank 和 DDR PAD 模块。DDR Bank 实现数据读写 DQS 的产生功能、PPC 与 IO 时钟
+域转换、ZQ 和 Vref 控制。DDR PAD 实现并串转换、延时调整和 IO 控制功能。
+
+
+          FPGA             UART(for debug only)
+
+                                 PHY CORE
+
+                                          APB                 DDR PHY
+                         MCU
+                                                                            DDR PAD0
+                           APB
+                                                       DDR Bank
+
+                                                                        DDR PAD49
+
+           User                                                             DDR PAD0
+          FPGA    DFI    PPC           Bus Matrix                                       DDR3/4
+                                                       DDR Bank                                    DDR3/4
+          Logic                                                                        Interface   SDRAM
+                                                                        DDR PAD49
+
+                                                                            DDR PAD0
+
+                                                       DDR Bank
+                                                                        DDR PAD49
+
+
+
+
+                         图 1-1 FPGA 中高速外部存储器接口框图
+IPUG035_1.4                                 www.anlogic.com                                                 7
+
+2025.07
+                                                             ®
+                                                     SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+1.2.2 MC and Standard PHY
+
+   下图为 PH1A FPGA 在 MC and Standard PHY 模式下的存储器接口方案，包括用户逻辑（User FPGA
+     、MC 和 PHY CORE 三部分。用户逻辑通过 AXI4 或 pAXI 接口总线与 MC 模块相连，MC 模块通过 DFI
+Logic）
+接口实现与 PHY 端的连接。
+
+          FPGA
+                                         DDR IP
+
+
+                                       init_cal_done
+
+
+
+                  AXI4/pAXI                                         DDR3/4
+           User   interface
+                                         DFI                      Interface   DDR3/4
+           FPGA                 MC                     PHY CORE                SDRAM
+          Logic
+                                         dfi_clk/
+                                        pll_locked
+
+
+
+
+                       图 1-2 MC and Standard PHY 模式存储器接口框图
+
+
+
+
+IPUG035_1.4                          www.anlogic.com                                   8
+
+2025.07
+                                                         ®
+                                                 SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+1.3 资源与性能
+
+1.3.1 资源使用
+
+   使用 TD6.2 及以上的版本，FPGA 器件型号为 PH1A400SFG900，对 4 种配置的 DDR IP 进行了资源使
+用情况的统计，详细使用情况参见表 1-1。
+
+   配置 1：Controller/PHY mode: Standard PHY; Data width: 8；
+
+   配置 2：Controller/PHY mode: Standard PHY; Data width: 72；
+
+   配置 3：Controller/PHY mode: MC and Standard PHY; Interface: pAXI; Data width: 8；
+
+   配置 4：Controller/PHY mode: MC and Standard PHY; Interface: pAXI; Data width: 72。
+
+                         表 1-1 4 种配置的 DDR IP 资源和性能表
+
+     配置          LUTs         FFs           ERAMs(20k)         PLL         BUFG
+      1          1545         1663              8               2            4
+      2          2324         3535              8               2            4
+      3          3754         4299              8               2            4
+      4          5577        10478              8               2            4
+注：
+
+   1. 资源使用量会因工程策略、软件版本、代码结构等因素，得到不同程度的优化，实际工程中本
+          IP 的最终资源使用量可能会与上表存在差异。
+
+
+1.3.2 读写效率
+
+   在“MC and Standard PHY”模式下，使用 AXI4 接口，对 DDR3 和 DDR4 两类 IP 进行功能仿真，计
+算出数据的读写效率。
+
+   DDR3 IP 的配置参数为：DataRate=1600mbps，DataWidth=32bit，ECC =“OFF”，ADDR_MAP =
+                ，REORDER = “NORMAL”
+“ROW_COLUMN_BANK”                 ，CL=11，CWL=8，用户端接口类型为 AXI4。分别对位宽为
+x8 和 x16 的 DDR3 颗粒进行读写效率测试。
+
+   DDR4 IP 的配置参数为：DataRate=1600mbps，DataWidth=32bit，ECC =“OFF”，ADDR_MAP =
+                ，REORDER = “NORMAL”
+“ROW_COLUMN_BANK”                 ，CL=12，CWL=11，用户端接口类型为 AXI4。分别对位宽为
+x8 和 x16 的 DDR4 颗粒进行读写效率测试。
+
+   本测试定义了 7 种不同的数据读写方式，分别为：顺序写数据、顺序读数据、非跨行混合长突发读
+写、跨行混合长突发读写、非跨行混合短突发读写、跨行混合短突发读写、跨行混合短突发读写以及随
+机地址混合读写。
+
+
+IPUG035_1.4                          www.anlogic.com                              9
+
+2025.07
+                                                        ®
+                                                SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+   顺序写数据：递增地址下写数据，burst 长度为 128，进行 64 次写 burst 操作。
+
+   顺序读数据：递增地址下读数据，burst 长度为 128，进行 64 次读 burst 操作。
+
+   非跨行混合长突发读写：对 DDR 颗粒的某一行中进行地址递增的数据写和读操作，每次写和读的
+burst 长度为 64，进行 64 次读写 burst 操作。
+
+   跨行混合长突发读写：对 DDR 颗粒的不同行地址进行数据的写和读操作，每次写和读的 burst 长度
+为 64，进行 64 次读写 burst 操作。
+
+   非跨行混合短突发读写：在 DDR 颗粒的某一行中进行地址递增的数据写和读操作，每次写和读的
+burst 长度为 4，进行 1024 次读写 burst 操作。
+
+   跨行混合短突发读写：对 DDR 颗粒的不同行地址进行的数据写和读操作，每次写和读的 burst 长度
+为 4，进行 1024 次读写 burst 操作。
+
+   随机地址混合读写：进行随机地址的数据写和读操作，每次 burst 的长度为 2，进行 1024 次读写
+burst 操作。
+
+   不同方式下的读写效率见下表。
+
+                           表 1-2 DDR3/4 IP 的读写效率
+
+          读写方式          DDR3x16chip       DDR3x8chip   DDR4x16chip   DDR4x8chip
+          顺序写数据             94.6%            95.0%          94.1%      94.4%
+          顺序读数据             93.8%            94.1%          93.3%      93.2%
+    非跨行混合长突发读写              92.6%            92.6%          88.3%      89.5%
+     跨行混合长突发读写              88.2%            89.5%          81.7%      78.7%
+    非跨行混合短突发读写              54.4%            54.5%          44.6%      44.8%
+     跨行混合短突发读写              32.0%            33.6%          22.3%      21.8%
+      随机地址混合读写              22.4%            23.8%          18.7%      21.5%
+
+
+
+
+IPUG035_1.4                         www.anlogic.com                            10
+
+2025.07
+                                                       ®
+                                               SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+2 IP 使用
+
+2.1 定制化 IP 工程步骤
+
+2.1.1 新建 DDR SDRAM IP
+
+   以 TD6.2 为例，不同的软件版本可能有差异，请参考对应版本的数据手册。
+
+   打开 TD 软件，点击 Tool -> IP Catalog->DDR3/4 SDRAM，设置完 IP 的 Export Path 和 Component
+Name 后，显示如图 2-1 所示的 IP Generator 界面。其中，Component Name 为用户设置的 IP 名，用户
+可在 IP 配置过程中随时修改此名称；External Memory Interface 包括 General、PHY Controller
+Option、Memory Option、IO Planning 和 Summary 5 个界面。
+
+
+2.1.2 General 配置
+
+
+
+
+                                图 2-1 General Tab
+
+   图 2-1 为 General Tab 选项，用户可对 DDR 类型、IP 模式、用户端接口等进行配置。
+
+         “Memory Protocol” – DDR 协议选项，支持 DDR3 和 DDR4。
+IPUG035_1.4                        www.anlogic.com                         11
+
+2025.07
+                                                            ®
+                                                  SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+         “Controller/PHY mode” – IP 模式选项，支持 Standard PHY，Ping-Pong PHY 以及 MC and
+          Standard PHY 的选择。
+
+         “Multi-Controller” – 多控制器选项，支持最多 2 个控制器的选择。当使用 2 个控制器，
+          需要通过选项“Controller Index”为控制器选择序号。仅 PH1A400 器件支持 Multi-Controller
+          功能，详情参考 4.2 章节。
+
+         “Export Files” – 文件输出选择，支持自动生成 IP 层级的时序约束文件。
+
+         “AXI4 Interface” - 用户接口类型选择，当“Controller/PHY mode”选为“MC and Standard
+          PHY”时，可对此选项进行设置。用户未选中此项时，用户端接口类型将设置为 pAXI 接口；选
+          中此项时，用户端接口类型将设为 AXI4 接口，此时用户可以对下方的“ID Width”选项进行
+          设置。
+
+
+2.1.3 PHY Controller Option 配置
+
+   下图为 PHY Controller Option 选项，用户可配置存储器的工作频率、PLL 的参考时钟频率、用户
+时钟输出、存储颗粒参数、存储数据位宽、ECC 功能、用户地址映射等。
+
+
+
+
+                              图 2-2 PHY Controller Option
+
+         Memory Clock Frequency - 存储颗粒的工作时钟频率，即 FPGA 的串行高速时钟频率。器件支
+
+IPUG035_1.4                           www.anlogic.com                         12
+
+2025.07
+                                                            ®
+                                                   SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+                                             。
+          持的最高工作频率参考数据手册《DS900_PH1A_Datasheet》
+
+         PLL Reference Clock Frequency - PLL 的输入参考时钟频率。推荐从 DDR AC Bank 的 HPIO
+          输入，以保证时钟质量。用户需在工程的 sdc 文件中增加该时钟约束：
+
+   create_clock -period 10 –name sys_clk -waveform {0 5} [get_ports {sys_clk}]
+
+         PHY to Controller Clock Ratio - 设置物理层（存储器）时钟频率与 PPC 和用户接口时钟
+          频率的比例。由于 FPGA 逻辑时序限制，只支持 4：1 的比例选项。
+
+         User Clock Outputs – 用户时钟输出，提供可选的 4 路用户时钟，用户可根据实际需求设置
+          时钟频率。
+
+         DRAM Configuration – DRAM 颗粒配置，根据工程中使用的颗粒进行配置。TYPE 为单个颗粒
+          的数据位宽配置，可选 x16 或 x8；Density 为颗粒容量选项，DDR3 颗粒支持 512Mb ~ 8Gb，
+          DDR4 颗粒支持 2Gb ~ 16Gb；Speed Bin 为颗粒的速度等级选择，可选择不小于 Memory Clock
+                                                           CWL 为 CAS Write Latency，
+          Frequency 的速度等级；CL 为 CAS Latency,其值由 Speed Bin 确定；
+          其值由用户设置。不同 Speed Bin 下的 CL 以及 CWL 可根据下表 2-1 进行设置。
+
+   注：
+
+   1. 本 IP 在 4.0 以及后续版本的 DDR 颗粒选择界面的由 Memory Part 升级为 DRAM Configuration，
+          原界面中颗粒型号与现界面中各选项设置的对应关系详见附录 1。
+
+                             表 2-1 Speed Bin 和 CL/CWL 对照表
+
+           DRAM TYPE                  Speed Bin                 CL          CWL
+                                      DDR3-800D                 5            5
+                                      DDR3-800E                 6            5
+                                      DDR3-1066E                6           5,6
+                                      DDR3-1066F                7            6
+                                      DDR3-1066G                8            6
+                                      DDR3-1333F                7           6,7
+                                      DDR3-1333G                8           6,7
+                                      DDR3-1333H                9            7
+              DDR3
+                                      DDR3-1333J                10           7
+                                      DDR3-1600G                8          6,7,8
+                                      DDR3-1600H                9           7,8
+                                      DDR3-1600J                10          7,8
+                                      DDR3-1600K                11           8
+                                      DDR3-1866J                10          7,8
+                                      DDR3-1866K                11          8,9
+                                      DDR3-1866L                12           9
+IPUG035_1.4                           www.anlogic.com                              13
+
+2025.07
+                                                             ®
+                                                    SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+            DRAM TYPE                   Speed Bin                 CL            CWL
+                                       DDR3-1866M                 13             9
+                                       DDR4-1600J                 10            9,11
+                                       DDR4-1600K                 11            9,11
+                                       DDR4-1600L                 12            9,11
+               DDR4
+                                       DDR4-1866L                 12           10,12
+                                       DDR4-1866M                 13           10,12
+                                       DDR4-1866N                 14           10,12
+         Memory Voltage - 颗粒的电压选项，其中 DDR4 为固定值 1.2V，用户不可修改；DDR3 支持
+          1.5V 和 1.35V(DDR3L 只支持该选项)，用户可根据需求进行选择。
+
+         Data Width - 数据位宽选项，可选范围：8-72。其支持的最大数据位宽与器件系列和封装有
+          关，详情参考具体器件的数据手册。
+
+         ECC–ECC 功能选择，当“Controller/PHY mode”设为“MC and Standard PHY”且 Data Width
+          为 16、32、64 时，可对该选项进行设置。ECC 使能后，在 IO Planning 选项卡的 Pin Selection
+          中，将自动增加一组 DQ Byte Group 信号。
+
+         Data Mask – Mask 功能选择。DDR3 时，支持 DM 选择；DDR4 时，该选项为“Data Mask and
+          DBI”支持的功能如下表。
+
+                            表 2-2 Data Mask and DBI 与 ECC 的关系
+
+                                                         PHY 接口
+              可选项
+                                       ECC Enable                      ECC Disable
+            DM NO DBI                       X                              √
+           DM DBI Read                      X                              √
+          NO DM DBI Read                   √                               √
+          NO DM DBI Write                  √                               √
+    NO DM DBI Read Write                   √                               √
+           NO DM NO DBI                    √                               √
+   当 ECC 功能开启时，DM 功能不可用。在 DDR3 模式下，如需使用 ECC 功能，用户需根据硬件配置情
+况对 DM 信号进行设置；ECC 和 DM 同时使能时，IP 内部强制将 DM 驱动为 0；ECC 使能且 DM 未使能时，
+颗粒侧 DM 信号需下拉为 0。在 DDR4 模式下，当 ECC 使能时，DM 功能不可用，颗粒侧 DM 功能通过 MR 寄
+存器关闭。
+
+   当 ECC 功能关闭时，所有功能均可选。
+
+         User Address Maping–用户地址映射选项，支持“Row_Column_Bank”、“Bank_Row_Column”、
+          “Row_Bank_Column”三种方式，详见 3.7.1 章节。
+
+         Reorder–重排序功能选项，支持“Normal”、“Strict”两选项。当该选项设置为“Normal”
+
+IPUG035_1.4                            www.anlogic.com                                 14
+
+2025.07
+                                                        ®
+                                                SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+          时，允许 MC 将用户命令进行重新排序，这有助于提高数据的读写效率；当该选项设置为“Strict”
+          时，MC 将严格按照用户发出的命令顺序执行，该设置可能会降低数据读写效率。
+
+
+2.1.4 Memory Option 配置
+
+
+
+
+                                图 2-3 Memory Option
+
+   图 2-3 为 Memory Option，实现用户对颗粒侧的配置。
+
+         Read Burst Type and Length – 颗粒侧突发类型选项，仅支持 Sequential 模式。
+
+         Internal Vref – DDR3 或 DDR4 颗粒的参考电压选项。DDR3 支持 ENABLE 和 DISABLE 可选，
+          DDR4 只支持 Internal。
+
+         Digitally Controlled Impedance(DCI) – 阻抗共享选择，FPGA 侧的 IO 内部不同 Bank 的
+          终端阻抗共享使能。当使用 2 个或 3 个 Bank 时，从 Bank 可以共享主 Bank 的终端阻抗。
+
+         Master Bank – Master Bank 设置选项，选择 DCI 级联的主 Bank 位置。
+
+         DRAM Driver Strength – 颗粒侧的数据端口输出阻抗设置。DDR3 时，可设置的值为 RZQ/6
+          和 RZQ/7；DDR4 时，可设置的值为 RZQ/5、RZQ/7 和 RZQ/6(RSVD)，其中 RZQ/6 为针对某些颗
+          粒预留（Reserved）的值，详情参考颗粒数据手册。
+
+         DRAM On Die Termination – 颗粒侧数据端口终端阻抗设置，通过配置颗粒的模式寄存器
+          （Mode Register，MR）进行设置。DDR3 时，可设置的值为 RRZQ/2、RZQ/4、RZQ/6；DDR4 时，
+          可设置的值为 RZQ/1、RZQ/2、RZQ/3、RZQ/4、RZQ/5、RZQ/6、RZQ/7。
+IPUG035_1.4                         www.anlogic.com                         15
+
+2025.07
+                                                             ®
+                                                     SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+         Host AC Driver Strength – FPGA 侧 AC 信号输出阻抗设置，可设置的值为 RZQ/4、RZQ/5、
+          RZQ/6、RZQ/7。
+
+         Host DX Driver Strength -   FPGA 侧 DQS/DQ/DM 信号输出阻抗配置，可设置的值为 RZQ/4、
+          RZQ/5、RZQ/6、RZQ/7。
+
+                                                               可设置的值为 RZQ/1、
+          Host DX On Die Termination – FPGA 侧 DQS/DQ/DM 信号终端阻抗设置，
+          RZQ/2、RZQ/3、RZQ/4、RZQ/5、RZQ/6、RZQ/7。
+
+
+2.1.5 IO Planning 配置
+
+
+
+
+                                      图 2-4 IO Planning
+
+   图 2-4 为 IO Planning 选项，用户根据实际需求对 DDR IP 信号进行管脚分配。
+
+         DDR IO Control – 用户根据硬件设计，设置 ddr_ck、ddr_reset_n、ddr_cs_n、ddr_cke、
+          ddr_odt、ddr_parity 以及 ddr_alert_n 等管脚的数目。其中，ddr_parity 和 ddr_alert_n 管
+          脚仅可在 DDR4 情况下设置。PingPong PHY 模式下，ddr_cs_n、ddr_odt、ddr_cke 管脚的数目
+          固定为 2；非 PingPong PHY 模式下，ddr_ck、ddr_cs_n、ddr_odt、ddr_cke 设置为 2 时，各
+          类信号行为一致，即广播模式。
+
+         Pin Selection - DDR 的管脚分配界面。用户可手动选择每个信号的 Bank Number、Byte Number、
+
+IPUG035_1.4                              www.anlogic.com                         16
+
+2025.07
+                                                                ®
+                                                      SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+          Pin Number 等信息；也可通过 Read ADC 按钮，读取 ADC 文件，实现对每个信号的管脚分配。
+
+         Read ADC – 加 载 已 保 存 的 管 脚 分 配 文 件 。 在 TD 安 装 路 径 <TD_INSTALL_PATH>/ip/
+          ddr/example_adc/ 下提供了参考 ADC 文件，ADC 文件的相关信息详见下表。
+
+                                 表 2-3 ADC 文件相关信息
+
+    ADC Files name          Device           Board         Solution         Note
+  apc101_ddr4_x72.adc                        APC101        DDR4 x72
+  ck202_ddr4_x64.adc     PH1A400SFG900       CK202         DDR4 x64   APC101 兼容 x32pp
+ ap104v2_ddr3_x64.adc                       AP104v2        DDR3 x64
+ ap102v1_ddr3_x64.adc    PH1A180SFG676      AP102v1        DDR3 x64   兼容 PH1A400SFG676
+  ap106_ddr3_x32.adc     PH1A90SBG484        AP106         DDR3 x32
+  ap105_ddr3_x16.adc     PH1A90SEG324        AP105         DDR3 x16
+  ap109_ddr3_x32.adc     PH1A90SEG325        AP109         DDR3 x32
+
+
+
+         Validate – 检查管脚分配是否符合规则。
+
+         Save ADC – 保存界面的管脚分配信息。
+
+         PLL Location – PLL 位置选项，必须位于 DDR IO 所在的 Bank。
+
+         Clock Pin Selection – 系统参考时钟的管脚选项。Clock Type 有 Diff、Single、None 共
+          3 个选项，当参考时钟所在的 Byte Group 位于 AC 信号所在的任一 Byte Group 时，Clock Type
+          必须设置为 Diff 或 Single（参考时钟信号为差分信号时，应选择 Diff；为单端时，应选择
+          Single），否则 Clock Type 应设为 None。Ref Clk Loc 为参考时钟输入的管脚号，当 Clock
+          Type 为 None 时，对应的 Ref Clk Loc 选项为 BUFG。
+
+
+2.1.5.1 IO 管脚分配规则
+
+   一个 HP Bank 共 50 个管脚，包含 4 个 Byte Group（其中两个 2 个 N12 管脚）
+                                                        ，其中每个 Byte Group
+包含一对固定位置的专用 DQS 管脚、5 对差分管脚（可分配为 DQ 或 DM/DBI）。另外有 2 个 Byte Group
+各包含一个单端管脚。IO 分配遵循一个 DQ Byte 对应一个 Byte Group，具体的 IO 分配规则为：
+
+         当使用 X8 或者 X16 的器件时，DQS 信号必须分配在每个 Byte Group 专用的时钟管脚 DQS 引脚
+          上,并且和 DQS 对应的 DQ 信号和 DM/DBI 信号也必须分配在同一个 Byte Group 中。
+
+         CK 必须连接到 PN 对上，可以是任意的 PN 对。
+
+         地址/控制信号必须放在同一个 Bank 内。
+
+         如果一个应用使用 3 个 Banks，地址/控制信号推荐分配在中间的 Bank32。
+
+         单个 AC 的低频信号(reset_n/cke/odt/parity/alert)可以放置在 DQ 组内。
+
+IPUG035_1.4                              www.anlogic.com                            17
+
+2025.07
+                                                      ®
+                                              SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+         Vref 放置在专用的 IO 管脚上，使用内部参考电压时，Vref 管脚可作普通 IO 使用。
+
+         两个 DDR 控制器可以共用 3 个 HP Banks：每个 Byte Group 专用，控制器之间的 Byte Group
+          不能交叉使用。当两个 DDR 控制器需要共享中间的 Bank32 时，只允许两个控制器的 DQ Byte
+          分配到 Bank32。
+
+         DCI 级联使用时，主 Bank 的 VRP 接参考电阻(240 欧)到地，从 Bank 的 VRP 可用作普通 IO，也
+          可以接参考电阻（240 欧）到地。
+
+
+2.1.6 Summary 介绍
+
+   下图 2-5 为 Summary Option 界面，该界面将给出完整的 IP 设置总结，包括器件型号、IP 模块名称、
+DDR 类型、控制器选项、DRAM 相关设置、IO Planning 等,用户确认设计符合要求后，点击 OK，即可生
+成 IP 输出文件。
+
+
+
+
+                              图 2-5 Summary Option
+
+
+
+IPUG035_1.4                       www.anlogic.com                         18
+
+2025.07
+                                                             ®
+                                                    SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+2.2 IP 输出文件
+
+   完成上述配置后，点击 OK 按钮，TD 将在用户指定的路径下产生输出文件，具体文件名及作用详见
+下表，其中<ip_name>为用户自定义的 IP 名称。
+
+                                      表 2-4 IP 输出文件
+
+                      名称                                          作用
+                  <ip_name>.sv                                   RTL 文件
+                 <ip_name>.ipc                               IP 的配置文件
+          <ip_name>_cfg_rom.txt/mif                         初始化配置文件
+              <ip_name>_mcu_rom.txt                       DDRPHY MCU 的执行文件
+                 <ip_name>.adc                               物理约束文件
+                 <ip_name>.sdc                               时序约束文件
+
+
+
+
+IPUG035_1.4                             www.anlogic.com                         19
+
+2025.07
+                                                                                    ®
+                                                                            SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+3 IP 介绍
+
+   图 3-1 为 FPGA 中 MC and Standard PHY 模式下的高速外部存储器接口核心框图，由 MC 和 PHY Core
+组成。其中，PHY Core 包括时钟管理模块( clock management ),MCU ( Micro Control Unit ), PPC
+和 DDR PHY。
+
+
+ FPGA                          DDR IP
+
+                                               PHY CORE
+
+
+
+
+                              dfi_clk/locked                                                           DDR3/4
+            Native/AXI                             Clock_management
+                                                                                                     Interface
+             Interface
+     User                                      Clk/locked                               Bus
+                                                                                               DDR               DDR3/4
+     FPGA                MC                                                  PPC        Matr
+                              ddr_init_cal_done                       APB                      PHY                SDRAM
+    Logic                                                                                ix
+                                                          MCU
+
+                                   DFI
+
+
+
+
+                                图 3-1 FPGA 中高速外部存储器接口核心框图
+
+   上图 PHY Core 中，PPC 为物理层硬核控制器，完成 DDR PHY 和颗粒的初始化、DQS gate training、
+delay line calibration、write leveling，write latency adjustment、eye training 和 VT 补偿等。
+PPC 提供 APB 标准总线接口，供访问配置寄存器。
+
+   MCU 实现系统的初始化配置，通过 APB 总线对 PPC 和 DDR PHY 进行配置寄存器的读写，完成后给出
+完成标志 ddr_init_cal_done，系统进入用户模式。
+
+   DDRPHY 由 DDR BANK 和 DDR PAD 组成，提供 PPC 和外部存储颗粒之间的数据和控制信号连接，完成
+内部并行数据和外部高速串行数据的转换，支持位宽为 x8 和 x16 的存储颗粒，支持最大数据位宽为
+72bits 的应用。
+
+   Bus Matrix 实现 PPC 到 DDRPHY 的信号互连和映射。
+
+                                              为 PPC 提供工作时钟 hctrl_clk，
+   时钟管理模块为 DDRPHY 提供慢速时钟 phy_clk 和高速时钟 ddr_clk，
+DFI 接口的工作时钟 dfi_clk 以及系统配置时钟。
+
+   MC 主要负责系统进入用户模式后，调度和控制 read、write、precharge、refresh 等命令，能够
+有效提高 DDR 的读写效率。MC 提供了 AXI4 和 pAXI 两种接口，降低了用户对 DDR IP 的使用难度。
+
+
+
+
+IPUG035_1.4                                             www.anlogic.com                                            20
+
+2025.07
+                                                              ®
+                                                     SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+3.1 顶层端口描述
+
+3.1.1 PHY 端口
+
+   本节介绍 DDR IP 的 PHY Core 端口，Standard PHY 和 Ping-Pong PHY 模式下的端口列表如下表所
+示。
+
+                    表 3-1 DDR3/4 Standard PHY 和 Ping-Pong PHY 模式下端口列表
+
+               信号名                 方向                             描述
+               sys_clk              I     系统参考时钟输入
+              sys_rst_n             I     系统复位信号输入，低有效
+
+            user_clk[3:0]           O     4 路可选的用户时钟输出，时钟频率可设置
+
+              pll_locked            O     系统时钟锁定信号
+                                     DDR3/4 interface
+                                          存储颗粒的地址总线。DDR4 时，地址与行列地址使能
+               ddr_addr             O     和读写命令复用:ddr_addr[16]/ddr_ras_n,
+                                          ddr_addr[15]/ddr_cas_n, ddr_addr[14]/ddr_we_n
+               ddr_ba               O     Bank 地址总线
+               ddr_bg               O     Bank group 地址总线(DDR4 only)
+          ddr_ck_t/ddr_ck_p
+                                    O     差分时钟输出，地址和命令的采样时钟
+          ddr_ck_c/ddr_ck_n
+               ddr_cke              O     时钟使能信号
+              ddr_ras_n             O     行地址选通信号(DDR3 only)
+              ddr_cas_n             O     列地址选通信号(DDR3 only)
+               ddr_we_n             O     写操作使能信号(DDR3 only)
+               ddr_cs_n             O     芯片选择信号
+                                          ddr_dm_dbi(DDR4 only) 数据掩膜和数据翻转复用管
+          ddr_dm_dbi/ddr_dm        I/O    脚信号，数据掩膜对写数据有效，信号方向是输出；
+                                          数据翻转是双向信号。ddr_dm 适用于 DDR3 only。
+               ddr_odt              O     片上终端信号
+             ddr_reset_n            O     复位信号
+              ddr_parity            O     命令和地址的校验信号(DDR4 only)
+              ddr_act_n             O     激活命令(DDR4 only)
+                                          CRC 错误标志位，命令和地址的错误校验标志位(DDR4
+             ddr_alert_n            I
+                                          only)
+               ddr_dq              I/O    数据信号
+             ddr_dqs_t/p           I/O    差分信号，数据采样时钟。DDR3 时，端口名为
+IPUG035_1.4                              www.anlogic.com                             21
+
+2025.07
+                                                              ®
+                                                      SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+               信号名                方向                              描述
+             ddr_dqs_c/n                ddr_dqs_p/n，DDR4 时，端口名为 ddr_dqs_t/c
+                                      DFI interface
+               dfi_clk            O     DFI 总线时钟
+           dfi_reset_n[3:0]       I     DFI 复位信号
+                                        DFI 时钟使能信号
+                                        Standard PHY 时，CKE_WIDTH=1；
+    dfi_cke[CKE_WIDTH*4-1:0]      I     Ping-Pong PHY 时，CKE_WIDTH=2。Channel0 的四个相
+                                        位为：dfi_cke[2n]，n=0,1,2,3； Channel1 的四个相
+                                        位为：dfi_cke[2n+1]，n=0,1,2,3。
+                                        DFI ODT 配置信号
+                                        Standard PHY 时，ODT_WIDTH=1；
+    dfi_odt[ODT_WIDTH*4-1:0]      I     Ping-Pong PHY 时，ODT_WIDTH =2。Channel0 的四个
+                                        相位为：dfi_odt[2n]，n=0,1,2,3； Channel1 的四个
+                                        相位为：dfi_odt[2n+1]，n=0,1,2,3。
+                                        DFI 片选信号
+                                        Standard PHY 时，CS_WIDTH=1；
+    dfi_cs_n[CS_WIDTH*4-1:0]      I     Ping-Pong PHY 时，CS_WIDTH =2。Channel0 的四个相
+                                        位为：dfi_cs_n[2n]，n=0,1,2,3；Channel1 的四个相
+                                        位为：dfi_cs_n[2n+1]，n=0,1,2,3。
+           dfi_act_n[3:0]         I     DFI ACT 信号(DDR4 only)
+           dfi_ras_n[3:0]         I     DFI 行地址选择信号
+           dfi_cas_n[3:0]         I     DFI 列地址选择信号
+            dfi_we_n[3:0]         I     DFI 写使能信号
+                                        DFI BG 地址信号（DDR4 only）
+     dfi_bg[BG_WIDTH*4-1:0]       I     使用 x16 颗粒时，BG_WIDTH = 1；
+                                        使用 x8 颗粒时，BG_WIDTH = 2。
+                                        DFI Bank 地址信号
+   dfi_bank[BANK_WIDTH*4-1:0]     I     DDR3 时，BANK_WIDTH = 3；
+                                        DDR4 时，BANK_WIDTH = 2。
+                                        DFI 地址信号
+  dfi_address[ROW_WIDTH*4-1:0]    I     DDR3 时，ROW_WIDTH 为 12 – 16；
+                                        DDR4 时，ROW_WIDTH 为 14 – 17。
+          dfi_parity_in[3:0]      I     Parity Setting（DDR4 only）
+           dfi_alert_n[3:0]       O     Parity Error Indicator（DDR4 only）
+                                        DFI 写数据和写数据掩码的 Valid 信号
+ dfi_wrdata_en[DQS_WIDTH*4-1:0]   I     Standard PHY 时，DQS_WIDTH 为 1–9,4 个相位分别
+                                        为：
+IPUG035_1.4                            www.anlogic.com                            22
+
+2025.07
+                                                          ®
+                                                 SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+              信号名               方向                            描述
+                                      dfi_wrdata_en_p0[0* N +: N]、
+                                      dfi_wrdata_en_p1[1* N +: N]、
+                                      dfi_wrdata_en_p2[2* N +: N]、
+                                      dfi_wrdata_en_p3[3* N +: N]；
+                                      Ping-Pong PHY 时，DQS_WIDTH 为 2/4/8,Channel0 的 4
+                                      个相位分别为：
+                                      dfi_wrdata_en_p0[0* N +: N/2]、
+                                      dfi_wrdata_en_p1[1* N +: N/2]、
+                                      dfi_wrdata_en_p2[2* N +: N/2]、
+                                      dfi_wrdata_en_p3[3* N +: N/2]；
+                                      Channel1 的 4 个相位分别为：
+                                      dfi_wrdata_en_p0[(0*N+N/2) +: N/2]、
+                                      dfi_wrdata_en_p1[(1*N+N/2) +: N/2]、
+                                      dfi_wrdata_en_p2[(2*N+N/2) +: N/2]、
+                                      dfi_wrdata_en_p3[(3*N+N/2) +: N/2]；
+                                      注：N 为 DQS_WIDTH。
+                                      DFI 写数据信号
+                                      Standard PHY 时，DQ_WIDTH 为 8–72,步进为 8，4 个
+                                      相位分别为：
+                                      dfi_wrdata_p0r[0*N +: N]、
+                                      dfi_wrdata_p0f[1*N +: N]、
+                                      dfi_wrdata_p1r[2*N +: N]、
+                                      dfi_wrdata_p1f[3*N +: N]、
+                                      dfi_wrdata_p2r[4*N +: N]、
+                                      dfi_wrdata_p2f[5*N +: N]、
+                                      dfi_wrdata_p3r[6*N +: N]、
+   dfi_wrdata[DQ_WIDTH*8-1:0]   I     dfi_wrdata_p3f[7*N +: N]；
+                                      Ping-Pong PHY 时，DQ_WIDTH 为 16/32/64,Channel0
+                                      的 4 个相位分别为：
+                                      dfi_wrdata_p0r[0*N +: N/2]、
+                                      dfi_wrdata_p0f[1*N +: N/2]、
+                                      dfi_wrdata_p1r[2*N +: N/2]、
+                                      dfi_wrdata_p1f[3*N +: N/2]、
+                                      dfi_wrdata_p2r[4*N +: N/2]、
+                                      dfi_wrdata_p2f[5*N +: N/2]、
+                                      dfi_wrdata_p3r[6*N +: N/2]、
+                                      dfi_wrdata_p3f[7*N +: N/2]；
+
+IPUG035_1.4                          www.anlogic.com                            23
+
+2025.07
+                                                          ®
+                                                 SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+              信号名               方向                            描述
+                                      Channel1 的 4 个相位分别为：
+                                      dfi_wrdata_p0r[(0*N+N/2) +: N/2]、
+                                      dfi_wrdata_p0f[(1*N+N/2) +: N/2]、
+                                      dfi_wrdata_p1r[(2*N+N/2) +: N/2]、
+                                      dfi_wrdata_p1f[(3*N+N/2) +: N/2]、
+                                      dfi_wrdata_p2r[(4*N+N/2) +: N/2]、
+                                      dfi_wrdata_p2f[(5*N+N/2) +: N/2]、
+                                      dfi_wrdata_p3r[(6*N+N/2) +: N/2]、
+                                      dfi_wrdata_p3f[(7*N+N/2) +: N/2]；
+                                      注：N 为 DQ_WIDTH；*_p[0-3]r 为上升沿数据；*_p[0-
+                                      3]f 为下降沿数据。
+                                      DFI 写数据掩码信号
+                                      Standard PHY 时，DM_WIDTH 为 1-9,4 个相位分别为：
+                                      dfi_wrdata_mask_p0r[0*N +: N]、
+                                      dfi_wrdata_mask_p0f[1*N +: N]、
+                                      dfi_wrdata_mask_p1r[2*N +: N]、
+                                      dfi_wrdata_mask_p1f[3*N +: N]、
+                                      dfi_wrdata_mask_p2r[4*N +: N]、
+                                      dfi_wrdata_mask_p2f[5*N +: N]、
+                                      dfi_wrdata_mask_p3r[6*N +: N]、
+                                      dfi_wrdata_mask_p3f[7*N +: N]；
+                                      Ping-Pong PHY 时，DM_WIDTH 为 2/4/8,Channel0 的 4
+                                      个相位分别为：
+  dfi_wrdata_mask[DM_WIDTH*8-         dfi_wrdata_mask_p0r[0*N +: N/2]、
+                                I
+              1:0]                    dfi_wrdata_mask_p0f[1*N +: N/2]、
+                                      dfi_wrdata_mask_p1r[2*N +: N/2]、
+                                      dfi_wrdata_mask_p1f[3*N +: N/2]、
+                                      dfi_wrdata_mask_p2r[4*N +: N/2]、
+                                      dfi_wrdata_mask_p2f[5*N +: N/2]、
+                                      dfi_wrdata_mask_p3r[6*N +: N/2]、
+                                      dfi_wrdata_mask_p3f[7*N +: N/2]；
+                                      Channel1 的 4 个相位分别为：
+                                      dfi_wrdata_mask_p0r[(0*N+N/2) +: N/2]、
+                                      dfi_wrdata_mask_p0f[(1*N+N/2) +: N/2]、
+                                      dfi_wrdata_mask_p1r[(2*N+N/2) +: N/2]、
+                                      dfi_wrdata_mask_p1f[(3*N+N/2) +: N/2]、
+                                      dfi_wrdata_mask_p2r[(4*N+N/2) +: N/2]、
+
+IPUG035_1.4                          www.anlogic.com                            24
+
+2025.07
+                                                            ®
+                                                   SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+              信号名                 方向                            描述
+                                        dfi_wrdata_mask_p2f[(5*N+N/2) +: N/2]、
+                                        dfi_wrdata_mask_p3r[(6*N+N/2) +: N/2]、
+                                        dfi_wrdata_mask_p3f[(7*N+N/2) +: N/2]；
+                                        注：N 为 DM_WIDTH；*_p[0-3]r 为上升沿数据；*_p[0-
+                                        3]f 为下降沿数据。
+                                        DFI 读数据使能信号
+                                        Standard PHY 时，DQS_WIDTH 为 1–9,4 个相位分别
+                                        为：
+                                        dfi_rddata_en_p0[0* N +: N]、
+                                        dfi_rddata_en_p1[1* N +: N]、
+                                        dfi_rddata_en_p2[2* N +: N]、
+                                        dfi_rddata_en_p3[3* N +: N]；
+                                        Ping-Pong PHY 时，DQS_WIDTH 为 2/4/8,Channel0 的 4
+                                        个相位分别为：
+ dfi_rddata_en[DQS_WIDTH*4-1:0]   I     dfi_rddata_en_p0[0* N +: N/2]、
+                                        dfi_rddata_en_p1[1* N +: N/2]、
+                                        dfi_rddata_en_p2[2* N +: N/2]、
+                                        dfi_rddata_en_p3[3* N +: N/2]；
+                                        Channel1 的 4 个相位分别为：
+                                        dfi_rddata_en_p0[(0*N+N/2) +: N/2]、
+                                        dfi_rddata_en_p1[(1*N+N/2) +: N/2]、
+                                        dfi_rddata_en_p2[(2*N+N/2) +: N/2]、
+                                        dfi_rddata_en_p3[(3*N+N/2) +: N/2]；
+                                        注：N 为 DQS_WIDTH。
+                                        DFI 读数据 Valid 信号.
+                                        Standard PHY 时，DQS_WIDTH 为 1–9,4 个相位分别
+                                        为：
+                                        dfi_rddata_valid_p0[0* N +: N]、
+                                        dfi_rddata_valid_p1[1* N +: N]、
+                                        dfi_rddata_valid_p2[2* N +: N]、
+ dfi_rddata_valid[DQS_WIDTH*4-
+                                  O     dfi_rddata_valid_p3[3* N +: N]；
+              1:0]
+                                        Ping-Pong PHY 时，DQS_WIDTH 为 2/4/8,Channel0 的 4
+                                        个相位分别为：
+                                        dfi_rddata_valid_p0[0* N +: N/2]、
+                                        dfi_rddata_valid_p1[1* N +: N/2]、
+                                        dfi_rddata_valid_p2[2* N +: N/2]、
+                                        dfi_rddata_valid_p3[3* N +: N/2]；
+
+IPUG035_1.4                            www.anlogic.com                            25
+
+2025.07
+                                                          ®
+                                                 SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+              信号名               方向                            描述
+                                      Channel1 的 4 个相位分别为：
+                                      dfi_rddata_valid_p0[(0*N+N/2) +: N/2]、
+                                      dfi_rddata_valid_p1[(1*N+N/2) +: N/2]、
+                                      dfi_rddata_valid_p2[(2*N+N/2) +: N/2]、
+                                      dfi_rddata_valid_p3[(3*N+N/2) +: N/2]；
+                                      注：N 为 DQS_WIDTH。
+                                      DFI 读数据信号
+                                      Standard PHY 时，DQ_WIDTH 为 8–72,步进为 8，4 个
+                                      相位分别为：
+                                      dfi_rddata_p0r[0*N +: N]、
+                                      dfi_rddata_p0f[1*N +: N]、
+                                      dfi_rddata_p1r[2*N +: N]、
+                                      dfi_rddata_p1f[3*N +: N]、
+                                      dfi_rddata_p2r[4*N +: N]、
+                                      dfi_rddata_p2f[5*N +: N]、
+                                      dfi_rddata_p3r[6*N +: N]、
+                                      dfi_rddata_p3f[7*N +: N]；
+                                      Ping-Pong PHY 时，DQ_WIDTH 为 16/32/64,Channel0
+                                      的 4 个相位分别为：
+                                      dfi_rddata_p0r[0*N +: N/2]、
+                                      dfi_rddata_p0f[1*N +: N/2]、
+   dfi_rddata[DQ_WIDTH*8-1:0]   O     dfi_rddata_p1r[2*N +: N/2]、
+                                      dfi_rddata_p1f[3*N +: N/2]、
+                                      dfi_rddata_p2r[4*N +: N/2]、
+                                      dfi_rddata_p2f[5*N +: N/2]、
+                                      dfi_rddata_p3r[6*N +: N/2]、
+                                      dfi_rddata_p3f[7*N +: N/2]；
+                                      Channel1 的 4 个相位分别为：
+                                      dfi_rddata_p0r[(0*N+N/2) +: N/2]、
+                                      dfi_rddata_p0f[(1*N+N/2) +: N/2]、
+                                      dfi_rddata_p1r[(2*N+N/2) +: N/2]、
+                                      dfi_rddata_p1f[(3*N+N/2) +: N/2]、
+                                      dfi_rddata_p2r[(4*N+N/2) +: N/2]、
+                                      dfi_rddata_p2f[(5*N+N/2) +: N/2]、
+                                      dfi_rddata_p3r[(6*N+N/2) +: N/2]、
+                                      dfi_rddata_p3f[(7*N+N/2) +: N/2]；
+                                      注：N 为 DQ_WIDTH；*_p[0-3]r 为上升沿数据；*_p[0-
+
+IPUG035_1.4                          www.anlogic.com                            26
+
+2025.07
+                                                         ®
+                                                 SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+               信号名             方向                            描述
+                                     3]f 为下降沿数据。
+                                     MC 端更新请求信号： 如果该信号不为 0，则表示 MC
+      dfi_ctrlupd_req[1:0]     I     端有更新请求，DFI 需在一段时间内处于空闲状态，在
+                                     此期间 PHY 端也可以执行更新操作。
+                                     MC 端更新完成信号：如果不为 0，则表示 PHY 已完成
+      dfi_ctrlupd_ack[1:0]     O
+                                     MC 的更新请求。
+                                     PHY 端更新请求信号：如果不为 0，则表示 PHY 端有更
+      dfi_phyupd_req[1:0]      O
+                                     新请求，DFI 需在一段时间内处于空闲状态。
+                                     PHY 端更新确认信号：如果不为 0，则表示 DFI 已处于
+      dfi_phyupd_ack[1:0]      I     空闲状态，并将持续到 dfi_phyupd_req 信号变为 0 为
+                                     止。
+                                     PHY 端更新类型: 与 dfi_phyupd_req 信号同步，有效
+                                     值为:
+                                     00 = tphyupd_type0（VT 补偿所需时间。1600mbps
+                                     时，至少需要 72 个 dfi_clk）
+      dfi_phyupd_type[3:0]     O
+                                     01 = tphyupd_type1（VT 和 ZQ 补偿所需时间。
+                                     1600mbps 时，至少需要 91 个 dfi_clk）
+                                     10 = tphyupd_type2 (Not used by the PHY)
+                                     11 = tphyupd_type3 (Not used by the PHY)
+          ddr_init_cal_done    O     PHY 端初始化和校验完成信号
+                                    Debug port
+              uart_rxd         I     UART 接收端
+              uart_txd         O     UART 发送端
+              mcu_busy         O     MCU 忙标志信号
+             user_update       I     用户交互寄存器触发信号
+          user_ram_addr[7:0]   I     用户交互 RAM 的地址信号
+           user_ram_wr_en      I     用户交互 RAM 的写使能信号
+     user_ram_wr_data[31:0]    I     用户交互 RAM 的写数据信号
+           user_ram_rd_en      I     用户交互 RAM 的读使能信号
+     user_ram_rd_data[31:0]    O     用户交互 RAM 的读数据信号
+   注：
+
+                                                       上层无需重新 Decode，
+   1. dfi_rddata_rdbi 信号为冗余信号，由于 RDBI Decode 已在 PPC 中完成，
+          为避免用户误解，本 IP 中已将 dfi_rddata_rdbi 信号移除。
+
+
+
+
+IPUG035_1.4                         www.anlogic.com                             27
+
+2025.07
+                                                              ®
+                                                     SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+3.1.2 MC 端口
+
+   本节介绍 DDR IP 在 MC and Standard PHY 模式下的 MC 用户端口，具体如表 3-2 所示，主要分为
+AXI4 接口、pAXI 接口和 ECC 相关信号 3 部分。
+
+                                  表 3-2 DDR3/4 MC 端口列表
+
+                信号名                 方向                            描述
+                                     AXI4 interface
+                                           写地址信号。
+                                           AXI_ADDR_WIDTH 的值由用户所选 DDR SDRAM 的行地址
+                                                                        、Bank
+                                           宽度（ROW_WIDTH）、列地址宽度（COL_WIDTH）
+                                                      、Bank Group 宽度（BG_WIDTH，
+                                           宽度（BA_WIDTH）
+                                           DDR3 时该值为 0）以及 DQS_WIDTH 决定。其值按如下
+                                           公式计算：
+ axi_awaddr[AXI_ADDR_WIDTH-1:0]      I
+                                           当 ECC = OFF 时，
+                                               AXI_ADDR_WIDTH = ROW_WIDTH + COL_WIDTH +
+                                           BA_WIDTH + BG_WIDTH + log2(DQS_WIDTH*8)–3；
+                                           当 ECC = ON 时，
+                                               AXI_ADDR_WIDTH = ROW_WIDTH + COL_WIDTH +
+                                           BA_WIDTH + BG_WIDTH + log2((DQS_WIDTH-1)*8)–3
+              axi_awvalid            I     写地址 valid 信号，高电平有效。
+              axi_awready            O     写地址 ready 信号，高电平有效。
+                                           写地址 ID 信号。
+   axi_awid[AXI_ID_WIDTH-0:0]        I     AXI_ID_WIDTH 的值由用户在“PHY Controller
+                                           Option”界面设置，范围：1~32。
+                                           写操作突发长度信号，此信号决定本次突发传输的数
+           axi_awlen[7:0]            I     据长度（AXI_BURST_LENGTH）：
+                                                   AXI_BURST_LENGTH = axi_awlen + 1
+                                           写操作的突发宽度信号，此信号决定本次突发传输的
+          axi_awsize[2:0]            I               ：
+                                           数据位宽（单位：字节）
+                                               axi_awsize = log2(AXI_DATA_WIDTH/8)
+          axi_awburst[1:0]           I     突发类型：支持 WRAP、INCR 两种突发类型。
+              axi_awlock             I     锁定类型，暂不支持。
+          aw_awcache[3:0]            I     cache 类型，暂不支持。
+          axi_awprot[2:0]            I     保护类型，暂不支持。
+                                           写传输优先级信号，axi_awqos = 4’h0 时，表示本次
+           axi_awqos[3:0]            I     写通道传输无优先级；axi_awqos != 4’h0 时，表示
+                                           本次写通道传输有优先级。
+IPUG035_1.4                              www.anlogic.com                              28
+
+2025.07
+                                                            ®
+                                                   SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+                信号名                方向                           描述
+                                         写数据信号。
+                                         数据位宽 AXI_DATA_WIDTH 的值由用户在“PHY
+  axi_wdata[AXI_DATA_WIDTH-1:0]    I     Controller Option”界面中设置的存储数据位宽
+                                         （Data_Width）决定：
+                                               AXI_DATA_WIDTH = Data_Width * 8
+              axi_wvalid           I     写数据 valid 信号。
+              axi_wready           O     写数据 ready 信号。
+                                         写数据掩码信号，低电平有效。该信号的第 n bit 为
+ axi_wstrb[AXI_DATA_WIDTH/8-1:0]   I     0 时，axi_wdata[8*n +: 8]数据将在本次传输中无
+                                         效。
+              axi_wlast            I     写数据的最后一个数据指示信号。
+    axi_bid[AXI_ID_WIDTH-1:0]      O     响应 ID 信号。
+           axi_bresp[1:0]          O     写响应信号，当前只支持“OKAY”一种状态的返回。
+              axi_bvalid           O     写响应 valid 信号。
+              axi_bready           I     写响应 ready 信号。
+ axi_araddr[AXI_ADDR_WIDTH-1:0]    I     读地址信号。
+              axi_arvalid          I     读地址 valid 信号，高电平有效。
+              axi_arready          O     读地址 ready 信号，高电平有效。
+   axi_arid[AXI_ID_WIDTH-0:0]      I     读地址 ID 信号。
+                                         读操作突发长度信号，此信号决定本次突发传输的数
+           axi_arlen[7:0]          I     据长度（AXI_BURST_LENGTH）：
+                                             AXI_BURST_LENGTH = axi_arlen + 1
+                                         读操作的突发宽度信号，此信号决定本次突发传输的
+          axi_arsize[2:0]          I               ：
+                                         数据位宽（单位：字节）
+                                             axi_arsize = log2(AXI_DATA_WIDTH/8)
+          axi_arburst[1:0]         I     突发类型：WRAP、INCR 两种。
+              axi_arlock           I     锁定类型,暂不支持。
+          axi_arcache[3:0]         I     cache 类型,暂不支持。
+          axi_arprot[2:0]          I     保护类型,暂不支持。
+                                         读传输优先级信号，axi_arqos = 4’h0 时，表示本次
+           axi_arqos[3:0]          I     读通道传输无优先级；axi_arqos != 4’h0 时，表示
+                                         本次读通道传输有优先级。
+  axi_rdata[AXI_DATA_WIDTH-1:0]    O     读数据信号。
+              axi_rvalid           O     读数据 valid 信号。
+              axi_rready           I     读数据 ready 信号。
+    axi_rid[AXI_ID_WIDTH-1:0]      O     读数据通道 ID 信号。
+
+
+IPUG035_1.4                            www.anlogic.com                             29
+
+2025.07
+                                                              ®
+                                                  SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+                信号名               方向                              描述
+           axi_rresp[1:0]         O     写响应信号，当前只支持“OKAY”一种状态的返回。
+                                  pAXI interface
+                                        写地址信号。
+                                        当 paxi_awvalid 和 paxi_awready 信号同时为高电平
+                                        时，每一时钟周期传输一个地址。
+                                        MC_ADDR_WIDTH 的值由用户所选 DDR SDRAM 的行地址
+                                        宽度（ROW_WIDTH）、列地址宽度（COL_WIDTH）以及
+ paxi_awaddr[MC_ADDR_WIDTH-1:0]   I
+                                                        、Bank Group 宽度
+                                        Bank 宽度（BA_WIDTH）
+                                        （BG_WIDTH，DDR3 颗粒的该值为 0）决定，其值由如
+                                        下公式计算：
+                                        MC_ADDR_WIDTH = ROW_WIDTH + COL_WIDTH +
+                                        BA_WIDTH + BG_WIDTH
+            paxi_awvalid          I     写地址 valid 信号。
+            paxi_awready          O     写地址 ready 信号。
+  paxi_wdata[MC_DATA_WIDTH-1:0]   I     写数据信号。
+  paxi_wstrb[MC_MASK_WIDTH-1:0]   I     写数据掩码信号，高电平有效。
+              paxi_wvalid         I     写数据的 valid 信号。
+              paxi_wready         O     写数据的 ready 信号。
+              paxi_wlast          I     写数据的最后一个数据指示信号。
+           paxi_bresp[1:0]        O     保留信号，无需关心。
+              paxi_bvalid         O     保留信号，无需关心。
+              paxi_bready         I     保留信号,输入 1 即可
+ paxi_araddr[MC_ADDR_WIDTH-1:0]   I     读地址信号。
+            paxi_arready          O     写地址 ready 信号。
+            paxi_arvalid          I     写地址 valid 信号。
+  paxi_rdata[MC_DATA_WIDTH-1:0]   O     读数据信号。
+              paxi_rlast          O     读数据的最后一个数据指示信号。
+              paxi_rready         I     读数据的 ready 信号。
+              paxi_rvalid         O     读数据的 valid 信号。
+                                         ECC
+                                        读数据时，如果数据发生单比特错误，该信号将从零
+           ecc_single[7:0]        O
+                                        状态变为非零状态。ECC 可以实现单比特数据纠错。
+                                        读数据时，如果数据发生多比特错误，该信号将从零
+          ecc_multiple[7:0]       O     状态变为非零状态。ECC 不能实现对大于 2bit 错误数
+                                        据的纠错。
+
+
+
+IPUG035_1.4                           www.anlogic.com                             30
+
+2025.07
+                                                      ®
+                                              SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+3.2 PPC
+
+   PPC 为 MCU 控制下的可编程 PHY 控制器，该控制器可以在 MCU 控制下完成 DDR 初始化、训练、内环
+和外环测试以及 DRAM 数据读写测试。同时该模块面向用户开放 DFI 接口。
+
+                                              （Single Data Rate）
+   DFI 接口用于实现外部控制器和 DDR PHY 之间的数据转换。数据速率固定为 SDR
+模式。详细内容请参考 3.6 章节。
+
+   PPC 需要两个时钟：工作时钟（ctrl_clk）和配置时钟（apb_clk）。工作时钟与 DFI 总线时钟 dfi_clk
+相同，是存储器时钟频率的 1/4。
+
+
+3.3 DDR BANK
+
+   DDR Bank 由 4 个 DQS Byte Group 和 1 个 PZQ 模块组成。PZQ 完成 Vref 和 ODT 的控制。DQS Byte
+Group 主要完成读写 DQS 信号的产生，以及 IO 控制信号的产生。
+
+
+3.4 DDR PAD
+
+   DDR PAD 为模数混合模块，由 IOL 和 IOB 组成。IOL 包括 IFIFO、OFIFO、ISERDES、OSERDES、IDELAY
+                                          。
+和 ODELAY。IOB 完成数据输入输出的使能控制（具体参考 HPIO 的用户手册）
+
+   数据路径具有 SDR 和 DDR 两种模式，信号方向可配置为仅输出、仅输入或双向。对于 DDR 存储器应
+用，AC 通路配置为 SDR 输出模式，而 DQ 通路配置为 DDR 双向模式。
+
+   对于存储器应用，AC 管脚包括时钟、地址和命令，最多占用 4 个 Byte Group，管脚数量取决于存
+储器的容量大小和支持的列数。DQ 管脚以 Byte Group 为单位，占用的 Byte Group 数量取决于所需的
+数据宽度。例如 32 位宽的数据，则需要 4 组 Byte Group；64 位或 72 位宽数据，则分别需要 8 组或 9
+组。
+
+
+3.5 时钟与复位
+
+   该 IP 系统时钟结构如下图所示，PLL0 和 PLL1 级联构成整个系统的时钟源，其中 PLL0 为 PLL1 提
+供参考时钟输入。sys_clk 为系统参考时钟输入，输入来源可为 GCLK 专用时钟管脚（输入参考时钟周
+                              ，或内部全局时钟网络（可能由于 PLL 级联造成系
+期抖动必须小于 25ps，推荐与 AC 信号在同一 Bank）
+统性能下降）。
+
+   图中 PLL0 用于产生 DDR PHY 的并行时钟 phy_clk 和串行时钟 ddr_clk。PLL1 用于产生用户逻辑相
+关的 dfi_clk 和 user_clk[3:0]。其中 dfi_clk 为 DFI 接口工作时钟。user_clk[3:0]为 IP 提供的最多
+4 路用户时钟，其中每路时钟均可单独设置频率。
+
+   此外，该 IP 提供一个系统复位信号输入，为低有效。复位信号直接控制内部的 PLL。当复位信号
+为低时，PLL 的 locked 信号拉低，其余模块均被复位。当复位信号释放后，系统自动进入初始化流程。
+
+
+IPUG035_1.4                       www.anlogic.com                         31
+
+2025.07
+                                                                       ®
+                                                            SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+                                                                  IOCLK ddr_clk
+
+
+                                                                  IOCLK ctl_clk   DDRPHY_BANK
+      mcu_clk
+                                                                                  in DX BANK
+                                                                       usr_clk
+                                                                                    up to 4x
+
+      sys_clk                                BUFG
+                  ref           c3
+                                             MLCLK                IOCLK ddr_clk
+                                c2
+                        PLL0                 MLCLK                IOCLK ctl_clk   DDRPHY_BANK
+                                c1                                                in AC BANK
+      sys_rst_n
+                                                                      usr_clk
+                                                                                    up to 4x
+                  rstn          c0
+
+                         lock
+
+                                                                  IOCLK ddr_clk
+
+
+                                                                  IOCLK ctl_clk   DDRPHY_BANK
+                         rstn
+                                                                                  in DX BANK
+                                fbk
+                  ref   PLL1                                          usr_clk
+                                                                                    up to 4x
+                                c0
+                         lock         BUFG           BUFG
+      dfi_clk
+
+
+
+                                        图 3-2 时钟网络框图
+
+
+3.6 DFI
+
+   DFI（DDR PHY Interface）为 DDR PHY 与 MC 之间用于传输控制信息和数据的接口。详细信息可参
+考 DFI 3.1 协议手册。
+
+   DDR3/4 协议中规范了 Read-to-Write 和 Write-to-Read Command Intervals 最小间隔。在该器件
+中，根据 IO 特性和 DelayLine 控制要求，为保证数据读写可靠性，相关时间间隔设计了一定程度的冗
+余。
+
+
+
+
+IPUG035_1.4                                     www.anlogic.com                                 32
+
+2025.07
+                                                            ®
+                                                  SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+3.6.1 DFI 写操作
+
+   根据 DFI 协议，DFI 写命令与写使能 dfi_wrdata_en 的时间间隔为 tphy_wrlat，其中 tphy_wrlat
+= CWL-2。DFI 模块通过驱动地址/命令总线将请求传送到 DDR PHY。
+
+   下表显示了不同的突发长度和 Rank 切换组合的写命令间隔时间。
+
+                              表 3-3 Write Command Spacing
+
+  Transaction Type    Rank Switch       Per Rank Delayline Configure     Latency
+
+   Write to Write      Same Rank                        -                  tCCD
+   Write to Write    Different Rank                Static                  tCCD
+   Write to Write    Different Rank               Dynamic                48+CWL/2
+   Write to Read     Different Rank               Dynamic                48+CWL/2
+                                                                       CWL+tWTR_S+20
+   Write to Read        Any Rank                   Static
+                                                                       CWL+tWTR_L+20
+   注：
+
+   1. 该器件仅支持 DDR3/4 Burst Lenght = 8 的应用场景。
+
+   2. CWL：CAS Write Latency
+
+   3. tWTR_S/tWTR_L：参考 DDR 颗粒用户手册
+
+   4. 在 PINGPONG PHY 的应用场景中，由于两个 channel 的 DQ 相互独立，DelayLine 配置采用静态
+          模式，读写转换间隔可遵循同 Rank 访问规则。
+
+   PPC 支持写操作的 Rank 延迟，因此需要区分相同 Rank 的写操作和不同 Rank 的写操作。合适的延
+时值是通过 write-leveling、write-latency adjust 和 data training 确定的。
+
+   当对某一特定的 Rank 执行写操作时，PPC 会加载相应的 Write Leveling System Latency                         和
+Write Leveling Delay 值，以便满足不同 Rank 对延时的需求，确保数据正确传输到 DRAM。当对不同
+                                                ，以正确设置系统
+于前一个 Rank 执行写操作时，PPC 需要最小的延时间隔（JEDEC 里要求的最小 tCCD）
+的延迟值，详见上表。
+
+
+
+
+IPUG035_1.4                           www.anlogic.com                              33
+
+2025.07
+                                                                                             ®
+                                                                                     SALPHOENIX 1A 系列 FPGA DDR3_4 高速接口用户手册
+   下图展示了带有所需延时间隔的写命令时序：
+
+   CWL = 9，则 tphy_wrlat = CWL - 2 = 7
+
+
+
+
+                                        图 3-3 Write command with required spacing diagram
+
+
+
+
+IPUG035_1.4                                               www.anlogic.com                                             34
+
+2025.07
+                                                              ®
+                                                     SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+3.6.2 DFI 读操作
+
+   DFI 读命令和读使能 dfi_rddata_en 信号的时间间隔为 trddata_en，其中 trddata_en = CL-4。
+
+   来自 DDR PHY 的读数据根据有效信号被加载到 PPC 中对应通道的 FIFO 中。当所有的读 FIFO 都缓
+存有效数据时，PPC 才会将读数据输出到 DFI 接口上。
+
+   下表显示了不同的突发长度和 Rank 切换组合的读命令间隔。
+
+                               表 3-4 Read Command Spacing
+
+  Transaction                   Host         Per Rank DelayLine
+                 Rank Switch                                             Latency
+     Type                       Vref             Configure
+ Read to Read     Same Rank      -                   -                    tCCD
+                  Different
+ Read to Read                  Static              Static                 tCCD
+                    Rank
+                  Different
+ Read to Read                  Dynamic            Dynamic                48+CL/2
+                    Rank
+                                                                           CL-
+ Read to Write    Any Rank       -                   -
+                                                                   CWL+tWPRE+MAX_RSL+21
+   注：
+
+   1. CL 为 CAS Latency；CWL 为 CAS Write Latency；tWPRE 为 write pre-amble 的长度。
+
+   2. MAX_RSL 为所有 Rank 的 Byte group 中最大的 DQS Gate System Latency 数值，在该器件中，
+          最大支持 13；如需更好的通用性，此处可以选取最大值 13，但要牺牲部分性能；也可根据 Gate
+          Training 结果设置。
+
+   3. 在 PINGPONG PHY 的应用场景中，由于两个 channel 的 DQ 相互独立，DelayLine 配置采用静态
+          模式，读写转换间隔可遵循同 Rank 访问规则。
+
+
+
+
+IPUG035_1.4                              www.anlogic.com                             35
+
+2025.07
+                                                                                         ®
+                                                                                 SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+    下图展示了带有所需延时间隔的读命令时序：
+
+   CL=12，trddata_en=CL-4=8.
+
+
+
+
+                              图 3-4 Read command with required spacing diagram
+
+
+
+
+IPUG035_1.4                                   www.anlogic.com                                                  36
+
+2025.07
+                                                ®
+                                       SALPHOENIX 1A 系列 FPGA DDR3_4 高速接口用户手册
+
+3.7 Memory Controller
+
+   Memory Controller 的内部架构如下图所示，其主要由 Interface Bridge、MC Core 和 DFI-Retiming
+三部分组成。Interface Bridge 模块为 AXI4 和 pAXI 接口的解析模块，用户等地址、数据等信号经该
+模块解析后产生内部信号传输给 MC Core 模块；MC Core 包括页管理模块、仲裁器、DFI 信号产生器以
+及状态保持模块 4 部分；DFI-Retiming 模块负责将 MC Core 中产生的非标准 DFI 信号转换成标准的的
+DFI 信号，实现与 PHY 端的连接。使用 MC 可以有效提高数据总线效率。
+
+
+          MC_TOP
+
+                                    MC Core
+
+
+
+
+                                                    DFI信
+   AXI/                   页管理          仲裁器          号产生                    DFI
+   pAXI       Interface                              器
+                                        MC                  DFI-Retiming
+               Bridge
+
+
+
+
+                                状态保持
+                                 模块
+
+
+
+
+                                图 3-5 MC 内部架构图
+
+   本 DDR IP 的 MC 用户接口分为 AXI4 和 pAXI 两种，可满足不同的用户需求。AXI4 接口读、写通道
+均不支持 out-of-order 传输模式；写通道不支持 outstanding 模式，读通道支持 outstanding 模式；
+写操作时，写地址通道的握手不能晚于写数据通道的握手。pAXI 接口为本公司自定义的用户接口，时
+序详见第 3.7.3 章节。
+
+
+3.7.1 地址映射
+
+3.7.1.1 pAXI 地址至 SDRAM 地址映射
+
+   在 IP Gui 界面中，用户可以通过“User Address Maping”选项设置 pAXI 接口的地址到 SDRAM 地
+                           “Bank_Row_Column”以及“Row_Bank_Column”3 种。用户
+址的映射模式，其包括“Row_Column_Bank”、
+可以根据实际需求选择不同的映射模式。
+
+   不同映射模式下的用户地址在 MC 中的映射方式将有区别：
+
+
+IPUG035_1.4                         www.anlogic.com                        37
+
+2025.07
+                                                                    ®
+                                                     SALPHOENIX 1A 系列 FPGA DDR3_4 高速接口用户手册
+     1. Row_Column_Bank 模式
+
+                              “Row_Column_Bank”模式的地址重映射如下图所示，其中 ROW_WIDTH
+     当 SDRAM 为 DDR3 256Mbx16 时，
+= 15，COL_WIDTH = 10，BA_WIDTH = 3，paxi_axaddr 为用户端的 pAXI 读或写地址（paxi_araddr/
+paxi_awaddr），Mem_Addr 为 SDRAM 的地址分布。由下图可知，paxi_axaddr[27:13]被映射为 SDRAM 的
+行地址 Row[14:0]，{paxi_axaddr[12:6]，paxi_axaddr[2:0]}被映射为 SDRAM 的列地址 Col[9:0]，
+{paxi_axaddr[4:3]，paxi_axaddr[5]}被映射为 SDRAM 的 Bank 地址 Ba[2:0]。
+
+paxi_awddr/
+paxi_araddr   A27   A26                A13   A12                    A7   A6    A5        A4      A3    A2    A1        A0
+   [27:0]
+
+
+
+Mem_Addr      A27   A26                A13   A12                    A7   A6    A4       A3       A5    A2     A1       A0
+
+
+                           Row[14:0]                     Col[9:3]                      Ba[2:0]              Col[2:0]
+
+
+
+                          图 3-6 “Row_Column_Bank”模式地址映射（DDR3 256Mbx16）
+
+                              “Row_Column_Bank”模式的地址重映射如下图所示，其中 ROW_WIDTH
+     当 SDRAM 为 DDR4 256Mbx16 时，
+= 15，COL_WIDTH = 10，BA_WIDTH = 2，BG_WIDTH=1。由下图可知，paxi_axaddr[27:13]被映射为 SDRAM
+的行地址 Row[14:0]，{paxi_axaddr[12:6]，paxi_axaddr[2:0]}被映射为 SDRAM 的列地址 Col[9:0]，
+paxi_axaddr[4:3]被映射为 SDRAM 的 Bank 地址 Ba[1:0]，paxi_axaddr[5]被映射为 SDRAM 的 Bank Group
+地址 Bg[0]。
+
+paxi_awddr/
+paxi_araddr A27     A26                A13   A12                    A7   A6    A5        A4      A3    A2    A1        A0
+   [27:0]
+
+
+
+Mem_Addr      A27   A26                A13   A12                    A7   A6    A4       A3       A5    A2     A1       A0
+
+                                                                                                 Bg
+                           Row[14:0]                     Col[9:3]                   Ba[1:0]                 Col[2:0]
+                                                                                                 [0]
+
+
+                          图 3-7 “Row_Column_Bank”模式地址映射（DDR4 256Mbx16）
+
+                             “Row_Column_Bank”模式的地址重映射如下图所示，其中 ROW_WIDTH
+     当 SDRAM 为 DDR4 512Mbx8 时，
+= 15，COL_WIDTH = 10，BA_WIDTH=2，BG_WIDTH=2。由下图可知，paxi_axaddr[28:14]被映射为 SDRAM
+的行地址 Row[14:0]，{paxi_axaddr[13:7]，paxi_axaddr[2:0]}被映射为 SDRAM 的列地址 Col[9:0]，
+paxi_axaddr[6:5]被映射为 SDRAM 的 Bank 地址 Ba[1:0]，paxi_axaddr[4:3]被映射为 SDRAM 的 Bank
+Group 地址 Bg[1:0]。
+
+paxi_awddr/
+paxi_araddr A28     A27                A14   A13                    A7   A6    A5        A4      A3    A2    A1        A0
+   [28:0]
+
+
+
+Mem_Addr      A28   A27                A14   A13                    A7   A6    A5       A4       A3    A2     A1       A0
+
+
+                           Row[14:0]                  Col[9:3]            Ba[1:0]         Bg[1:0]           Col[2:0]
+
+
+                          图 3-8 “Row_Column_Bank”模式地址映射（DDR4 512Mbx8）
+IPUG035_1.4                                        www.anlogic.com                                                 38
+
+2025.07
+                                                                                 ®
+                                                              SALPHOENIX 1A 系列 FPGA DDR3_4 高速接口用户手册
+    2. Row_Bank_Column 模式
+
+                             “Row_Bank_Column”模式的地址重映射如下图所示，其中 ROW_WIDTH
+    当 SDRAM 为 DDR3 256Mbx16 时，
+= 15，COL_WIDTH = 10，BA_WIDTH = 3。由下图可知，paxi_axaddr[27:13]被映射为 SDRAM 的行地址
+Row[14:0]，paxi_axaddr[12:10]被映射为 SDRAM 的 Bank 地址 Ba[2:0]，paxi_axaddr[9:0]被映射为
+SDRAM 的列地址 Col[9:0]。
+
+paxi_awddr/
+paxi_araddr A27    A26                       A13    A12     A11      A10    A9                  A3   A2    A1     A0
+   [27:0]
+
+
+
+Mem_Addr    A27    A26                       A13    A12     A11      A10    A9              A3       A2    A1     A0
+
+
+                           Row[14:0]                       Ba[2:0]                   Col[9:0]
+
+
+                          图 3-9 “Row_Bank_Column”模式地址映射（DDR3 256Mbx16）
+
+                             “Row_Bank_Column”模式的地址重映射如下图所示，其中 ROW_WIDTH
+    当 SDRAM 为 DDR4 256Mbx16 时，
+= 15，COL_WIDTH = 10，BA_WIDTH = 2，BG_WIDTH = 1。由下图可知，paxi_axaddr[27:13]被映射为
+SDRAM 的 行 地 址 Row[14:0] ， paxi_axaddr[12] 被 映 射 为 SDRAM 的 Bank Group 地 址 Bg[0] ，
+paxi_axaddr[11:10]被映射为 SDRAM 的 Bank 地址 Ba[1:0]，paxi_axaddr[9:0]被映射为 SDRAM 的列地
+址 Col[9:0]。
+
+paxi_awddr/
+paxi_araddr A27    A26                       A13    A12    A11       A10    A9              A3       A2    A1     A0
+   [27:0]
+
+
+Mem_Addr    A27    A26                       A13    A12    A11       A10    A9              A3       A2    A1     A0
+
+                                                    Bg
+                           Row[14:0]                          Ba[1:0]                Col[9:0]
+                                                    [0]
+
+
+                          图 3-10 “Row_Bank_Column”模式地址映射（DDR4 256Mbx16）
+
+                            “Row_Bank_Column”模式的地址重映射如下图所示，其中 ROW_WIDTH
+    当 SDRAM 为 DDR4 512Mbx8 时，
+= 15，COL_WIDTH = 10，BA_WIDTH = 2，BG_WIDTH=2。由下图可知，paxi_axaddr[28:14]被映射为 SDRAM
+的 行 地 址 Row[14:0] ， paxi_axaddr[13:12] 被 映 射 为 SDRAM 的 Bank Group 地 址 Bg[1:0] ，
+paxi_axaddr[11:10]被映射为 SDRAM 的 Bank 地址 Ba[1:0]，paxi_axaddr[9:0]被映射为 SDRAM 的列地
+址 Col[9:0]。
+
+ paxi_awddr/
+ paxi_araddr A28    A27                A14    A13    A12     A11      A10    A9                 A3    A2    A1        A0
+    [28:0]
+
+
+
+ Mem_Addr    A28    A27                A14    A13    A12     A11      A10    A9                 A3    A2    A1        A0
+
+
+                          Row[14:0]                              Ba[1:0]              Col[9:0]
+
+
+                          图 3-11 “Row_Bank_Column”模式地址映射（DDR4 512Mbx8）
+
+
+IPUG035_1.4                                                www.anlogic.com                                       39
+
+2025.07
+                                                                                ®
+                                                                 SALPHOENIX 1A 系列 FPGA DDR3_4 高速接口用户手册
+     3. Bank_Row_Column 模式
+
+                              “Bank_Row_Column”模式的地址重映射如下图所示，其中 ROW_WIDTH
+     当 SDRAM 为 DDR3 256Mbx16 时，
+= 15，COL_WIDTH = 10，BA_WIDTH = 3。由下图可知，paxi_axaddr[27:25]被映射为 SDRAM 的 Bank 地
+址 Ba[2:0]，paxi_axaddr[24:10]被映射为 SDRAM 的行地址 Row[14:0]，paxi_axaddr[9:0]被映射为
+SDRAM 的列地址 Col[9:0]。
+
+paxi_awddr/
+paxi_araddr   A27    A26      A25   A24                        A10   A10   A9              A3   A2   A1    A0
+   [27:0]
+
+
+Mem_Addr      A27    A26      A25   A24                        A10   A10   A9              A3   A2   A1    A0
+
+
+                    Ba[2:0]                     Row[14:0]                           Col[9:0]
+
+
+                              图 3-12 “Bank_Row_Column”模式地址映射（DDR3 256Mbx16）
+
+                              “Bank_Row_Column”模式的地址重映射如下图所示，其中 ROW_WIDTH
+     当 SDRAM 为 DDR4 256Mbx16 时，
+= 15，COL_WIDTH = 10，BA_WIDTH = 2，BG_WIDTH=1。由下图可知，paxi_axaddr[27]被映射为 SDRAM
+的 Bank Group 地 址 Bg[0] ， paxi_axaddr[26:25] 被 映 射 为 SDRAM 的 Bank 地 址 Ba[1:0] ，
+paxi_axaddr[24:10]被映射为 SDRAM 的行地址 Row[14:0]，paxi_axaddr[9:0]被映射为 SDRAM 的列地址
+Col[9:0]。
+
+paxi_awddr/
+paxi_araddr   A27    A26      A25   A24                        A10   A10   A9              A3   A2   A1    A0
+   [27:0]
+
+
+Mem_Addr      A27    A26      A25   A24                        A10   A10   A9              A3   A2   A1    A0
+
+              Bg
+                         Ba[1:0]                Row[14:0]                           Col[9:0]
+              [0]
+
+
+                              图 3-13 “Bank_Row_Column”模式地址映射（DDR4 256Mbx16）
+
+                             “Bank_Row_Column”模式的地址重映射如下图所示，其中 ROW_WIDTH
+     当 SDRAM 为 DDR4 512Mbx8 时，
+= 15，COL_WIDTH = 10，BA_WIDTH=2，BG_WIDTH=2。
+
+paxi_awddr/
+paxi_araddr   A28    A27      A26   A25   A24                        A10   A9              A3   A2   A1    A0
+   [28:0]
+
+
+
+Mem_Addr      A28    A27      A26   A25   A24                        A10   A9              A3   A2   A1    A0
+
+
+               Bg[1:0]                             Row[14:0]                        Col[9:0]
+
+
+                              图 3-14 “Bank_Row_Column”模式地址映射（DDR4 512Mbx8）
+
+
+
+
+IPUG035_1.4                                                 www.anlogic.com                               40
+
+2025.07
+                                                    ®
+                                          SALPHOENIX 1A 系列 FPGA DDR3_4 高速接口用户手册
+
+3.7.1.2 AXI 地址至 pAXI 地址映射
+
+   当用户选择使用 AXI4 接口时，MC 的 Interface Bridge 模块将 AXI4 接口总线的转换为 pAXI 接口
+总线。由于 AXI4 总线的地址以字节为单位，因此 axi_axaddr 信号的宽度取决于用户在“PHY Controller
+                         。axi_axaddr 至 paxi_axaddr 存在如下表所示的映射关系。
+Option”界面中所设置的“Data Width”
+
+                         表 3-5 axi_axaddr 至 paxi_axaddr 的映射关系
+
+ Data Width   AXI Data Width                       AXI Byte Address
+      8             64         axi_axaddr = paxi_axddr[MC_ADDR_WIDTH-1:0]
+     16            128         axi_axaddr = { paxi_axddr[MC_ADDR_WIDTH-1:0] , 1’b0 }
+     32            256         axi_axaddr = { paxi_axddr[MC_ADDR_WIDTH-1:0] , 2’b00 }
+     64            512         axi_axaddr = { paxi_axddr[MC_ADDR_WIDTH-1:0] , 3’b000 }
+
+3.7.2 AXI4
+
+   AXI4 接口时序详情参考 ARM 公司的《AMBA AXI Protocol》文档。
+
+
+3.7.3 pAXI
+
+   pAXI 接口不同模式的数据读、写操作时序，如下图所示。
+
+   写数据的时序如下图所示。当 paxi_awvalid 信号与 paxi_awready 信号同时为高时，信号握手成
+功，可以进行写数据、地址操作。
+
+
+
+
+                            图 3-15 pAXI 接口单次写数据时序图
+
+
+
+
+IPUG035_1.4                             www.anlogic.com                          41
+
+2025.07
+                                         ®
+                               SALPHOENIX 1A 系列 FPGA DDR3_4 高速接口用户手册
+
+
+
+
+                    图 3-16 pAXI 接口连续写数据时序图
+
+     此外，pAXI 接口的写数据信号最多可以在写地址信号后 2 个时钟周期后产生，详见下图。
+
+
+
+
+               图 3-17 pAXI 接口写数据延后写地址 2 个 clk 时序图
+
+   读数据的时序如下图所示，当 paxi_arvalid 信号与 paxi_arready 信号同时为 1 时，读地址信号握
+手成功，经过若干时钟周期后，读 pAXI 读数据通道返回读数据。
+
+
+
+
+                    图 3-18 pAXI 接口单次读数据时序图
+
+
+
+
+                    图 3-19 pAXI 接口连续读数据时序图
+
+
+
+
+IPUG035_1.4                  www.anlogic.com                   42
+
+2025.07
+                                                         ®
+                                            SALPHOENIX 1A 系列 FPGA DDR3_4 高速接口用户手册
+
+4 参考设计
+
+4.1 仿真设置
+
+   在 DDR IP 4.0 中，   需定义 IP 必要的宏：PH1_DDRPHY_SIM、
+                  仿真时，                                    MC0_DDRPHY_CFG_ROM
+                                               PH1_MIS_SIM、
+  和 MC0_DDRPHY_MCU_ROM，且应添加仿真所需的模型文件。
+
+
+4.1.1 宏定义
+
+   +define+PH1_DDRPHY_SIM
+
+   +define+PH1_MIS_SIM
+
+   +define+MC0_DDRPHY_CFG_ROM='"<path>/<ip_name>_cfg_rom.txt"'
+
+   +define+MC0_DDRPHY_MCU_ROM='"<path>/<ip_name>_mcu_rom.txt"'
+
+   其中，<path>为 DDR IP 所在的路径。
+
+
+4.1.2 仿真模型
+
+   仿真所需的模型文件详见下表，其中<TD_INSTALL_PATH>为 TD 软件的安装路径。
+
+                                 表 4-1 仿真模型文件列表
+
+              文件路径                          文件名                        说明
+                                     ph1_phy_pll.v
+                                     ph1_logic_clk.v
+                                     ph1_phy_hp_mlclk.v
+                                     ph1_phy_hp_ioclk.v
+                                     ph1_phy_ddr_pad.v
+                                     ph1_phy_ddr_bank.v
+ <TD_INSTALL_PATH>/sim_release/ph1
+                                     ph1_phy_ddr4_cal.v
+                                                             PH1_PHY_GSR 需与顶层
+                                                             Testbench 同时指定为 TOP
+                                     ph1_phy_gsr.v           Module 或在顶层 Testbench 中
+                                                             例化该模块，且不可使用库编
+                                                             译。
+
+
+
+
+IPUG035_1.4                               www.anlogic.com                          43
+
+2025.07
+                                                            ®
+                                                  SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+4.2 双控制器应用
+
+   由于 IP 的宏定义和 module 定义的作用域为全局作用域，在双控制器应用时需避免两个 IP 中宏定
+义和 module 定义的重复，因此 TD 产生两个 DDR IP 时，用户需通过设置“Controller Index”进行区
+分。
+
+   PH1A 系列的 FPGA 中，每个 HP BANK 的阻抗校准、阻抗配置和 Vref 配置，均通过同一个 DDR_BANK
+实现，因此当两个 DDR IP 存在共享 BANK32 的情况时，该 BANK 的阻抗校准、阻抗配置和 Vref 配置需要
+通过其中一个 IP 进行控制。在本 IP 实现中，该控制由 Controller Index 为 2-1 的 IP 完成。
+
+   在 PH1A 系列 FPGA DDR 双控制器应用中，存在两种情况：1. 两 IP 共享 BANK32；2.两 IP 相互独
+立，即非共享 BANK32。
+
+
+4.2.1 非共享 BANK
+
+   用户使用的 2 个控制器为非共享 BANK 情况时，两个 IP 的 Multi-Controller 和 Controller Index
+选项分别进行如下图所示的设置。Controller Index 的设置完全由用户指定，与硬件结构无关。
+
+
+
+
+                                 图 4-1 IP General 设置
+
+   仿真时，需分别设置两个 IP 的 CFG_ROM 和 MCU_ROM 文件的宏定义。
+
+   +define+PH1_DDRPHY_SIM
+
+   +define+PH1_MIS_SIM
+
+   +define+MC0_DDRPHY_CFG_ROM='"<path>/<mc0_ip_name>_cfg_rom.txt"'
+
+   +define+MC0_DDRPHY_MCU_ROM='"<path>/<mc0_ip_name>_mcu_rom.txt"'
+
+   +define+MC1_DDRPHY_CFG_ROM='"<path>/<mc1_ip_name>_cfg_rom.txt"'
+
+
+IPUG035_1.4                             www.anlogic.com                       44
+
+2025.07
+                                                            ®
+                                                  SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+   +define+MC1_DDRPHY_MCU_ROM='"<path>/<mc1_ip_name>_mcu_rom.txt"'
+
+   其中，<path>为 DDR IP 所在的路径。
+
+
+4.2.2 共享 BANK
+
+                           IP 设置方法与图 4-1 相同。
+   用户使用的 2 个控制器为共享 BANK 情况时，                 用户还需将 Controller
+                                           同时，
+Index 为 2-1 的 IP 的 pzq_cal_done_o 端口连接至 Controller Index 为 2-2 的 IP 的 pzq_cal_done_i
+端口。
+
+   仿真时，配置方法与 4.2.1 节中的设置方法一致。
+
+
+
+
+IPUG035_1.4                             www.anlogic.com                        45
+
+2025.07
+                                              ®
+                                      SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+5 功能调试
+
+   本 IP 提供两种调试方式：UART 和用户交互 RAM。
+
+
+5.1 UART
+
+   DDR IP 提供 UART 串口来打印 DDRPHY 的初始化过程信息，其端口名为 uart_txd，串口速率默认为
+115200bps。初始化完成后，UART 将打印出如下各图所示的信息。
+
+   1. PHY 端的配置信息。
+
+
+
+
+                        图 5-1 PHY 端配置信息
+
+   2. DDRPHY_BYTE 的 IO 模式配置的过程指示信息，IO 模式配置完成后将打印如下图所示的内容。
+
+
+
+
+                       图 5-2 IO 模式配置完成
+
+
+
+
+IPUG035_1.4                 www.anlogic.com                       46
+
+2025.07
+                                                       ®
+                                               SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+   3. PPC 基础配置的过程指示信息，DDR 的 PPC 基本配置完成后，将打印下图内容。
+
+
+
+
+                              图 5-3 PPC 基本配置完成
+
+   4. PHY 端 Duty Cycle 校准信息，打印已使用的每个 AC 和 DX 的 Duty Cycle 校准结果。如果出现
+          “DCC_ERROR”内容，表示时钟占空比超出±5%的校准范围。下图为 Duty Cycle 校准结果正常
+          的情况。
+
+
+
+
+                         图 5-4 AC 和 DX 的 Duty Cycle 校验信息
+
+   5. DRAM 初始化信息，PHY 端对 DRAM 颗粒的初始化完成后，将打印下图所示信息。
+
+
+
+
+                              图 5-5 DRAM INIT 完成信息
+
+   6. DRAM 初始化完成后，会进行 Training，包括：Write Leveling、RDQS Gate Leveling、Write
+          Latency Adjust、Read Eye Centering、Write Eye Centering，每一步完成后都将打印如下
+          图所示的相关 Training 信息。如果 Training 过程中出现“Fail”，表示该过程 Training 失
+          败。
+
+
+
+
+                            图 5-6 Training 步骤及结果信息
+
+
+IPUG035_1.4                          www.anlogic.com                       47
+
+2025.07
+                                                  ®
+                                          SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+   7. PPC MTEST 信息，Training 结束后，通过 PPC 采用 27 种数据码型，对 DRAM 进行读写测试，下
+          图为测试通过后，UART 打印的信息。
+
+
+
+
+                          图 5-7 PPC MTEST 信息
+
+   8. 训练结果报告
+
+
+
+
+                              图 5-8 训练结果
+
+   9. 初始化、校验等操作完成后，PHY 端将 DFI 的控制权释放，并打印下图信息，此后用户可以通
+          过 DFI 接口进行读、写等操作。
+
+
+
+
+                         图 5-9 DFI 控制权释放信息
+
+
+
+
+IPUG035_1.4                     www.anlogic.com                       48
+
+2025.07
+                                               ®
+                                       SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+5.2 用户交互 RAM
+
+   用户交互 RAM 的主要功能：
+
+   1. DDRPHY 配置信息回读。
+
+   2. DDRPHY 训练状态回读。
+
+   3. DDRPHY 训练结果回读。
+
+                                             。
+   4. TX EYE 和 RX EYE 的二维扫窗功能（DDR3 TX 方向仅支持一维）
+
+   5. MR 寄存器、TX VREF、RX VREF、AC 延时补偿的强制配置功能。
+
+   如需相关功能详情，请联系安路科技的技术支持。
+
+
+
+
+IPUG035_1.4                  www.anlogic.com                       49
+
+2025.07
+                                                                     ®
+                                                       SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+附录一：兼容说明
+
+   1. IP 界面
+
+   DDR IP 在 4.0 中，PHY Controller Option 界面的 DDR 颗粒选择设置由 Memory Part 升级为 DRAM
+Configuration。原 Memory Part 选项如下：
+
+
+
+
+   现 DRAM Configuration 选项如下图：
+
+
+
+
+   原 Memory Part 中颗粒型号设置与现 DRAM Configuration 中各参数设置的对应关系如下表所示，
+其中，Memory Clock Frequency 列为 Clock Option 选项的值，单位：MHz。
+
+                              Memory Clock                      DRAM Configuration
+ DDR_TYPE     MemoryPart
+                                Frequency          TYPE   Density        SpeedBin     CL   CWL
+                            less than or equal
+                                                                         DDR3-800E    6     5
+                                   400
+                            less than or equal
+                                                                         DDR3-1066F   7     6
+                                   533
+              MT41J128M16   less than or equal      x16        2Gb
+                                                                         DDR3-1333H   9     7
+                                   667
+                            less than or equal
+                                                                         DDR3-1600K   11    8
+                                   800
+   DDR3
+                             greater than 800                            DDR3-1866M   13    9
+                            less than or equal
+                                                                         DDR3-800E    6     5
+                                   400
+                            less than or equal
+                                                                         DDR3-1066F   7     6
+              MT41K128M16          533              x16        2Gb
+                            less than or equal
+                                                                         DDR3-1333H   9     7
+                                   667
+                            less than or equal                           DDR3-1600K   11    8
+
+IPUG035_1.4                                  www.anlogic.com                               50
+
+2025.07
+                                                                     ®
+                                                         SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+                              Memory Clock                      DRAM Configuration
+ DDR_TYPE     MemoryPart
+                                Frequency          TYPE     Density      SpeedBin     CL   CWL
+                                   800
+                             greater than 800                            DDR3-1866M   13    9
+                            less than or equal
+                                                                         DDR3-800E    6     5
+                                   400
+                            less than or equal
+                                                                         DDR3-1066F   7     6
+                                   533
+              MT41K256M16   less than or equal      x16        4Gb
+                                                                         DDR3-1333H   9     7
+                                   667
+                            less than or equal
+                                                                         DDR3-1600K   11    8
+                                   800
+                             greater than 800                            DDR3-1866M   13    9
+                            less than or equal
+                                                                         DDR4-1600L   12    9
+              MT40A256M16          800              x16        4Gb
+                             greater than 800                            DDR4-1866N   14   12
+                            less than or equal
+                                                                         DDR4-1600L   12    9
+   DDR4       MT40A512M16          800              x16        8Gb
+                             greater than 800                            DDR4-1866N   14   12
+                            less than or equal
+                                                                         DDR4-1600L   12    9
+              MT40A512M8           800              x8         4Gb
+                             greater than 800                            DDR4-1866N   14   12
+
+
+
+         DFI 信号
+
+   由于 RDBI Decode 已在 PPC 中完成，上层无需重新 Decode，因此 dfi_r 的 data_rdbi 信号为冗余
+信号，为避免用户误解，本 IP 中已将 dfi_rdata_rdbi 信号移除。
+
+   在用户原工程中，且 IP 模式为“Standard PHY”或“PingPong PHY”时，用户对 IP 进行更新后，
+需手动删除原代码中 dfi_rddata_rdbi 信号的连接。
+
+         仿真设置
+
+   IP 3.0 以及之前版本中，在仿真时，采用动态传参的形式设置 DDRPHY 配置文件和 MCU 的 ROM 文
+件，如下所示：
+
+   +DDRPHY_CFG_FILE_0=<ip_path>/<ip_name>_cfg_rom.txt
+
+   +MCU_RAM_INIT_FILE=<ip_path>/<ip_name>_mcu_rom.txt
+
+   在 IP 4.0 版本中，采用宏定义的形式进行传参，具体设置方法参考 4.1 章节。
+
+IPUG035_1.4                                  www.anlogic.com                               51
+
+2025.07
+                                                     ®
+                                             SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+版本信息
+
+     日期        DOC 版本   IP 版本   修订记录
+  2024/11/07    1.0      1.0    首次发布中文版
+                                1. 更新 1.3.1 章节中资源使用数据。
+  2024/11/28    1.1      1.0    2. 更新 0 章节中读写效率统计数据。
+                                3. 更新 2.1 章节的各个界面的示意图和内容描述。
+  2024/12/11    1.2      1.0    更新表 2-1
+  2025/04/02    1.3      2.0    更新 2.1.4 章节的界面示意图和内容描述。
+                                1. 更新表 1-1 4 钟配置的 DDR IP 资源和性能表。
+                                2. 更新 2.1 定制化 IP 工程步骤一节描述，以新版本 IP
+                                   为例进行介绍。
+                                3. 删除 3.6.3 Gate 阶段问题说明一节。
+                                4. 更新表 3-1、3-2 内容。
+                                5. 更新表 3-5 axi_axaddr 至 paxi_axaddr 的映射关系，
+  2025/07/21    1.4      4.0
+                                   对 Data Width 和 AXI Data Width 进行区别说明。
+                                6. 更新 4 参考设计一节，对仿真设置进行说明；增加双
+                                   控制器应用的相关说明。
+                                7. 更新 4.2 功能调试一节，对 UART 和用户交互 RAM 两
+                                   种调试方式进行介绍。
+                                8. 新增附录一：兼容说明。
+
+
+
+
+IPUG035_1.4                        www.anlogic.com                       52
+
+2025.07
+                                           ®
+                                   SALPHOENIX 1A 系列 FPGA DDR IP 用户手册
+
+
+
+
+版权所有©2025 上海安路信息科技股份有限公司
+
+未经本公司书面许可，任何单位和个人都不得擅自摘抄、复制、翻译本文档内容的部分或全部，并不得
+以任何形式传播。
+
+
+免责声明
+
+本文档并未授予任何知识产权的许可，并未以明示或暗示，或以禁止发言或其他方式授予任何知识产权
+许可；本文档仅为向用户提供使用器件的参考，协助用户正确地使用安路科技产品之用，其著作权归安
+路科技所有；本文档所展示的任何产品信息均不构成安路科技对所涉产品或服务作出任何明示或默示
+的声明或保证。
+
+安路科技将不定期地对本文档进行更新、修订。用户如需获取最新版本的文档，可通过安路科技的官方
+网站（网址为：https://www.anlogic.com）自行查询下载，也可联系安路科技的销售人员咨询获取。
+
+
+IPUG035_1.4              www.anlogic.com                       53
+
+2025.07
+

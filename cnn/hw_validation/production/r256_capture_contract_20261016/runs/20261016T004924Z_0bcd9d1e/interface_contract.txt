@@ -1,0 +1,96 @@
+R256采集契约（离线候选，不是已实现RTL）
+2026-10-16；候选RoadYOLO-S4-256-H48；work/roadyolo。
+共同JSON由C7拥有；wire model_id/resize_id尚未分配，不能擅自沿用512身份发布256任务。
+
+1. 数据与数值
+输入原图1280×720 RGB888，连续NHWC/YXC，共2764800B，源行3840B。
+必须从原720p取5×5非重叠块：
+out[y,x,c] = RNE(sum(source[5y+dy,5x+dx,c],dy/dx=0..4)/25)。
+输出256×144×3 UINT8，共36864像素/110592B（0x1B000），行768B，无padding。
+不用已舍入512缓存再缩一半，不使用灰度或最近邻，不在横向先除5。
+水平5样本最大1275需11bit；纵向5水平和最大6375需13bit；一次最终RNE，结果0..255。
+整数和除奇数25没有精确半点；RNE契约仍保留，穷举0..6375对精确Fraction oracle。
+输入槽保存UINT8。仅实际Stem卷积读入口pixel-128一次，INT8范围[-128,127]。
+reference.centered_int8拒绝signed输入，不代表可以检测上游伪装成UINT8的错误语义。
+
+2. AWB输入与输出打包
+沿冻结road_area_resize真实接口：i_rgb[95:72]为最早pixel0，依次[71:48]/[47:24]/[23:0]。
+每个输入24bit为R[23:16]/G[15:8]/B[7:0]。i_valid一次表示四个连续有效像素，无input ready。
+每源行320个valid拍；第319号拍i_eol=1，其余valid拍必须i_eol=0。空拍不得带EOL。
+SOF可与首valid同拍或提前；valid空隙不重置x/相位，不把valid下降当行末。
+水平beat起点相位依次0,4,3,2,1；每5个beat水平完成数0,1,1,1,1，合计4个输出。
+5像素组完成分别落在输入lane3/2/1/0，跨lane、跨beat继续累计；不能把每个96bit拍独立平均。
+每5源行形成一输出行。CPU事件参考即时表达数据依赖，不指定未来RTL的有效延迟/缓存/II。
+
+输出复用旧o_pixels[47:0]、o_pixel_mask[1:0]：串行只用mask01；空拍00；无新增11双lane要求。
+o_pixels[7:0]=R0，[15:8]=G0，[23:16]=B0；[47:24]=0。
+这与输入RGB字内R在高byte不同，必须显式转换；连续DDR字节顺序R,G,B。
+输出SOF仅首有效像素；EOL在x255；EOF仅x255/y143，均与mask01同拍有效。
+下游按mask置位消费，不以任意时钟数计像素；只在成功消费有效像素后推进3字节。
+不反压原视频/摄像头；未来FIFO/DMA溢出使整帧无效，不在中途恢复并发布剩余半帧。
+
+3. 端口与边界清单（本批仅列，不修改）
+旧实际模块camera_capture_2fps_20261015/rtl/road_area_resize.v：
+输入i_clk1/i_rstn1/i_rgb96/i_valid1/i_sof1/i_eol1；
+输出o_pixels48/o_pixel_mask2/o_sof1/o_eol1/o_eof1/o_frame_error1/o_busy1保持。
+原模块没有o_x/o_y端口。参考output_records里的x/y是语义坐标，不是宣称已经增加硬件端口。
+内部wire_worker_x、reg_magic_*_x等9位及y等9位可以保持，合法范围改0..255/0..143。
+源beat9位0..319、源row10位0..719、horizontal_phase3位0..4均保持。
+若后续适配器确需导出坐标，保留9位即可，但必须由C7批准接线，不能把Python记录当现有端口。
+源末拍319/EOL规则不变；输出511→255、287→143；帧像素147456→36864，字节442368→110592。
+水平5→2加权、两个部分和、两路水平结果及双纵向加权机制必须换为5→1未舍入累计，
+不是只替换511/287就正确。新逻辑最多一项水平完成/beat；资源/工作拍数需后续RTL实测。
+旧40×512双ERAM组织不能据逻辑缩半直接宣布省一ERAM；本批不改RAM、不提供映射数字。
+已有512 FIFO的128 records/192残余与最短192空拍证明属于旧算法，不移植为256新证明。
+
+4. DDR输入槽：只改有效长度，不移动分配
+slot0 base=54525952=0x03400000；slot1 base=55050240=0x03480000；各保留524288B=512KiB。
+slot0本次有效字节[0x03400000,0x0341B000)，slot1[0x03480000,0x0349B000)。
+实际槽分配区间仍[0x03400000,0x03480000)、[0x03480000,0x03500000)，尾部旧数据不能读入本帧。
+不搬到别的52–64MiB位置；不据离线地址证明容量、地址单位、视频非重叠或写可见性。
+线性输入地址base+((y*256+x)*3+c)，末偏移110591；保持base32/slot1。
+old road_capture_slots.i_capture_bytes[18:0]保留19位。两个真实长度判断：
+rtl/road_capture_slots.v:72的end_good以及:199的协议诊断442368都应在独立候选改110592，
+frame_ready_dispatch_20261016/rtl/road_capture_slots.v为实际实例副本，也必须由其owner同源更新。
+不只改历史未实例化源码。新候选尚未创建这些RTL副本；本批只发布替换清单。
+DMA累计、EOF完整计数、最大有效读范围、slot/张量描述和TB常量同改；i_capture_end仍只接受完整无错帧。
+
+5. 接纳、信用、身份与取消（旧合同不变）
+SOF前必须已安全取得FREE槽和整帧捕获能力；无credit整帧跳过，不能到帧中途才接纳。
+credit至少包含真实槽所有权、resize空闲、DMA有界容纳/发布能力；缩小张量不等于credit已实现。
+原road_source_sof_identity.i_capture_credit为camera域输入；不得把100MHz o_free_mask裸连过来。
+descriptor128={epoch32,source_frame32,capture_ms64}保持；时间取源捕获镜像，不改用CNN完成时间。
+跨域payload从源请求冻结到真实目标消费ACK返回保持；目标只在完整捕获后拉valid，保持到ready握手。
+ACK只是该身份事务消费，不是DDR写完成，不释放READING槽。复位立即撤许可，不证明外部在途已排空。
+slot元数据必须在该身份被dispatcher接受前安全可见；本批不新增CDC/FIFO或任意身份队列。
+原raw SOF异常取消与合格admit分配存在不同职责：只接admit会漏异常中断，只接所有raw SOF会误分配。
+该适配尚待C7决定，不能在此换接口、伪造同域或当成已解决。
+分配仅看SOF前FREE，不旁路同边沿release；捕获中重入SOF/overflow/几何错/不完整end→QUARANTINE。
+QUARANTINE不自动回FREE；需已排空并协调新代的恢复路径，不能固定等几拍复用。
+
+6. READY、claim与最后读
+状态保持FREE→CAPTURING→WAIT_VISIBLE→READY→READING→FREE，异常QUARANTINE。
+完整110592B且无frame_error只是WAIT_VISIBLE资格；还需真实同slot/epoch/frame写可见事件才READY。
+i_write_visible/i_visible_slot/epoch/frame_id沿旧端口；AW/W ready握手、SOF ACK、EOF均不等于可见。
+当前实际write_visible服务仍缺失，本参考不驱动任何假事件，不使硬件READY闭合。
+claim valid/ready及slot/epoch/frame保持到握手；READY前不发计算job，task_id不冒充source_frame_id。
+原225位job布局不变；本批wire model/resize身份未分配，不能启动混合分辨率硬件任务。
+释放仅实际最后输入读响应被消费、无在途未消费响应、无未来输入读取且服务允许复用，身份匹配才有效。
+CNN done、请求发出、NMS done、结果copy ACK、固定延时均不能代替last_read_consumed。
+复位取消本地valid，外部已接受DDR返回仍必须按原归属排空，再复用槽/epoch；本批不实现该服务。
+
+7. 显示保持与资格
+box_overlay_joint_20261016已有单次18整帧64框＋AGE交接，不重跑、不修改，不重新做显示。
+显示仍使用1280×720源坐标，R256框由C9直接乘5并统一RNE/裁边，不能在旧5/2结果再乘2。
+2000ms源图年龄、实时失效撤框、pending完整表SOF切active、整帧冻结不变。
+本批只有离线参考/黄金输入/契约，不含RTL仿真、综合、布局布线、位流/板/Flash、训练或重校准。
+八门compile/ast/readability/comment/naming/profile/testbench/toolchain均NOT_RUN。
+readable-python-generator当前缺失，未安装、未宣称Python严格门通过；实际CPU断言测试独立报告。
+
+8. C2最小调用
+用importlib.util加载本目录reference.py（导入无写文件/无GPU依赖）。
+rgb256=resize_rgb888(original_720p_uint8_RGB.tobytes(order='C'))；长度110592。
+若部署参考自己在Stem做pixel-128，传rgb256，不再调用centered_int8；若需要已中心化显式入口才调用一次。
+golden_manifest.json索引九套source.rgb888.zlib、golden.rgb888和golden.int8及哈希。
+运行python -B -X utf8 self_check.py重新自检只新增本目录run；会保留失败，不改旧数据/代码。
+合成黄金图没有GT，不能用于Precision/Recall/AP50结论；17图评估由C2另行读取冻结val。

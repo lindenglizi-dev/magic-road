@@ -1,0 +1,115 @@
+# Verilog deliverable gate
+
+Root: `E:\project\qiansai\anlogic_topic2_work\lab1_sc500_road_vision\cnn\hw_validation\production\shared_lut_service_1fps_20261015\verification\tb_road_shared_lut_service.v`
+Delivery ready: `False`
+Summary: **105 error(s)**, **0 strict warning(s)**
+
+## Other deliverable findings
+
+| Severity | Code | Path | Line | Message |
+|---|---|---|---:|---|
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:4` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:5` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:9` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:11` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:12` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:13` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:14` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:15` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:16` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:17` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:18` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:19` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:20` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:21` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:22` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:23` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:24` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:25` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:26` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:27` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:28` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:29` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:30` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:31` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:32` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:33` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:34` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:35` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:37` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:38` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:39` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:40` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:41` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:42` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:43` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:44` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:45` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:46` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:47` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:48` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:49` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:50` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:51` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:52` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:53` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:54` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:55` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:56` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:57` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:58` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:59` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:60` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:61` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:68` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:70` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:71` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:72` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:73` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:74` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:75` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:76` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:77` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:78` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:79` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:80` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:81` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:82` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:83` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:84` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:85` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:86` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:87` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:88` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:89` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:90` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:91` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:92` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:93` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:94` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:95` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:97` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:98` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:100` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:116` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:190` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:199` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:212` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:213` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:214` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:215` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:216` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:217` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:218` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:219` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:220` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:221` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:222` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:274` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:275` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:276` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:277` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:278` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:279` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:336` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |
+| error | COMMENT_COMMENT_PLACEMENT | `tb_road_shared_lut_service.v:580` |  | Verilog code line must use a same-line or adjacent explanatory comment in the requested language. |

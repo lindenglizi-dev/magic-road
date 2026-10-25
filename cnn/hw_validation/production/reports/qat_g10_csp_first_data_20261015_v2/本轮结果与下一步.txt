@@ -1,0 +1,34 @@
+CSP2首残差：真实QAT整数参考与地址契约（修正版v2）
+2026-10-15 10:10:02 北京时间完成；CPU导出与校验5.063秒。
+
+本轮完成
+原G10参数不变：DW12/stride1、PW12→12的12字段和共享SiLU，共13段2526字节，按160-bit物理词解包逐字段一致。
+输入沿已通过前三层RTL及双时钟PAXI联调的PW8×8×24合成测试图输出；本轮不训练、不重新选尺度，也不做道路精度评估。
+取后12通道进入分支，前12通道保持旁路。一个左上4×4×12输出使用6×6×12 halo：300个真实值、132个上/左真实边界补零；缺少图像内部上下文则拒绝，不把截取边界当图像边界。
+2304项黄金参考包含8个DW/PW算术阶段共1536值，以及前半旁路、残差bypass、signed9和、最终sat8各192值。卷积阶段与独立标量实现逐项一致，较大上下文有效区域一致，残差与既有整数图一致。
+160个现有24MAC接口任务、320组数据，384个有效累加结果与黄金值一致，无重复/缺失输出。DW空间点按3+1、PW输入通道按8+4，尾lane置零；这只是端口数据参考，尚未输入RTL。
+432个halo地址、192个输出地址、384个字节写和24个128-bit写beat对照通过；残差融合后才写PW别名存储，不先提交原始PW结果，不覆盖原输入/前半旁路。
+DW/PW全INT8输入保守累加界71383/104003，符合signed33部分和与INT32结果要求。残差同尺度、signed9→sat8；真实本图饱和0次，极值由65536种INT8组合单测覆盖。
+
+验证与纠错
+8项测试通过：halo/缺上下文、残差全部INT8组合、MAC尾lane和错误/重复任务、地址跨tile，加原参考回归及身份/契约漏绑负例。
+v1数值没有发现错误，但审查发现先计算产物哈希、后生成identity.json，漏绑身份文件；后加contract也不在核心结果收据中。v1原记录保留并标记证据未闭合，不覆盖成成功修复。
+v2先生成identity及冻结contract，再计算核心产物哈希，缺任一文件则拒绝成功。status→verification_receipt→identity/contract现已闭合。
+最终261个输入/源码、44个核心产物哈希通过；35个参数、向量、输入、任务、地址及NPZ数值文件与v1逐字节相同。修复没有改变数值、模型、地址或验收口径。
+核心范围以verification_receipt.artifact_sha256为准；本说明和execution_checks等后加说明文件不伪称属于原数值核心，执行收据另绑定它们/核心元数据。
+
+边界与未通过项
+数据-only：新增训练0、数值全网前向0、CUDA未初始化、RTL修改/对拍0、仿真/综合/位流/板卡0。
+当前只覆盖第一残差的一个左上4×4 tile，未覆盖右/下/其他内部tile、第二残差、concat/CSP2最终PW、整网和5FPS/正式精度。
+字节影子及native地址代数不证明实际PAXI跨beat读重组、背压、DMA掩码、写可见性或硬件无覆盖。
+后续还须构造饱和样例贯穿残差融合、storage_alias及128-bit打包，而不是只依赖本图零饱和和独立加法单测。
+本轮未执行新的八项RTL门禁；前序两控制器的403错误/0 strict warning仍保留，六项failed、testbench/toolchain not_requested，不是本新单元的通过记录。厂商RAM初始化警告、实际DDR及物理阻塞未解决。
+readable-verilog-generator要求参考先行；Ponytail复用已有卷积/量化/图地址/解包，未新增依赖或通用加速器。readable-python-generator和readable-script-generator入口未提供，不声明其严格门禁通过。
+work/roadyolo，仅本地保存，不提交推送。
+
+下一步（未执行）
+用contract.json、参数、MAC任务、黄金结果及地址表实现独立12通道stride1首残差RTL探针；保持24MAC、现有II、RNE、SiLU及PAXI外设协议。
+先逐项核对acc/pre/SiLU/post/residual及实际写地址，再测尾lane、背压、复位/故障和跨beat读重组。需要改变对外协议或数值时先单列决策。
+之后接第二残差前，必须先补齐第一残差输出的真实halo上下文，不能在现4×4结果外直接补零。
+
+入口：contract.json、graph_segment.json、parameters/、vectors/、golden.npz、mac_tasks.json、addresses.json、identity.json、verification_receipt.json、status.json。

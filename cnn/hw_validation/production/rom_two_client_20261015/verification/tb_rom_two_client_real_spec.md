@@ -1,0 +1,13 @@
+# tb_rom_two_client_real verification contract
+
+One no-port testbench instantiates the actual pure-wiring two-client top. No internal handshake or data is driven. The top includes the original down2 boot prefetch, original LUT service, new arbiter, and exactly one unchanged G10 PH1P reader.
+
+The parameter sink compares 652 kind/address/INT32 values and the table sink compares 1024 SiLU address/INT16 values with `reference/prefetch_expected_47.hex`. Signed SiLU values use the reference's signed extension when comparing the packed 32-bit expectation. Load/table sinks use independent deterministic LFSR bits and bounded long stalls. Dynamic requests interleave all 1024 sigmoid and 256 exp entries so both kinds overlap prefetch. Every result compares kind, address, tag, frame token, model ID, data and error; idle request fields change immediately after acceptance. Responses are randomly held for zero to seven cycles and checked for full-payload stability.
+
+Passive counters distinguish arbiter admissions, physical reader accepts and real returns for each owner. Cancellation occurs before admission, then exactly after LUT admission but before physical acceptance. The latter must drain its late return before the service accepts a new token. Common reset is exercised during a physical read and while a client response is held. The final boot reload must again emit all 1676 correct items.
+
+```json
+{"signal":[{"name":"clk","wave":"p.........."},{"name":"prefetch_active","wave":"1.........0"},{"name":"query_accept","wave":"010........"},{"name":"lut_admit","wave":"0....10...."},{"name":"cancel","wave":"0.....10..."},{"name":"physical_accept","wave":"0.....10..."},{"name":"service_state","wave":"=.....=..=.","data":["WAIT","DRAIN","IDLE"]},{"name":"old_rom_consume","wave":"0.......10."},{"name":"old_client_rsp","wave":"0.........."},{"name":"new_token_accept","wave":"0.........1"}],"head":{"text":"Schematic: divide and real ROM wait compressed; cancel follows logical admission"}}
+```
+
+Success requires all comparisons, complete counts, both competing query kinds, cancellation/reset recovery, the watchdog and `TB_PASS_ROM_TWO_CLIENT_REAL`. This is functional vendor-model evidence for fixed down2 plus the LUT tables, with no full-network, resource, physical timing, DDR, board or Flash claim. The original prefetch lacks a ROM-fault input; actual-ROM fault injection is not covered. The current formatter/spec document port contract rejects no-port TBs; `gates/real.json` preserves that strict failure. This companion is manual documentation, not a claimed successful `write-spec` result.

@@ -1,0 +1,42 @@
+首残差 tile：布局布线结果与下一步
+日期：2026-10-15
+
+一、已完成
+冻结 v2 候选完成 TD 实际布局布线。physical_attempt4 为有效结果。
+本轮未改 RTL、权重、数值契约或 100 MHz 时钟约束；未训练、生成 bitstream、操作板卡或 Flash。
+当前分支 work/roadyolo；只保存本地，不提交或推送。
+
+二、实际测量
+内部 setup 最差裕量：+0.484 ns。
+内部 hold 最差裕量：+0.021 ns。
+内部 setup / hold 分别实际评分 7,970 条路径，违例均为 0。
+全报告实际评分 setup 17,953、hold 18,163 个端点，负裕量端点均为 0。
+STA 覆盖率：90.21%，不能称为全部路径签核。
+实际布线资源：5,396 Slice、30 DSP、1 ERAM、5,060 寄存器、4,870 LUT6。
+上述为独立首残差 tile，不是整机资源，也不能与其他独立计算核简单相加后宣称可部署。
+
+三、复核与失败记录
+90 项原始、104 项暂存及 20 项物理输入哈希复核通过；RTL 与时钟约束保持不变。
+no clock、clock definition、invalid constraint、combinational loops、no path constraints、shadowed/ignored timing exceptions 均为 0。
+保留 2 项 dummy node；未擅自添加时序例外。
+physical：时序模型更新前查询时钟导致提前停止，未算通过。
+physical_attempt2：导入数据库后再次读取相同时钟，导致重复定义、STA 0% 和无内部评分路径；检查器拒绝该空报告。
+physical_attempt3：准备阶段文本编码失败，未启动 TD。
+physical_attempt4：仅修复启动流程，沿用原数据库时钟，取得上述真实结果。所有失败记录保留。
+
+四、仍未通过的范围
+51 个输入未设置 input delay，75 个输出未设置 output delay，外部 I/O 未签核。
+原始外部复位没有实际 recovery/removal 评分路径，复位解除时序未签核。
+hold 仅余 21 ps；后续接入必须重跑实际时序，不能沿用本次裕量。
+严格门禁仍未通过：完整 10 个 RTL 源闭包记录 4,883 errors、7 warnings；功能与物理收据不清除该交付阻断。
+完整 CSP2、真实 DDR、全模型、视频链路、5 FPS、识别精度及连续板测均不在本次通过范围。
+因此 physical_internal_setup_hold_pass=true，但 physical_timing_passed=false、production_delivery_ready=false。
+
+五、下一步可执行顺序
+1. 固定本次首残差 tile，不为已通过的内部路径额外改频率、例外或重跑随机种子。
+2. 从冻结整数模型取得完整 CSP2 所需的真实输入和邻域，补第二残差、旁路拼接与末端融合参考；现有小窗口不足的 halo 不用零填充冒充。
+3. 在同一计算阵列上复用调度，补 CSP2 边界 tile、通道尾块、背压、连续任务、复位晚返回及错误拒写对拍，不并排新增一套 30 DSP 核。
+4. 对完成的 CSP2 独立候选重新执行数值、握手、综合和实际布局布线，再衔接真实 DDR 来源与全帧周期预算。
+5. 外部 I/O、复位解除、严格门禁和整机资源/时序必须单独补齐；未通过前不宣称上板或正式交付完成。
+
+证据入口：status.json、physical_final_checks.json、physical_attempt4/physical_summary.json，以及该目录的原始 timing/check_timing/资源报告。

@@ -1,0 +1,60 @@
+真实 DDR 控制器启动观察与下一步阻断
+2026-10-11
+
+一、先说未完成项
+
+真实存储读写及写后读可见性仍未验证。原因已经缩小到具体缺件：现有工程和 TD 安装目录没有与 PH1P35MDG324 封装内 DDR2 匹配的存储器仿真模型和完整测试顶层，而不是缺少 CNN 算术代码或现场视频。
+
+二、本轮实际推进
+
+上一轮只编译、加载到 0 时刻；本轮新增一个无端口测试台，以真实 100 MHz 参考时钟、2 us 低复位驱动未修改的原厂控制器，观察 1 ms。APB/PAXI 请求全部保持无效，记录派生时钟、复位释放、初始化命令及 ready。没有 force、没有替换 PLL、没有启用 PH1P_DDRPHY_SIM 缩短初始化，也没有返回伪造数据。
+
+观察到 PHY ready 在 622.471406 us 拉高，同时可见 DDR 初始化与刷新命令。由于没有连接 DDR2 存储器模型，这一结果反而明确证明：ready 不能作为存储读写自检通过条件。
+
+具体原因在当前生成配置和明文源码中可定位：
+  user_source/hdl_source/ph1p35_ddr/ddr2/ddr2.v:80，CAL_EN=0。
+  user_source/hdl_source/ph1p35_ddr/ddr2/src/rtl/phy/ph1p_ddrphy_wrapper.v:442-469，cal_dis 分支直接将 init_done 转为 cal_done。
+本轮没有把 CAL_EN 改成 0；它就是原始工程配置，也不因这个发现擅自启用校准或修改真实硬件参数。
+
+完整运行到1002 us，共100200个参考时钟上升沿；cfg/dhi/DDR时钟分别记录50570、117705、434359个上升沿（包含启动等待，不是直接拿全程平均算稳态频率）。最后100 us窗口测得约50.79 MHz配置时钟、133.33 MHz DDR用户时钟、533.34 MHz DDR时钟。DDR用户域不是CNN的100 MHz域，后续接入仍须沿既定跨域契约处理。
+
+记录109条DDR命令，其中MRS 7、refresh 52、precharge 50；无请求读返回为0。实际ModelSim编译和运行0错误，运行保留391条厂商层级警告，不把它们算成“零警告通过”。仿真墙钟约4分45秒，启动及读写状态不能由这段主机耗时推导板上性能。
+
+完整计数及最终状态见 status.json 和 simulation/receipt.json；原始日志、工作库和 startup.wlf 同目录保留。原日志里的 time_ps 标签使用了 %t，受厂商最小 1fs 时间精度影响实际打印为 fs；status.json 明确除以 1000 修正为 ps。参考时钟周期断言和边沿计数不受显示格式影响，没有拿错误单位当速度结论。
+
+三、器件模型到底缺什么
+
+DS1300_PH1P_Datasheet.pdf 的 PDF 第45页、文档第39页说明 PH1P35MDG324 内部合封 512 Mb、x16、BL8 存储器。因此无需用户去拍“外置 DDR 芯片”。工程配置是 Integrated、DDR2-1066、ROW13/COL10/BA2、CL7/CWL6；资料未披露内存 die 厂商料号。
+
+现有29个RTL文件是控制器、PHY、初始化和加密 MC。ddr2_parameter.vh 仅是时序常量头，ph1p_phy_dramhardcon.v 是硬连接/小 DPRAM 原语，均不是能执行 DDR2 命令并保存读写数据的器件模型。相关官方示例重复相同文件集，未发现模型。完整盘点范围和结论保存在 model_inventory.json，不宣称互联网上不存在模型。
+
+也查到 Micron 官方页面列出 DDR2 Verilog Model 的 Get Access 入口，但没有取得下载包，更没有 PH1P 合封 die 的兼容性依据，因此不选用任意外置 512Mb x16 模型冒充。
+来源：https://www.micron.com/products/memory/dram-components/ddr2-sdram/part-catalog/part-detail/mt47h32m16nf-25e-it-h
+
+四、需要用户协助取得的材料
+
+请向安路或比赛官方技术支持索取以下原始包，可直接转发这段：
+
+“工程器件 PH1P35MDG324（HX1P35A 板），TD 6.2.1 Engineer 6.2.168.116，生成 MIS IP build Mar 25 2026，Integrated DDR2 512Mb x16 / DDR2-1066 / BL8 / CL7 / CWL6 / MC_REORDER=NORMAL，ModelSim SE-64 2020.4。已有控制器、PHY和FPGA原语库并已完成真实启动观察，缺封装内DDR2对应的受支持器件模型。请提供模型 .v/.vh、参数定义、完整仿真TB和编译/运行脚本；或确认可用的兼容DDR2 die型号及模型配置。同时请明确 NORMAL 模式下写后读可见性、无ID读返回顺序、内部 paxi_bvalid 的实际完成含义，以及复位后已接受请求的处置。”
+
+模型的作用是让真实控制器发出的 DDR 命令得到独立器件响应，从而验证数据确实写入、读回，及何时可发布张量 READY。它不是训练数据，不需要现场标注视频，也不需要现在连接板卡。仅有控制器 RTL 或“初始化成功”截图不能替代。
+
+五、拿到材料后的固定执行顺序
+
+1. 不改当前 IP，接器件模型，先证明初始化和4个已知地址的数据逐字节一致。
+2. 测 AW/W 同拍及延后1/2拍、真实 READY、同址写后读和交错地址读回；保留时间线，不用固定等几拍替代完成事件。
+3. 明确写可见性后再修独立包装层副本的真实 WREADY/RLAST 接线，接现有单在途桥。
+4. 将上一轮589824字节、36864写及36864读的测试迁到真实 IP 闭环，随后才扩展可综合DMA及剩余网络。
+
+在器件模型取得前，不再重复跑同样的条件 RAM 来充当新 DDR 进展，也不继续扩大 CRC 或通用探针。
+
+六、代码及证据边界
+
+新增测试台：本目录 tests/tb_ddr_vendor_startup.v。
+接口与周期图：tests/tb_ddr_vendor_startup_spec.md、specifications/startup.svg。
+执行入口：本目录 run.py（prepare / gate / simulate / specifications / finish / check）。
+全部输出限定本目录；旧文件和依赖302项运行前后校验，不修改既有报告。
+
+本测试台严格门禁209条未闭合，包括检查器解析问题和命名/格式/注释项；不是上一轮417条已被修成209条。八项原始状态存入status.json，实际ModelSim编译/执行单列。规范工具仍拒绝无端口TB，保留失败，不新增假端口；周期图由受管WaveDrom渲染。仿真通过不等于严格交付通过。
+
+本轮沿用 readable-verilog-generator 的证据区分和 Ponytail 的最小复用原则，只加启动观察，不重写计算核。没有新综合/布局布线资源数据、没有板测FPS或真实模型精度结果，没有训练、生产修改、位流、上板或Flash操作。

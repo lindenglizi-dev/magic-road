@@ -1,0 +1,89 @@
+显式双bank命令ROM：执行与对比报告
+启动：2026-10-14；结果整理：2026-10-15
+
+一、先说未通过和较差部分
+
+1. 严格交付门仍未闭合：gate_attempt2/rtl.json 为782 errors、20 strict warnings；tests.json 为723 errors、0 strict warnings。上一轮TB为573条，本轮加入综合网表专用TB后增加150条，检查对象由3个文件增加为4个；不能把对象数量变化解释为新增150个计算错误，也不能把工具不支持的语法一概当误报。
+2. 全板接口未签核：STA覆盖98.41%；23个输入、49个输出未指定外部延迟，包含DDR物理接口、复位及显示接口。沿用原约束，不编造外部时序，不以本次内部正裕量替代板级签核。
+3. setup最差仅+0.015 ns，hold +0.020 ns，removal +0.022 ns；裕量很薄。PLB使用93.59%，有明显布线压力。
+4. 本候选尚无上板结果。既有三次复位和10分钟稳定记录属于旧单tile位流，不能迁移到本候选。
+5. 仍是测试参数、Stem→DDR→DW/PW四tile闭环，不是完整67层CNN，不包含摄像头连续推理、真实量化模型、框解码或NMS，不证明5 FPS或精度达标。
+
+二、本轮唯一设计修改
+
+冻结基线：../stem_ddr_down2_four_20261014/，保留此前全部失败报告。
+修改：rtl/road_stem_ddr_sequence.v 第90行附近。
+把8192×64命令数组拆成两个4096×64数组；在原ST_FETCH同时读取两组，寄存PC[12]，随后选择对应返回。同步返回与选择同拍，不额外增加取指拍。
+添加syn_keep只为保留两个返回寄存器和选择位，不是时序例外。
+program.hex的8192词、6092有效指令、补齐内容及哈希不变；低/高文件只是机械切分。
+顶层、8个算术/调度依赖、mailbox、端口、II、数值/复位/故障语义、SDC及原build目录Tcl均未修改。
+具体差异：source_diff.patch；分组契约与哈希：reference_banks.json。
+
+三、功能证据
+
+RTL ROM测试：8192词逐地址一致，16384次非FETCH保持一致；低组误替换为高组的负例在地址0被捕获。
+原13项直接回归：全部通过，每个案例的周期与冻结四tile基线完全相同。详见functional_comparison.json、sequence_verification/receipts/manifest.json。
+双时钟集成：实际算术核和CDC mailbox，受控PAXI存储端点。
+正常125824周期；随机背压128083周期，均与原四tile基线相同。
+事务数：256次128-bit写、289次读；4096字节Stem输出，4个DW/PW小块，1536字节最终PW输出。
+读halo按64/72/72/81个有效空间位置加载，补零17/9/9/0；测试覆盖图像左上边界与内部tile，不是重复读取同一块。
+以上周期不是厂商DDR板测延迟，也不能外推整网FPS。
+
+正常周期互斥分桶（名称/定义以原RTL及接口文件为准）：
+bin0=3；bin1=6046；bin2=75792；bin3=2191；bin4=3468；
+bin5=5832；bin6=6752；bin7=4352；bin8=3072；bin9=18316。
+总和125824，无重叠相加。随机模式只有bin3→2627、bin4→5291，其余不变。
+
+四、实际布局布线及约束复核
+
+器件PH1P35MDG324、速度-3；CNN目标100MHz，DDR用户时钟约133.333MHz。
+本候选只做了一次完整综合、布局布线：physical/td.command.json，退出0，耗时1512.06秒，日志包含ONCE_PHYSICAL_COMPLETE。
+没有重跑随机种子/线程组合，没有导入旧gate.db冒充新完整实现。
+
+实际整壳资源（含DDR IP、HDMI显示、算术和调度，不是CNN独占数）：
+Slice 15820/21216（74.57%）；DSP 30/40（75%）；ERAM 15/108（13.89%）；
+PLB 2482/2652（93.59%）；MSlice 7013/8112（86.45%）；PLL 3；I/O 51。
+重要：命令ROM在本候选中成为LUT逻辑，不能继续引用旧版20块ERAM映射。总资源下降/变化不能单独归为算术优化；这是取指结构导致映射改变的代价。
+
+最初physical/check_timing.rpt记录4条local/master clock定义问题。
+在constraint_recheck/重新导入同一pr.db，再读原board.sdc、原DDR IP SDC及原resolved_display.sdc：clock definition=0，no clock=0，invalid constraint=0，组合环=0。
+无重新布局布线、无新时序例外、无周期或延迟约束改动。两个pr.db的SHA256相同；全量路径统计和最差路径与原结果完全一致。
+本次说明的是原约束来源重新建立后诊断归零，不能泛称任意时钟定义问题都可忽略。
+
+全量每组最多100000端点、每端点1条路径，慢/快角的max/min均打开：
+setup 27061；hold 31849；recovery 5378；removal 5378；负裕量记录0。
+setup最差+0.015 ns：DDR PHY init_gate到init_gate_r，100→133.333MHz，slow_m40c；数据延迟2.894 ns，其中网络2.679 ns。
+hold最差+0.020 ns：DDR PHY复位到DDR byte FIFO复位，fast_m40c。
+recovery最差+1.131 ns：CNN复位同步/分发到Stem权重寄存器，slow_m40c。
+removal最差+0.022 ns：CNN复位分发到序列器加法寄存器，fast_m40c。
+CNN同域统计setup +0.105 ns、min +0.022 ns；不能把它代替整壳最差+0.015 ns。
+详细端点、RAM/DSP相关路径、原异常与未覆盖记录保留在physical/及constraint_recheck/，最终机器可读汇总为comparison.json。
+
+五、综合网表ROM检查与保留问题
+
+实际gate_netlist中的取指实例原样提取，用安路厂商原语运行；PC、取指时钟及使能由专用TB控制，ROM数据不被替换。
+netlist_rom_attempt3/receipt.json：两组完整64位返回在8192个PC取值下均正确；选择寄存器同步，16384次保持检查通过。没有使用第二份行为ROM替代映射电路。
+限制：这不是SDF时序仿真、不是全部解码器的门级验证、不是DDR控制器存储模型测试，也不是硅片读回。
+最初全工程网表仿真开销过大，已主动停止；随后切除不相关DDR/PLL/算术实例。首个收窄版本缺厂商glbl全局启动模型，展开失败；补齐实际glbl后通过。保留netlist_rom/及netlist_rom_attempt2/失败/停止日志。
+厂商库编译578 warnings、最终仿真21276 warnings原样保留；多数涉及省略原语端口/类型，不宣称“零警告”。
+
+SYN-5025置零记录、dummy node的DSP控制/LSlice/PLL三类记录均保留。
+有效ROM返回已通过实际原语检查，PAXI数据线在生成诊断位流时另作256位驱动/接收连通性检查；这些证据不能替代所有dummy控制端点的逐项生产签核。
+规格生成工具对无端口TB要求非空ports，自动规格失败记录保留；不伪造端口、不改全局检查器。依readable-verilog-generator流程保留门禁状态，诊断实现通过不等于严格交付通过。
+
+六、位流与用户下一步
+
+临时诊断位流已在finalize.py全部前置断言通过后成功生成，status.stage=DIAGNOSTIC_BIT_READY_BOARD_NOT_RUN。
+SHA256：9b8dd66127b7ac88d1b065707689e3ce3d681c80f182556c1f8cd8a7058b3aa6。
+数据库SHA256：04d5e1f7c881dea92d19b384a842e924d4b7252f0392504124da53e656cdbb44。
+最终路径、大小及数据库绑定见status.json和diagnostic_bitgen/receipt.json。生成前256位PAXI驱动/接收连通性检查通过；导入数据库后的四类时序仍无负裕量、时钟定义0。没有下载命令，不连接开发板，不写Flash。
+若status.stage为DIAGNOSTIC_BIT_READY_BOARD_NOT_RUN，可在BitWriter选择PROGRAM_SRAM、同一PH1P35MDG324设备，加载：
+diagnostic_bitgen/HX1P35A_C7_STEM_DDR_DOWN2_BANKS.bit
+确认文件名末尾为BANKS，不是旧单tile的DOWN2.bit，也不是旧FOUR文件。
+预期：自检结束后TEST绿底、蓝色心跳。复位3次应重新完成自检并恢复绿色，再保持10分钟。
+若红色、卡住或花屏，先保存整屏状态及加载文件名，不盲目重载或改Flash。旧单tile已通过位流仍作为回退点。
+完成四tile上板复验后，下一主线是扩到真实层的tile遍历/DDR复用；不继续扩CRC，不按当前巨大字面指令ROM无限堆整网。
+
+结论
+本轮取得了真正的新进展：同程序、同周期、同核及同约束的新候选完成一次完整布局布线，并通过ROM映射功能检查。没有证明旧崩溃的唯一根因；仅能确认该候选绕过了此前失败路径。
+它是四tile上板诊断候选，不是最终CNN部署版本。先验证这一步，不以局部绿屏宣布整网资源、FPS或精度完成。

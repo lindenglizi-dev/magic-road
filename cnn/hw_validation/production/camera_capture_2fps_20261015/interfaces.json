@@ -1,0 +1,27 @@
+{
+  "status": "COMPONENT_CONTRACT_NOT_REAL_DDR_INTEGRATION",
+  "scaler": {
+    "module": "road_area_resize",
+    "clock_reset": "i_clk; i_rstn asynchronous assertion; pipeline/frame state cancels immediately",
+    "ports": {"i_clk":1,"i_rstn":1,"i_rgb":96,"i_valid":1,"i_sof":1,"i_eol":1,"o_pixels":48,"o_pixel_mask":2,"o_sof":1,"o_eol":1,"o_eof":1,"o_frame_error":1,"o_busy":1},
+    "input_lane_order": [3,2,1,0],
+    "output_byte_order": "lowest R0,G0,B0,R1,G1,B1 highest",
+    "source_shape": [720,1280,3],
+    "output_shape": [288,512,3],
+    "no_input_ready": true,
+    "eram_goal": 2
+  },
+  "slots": {
+    "module": "road_capture_slots",
+    "clock_reset": "i_clk single control domain; i_rstn cancels all state; real shared-DDR reset/drain not supplied by this component",
+    "ports": {"i_clk":1,"i_rstn":1,"i_sof":1,"i_epoch":32,"i_frame_id":32,"i_timestamp":64,"i_capture_end":1,"i_capture_bytes":19,"i_frame_error":1,"i_write_visible":1,"i_visible_slot":1,"i_visible_epoch":32,"i_visible_frame_id":32,"i_read_claim_valid":1,"i_read_claim_slot":1,"i_read_claim_epoch":32,"i_read_claim_frame_id":32,"i_last_read_consumed":1,"i_release_slot":1,"i_release_epoch":32,"i_release_frame_id":32,"o_claim_ready":1,"o_capture_active":1,"o_capture_slot":1,"o_capture_base":32,"o_capture_accepted":1,"o_frame_skipped":1,"o_free_mask":2,"o_ready_mask":2,"o_reading_mask":2,"o_quarantine_mask":2,"o_slot_epochs":64,"o_slot_frame_ids":64,"o_slot_timestamps":128,"o_protocol_error":1},
+    "bases": [54525952,55050240],
+    "slot_bytes": 524288,
+    "payload_bytes": 442368,
+    "priority": ["reset", "SOF during active capture quarantines old frame and skips new", "frame_error quarantines current capture", "valid capture_end validates geometry", "matching write_visible publishes", "read claim", "matching last_read_consumed releases"],
+    "simultaneous_end_visible": "allowed only with valid full-size end and matching active slot identity",
+    "allocation": "SOF sees pre-edge FREE only; no same-edge release bypass",
+    "no_automatic_ready_discard": true,
+    "visibility_provider": "external controlled event in component TB; actual PAXI guarantee unimplemented"
+  }
+}

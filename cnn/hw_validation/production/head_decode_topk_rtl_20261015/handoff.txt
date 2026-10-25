@@ -1,0 +1,62 @@
+RoadYOLO C2 head/Top128 可运行交接（2026-10-15）
+
+最新状态：同源本地授权Icarus编译返回0，vvp完整13/13 PASS。
+正式新收据：verification/reports/escalated_attempt/summary.json，13个日志均保存在同一独立目录。
+主代理对两批源码/数据/工具的独立闭包复核见相邻shared_lut_service_1fps_20261015/final_receipt.json。
+旧verification/reports/summary.json仍为SIM_PASS_COMPILE_ABNORMAL，编译返回3221225477，未倒改。
+严格格式/AST门未通过；未综合、未布局布线、未上板。功能通过不等于正式交付。
+这是独立验证候选，不是正式生产发布。不训练、不修改五个冻结算术核，不实现NMS。
+本目录RTL已供C9只读接线；不要复制第二张候选表，不修改本目录。
+
+一、源文件与复跑
+RTL：rtl/road_head_decode_topk.v、rtl/road_candidate_ram.v。
+TB和实际命令、工具/源码哈希见 verification/run_rtl.py 及 verification/reports/。
+从工程根目录、现有CPU Python环境运行 verification/run_rtl.py --suite all；需PATH中现有iverilog/vvp。
+数值输入只用保存的heads和当前模型包，不运行CNN推理。模型ID B35D4A66；完整payload SHA256：
+b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+端口名称/位宽唯一清单见requirements.json，PIF1位段不变。
+
+二、C9最小接线
+start：i_start_valid && o_start_ready锁定frame_token32、model_id32。
+cell：i_cell_valid && o_cell_ready；112位低16起依次tx/ty/tw/th/objectness/person/vehicle；
+cell_id严格0..12095递增，cell_frame_token与start一致。忙时源端保持valid与payload。
+共享LUT：o_lut_req_* → 服务req；服务rsp → i_lut_rsp_*；kind/address/tag/frame_token/model_id必须原样返回。
+不能把动态请求换成常数。头部尾段/阈值/RNE由现RTL执行。
+seal：o_sealed_valid && i_sealed_ready，token32及两类count8（各0..128）同时采样；等待期间冻结。
+read：i_read_req_valid && o_read_req_ready锁定class1/index7；至o_read_rsp_valid && i_read_rsp_ready
+前禁止第二请求。响应回显class/index；data160为DECODED160，error需传播，不发布部分成功表。
+finish：NMS最后输出完成且无未决读后，i_finish_valid && o_finish_ready，token必须匹配；之后释放候选RAM。
+共同复位异步断言/两级同步释放；i_abort撤销本地事务并与受控LUT共同取消。
+后续共享ROM服务cancel会排空已接受的无标签ROM响应；不声称外部DDR已排空。
+
+三、唯一候选存储
+只有road_candidate_ram里的1024×40bit数组，共40960bit＝2类×128条×160bit。
+每条连续四个40bit词，地址{class,index[6:0],word[1:0]}。不复位数组内容。
+写四拍；同步读逐词READ/CAPTURE共八拍；随后整条响应保持。不能再为NMS加候选RAM。
+SCAN原始堆、SORT原地堆排序、DECODE覆盖为DECODED160、NMS只读，互斥占有。
+2 ERAM是物理目标，不是已证实映射；DSP新增0也是目标，尚无TD资源/时序报告。
+
+四、实际周期（verification/reports/summary.json）
+最新独立复跑再次测得真实图start握手→首次sealed_valid：837581拍，100MHz换算8.37581ms。
+SCAN835788、SORT709、DECODE1083，主阶段之和837580，另1拍start边界；等待已包含，不能再次相加。
+输入等待1、LUT等待54698、RAM等待868；seal前物理词读268/写236；NMS客户端逐条读回后词读316。
+本模块真实图TopK共12条，封存内容逐项相同；最后7框由后续NMS产生，本模块没有NMS。
+满两类各128候选的ties向量710191拍：SCAN643612/SORT43534/DECODE23043，另2拍边界。
+11个数值/边界用例加protocol、phase_reset共13项PASS，含气泡、长反压、范围/身份故障和各阶段取消。
+这不是最坏所有12096点持续替换堆的周期上界，也不是整网帧率。2M是整个后处理共同额度；
+新本周整帧100M/1FPS仅规划，500ms过期未改变。不能把本模块周期当作整网1FPS证据。
+
+五、八门及未测边界
+gates/attempt_01.json是实际严格门结果：compile/ast/readability/comment/naming/profile均failed，
+testbench/toolchain在该静态调用中not_requested。合计1215错误、0严格警告；含紧凑语句控制解析失败。
+实际外部工具异常与13项功能PASS单列，不覆盖静态失败；TB自身最终20项注释诊断（不是21）单列。
+TB静态compile/AST/readability/naming/profile通过只适用于TB，不能覆盖本目录RTL静态失败。
+旧工具异常参数/hash/逐项周期见verification/verification_handoff.md；新授权复跑的命令、
+工具/源hash与逐项结果见verification/reports/escalated_attempt/summary.json及run_attempt.py。
+新成功不覆盖旧3221225477失败，缺失历史失败日志不补造。
+旧工具异常无持久日志的部分不补造，当前功能状态以新成功收据为准。
+未测：真实ROM-R1服务连接、联合C9、全网/真实DDR竞争、物理RAM/DSP/Slice映射、时序、摄像头、板测。
+两个模块的canonical规格与SVG已生成，分别在specification/head/spec/road_head_decode_topk/
+和specification/ram/spec/road_candidate_ram/；源JSON在spec_input_head.json和spec_input_ram.json。
+这是由已确认合同生成的no-source文档，不声称formatter已对头部RTL端口/行为完成交叉证明。
+先前沙箱访问失败及错误工作目录的CLI失败不计为通过；正确工作目录/本地授权运行才实际生成。

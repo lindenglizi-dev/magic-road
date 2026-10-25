@@ -1,0 +1,75 @@
+road_feature_blocks_client SPPF candidate design contract
+
+Baseline ../../frozen_attempt2/rtl/road_feature_blocks_client.v
+SHA256 19fd72c058a2458fb71da7ccae9c890dc1d7f7dc21412e23813cd43db88001e0.
+Only sppf_candidate/rtl/ modified by this role; root rtl and frozen copies read-only.
+Compile exactly one same-name module candidate per closure.
+100MHz same domain, original ports/core II/numeric/reset unchanged.
+One FSM, one3072B byte cache, one24x192bit weightbank, one external old arithmetic owner.
+Supported IDs2/3/4 preserved; newID5; ID6+ unsupported.
+
+Reference ../../reference/sppf/contract.json and ../../reference/sppf_manifest.json.
+graph SHA256 2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738.
+payload b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145.
+SPPF artifact46 hashes checked and equal. CPU-only PASS is not RTL PASS.
+
+block5 H18 W32, stages:
+0 squeezePW Cin96 Cout24 source0376b000(CSP4.out) destination0377a000.
+1 pool5x5 C24 source0377a000 destination0377e000.
+2 pool5x5 C24 source0377e000 destination03782000.
+3 pool5x5 C24 source03782000 destination03786000.
+4 outPW Cin96 Cout96 destination0378a000, concat channel order
+[0,24) squeeze at0377a000; [24,48)pool00 at0377e000;
+[48,72)pool01 at03782000; [72,96)pool02 at03786000.
+No residual, both PW12groups, original parameter/SiLU path.
+tile4x4_hwc address fixedconstant W32 strides96or24, no channel padding.
+No y18/19 writes, final tile y16 has two valid rows.
+
+Start handshake only IDLE with table_loaded/fault gating latches inputID.
+Busy inputID/start ignored; outputID held through finish and next idle until next accepted start/reset.
+Parameter response consumption checks block/layer/channel/group/window/quantization/error.
+Barrier consumption checks block/layer; final layer4 FINISH1 with busy then IDLE.
+Reset priority, then fault, then matching handshake, then traversal/hold.
+Common reset clears control/identity/linevalid; services cancel prior responses and reloadSiLU.
+Illegal accepted ID, bad metadata/read/core, cancel/fault retain busy until common reset.
+No independent hot-reset or late-return guarantee; no frame identity port added.
+
+All stage prefetch1536B: PW16x96, pool8x8x24halo.
+Pool padding=-128 algorithm, physical invalidtilepadding0 distinct.
+Out concat resolves fixed24channel source chunks; no new tensor cache/materialization.
+Prefetch order PWpixel/channel, poolhaloRow/column/channel; one16B line persists tile-to-tile,
+invalidated at start and each stage. Single inflight16B read; exact128bit response address.
+CPU schedule expected reads3456/3060/3060/3060/4608, root must measure independently.
+Root schedule ../schedule_report.json, hash-bound to its script/graph, not fitted to RTL.
+
+Storage owner is state-task process. No arrayreset. Cover every used byte before compute,
+cover every used weight slot before output group.3072B+576B+31B+16B=3695B excluding controls.
+Only small poolsample8, poolmax8, sampleindex5, pooladdress32 added.
+At most one bytecache access/cycle:
+PREFETCH write OR CACHE_ACTIVATION read OR CACHE_BYPASS read OR POOL_READ read.
+No private MAC/SiLU/ROM/RAM;4ERAM target raw10240B remains unproven, timing/resources UNKNOWN.
+
+Pool control:
+TASK_SETUP7 clears sampleindex0,max80 and freezes one pool address; core metadata not touched.
+POOL_READ17 captures one signedbyte. POOL_COMPARE18 compares signed8 sample/max and advances sample.
+25samples exactly, last comparison completed before POOL_WRITE19 visible.
+POOL_WRITE holds address,max,sum=signextend9(max) until actual writer handshake.
+Pool write handshake distinct from core write; no core_written/task_done retirement.
+Pool core_valid/parameter_valid/response_ready/core_output_ready remain0.
+Any i_core_output_valid duringpool is illegal, stickyfault; same-cycle pool write suppressed.
+ADVANCE13 traverses pixel inner/channel outer, pool increments1/PW increments3.
+After last realpixel/channel/tile, BARRIER14 confirms layer-visible writes.
+Whole block remains one owner, no layer owner release.
+Perpooloutput: setup1+read25+compare25+writewait+advance1.
+Actual state/endpoint cycles are root-only measurement; no coreRETIRE for pool.
+CSP2/3/4 original execution branch and core cadence preserved.
+
+Root verification: one DUT CSP4 actual result writes feed SPPF stage0, no CPU output replacement.
+All PW intermediates, pools/signedsum/address, requestcount, state occupancy, tailrows,
+backpressure payload stability, busy identity perturbation, common reset/table reload,
+wrong barrier/block, negative signed/border checks and illegal oldcore duringpool.
+Original CSP2/3/CSP4 candidate regressions separate as needed. No ModelSim/TD by this role.
+Strict static report static_gate.json/md: compile passed; ast/readability/comment/naming/profile failed;
+testbench/toolchain not_requested. Total1477errors, strict_warnings0, delivery_ready=false.
+Failures retained, not production acceptance. ModelSim/TD were not run by this role.
+PAN missing and continuous backbone/down3/down4/DDRhigherlevel ownership not established.

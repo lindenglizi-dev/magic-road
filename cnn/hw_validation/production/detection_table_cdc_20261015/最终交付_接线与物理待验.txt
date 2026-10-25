@@ -1,0 +1,106 @@
+SRIF1三表CDC与共享时间：最终交付；C8；2026-10-15
+
+一、当前仍未通过的具体项目
+1. 物理CDC/MTBF、bundled-data延迟/总线偏斜、LUTRAM实际映射、setup/hold/recovery/removal及整机资源尚未运行，不能宣布可部署。
+2. 严格RTL交付门未闭合：time 98条错误，table 746条错误，均0严格警告。除格式/注释/命名外，复位域、位宽未决、RAM驱动识别、ready-valid关系及组合操作预算仍有原始诊断，未删除或豁免。
+3. 真实摄像头SOF与capture_timestamp绑定尚由C7接入；本组件已实现时间CDC，但不代表摄像头时间戳已正确采集。
+4. DDR write_visible/RAW与长背压外部依据仍未闭合；未重查受保护源码，也未以本组件通过代替DDR保证。
+5. 未跑TD、未生成位流、未上板/Flash、未训练、未改生产或五冻结算术文件；未测整网1FPS或精度。
+
+二、本轮已经完成，而不是下轮计划
+8/8正式ModelSim双时钟case通过，所有最终收据同一冻结RTL/TB/runner/reference闭包，编译和运行0错误/0警告。
+另用完全相同的冻结case10、CPU向量和RTL做一次VCD只读观察，补齐seal→copy_ack真实端点；未force信号、未改刺激或RTL。
+旧缩放/双槽228项成果、其59项外部冻结依赖、S1的174项冻结依赖均再次只读核验无变化；没有重跑旧S1/缩放。
+唯一部署源清单：source_manifest.json。代码仅rtl/road_time_snapshot.v与rtl/road_detection_table_cdc.v。
+同名规格/周期图：specifications/source/spec/detection_table_cdc/。完整功能入口verification/suite_manifest.json、TEST_REPORT.md、endpoint_summary.json。
+机器结果与工具二进制SHA：component_results.json。滚动状态：status.json。
+
+三、实际结构与所有权
+                    100MHz源域                             75MHz HDMI域
+NMS FINAL97 → 唯一source表97×64 ──冻结req/复制/ack──→ 空闲目标bank
+C7 SRIF1元数据 → source metadata265                       │完整后pending
+                                                         └─SOF旋转→active
+100MHz唯一毫秒计数器 → 独立96bit时间冻结req/ack ────────→ now/epoch/time_valid
+                                                       → age上界/绘制许可
+
+只有source、pending、active三张表。目标a/b两个bank在pending/active之间轮换；复制不写active。
+载荷18624bit，三份元数据795bit，合计19419bit。时间通道额外96bit held payload及计数/同步控制另计，绝不漏算为免费。
+source表已经在本模块内，C7把NMS输出直接流入；不得再在外部保存第四张完整组装表。
+本模块只提供单个97bit异步active读口，不实现64路并行画框比较树；视频叠加器仍由C7在原视频链接入。
+
+四、可直接接线的端口及握手
+road_detection_table_cdc：
+- i_src_clk接模板PLL.clk0_out/S_100m_clk；i_dst_clk接PLL.clk4_out/S_hdmi_pixel_clk。
+- i_rstn为本组件两域共同取消复位；模块内部各域两拍同步释放，不能只复位一个域。源生产者及time模块必须遵守同一次协调取消。
+- i_src_entry_valid/i_src_entry[96:0]接NMS FINAL97，o_src_entry_ready回NMS；valid与payload保持至实际源上升沿valid&&ready。
+- 顺序装载0..63，无另一个index端口；64项可在64个相邻源上升沿接受，已实际测II=1。
+- i_src_meta_valid/i_src_metadata[264:0]由C7封存；o_src_meta_ready接受条件为已接收项数等于合法count<=64且当前无entry_valid。
+- entry与metadata同来时entry先接，metadata随后接，不做末entry同拍计数旁路，不允许两通道互相堵死。
+- 元数据被接受后source RAM和metadata冻结；o_src_copy_ack只在最后一项复制完、目标ack经源同步并消费后脉冲。不是NN done、NMS done或输入DDR槽释放事件。
+- i_src_abort只丢未seal的部分装载；已seal时只报o_src_error，不撤销已发布请求。取消必须在seal前决定；不得把此口误作已发布表的紧急取消。
+- i_dst_copy_enable控制实际复制步进，反压时游标/源读地址不变；pending满不覆盖，源仍冻结等候。
+- i_dst_sof必须是HDMI域每帧一个边界脉冲，不可接整段VSYNC电平。C7须与现RGB/de/vsync管线对齐。
+- o_dst_pending_valid表示完整pending；o_dst_update仅在SOF采用先前完整pending时一拍。末项复制同拍SOF不旁路，需后续SOF。
+- o_dst_active_valid表示完整active表存在，包括合法count0；count0更新会清框，不算“未完成”。
+- i_dst_read_index[5:0]选择active项；索引>=count返回0。o_dst_entry[96:0]与o_dst_metadata[264:0]均来自active。
+- o_dst_draw_valid才是最终绘制许可；元数据/表整帧稳定，但age/失联/身份门可随时撤销绘制，不改active载荷。
+- o_dst_age_upper_ms在无active、time失效、epoch不符、时间顺序非法时输出UINT64_MAX表示未知，不显示为0ms；合法65bit差值+4溢出也饱和MAX。
+- o_src_error/o_dst_error为诊断，不用它们替代完整metadata result_status。
+
+road_time_snapshot：
+- 共用上述两个真实时钟及协调i_rstn；i_src_epoch由C7提供，协调复位之间保持稳定。
+- o_src_now_ms是摄像头/计算描述符应使用的唯一100MHz同源时间；o_src_tick每100000有效源周期一拍，计数不因时间busy或框表反压停住。
+- o_dst_now_ms→table.i_dst_now_ms；o_dst_epoch→table.i_dst_time_epoch；o_dst_time_valid→table.i_dst_time_valid，三者均已是HDMI域寄存输出。
+- 每1ms发布机会冻结96bit（高64 now、低32 epoch），req经两级同步，再稳定等待一拍捕获后ack；源收到同步ack才可复用payload。
+- 时间通道完全独立，不接table.i_dst_copy_enable，不因pending满停住。
+- 首次时间快照前不绘框；距末更新150000目标拍仍有效，第150001拍失效。恢复必须收到完整新快照，不凭本地计数重开许可。
+
+五、唯一SRIF1/PIF1与模型绑定
+265bit：[31:0]epoch，[63:32]task_id，[95:64]source_frame_id，[127:96]model_id，[134:128]count，[136:135]status，[200:137]capture_ms，[264:201]completion_ms。
+postprocess frame_token映射task_id，不等于包含跳过帧的摄像头source_frame_id。
+status0为正常含空表；1取消、2故障、3保留均可作完整诊断传输但不绘框。非0状态不要求额外删掉已完整装载的diagnostic entry。
+FINAL97：[0]class，[16:1]score，[36:17]x0，[56:37]y0，[76:57]x1，[96:77]y1，源坐标Q12.8；本模块逐位搬运，不改尺度/NMS结果。
+EXPECTED_MODEL_ID默认0xB35D4A66；C7须绑定完整payload SHA b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+32bit过滤不是ROM完整性证明。本批不读取ROM；第五批发现旧R1包不同的问题由C2新真实包接入解决，不把本表测试当ROM已正确初始化。
+
+六、实际周期与数字时间界
+配置证据：template/design_top_wrapper.v实例PLL；PLL.v C0=100MHz、C4=75MHz，共50MHz参考、C0分频15/C4分频20。
+非板测。双时钟TB使用10000ps与13334ps周期、2300ps异相；目标实际仿真频率74.996250187MHz，注明1ps量化而非假称精确75MHz。
+source预装载：连续64项在64个相邻源上升沿接受；这是64次传输/II=1，第一到第64沿时间差为63个周期，不能混淆计时窗口。
+无停顿copy_busy：count64为64个目标周期=853376ps；count33为33周期，加入512周期反压后实测545周期。
+完整seal接受→源copy_ack实测：count0 70ns；1 90ns；32 500ns；33 520ns；64 930ns。包括同步、metadata稳定捕获、完整复制与返回ack，不用64复制周期冒充总延迟。
+以上同向量VCD原始波形/源码哈希/逐事件时间见endpoint_measurement_receipt.json指向的measurement.json。
+pending→SOF在该受控TB为4目标周期=53.336ns；另专测pending满保持200周期。真实HDMI要等实际帧边界，不能沿用TB的53ns宣称上板延迟。
+按模板1650×750、75MHz名义帧周期16.5ms，实际集成待实测；不能漏算SOF等待与源结果已有年龄。
+time：6ms运行6次tick/完整更新；req→update实测4目标周期；busy往返6–7源周期；watchdog恰150001目标周期。
+实际time→table串联：复制被阻74994目标周期期间时间仍更新；停源钟导致time_valid/draw撤销，恢复首次完整时间快照后才能重开。
+CPU条件证明：活跃配置时钟且数字同步行为成立时，req→capture<53.333334ns、往返<83.333334ns；冻结至watchdog撤valid<2.000067ms<3ms。物理亚稳态延迟和时钟存活不由此签核。
+source预装载、copy/ack、pending→SOF、free-running time属于不同/可能重叠窗口，禁止直接相加当整帧CNN时间。
+
+七、500ms与拟议2000ms
+默认AGE_LIMIT_MS=500保持。保守age_upper=now_snapshot-capture+4ms（快照3ms+量化1ms裕量）。
+实际边界：raw age496允许、497拒绝；独立2000实例1996允许、1997拒绝。2000只在TB对照实例，不在部署默认启用。
+未来capture、capture>completion、completion>now、time失效、epoch/model/status不合法均不绘框；未知age为MAX，显示端应写AGE_INVALID而非巨大毫秒或0。
+1FPS是100M周期目标，不代表延迟低于500ms。若source结果到达时已超门限，将完全不绘框；若年龄尚小，1秒更新间隔仍可能留下明显撤框空窗。不得把旧表重复显示计为新推理，也不能据此默改2000ms。
+
+八、C7必须完成的真实SOF与物理义务
+1. capture_ms须绑定真实摄像头SOF/接纳帧，而非CNN开始、结束或metadata传输时刻；completion_ms用相同o_src_now_ms记录真正整帧后处理完成。
+2. AWB在不同域。不能把动态o_src_now_ms[63:0]直接接摄像头槽timestamp，也不能仅同步SOF脉冲就宣称整组frame/epoch/time原子。C7需选定冻结描述符/SOF事件与同源时间的原子绑定方案，并证明误差仍在已声明age裕量内。
+3. 若只能在100MHz收到SOF事件后再取时间，须报告事件传输延迟及偏差，不把收到时刻冒充无误差源SOF。超出预算需集中决定，不以TB oracle作依据。
+4. 原视频链/唯一DDR保持；C8本批不增加视频发送器、DDR桥、UART或异步FIFO。输入槽write_visible的厂商阻塞仍独立保留。
+5. 真正综合顶层只实例化一套time和一套table。TB的500/2000双实例、保留旧源码、所有tests/reference/verification不得进综合源清单。
+6. 三个97×64数组目标映射LUTRAM，但当前未强制厂商属性、未验证TD映射；可能被选成ERAM或FF，不能声称0新增ERAM/DSP已通过。C7应检查三个数组实际cell类型/位数/读写时钟，再依据官方支持的属性作最小映射修正。
+7. 三表19419bit、时间及全部控制/比较计入共享D1100Slice/0DSP/6ERAM预算，不能额外再申请一份D额度。硬限21216/40/108、管理19000/38/107，均待实际完整顶层结果。
+8. 物理检查精确对象：time.flag_request_toggle→flag_request_meta→flag_request_sync与反向ack；table.flag_request_toggle_src→flag_request_meta_dst→flag_request_sync_dst与反向ack。首级不得分发到功能逻辑；ASYNC_REG仅为属性意图，不等于安路已识别/布局已安全。
+9. bundled路径：time.reg_held_snapshot→dst_now/epoch；table.reg_source_metadata→目标meta_a/b；目标cnt_copy_index→source LUTRAM异步读→目标LUTRAM写入。逐项核对实际稳定窗口、setup/hold和总线偏斜，不能全局false-path一笔抹去。
+10. 各域release二级→功能reset分发须检查recovery/removal及扇出；common reset清toggle/seen/valid/count，不清RAM。单侧热复位和真实DDR排空仍未提供。
+11. active异步读口到原HDMI叠加的路径及65bit年龄比较链须纳入真实时序；若需要输出流水，RGB/de/vsync和框判断必须一致，由C7集中决定，不私自改变端口延迟。
+
+九、门禁、失败与版本
+公开矩阵：compile通过；ast/readability/naming未通过；comment为time通过/table未通过；profile通过；testbench/toolchain由最终ModelSim 8例实际证据通过。总delivery_ready=false。
+root静态gate_attempt3未请求外部执行，testbench/toolchain=not_requested；verification/time_deliverable_gate、table_deliverable_gate接入真实执行证据。二者范围不同，不混写。
+关键原始诊断含VG073/099/100复位域、VG137位宽未决、VG153数组驱动识别、VG155ready-valid绑定、VG145/146组合来源/操作预算；格式/注释另列。人工数值/握手通过不自动销门，实际物理未过不能生产签核。
+旧table hash4cf6...保留于retained_before_age_invalid/；新48a2...仅修改未知age输出mux，合法数值/复制/握手未变。time保持00e3...。
+旧CPU口径与新版均保留；此前误把task与frame_token混淆、非0status强制0框已纠正，不倒改最初快照。
+失败记录包括TB超宽timeout字面量、绝对向量路径截断、ready/valid与NBA/delta观察错误；全部保留。修的是测试观察，不延长RTLready，不把故障提前退出当提速。
+本轮最终抓手：独立彩色采集组件已封存，本三表/共享时间功能已封存；接下来由C7把真实ROM/后处理结果、真实SOF时间和原HDMI接成唯一实际顶层，再统一排TD。C8不继续扩探针或通用显示引擎。

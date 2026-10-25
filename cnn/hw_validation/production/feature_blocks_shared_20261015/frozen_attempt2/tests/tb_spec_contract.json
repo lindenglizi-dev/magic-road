@@ -1,0 +1,114 @@
+{
+  "name": "feature_blocks_shared",
+  "modules": [
+    {
+      "name": "tb_feature_blocks_client",
+      "rtl_path": "tests/tb_feature_blocks_client.v",
+      "parameters": [],
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "verification_completion",
+            "description": "所有指定比较和归属检查成功后置位"
+          }
+        ]
+      },
+      "behavior": [
+        "一个road_feature_blocks_client与一个road_csp_first_probe；CSP2五阶段再CSP3/CSP4七阶段，块间不复位",
+        "每块源/参数/golden从reference/csp2|csp3|csp4加载；live memory只由DUT输出写回并在匹配块/层屏障后可读",
+        "每个真实acc/pre/SiLU/post/sum/output/地址逐项比较，精确覆盖所有逻辑位置；物理尾行禁止写",
+        "busy中扰动i_start/i_block_id，检查o_block_id不变且固定形状/参数归属正确；DONE仍busy且不接新start",
+        "CASE2共同复位撤销服务后重装LUT，再完整2->3->4；中止计数独立不并入完整块",
+        "FEATURE_BLOCKS_PASS/EXPECTED_FAULT唯一最终标记；FEAT_BLOCK_STAGE/STATE/RUN逐块互斥周期和精确请求账本"
+      ],
+      "constraints": [
+        "i_block_id/response_block_id/barrier_block_id四位；应用channel7/group5/layer3/window3；旧核心接口不改",
+        "TB最大golden槽221184字节；DUT单工作缓存3072字节、24项权重bank由RTL所有，TB不得预填",
+        "单16字节对齐128位读返回且单在途；source/真实中间内存，不把golden冒充中间结果",
+        "完整三块clean_cycles<100M；总watchdog130M覆盖共同复位额外工作；初次LUT加载不进clean块周期"
+      ],
+      "corner_cases": [
+        "CSP2 PW12输入末组mask0f；DW尾单点mask01，CSP4 y18/19不写",
+        "随机参数/读/核/写反压及payload保持",
+        "非法ID15无读/参数/核/写/屏障；错responseblock及首层完整后错barrierblock保持fault占有",
+        "NEGATIVE_ACC通过XOR1期望制造真实首acc比较失败，fatal且不出现PASS"
+      ],
+      "verification_cases": [
+        "CASE0同实例顺序2->3->4，共1327104个acc/pre/SiLU/post/output",
+        "CASE1完整随机反压序列；CASE2阶段2至少128写后中止和共同复位，重装LUT再完整序列",
+        "CASE3非法ID；CASE4错参数响应block；CASE5错屏障block；wrapper99对应CASE0+NEGATIVE_ACC=1",
+        "17状态和5/7/7阶段周期和等于逐块cycles/accounted；完成块stage exact reads/parameters/tasks/groups/barriers"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "switch",
+          "title": "末层可见后连续切换固定块",
+          "scenario": "sequence",
+          "description": "长计算与层内屏障省略；DONE忙一拍，下一IDLE方接受不同块，无共同复位。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p........."
+              },
+              {
+                "name": "rstn",
+                "wave": "1........."
+              },
+              {
+                "name": "i_block_id",
+                "wave": "=...=...=.",
+                "data": [
+                  "2",
+                  "15 busy扰动",
+                  "3"
+                ]
+              },
+              {
+                "name": "final_barrier_accept",
+                "wave": "0...10...."
+              },
+              {
+                "name": "o_done",
+                "wave": "0....10..."
+              },
+              {
+                "name": "o_busy",
+                "wave": "1.....01.."
+              },
+              {
+                "name": "o_start_ready",
+                "wave": "0.....10.."
+              },
+              {
+                "name": "i_start",
+                "wave": "0....1110."
+              },
+              {
+                "name": "o_block_id",
+                "wave": "=......=..",
+                "data": [
+                  "2",
+                  "3"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

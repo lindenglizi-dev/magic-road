@@ -1,0 +1,277 @@
+# Verilog Review
+
+- delivery_ready: False
+- repair_required: True
+- rerun_required_after_repair: True
+
+## Findings
+- `VG000` [error] > ERR: [Python] control parser strict failure.
+- `VG068` [error] Header Description/Simulations fields must use the fixed bilingual path contract (`description/testbench` in English and `Description/TestBench` in Chinese).
+- `VG067` [error] Standard header must be followed by exactly one blank line before `module`.
+- `VG067` [error] Header must end at the last Chinese history record; do not keep extra summary comments between the header and `module`.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 17.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 18.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 20.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 25.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 27.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 25.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 25.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 26.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 29.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 33.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 38.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 40.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 39.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 38.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 37.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 36.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 29.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 24.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 28.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 36.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 34.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 24.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 25.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 27.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 32.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 33.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 33.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 28.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 28.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 32.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 28.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 30.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 30.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 36.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 30.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 24.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 24.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 31.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 35.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 39.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 35.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 24.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 26.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 19.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 19.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 20.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 28.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 26.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 26.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 30.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 37.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 36.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 35.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 34.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 25.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 33.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 29.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 26.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 34.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 30.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 28.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 29.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 29.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 34.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 33.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 29.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 31.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 31.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 36.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 37.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 31.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 25.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 25.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 24.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 35.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 36.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 33.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 30.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 36.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 30.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 35.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 40.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 35.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 41.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 35.
+- `VG060` [error] Inline comment must start at display column 48, aligned from region anchor column 48; got 31.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 33.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 35.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 39.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 33.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 33.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 38.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 39.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 38.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 40.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 41.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 39.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 34.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 36.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 37.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 37.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 36.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 35.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 38.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 35.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 30.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 28.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 29.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 29.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 30.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 26.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 28.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 33.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 27.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 28.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 27.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 36.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 36.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 34.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 32.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 30.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 31.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 34.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 33.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 34.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 30.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 29.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 23.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 24.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 22.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 29.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 24.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 24.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 28.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 26.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 26.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 27.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 27.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 28.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 24.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 20.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 29.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 28.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 26.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 27.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 35.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 40.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 26.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 26.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 32.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 31.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 30.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 28.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 28.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 24.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 31.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 24.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 24.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 36.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 38.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 25.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 33.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 34.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 30.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 31.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 30.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 36.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 35.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 31.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 30.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 34.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 35.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 34.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 34.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 42.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 39.
+- `VG060` [error] Inline comment must start at display column 44, aligned from region anchor column 44; got 43.
+- `VG072` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG073` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG074` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG075` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG076` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG077` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG078` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG079` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG080` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG081` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG082` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG083` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG084` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG085` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG086` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG087` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG088` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG089` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG090` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG091` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG092` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG093` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG094` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG095` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG096` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG097` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG098` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG099` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG100` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG101` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG102` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG103` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG104` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG105` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG106` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG107` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG108` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG109` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG110` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG111` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG112` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG113` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG114` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG115` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG116` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG117` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG118` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG119` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG120` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG121` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG122` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG123` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG124` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG125` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG126` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG127` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG128` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG129` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG130` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG131` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG132` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG133` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG134` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG135` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG136` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG137` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG138` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG139` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG140` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG141` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG142` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG143` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG144` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG145` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG146` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG147` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG150` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG151` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG152` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG153` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG154` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG155` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG156` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG157` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `VG158` [BLOCKER] > ERR: [Python] control parser strict failure.
+- `COMMENT_COMMENT_PLACEMENT` [error] Verilog code line must use a same-line or adjacent explanatory comment in the requested language.
+- `COMMENT_COMMENT_PLACEMENT` [error] Verilog code line must use a same-line or adjacent explanatory comment in the requested language.

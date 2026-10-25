@@ -1,0 +1,135 @@
+PH1P 写后读可见性证据与 C8 最小服务合同
+日期：2026-10-15；任务：有限只读追查，不重复完整差距单。
+结论状态：LOCAL_NOT_PROVEN / 生产 READY 依据尚未获得。
+工作分支：work/roadyolo；开始时间：19:59 北京时间；有效工作时间上限 90 分钟。
+
+1. 结论与下一决定
+
+同址 RAW（先写后读）、插入其他客户流量后的顺序保证、可用写屏障，以及 AW/W 两拍限制在长背压下的准确含义，本地未能证明。
+这不是发现该 IP 必然出错；原因是官方手册没有给出这些条款，匹配 MC 的队列/仲裁实现受保护，不能从其端口声明推导行为。
+不能用 NORMAL 名称、WREADY、内部 B、某个 FIFO 空、固定等待或受控模型假设放行正式输入槽 READY。
+
+最小出口不是新增桥或物理完成探针，而是请厂商确认本目录“唯一厂商询问清单.txt”的 Q1～Q4。
+若 Q1 明确支持同一 PAXI 口的逐地址 RAW 且满足列出的条件，正常张量交接可仅靠“全部写接受在先、消费者读接受在后”成立，不必额外等所有写物理落存。
+若 Q1 不成立或条件不适用，则按 Q2 的正式屏障契约处理；本次不选择未经证明的替代。
+正常读取的逻辑可见与独立取消/地址重用的旧事务排空是不同问题，不要求为了正常读而无条件增设通用 drain 模块。
+
+2. 唯一匹配版本及路径
+
+工程根 P：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision
+完整前三层冻结目录 F：P/cnn/hw_validation/production/reports/frontend_ddr_full_20261015
+本次证据输出 V：P/cnn/hw_validation/production/reports/ddr_visibility_evidence_20261015
+S1 候选 S：P/cnn/hw_validation/production/frontend_rgb_reuse_20261015
+下文 F/S/P 为上述绝对路径缩写，文件:行号只绑定本次核实版本。
+
+实际生成模块：F/physical/ddr2/ddr2.v:5-7 标记 TD 6.2.168116，Build time Mar 25 2026 16:00:15。
+实际 IP 元数据：F/physical/ddr2/ddr2.xml:663-665 的 ipGenVersion value 为 168007 2025/07/10，文本版本 1.0。
+安装包目录名：E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/ip/depot/MIS_DDRF6F1D0P0_1.1/PH1P_DDRMC_IP/Other/ph1p_ddrphy_ip/
+上述软件、生成器元数据、包目录名各自记录，不能把它们混写为同一个版本号。
+
+实际配置：DDR2，原生 PAXI，MC_REORDER=NORMAL，MC_ECC=OFF，ROW_COL_BANK；地址25位、数据128位、mask16位；DX_NUM=2、BA=2、ROW=13、COL=10，tCK=1876 ps，CWL=6、CL=7。
+配置来源：F/physical/ddr2/ddr2.v:61-102；F/physical/ddr2/src/rtl/include/ph1p_mis_define.vh:1；接口 F/physical/ddr2/ddr2.v:28-42。
+注意内部模块缺省参数写 STRICT，不代表当前实例使用 STRICT；上层 NORMAL 经参数连线覆盖，未修改模式。
+
+版本一致性已核对：F 与 S/implementation 的 ddr2.v 完全同哈希；两者 MC 源与 TD 安装包 MC 源三份完全同哈希。S1 仍使用同一个 mailbox 文件版本。
+因此本次 MC 证据适用于当前 S1 引用的这份 IP，不以旧调度器的功能结果替代 S1 的功能/物理结果。
+
+3. 官方文档能证明到哪里
+
+文件：E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/doc/IPUG/IPUG034_PH1P_MIS_IP_Guide.pdf
+DOC 1.2，2024.09；印刷页29 / PDF页33版本表记录 DOC1.2、IP1.1，日期2024/09/29。
+本轮检索全部33页，并完整读取相关页；实看印刷页19 / PDF页23的时序图。
+
+E1【已证明：文档范围】印刷页1 / PDF页5：适用于PH1P35/100，支持Normal/Strict；印刷页25 / PDF页29仅列Reorder两选项，没有给两者的RAW、WAW、跨客户或全局顺序定义。
+E2【已证明：结构边界】印刷页3、6 / PDF页7、10：DDRMC含接口解析、FIFO、仲裁与命令调度；这说明需要追MC调度，而不是只看PHY引脚时序。
+E3【已证明：接口定义】印刷页13-14 / PDF页17-18表2-9：AW按VALID&&READY接受；列出W/AR/R接口，mask为高有效屏蔽。没有用户B、fence、flush或drained端口定义。
+E4【已证明：地址解释】印刷页18 / PDF页22表2-17：当前128-bit配置字节地址等于native地址左移1；16 B完整拍native步长8。此映射不证明命令顺序。
+E5【条件成立：两拍图示】印刷页19 / PDF页23图2-16及相邻文字：写数据信号允许晚于写地址信号最多2clk。图中对应AWREADY/WREADY已经为高，VALID首次提出与接受重合。
+E6【缺证据】该图没有WREADY长时间为低、AW长背压或队列满场景，因此不能区分起点是AW首次VALID还是AW接受，也不能区分终点是W首次VALID/数据出现还是W接受。
+
+印刷页18另将“标准AXI4时序”和“pAXI时序”分节。不能用标准AXI惯例自动补足当前原生PAXI的限制。
+印刷页19读时序文字误用了awvalid/awready，图2-17实际标AR；本次按图和端口表识别读通道，不从该笔误推导额外顺序保证。
+
+官方公开资料补查：仅检索anlogic.com/tech.anlogic.com的PH1P、PAXI、NORMAL/STRICT、IPUG034相关信息。
+官方目录 https://www.anlogic.com/support/ip 可访问，但本次未取得可引用的RAW/屏障或长背压条款；检索无命中不证明厂商没有其他资料。未尝试绕过登录/资料权限，也未向厂商发送问题。
+不把其他厂商AXI文档、PH1A/PH2实现或论坛推测当匹配PH1P的合同。
+
+4. 实际源码追到的边界
+
+源请求 → F/rtl/road_paxi_mailbox.v → F/physical/ddr2/ddr2.v
+       → ph1p_ddrmc_wrapper_63f4ac254419.v → src/rtl/top/ph1p_ddrmc_top.v
+       → src/rtl/mc/alc_mc_top_all.enc.sv（受保护的MC）→ 四相DHI → DDRPHY。
+
+S1【已证明】ddr2.v:93-102选择NORMAL；ph1p_ddrmc_wrapper_63f4ac254419.v:337-339继续传递；ph1p_ddrmc_top.v:295-307以REORDER(MC_REORDER)实例化alc_mc_top。
+S2【已证明】ph1p_ddrmc_top.v:329-350直接接AW/W/AR/R；:339-341丢弃内部BRESP/BVALID，BREADY=1；:319-326导出四相DHI命令。
+S3【缺证据的精确位置】alc_mc_top_all.enc.sv:7-70只有可读参数/端口；:90-116选择时序常数；:121-4209是pragma protect受保护实现。地址队列、数据配对、RAW相关性检查、仲裁及READY生成不能从本地明文审阅。
+S4【已证明：不是替代调度器】mc/alc_phy2mc_fifo_ctrl.v:4-14、51-80仅处理PHY返回数据与各lane FIFO；没有AW/AR地址、RAW比较或写退休信息。它的empty不是MC全部旧事务已空。
+S5【已证明：下游而非屏障】phy/ph1p_ddrphy_cmd_execution.v:16-20、68-82处理已产生的DHI命令；其物理时序不证明上游AR不会越过某个已接受但未发出的写。
+S6【已核查搜索范围】匹配工程IP目录、TD安装PH1P MIS目录及sim_release/ph1p未找到可读的同版本命令队列/仲裁实现；其他PH1/PH2封装不作为替代依据。未解密、未绕过保护，未改厂商代码。
+
+当前邮箱 F/rtl/road_paxi_mailbox.v:186、189、326-341：AW被接受后下一状态才首次呈现W，常规反压期间保持；:415-418在W接受时产生写成功回执。
+所以：若两拍限制指“AW接受→首次WVALID”，目前为1拍；若从AW首次提出算，AWREADY长时间低会拉长间隔；若终点是W接受，WREADY长时间低也会拉长间隔。这两种未定义情况不能靠当前图例签核。
+以前匹配真实IP的gap1/gap2实例表明空闲条件下AW可在WVALID前被接受；没有证明拥塞状态AWREADY总是不依赖WVALID。
+依据：P/cnn/hw_validation/production/reports/ddr_real_handshake_20261013/analysis.json；该旧运行没有DRAM读数据通过记录，本轮未重跑。
+
+内部B不能直接解题：旧记录B在W接受后1个DHI周期出现，且比引脚WRITE早约54.407～69.407ns；这不排除B可能具有逻辑顺序语义，但也没有证明这种语义。恢复B接线须先获得其定义，并非本轮授权内容。
+
+5. 给C8的最小合同：只在必要的位置等待
+
+定义三个不同事件：
+accepted(W)：该笔AW和完整W都已被匹配PAXI接受。
+visible_for_later_reads(W)：合同保证后续满足条件的同址读得到该写或更晚合法写，而不是旧内容；可能由顺序保证成立，不必存在独立引脚。
+drained(epoch)：旧代次不再有会改变重用地址的写或会落入新任务的读返回；这是取消/重用所需条件，不等同于正常可读。
+
+当前能落地而不扩大结构的边界：
+C1 同一个PAXI入口、统一地址解释/owner，不改NORMAL；使用当前对齐16B全字写及mask=0约定。
+C2 上游把写响应解释为accepted；所有者至少覆盖该次AW/W配对，禁止另一客户把其W插入未配完的AW。读接受前预留返回存储并登记owner。
+C3 “所有张量写已接受”可作为内部事实统计，但当前不能直接改名为正式READY/visible；需要Q1或Q2对应的依据。
+C4 不新增固定等待、marker探针、FIFO空判断或内部B完成器来弥补资料缺失；不把单槽busy清零说成MC排空。
+
+若厂商对Q1答复肯定，正常张量发布的最小推导如下（这是条件证明，不是当前通过结论）：
+对张量每个16B地址b，先保证其最终写Wb已完整接受；发布事件P发生在所有这些接受之后；之后才允许消费者ARb进入同一个PAXI口。
+于是对每个b均有 accepted(Wb) < P < accepted(ARb)。若厂商保证这一关系下返回最近写值，且期间无覆盖该地址的其他写、无复位/错误，则每个读值正确。
+其他客户在不冲突地址上的插入流量必须包含在Q1保证范围内；客户ID在当前PAXI中不存在，它们只是同一服务入口的不同来源。
+满足这些条件即可把P定义为“对未来这些读逻辑可见”；无需为了正常消费再另造全局物理退休模块、额外B端口或通用fence。
+若厂商只保证更窄条件，则只能按明确条件限流/序列化，不能把条件删掉以满足性能预算。
+
+跨客户顺序必须拆开：
+- 不同地址、无数据依赖：不需要追求所有客户的全局物理完成顺序，但仍要保证返回归属、容量与各笔读数据正确。
+- 同一地址的写→读：需要Q1的RAW保证，或Q2明确支持的屏障。
+- 同址多次写、读后覆盖、独立取消/重用：需要对应WAW/WAR/排空条件；不能仅从RAW一个性质推出。
+
+回读限制：读回最后一个marker只证明该marker的读值，不证明此前其他地址写已完成。全量回读可验证本次内容，但在缺少请求顺序和晚写边界时不能自动证明旧写不会随后覆盖。
+因此回读继续作为数据验证，不作为本轮自行定义的通用drain替代。也不要求C8为正常张量读取等待一个不必要的“所有物理事务退休”事件。
+
+6. 对本周主线的实际影响与停止点
+
+正常可见性未获依据，影响摄像头输入槽READY、Stem→DW、PW→CSP及后续任何DDR层间交接的正式签核；不等于必须停止无关算子/调度数值开发。
+长背压语义未获依据，影响视频竞争和队列满时当前AW→W模式的适用性；空闲诊断成功不能代替这一条。
+排空未获依据，影响独立CNN取消、超时后重试和存储槽重用；保持旧独占诊断fail-stop范围，不临时加第二套复位/桥。
+所有问题集中到唯一询问清单；收到正式答复后，只补对应的最小服务约束与测试，不重新做整套差距审查。
+无法确认前不使能生产READY；本轮到此停止，不续开CRC/DHI实验，不以模型假设放行，不自行切STRICT，不运行重型TD。
+
+7. 核验、门禁及输出边界
+
+实际执行：只读官方PDF检索/图示检查、源码及配置追踪、安装包与工程副本SHA256比较、两个独立只读复核；官方公开资料有限检索。
+回归/端点周期：本轮NOT_RUN / N/A；没有新功能回归或速度测量，不引用旧17,252,079拍作为本轮成绩。新S1已有15,848,967拍是其他报告的受控端点结果，不是本次DDR保证证据。
+compile、ast、readability、comment、naming、profile、testbench、toolchain：本次均NOT_RUN。历史严格失败不改写为通过。
+readable-verilog-generator依赖预检：required_ok=true，WaveDrom3.6.1和erie-remote-ssh存在；推荐context-engineering缺失，聚合ok=false。未安装任何依赖，本次只读审查不依赖该推荐项。
+未修改C8文件、五个冻结算术核、控制器模式、生产工程或旧报告；未训练、生成位流、上板、写Flash、提交/推送或向其他聊天发消息。
+
+核心SHA256：
+官方PDF 340f0705979e2c8467171efbf586497be60adf71236dc99dc2c1fee7271a18ca
+ddr2.v 99910fcd06d61b728c4333f8eb15dd07b61db32af197ad3871995283461fe29e
+ddr2.xml 1c0928264dcbc2217f7c1015042fc61e02bd444b727eac8b2e8f9bc4b89fc720
+ph1p_ddrmc_wrapper_63f4ac254419.v a206d148022c1a5bb46c37932714dc9d57fea32f39fdb344e060e9fc9c6ff1ce
+src/rtl/top/ph1p_ddrmc_top.v 067ac86d88e35cb0c12e62816175542df2e907d244e86f92411611b83123736e
+src/rtl/mc/alc_mc_top_all.enc.sv 19b4b773f7dae211b9b9adb73c3871d5b494345fbf684ce1b7dac9cd3cae512b
+src/rtl/mc/alc_phy2mc_fifo_ctrl.v cf1500a2d491c637a9150fb36fbc6de109e62cca5d8ff3c58dadf5f7f84472c6
+src/rtl/phy/ph1p_ddrphy_cmd_execution.v 53c5eaad74abfc98bb0c2a4ede0a1863c8a34008da1955cf7ad397e151d0a9c1
+src/rtl/include/ph1p_mis_define.vh a0e0bc78eab01cd1815a04f246420b68b4a5a616c43c2f36988c4df94fc1b471
+mailbox e59b4f0ed68728ce3a31123d5e10e9939672bd5fe0aaf5e0a6acb32660657bec
+
+写报告后核验：8份IP源/配置、官方PDF及mailbox共10项哈希均匹配，0项变化；报告中的哈希与实际文件一致，询问清单恰有Q1～Q4四项；输出目录仅有本报告和唯一询问清单两份文件。
+结束时间：2026-10-15 20:15北京时间；约16分钟内收敛，未耗尽90分钟上限，不为凑满时间重复搜索或扩展任务。
+交接：本文件说明可证范围与条件合同；唯一厂商询问清单.txt可直接转交FAE。问题未获得正式答复，状态保持LOCAL_NOT_PROVEN，随后待命。

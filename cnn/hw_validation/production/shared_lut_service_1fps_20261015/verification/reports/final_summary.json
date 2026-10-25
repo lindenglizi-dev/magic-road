@@ -1,0 +1,74 @@
+{
+  "status": "PASS_WITH_SANDBOX_TOOL_FAILURE_RECEIPTS",
+  "qualified_run": {
+    "environment": "same local host, sandbox escalation",
+    "compile_returncode": 0,
+    "simulation_returncode": 0,
+    "compile_command": "iverilog -g2012 -Wall -s tb_road_shared_lut_service -o build/tb_escalated.vvp tb_road_shared_lut_service.v ../rtl/road_shared_lut_service.v",
+    "simulation_command": "vvp build/tb_escalated.vvp +ROM=assets/physical_words_160.hex",
+    "pass_marker": "TB_PASS_SHARED_LUT default_entries=1280 odd_entries=1280 invalid=3 cancel=3 reset=2 reader_fault=1"
+  },
+  "failed_compile_receipts": [
+    {"attempt": 1, "environment": "workspace sandbox", "returncode_unsigned": 3221225477, "simulation_started": false, "receipt": "compile_attempt_1.json"},
+    {"attempt": 2, "environment": "workspace sandbox", "returncode_unsigned": 3221225477, "simulation_started": false, "receipt": "compile_attempt_2.json"},
+    {"attempt": "short-path diagnostic", "environment": "workspace sandbox", "returncode_signed": -1073741819, "simulation_qualified": false, "receipt": "compile_shortpath_diagnostic.json"}
+  ],
+  "metrics": {
+    "default_entries": 1280,
+    "default_exhaustive_rom_reads": 1280,
+    "default_latency_cycles": {"min": 23, "max": 23, "average": 23.0},
+    "odd_entries": 1280,
+    "odd_lane19_entries": 129,
+    "odd_exhaustive_rom_reads": 1409,
+    "odd_latency_cycles": {"min": 23, "max": 26, "average": 23.3},
+    "total_default_rom_reads_all_scenarios": 1288,
+    "total_odd_rom_reads_all_scenarios": 1410
+  },
+  "run_parameters": {
+    "clock_hz": 100000000,
+    "compiler_mode": "-g2012 -Wall",
+    "default_sigmoid_byte_offset": 137962,
+    "default_exp_byte_offset": 140010,
+    "test_only_odd_sigmoid_byte_offset": 19,
+    "test_only_odd_exp_byte_offset": 39,
+    "rom_words": 7168,
+    "rom_word_bits": 160,
+    "one_outstanding": true
+  },
+  "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "tool_sha256": {
+    "iverilog.exe": "803b8844af2cc8ed70b5f08b07ffa749901280e81339617ca3e72cbbb852bd2b",
+    "vvp.exe": "e2f442f4d5aa76e55c85c3ff77e4446fbfdb9946b7cfe8a2dff87f275da17b62"
+  },
+  "source_sha256": {
+    "rtl/road_shared_lut_service.v": "434110b3ee9116d759704e6a998060c988910060dde011542c4c9d3fe73a51ad",
+    "verification/tb_road_shared_lut_service.v": "a8022bae9cf6dc933838e3a705d5174246e8d8619f6c9e891d7f9051b1a119ce",
+    "verification/run_rtl.py": "b6c6714c5b9ec9b7d94c5b6cc52881b7e69e9a42eefe125e716d0c832f0f8eb2",
+    "verification/prepare_vectors.py": "3fca4372b56dc968f09427e08a50e9dee8a5bae8da84b9958f06d0223eeade1a"
+  },
+  "input_sha256": {
+    "assets/physical_words_160.hex": "78220008aefaf3921c20517771c39e310bb7ec8d1b58d1503bd5db97c863522f",
+    "assets/sigmoid_expected_16.hex": "889fa62b54d26210c37e9260c3e954d1913c0606593381152a2846b2609419ca",
+    "assets/exp_expected_16.hex": "135731b97a0a144eacf953b80a540eb68591bcb6b5bddb588824917218ca8d0c",
+    "assets/odd19_sigmoid_expected_16.hex": "a9da7e95bdf4acd0609d16f6f29f79b24435dabad78460c1d0033958a9b49123",
+    "assets/odd39_exp_expected_16.hex": "d78985eed519a2308a52ff0caf4fd1509be65d47040ea3295c007f646d8c6c80"
+  },
+  "strict_gate": {
+    "scope": "verification/tb_road_shared_lut_service.v only",
+    "delivery_ready": false,
+    "errors": 105,
+    "strict_warnings": 0,
+    "only_rule": "COMMENT_COMMENT_PLACEMENT",
+    "compile": "passed",
+    "ast": "passed",
+    "readability": "passed",
+    "comment": "failed",
+    "naming": "passed",
+    "profile": "passed",
+    "testbench": "not_requested",
+    "toolchain": "not_requested",
+    "comment_language": "en"
+  },
+  "dut_gate_boundary": "Production DUT gate is separate. The main-agent gates/attempt_01.json reports 526 findings with AST, readability, and naming failures; the 105 TB-only comment findings are not the whole-component gate result.",
+  "no_inference_training_td_synthesis_bitstream_board_or_integration": true
+}

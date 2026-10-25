@@ -1,0 +1,13 @@
+第六批C9滚动状态：实现中，尚未宣称RTL联测通过。
+目标：真实ROM后处理→最小publisher→C8原source/pending/active三表。
+已确认：work/roadyolo；新目录独占；68个复用文件与旧源逐字节一致，frozen_dependencies.json已冻结。
+已确认：正常100MHz/75MHz；模板SOF周期1,237,500像素拍（16.5ms）；新实例AGE_LIMIT_MS=2000，旧500只读。
+关键边界：seal前撤销，seal后只等copy_ack；publisher自己持有任务，不能只看C8 busy。
+已定位并在合同规避：NMS fault受cancel门控，因此禁止组合fault→pipeline_cancel反馈；改为ABORT状态取消。
+已完成：Python语义33项/500拍；35端口canonical规范与两个WaveDrom图；发布器RTL；协议21项及正常7框真实厂商ROM首轮冒烟通过。
+已完成：只读独立审阅未发现高优先级语义问题；表及计时模块保持原哈希。
+已完成：基础31项覆盖＝旧run明确PASS21项＋修正TB新run PASS10项；额外补充META复位和pending-full两项2/2 PASS。详细索引verification/baseline_acceptance_coverage.json；不是单次31/31 run。
+已完成：500拍Python→RTL全部输出、状态/计数一致。68个冻结旧依赖前后不变，publisher最终SHA仍c9b25968c51827f0a1856a5bcf5618c64742c04641629ac0c3ca4412847939f0。
+失败保留：TB初始化ready旧断言；恢复帧下降沿start误判。定点复现后只修TB上升沿握手，恢复帧已正确接受12096项并发布7框；没有修改功能RTL或倒改FAIL。
+未完成：严格八门闭合（publisher123条，详gate_analysis.txt）、物理资源/时序、实际源SOF与READY槽身份配对。C8稳定接口已读，尚未实例化。
+本批不包含：生产改动、训练、位流、上板、Flash、完整67层/DDR闭环；不把组件测量称为整网FPS。

@@ -1,0 +1,16 @@
+# 完整前三层 DDR Python 参考报告
+
+状态：PASS（仅 TEST_ONLY 诊断参数，不是部署 QAT 模型）。
+
+- 输入：512×288×3 RGB，严格使用 16×16 周期公式，无边缘覆写。
+- 全帧数值：Stem 144×256×16、DW3s2 72×128×16、PW 72×128×24；每层 acc/pre/silu/post 均按 tile4x4_hwc 导出并哈希。
+- DDR：input/stem/pw 字节基址分别为 0x03400000/0x03500000/0x03600000；128-bit beat 数分别为 27648/36864/13824。native=byte>>1，每 beat 步长 8。
+- RGB pattern ROM：16 行×3 个 128-bit 字，共 48 字；逐字重建 96 beats/行、288 行，与完整 RGB 442368 字节逐项一致。
+- Stem 板上 golden：9 类×256B；轴分类 0=top/left，非边界 class=1+(index&1)，即 even=1、odd=2。2304 tile 逐项一致，0 mismatch。
+- PW 板上 golden：4 类×384B；按 ty==0 与 tx==0 分类。576 tile 逐项一致，0 mismatch。
+- combined_golden.hex：Stem 9×16 词后接 PW 4×24 词，共 240 个有效 128-bit 词，尾补 16 个零词至 256。
+- Halo：Stem [2304,243] 读 NHWC RGB；DW [576,1296] 读 Stem tile4x4_hwc。无效地址=-1、值=0；底/右最后窗口全部有效。
+- 16B 单行缓存（每 tile 失效）：Stem 51357 beat reads、20672 连续段，单 tile 16..27 reads；DW 46207 beat reads、15295 连续段，单 tile 64..81 reads。
+- 数值来源：旧冻结 stem_down2_handoff_20261011 测试权重、偏置、量化参数和 SiLU 表；依赖与全部向量哈希见 contract.json。
+
+未执行：训练、GPU、RTL 修改、仿真、综合、板卡、Flash、位流。

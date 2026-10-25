@@ -1,0 +1,225 @@
+{
+  "modules": [
+    {
+      "name": "road_stem_ddr_board_top",
+      "feature": "frontend_ddr_tensor",
+      "rtl_path": "road_stem_ddr_board_top.v",
+      "description": "固定完整前三层宏调度与真实DDR读写，TEST_ONLY参数。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_sys_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "C4板载50MHz",
+            "description": "C4板载50MHz"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "C7共同复位",
+            "description": "C7共同复位"
+          },
+          {
+            "name": "o_tmds_blue_p",
+            "direction": "output",
+            "width": 1,
+            "role": "原HDMI差分正端",
+            "description": "原HDMI差分正端"
+          },
+          {
+            "name": "o_tmds_green_p",
+            "direction": "output",
+            "width": 1,
+            "role": "原HDMI差分正端",
+            "description": "原HDMI差分正端"
+          },
+          {
+            "name": "o_tmds_red_p",
+            "direction": "output",
+            "width": 1,
+            "role": "原HDMI差分正端",
+            "description": "原HDMI差分正端"
+          },
+          {
+            "name": "o_tmds_clock_p",
+            "direction": "output",
+            "width": 1,
+            "role": "原HDMI差分正端",
+            "description": "原HDMI差分正端"
+          },
+          {
+            "name": "ddr_ck_p",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂DDR专用命令端",
+            "description": "原厂DDR专用命令端"
+          },
+          {
+            "name": "ddr_ck_n",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂DDR专用命令端",
+            "description": "原厂DDR专用命令端"
+          },
+          {
+            "name": "ddr_cke",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂DDR专用命令端",
+            "description": "原厂DDR专用命令端"
+          },
+          {
+            "name": "ddr_odt",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂DDR专用命令端",
+            "description": "原厂DDR专用命令端"
+          },
+          {
+            "name": "ddr_cs_n",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂DDR专用命令端",
+            "description": "原厂DDR专用命令端"
+          },
+          {
+            "name": "ddr_ras_n",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂DDR专用命令端",
+            "description": "原厂DDR专用命令端"
+          },
+          {
+            "name": "ddr_cas_n",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂DDR专用命令端",
+            "description": "原厂DDR专用命令端"
+          },
+          {
+            "name": "ddr_we_n",
+            "direction": "output",
+            "width": 1,
+            "role": "原厂DDR专用命令端",
+            "description": "原厂DDR专用命令端"
+          },
+          {
+            "name": "ddr_ba",
+            "direction": "output",
+            "width": 2,
+            "role": "DDR bank地址",
+            "description": "DDR bank地址"
+          },
+          {
+            "name": "ddr_addr",
+            "direction": "output",
+            "width": 13,
+            "role": "DDR行列地址",
+            "description": "DDR行列地址"
+          },
+          {
+            "name": "ddr_dqs_p",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR差分选通正端",
+            "description": "DDR差分选通正端"
+          },
+          {
+            "name": "ddr_dqs_n",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR差分选通负端",
+            "description": "DDR差分选通负端"
+          },
+          {
+            "name": "ddr_dq",
+            "direction": "inout",
+            "width": 16,
+            "role": "DDR数据",
+            "description": "DDR数据"
+          },
+          {
+            "name": "ddr_dm",
+            "direction": "inout",
+            "width": 2,
+            "role": "DDR掩码",
+            "description": "DDR掩码"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "CNN100MHz; DDR133.33MHz; HDMI75/375MHz"
+      },
+      "reset": {
+        "assertion": "Entire DDR and arithmetic jointly asserted asynchronously",
+        "release": "Two-flop release in each domain, reload all 1024 SiLU entries before start"
+      },
+      "behavior": [
+        "原PLL/DDR IP/HDMI和mailbox连接完整前三层序列器。",
+        "诊断计数加宽32位；原状态字段显示低位，第二数据页显示完整写/读/输出/周期计数。",
+        "各域异步断言、同步释放；加载器和DDR共同复位；不增加时序例外或真实外设协议。",
+        "顶层物理I/O沿原约束，51位外部I/O，不增加UART/AXI控制端口。"
+      ],
+      "constraints": [
+        "Read-only ROM initialization is checked separately from board readback.",
+        "No new timing exceptions for mailbox; existing bounded display CDC retained.",
+        "TEST_ONLY coefficients, no deployed-model precision or full CNN FPS claim."
+      ],
+      "corner_cases": [
+        "顶左padding、右下末tile、行列进位、cache跨字节边界、请求背压、读延迟、复位与故障"
+      ],
+      "verification_cases": [
+        "全帧逐项数值与地址、真实中间值、正常及随机背压、共同复位、实际TD资源时序"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "full_traversal",
+          "title": "完整张量交接",
+          "scenario": "tensor_handoff",
+          "description": "阶段顺序图；每个真实DDR请求均等待接受和响应，不规定返回固定拍数。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "stage",
+                "wave": "========",
+                "data": [
+                  "INPUT_WRITE",
+                  "TABLE_PARAM",
+                  "RGB_READ",
+                  "STEM",
+                  "STEM_WRITE",
+                  "HALO_READ",
+                  "DW_PW",
+                  "PW_WRITE"
+                ]
+              },
+              {
+                "name": "source",
+                "wave": "=.=..=..",
+                "data": [
+                  "pattern ROM",
+                  "DDR RGB",
+                  "DDR Stem"
+                ]
+              },
+              {
+                "name": "result",
+                "wave": "x...=..=",
+                "data": [
+                  "589824B Stem",
+                  "221184B PW"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,443 @@
+{
+  "schema": 1,
+  "role": "read_only_integration_inventory",
+  "date": "2026-10-16",
+  "project": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "branch": "work/roadyolo",
+  "scope": "C8 seventh batch 64-box + AGE; only inventory files written. No RTL edits, simulator, TD, train, bitstream, board or Flash.",
+  "current_checks": {
+    "vendor_present_subset_checked": 61,
+    "vendor_present_subset_mismatches": [],
+    "vendor_lane_count": 56,
+    "projection_note": "source_receipt closure_sha256 lists the wider original C2 package. C9 runner checks all physically reused files against that receipt, not existence of every wider key."
+  },
+  "fixtures": {
+    "publisher_root": "cnn/hw_validation/production/result_publish_joint_20261015",
+    "stable_tb": "verification/tb_road_result_publish_joint.v",
+    "stable_runner": "verification/run_vendor_rom.ps1",
+    "stable_live_files_match_snapshot": "20261015_234212_068_637d4424",
+    "true_rom_root": "vendor_rom",
+    "compile_define": "+define+USE_VENDOR_ROM",
+    "simulation_tops": [
+      "work.PH1P_PHY_GSR",
+      "work.tb_road_result_publish_joint"
+    ],
+    "required_working_directory": "run root with copied artifacts/group_*_lane_*.dath",
+    "model_id_hex": "B35D4A66",
+    "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+    "real_case": {
+      "name": "real_image",
+      "head_words": 12096,
+      "final_entries": 7,
+      "person": 2,
+      "vehicle": 5,
+      "root": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image",
+      "heads": "heads_cell_order_112.hex",
+      "expected": "result_table_97.hex",
+      "expected_decoded": "final.json"
+    },
+    "evidence": "31 baseline unique cases across original FAIL run21 accepted passes + corrected run10 passes; supplemental2. No single31/31 receipt. 33scene/500cycle publisher reference separate."
+  },
+  "source_closure": {
+    "c9_rtl": [
+      "road_candidate_ram.v",
+      "road_head_decode_topk.v",
+      "road_shared_lut_service.v",
+      "road_nms_serial.v",
+      "road_result_publisher.v",
+      "road_detection_table_cdc.v",
+      "road_time_snapshot.v"
+    ],
+    "rom_rtl": [
+      "vendor_rom/rtl/road_numeric_rom_reader.v",
+      "vendor_rom/rtl/road_yolo_numeric_rom_group.v"
+    ],
+    "vendor": [
+      "vendor_rom/vendor/ph1p_logic_eram.v",
+      "vendor_rom/vendor/ph1p_phy_gsr.v"
+    ],
+    "numeric": "56 lanes + frozen manifest; do not use controlled physical_words fallback as true vendor ROM proof",
+    "age": "cnn/hw_validation/production/source_sof_identity_20261015/rtl/road_age_overlay.v"
+  },
+  "final97": {
+    "label": [
+      0,
+      0
+    ],
+    "score": [
+      16,
+      1
+    ],
+    "x0": [
+      36,
+      17
+    ],
+    "y0": [
+      56,
+      37
+    ],
+    "x1": [
+      76,
+      57
+    ],
+    "y1": [
+      96,
+      77
+    ],
+    "integer_x0": [
+      36,
+      25
+    ],
+    "integer_y0": [
+      56,
+      45
+    ],
+    "integer_x1": [
+      76,
+      65
+    ],
+    "integer_y1": [
+      96,
+      85
+    ],
+    "labels": {
+      "person": 0,
+      "vehicle": 1
+    },
+    "coordinates": "Unsigned Q12.8 containing integer source pixels <<8; NMS already RNE(network_q8*5/512). Source half-open geometry, x1<=1280,y1<=720. Do not round again.",
+    "drawing": "Draw 1px: x0<=x<x1,y0<=y<y1 and x==x0||x==x1-1||y==y0||y==y1-1. Skip x0>=x1 or y0>=y1 without altering stored result.",
+    "colors": "Existing legacy precedent person00ff00 vehicle00ffff; seventh-batch plan requires fixed overlap priority but gives no explicit winning class. Choose and freeze in new contract.",
+    "legacy_priority": "Old four-track overlay first matching lowest track index wins; not an explicit new cross-class requirement."
+  },
+  "metadata265": {
+    "epoch": [
+      31,
+      0
+    ],
+    "task_id": [
+      63,
+      32
+    ],
+    "source_frame_id": [
+      95,
+      64
+    ],
+    "model_id": [
+      127,
+      96
+    ],
+    "box_count": [
+      134,
+      128
+    ],
+    "status": [
+      136,
+      135
+    ],
+    "capture_ms": [
+      200,
+      137
+    ],
+    "completion_ms": [
+      264,
+      201
+    ]
+  },
+  "table": {
+    "module": "road_detection_table_cdc",
+    "new_instance": {
+      "AGE_LIMIT_MS": 2000,
+      "EXPECTED_MODEL_ID": "32'hB35D4A66"
+    },
+    "ports": {
+      "i_src_clk": 1,
+      "i_dst_clk": 1,
+      "i_rstn": 1,
+      "i_src_entry_valid": 1,
+      "i_src_entry": 97,
+      "o_src_entry_ready": 1,
+      "i_src_meta_valid": 1,
+      "i_src_metadata": 265,
+      "o_src_meta_ready": 1,
+      "i_src_abort": 1,
+      "o_src_copy_ack": 1,
+      "o_src_busy": 1,
+      "o_src_error": 1,
+      "i_dst_copy_enable": 1,
+      "i_dst_sof": 1,
+      "i_dst_now_ms": 64,
+      "i_dst_time_epoch": 32,
+      "i_dst_time_valid": 1,
+      "i_dst_read_index": 6,
+      "o_dst_entry": 97,
+      "o_dst_metadata": 265,
+      "o_dst_active_valid": 1,
+      "o_dst_draw_valid": 1,
+      "o_dst_pending_valid": 1,
+      "o_dst_copy_busy": 1,
+      "o_dst_update": 1,
+      "o_dst_age_upper_ms": 64,
+      "o_dst_error": 1
+    },
+    "read": "One combinational async active read. No req/ready, no registered output. Changes with index, bank, count. Zero only if internal nonempty flag false or index>=count. It is NOT masked by draw_valid.",
+    "source": "entry accepted in order only valid&&ready, max64. Meta ready requires no entry_valid, count<=64 and exact accepted count. Meta seals source; held until returned copy_ack/common reset. abort cancels unsealed partial source only; sealed abort produces error.",
+    "copy": "Request2FF sync, detection schedules metadata wait, following edge captures metadata. Count0 creates pending and ack immediately; count1..64 starts copying one entry per enabled destination edge beginning next edge. copy_enable stalls writes/index; async active read remains available. Last copy creates pending and toggles ack.",
+    "switch": "i_dst_sof && old pending_valid causes NBA active-bank/present/count switch, pending clear and update pulse. SOF same edge as final copy does not select new pending. Start a new scan after switch edge. Active entries/metadata freeze until another SOF.",
+    "valid": "o_dst_active_valid is present even for complete empty table; draw_valid is nonempty AND live identity/status/model/time/order/age. draw_valid is combinational and may withdraw mid-line; renderer must use live signal.",
+    "age": "age_upper=now-capture+4 using65 bits. Draw permits<=2000 including2000. Capture<=completion<=now, coherent epoch/model/status0. Unknown/no active/time invalid/epoch mismatch/order invalid or upper overflow =>UINT64_MAX. Model/status mismatch alone removes draw, does not force age invalid.",
+    "reset": "Common async assert, independently two local release edges; earliest transfer on third edge. Payload RAM is not reset. All old validity/request/copy states cancel.",
+    "output_timing": "entry/meta/active_valid/draw_valid/age/pending/copy_busy combinational from held state/live time; update and destination error registered1cycle pulses. Source copy_ack/error registered1cycle pulses after synchronized return."
+  },
+  "video": {
+    "source": "user_source/hdl_source/vtc/uivtc.v",
+    "mixer": "user_source/hdl_source/hdmi_mixer.v",
+    "template": "cnn/template/design_top_wrapper.v:797",
+    "active": [
+      1280,
+      720
+    ],
+    "total": [
+      1650,
+      750
+    ],
+    "nominal_pixel_hz": 75000000,
+    "frame_cycles": 1237500,
+    "frame_ms": 16.5,
+    "line_cycles": 1650,
+    "active_cycles": 1280,
+    "blank_samples": 370,
+    "last_active_to_next_first_periods": 371,
+    "blank_us": 4.933333333333334,
+    "hs_range": [
+      1390,
+      1430
+    ],
+    "vs_condition": "vcnt>725 && vcnt<=730, so lines726..730",
+    "vertical_counter": "increments at old hcnt1279, not hcnt1649",
+    "vtc_register_stages": {
+      "vs": 1,
+      "hs": 1,
+      "de": 2,
+      "user": 2,
+      "last": 2
+    },
+    "mixer_register_stages": {
+      "vs": 3,
+      "hs": 3,
+      "de": 3,
+      "rgb": 3
+    },
+    "raw_vs_to_next_raw_de_periods": 39970,
+    "mixer_vs_rise_to_next_mixer_de_rise_periods": 39971,
+    "sof": "wire mixer_vs && !registered_previous_mixer_vs, shared by table and box. The consuming edge is1period after mixer VS transition;39970periods lead to mixer first DE transition. VS rise is blank. Do not use VTC user/first active pixel as AGE SOF.",
+    "age_alignment": "AGE after box must receive equally delayed blankSOF. AGE captures new active age on first subsequent !DE edge, then fixed text for frame. AGE adds1 registered video stage. Live table draw permission independent of text.",
+    "insertion": "cnn/template/design_top_wrapper.v mixer S_hdmi_out_* at833..836 -> new box -> existing AGE -> hdmi_tx at848..854; do not alter production."
+  },
+  "distributed_ram": {
+    "path": "E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/sim_release/ph1p",
+    "available": [
+      "PH1P_LOGIC_DRAM64X8",
+      "PH1P_LOGIC_DRAM32X16",
+      "PH1P_LOGIC_DRAM",
+      "PH1P_LOGIC_DRAM64X8R16",
+      "PH1P_LOGIC_DRAM32X16R8"
+    ],
+    "dram64x8_ports": {
+      "raddr": 6,
+      "waddr": 6,
+      "di": 8,
+      "wclk": 1,
+      "wrst": 1,
+      "we": 1,
+      "rdo": 8
+    },
+    "dram64x8_dependencies": [
+      "ph1p_phy_mslice.v",
+      "ph1p_phy_dramhardcon.v",
+      "vendor GSR"
+    ],
+    "read": "Async rdo; generic DRAM additionally optional READREG rdoq.64x8 wrapper visibly uses8MSLICE and DRAMHARDCON.",
+    "reset": "wrst active-high; write-controller release depends vendor global done. No RAM-clear or initialization proof. No same-address read/write guarantee assumed.",
+    "advice": "Small per-line endpoint/event map may use distributed RAM with0ERAM/0DSP intent; capacity, collision behavior, clearing/valid tagging and write throughput must be explicitly bounded; true Slice/map/timing await C7. Only filelisting/rg/hash inspection done."
+  },
+  "gates": {
+    "compile": "NOT_RUN_READ_ONLY_INVENTORY",
+    "ast": "NOT_RUN_READ_ONLY_INVENTORY",
+    "readability": "NOT_RUN_READ_ONLY_INVENTORY",
+    "comment": "NOT_RUN_READ_ONLY_INVENTORY",
+    "naming": "NOT_RUN_READ_ONLY_INVENTORY",
+    "profile": "NOT_RUN_READ_ONLY_INVENTORY",
+    "testbench": "NOT_RUN_READ_ONLY_INVENTORY",
+    "toolchain": "NOT_RUN_READ_ONLY_INVENTORY"
+  },
+  "limitations": [
+    "No simulator/TD run this task; timing counts source-derived arithmetic only.",
+    "Legacy publisher/table strict failures remain; actual functional receipts do not override gates.",
+    "True7 fixture is saved HEAD112 through actual ROM/postprocess, not67-layer CNN inference or camera DDR closure.",
+    "Physical resource, timing,CDC/MTBF, board and accuracy not accepted."
+  ],
+  "source_hashes": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "25f55b392e0b2b8a8db389948d91c7af3ac7438de540ff8e0f6c0bcc85f69dc1",
+      "bytes": 5019
+    },
+    {
+      "path": "MULTI_AGENT_WORKFLOW.md",
+      "sha256": "d00d37b9c04a49e313d498b5cbce1b268847b947d1a6236ca2d2fcfb95bdcad9",
+      "bytes": 8347
+    },
+    {
+      "path": "cnn/template/design_top_wrapper.v",
+      "sha256": "a31d852619f84925a3aed13e69b5de556b4e43c0b361318c21794a664ceb4643",
+      "bytes": 30625
+    },
+    {
+      "path": "user_source/hdl_source/vtc/uivtc.v",
+      "sha256": "c7deaea83ea04fae9caaf34644fe089aeba6dc54dee26c377aef1df44648e4db",
+      "bytes": 5798
+    },
+    {
+      "path": "user_source/hdl_source/hdmi_mixer.v",
+      "sha256": "23760e848c7fe803c1d562cb7a32afe33742ccf07c647d60af0cca8867a6b276",
+      "bytes": 4947
+    },
+    {
+      "path": "cnn/hw_validation/production/source_sof_identity_20261015/rtl/road_age_overlay.v",
+      "sha256": "d24c7ca135fb362e2cb1c63eae6068f5a1660dd2ba564f50640774260ca5a502",
+      "bytes": 10377
+    },
+    {
+      "path": "cnn/hw_validation/production/source_sof_identity_20261015/rtl/road_source_sof_identity.v",
+      "sha256": "dbe6056ef93f231e192afd287264fd3173329401d8b57ba29a497dc7875970b5",
+      "bytes": 18754
+    },
+    {
+      "path": "cnn/hw_validation/production/source_sof_identity_20261015/interfaces.json",
+      "sha256": "8f59c5222639dacf6ed3c30b67fedd8c021637aa694db0c60cff09da3d873adb",
+      "bytes": 4416
+    },
+    {
+      "path": "cnn/hw_validation/production/postprocess_joint_1fps_20261015/vector_manifest.json",
+      "sha256": "05908151d1b85d8deff53638f97614af4de47ecb3ee3b5e97c5eb0b8f6732750",
+      "bytes": 27813
+    },
+    {
+      "path": "cnn/hw_validation/production/postprocess_joint_1fps_20261015/verify_vectors.py",
+      "sha256": "8935de3ac08da883be887ff8a6b1f495525cf966864e26b8c3dc1602351bf1a2",
+      "bytes": 12978
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/verification/tb_road_result_publish_joint.v",
+      "sha256": "6055ec6ce099f18dc8e8e9eecfa3d8be821490bb93fd20f3f8bae6f53e410d7e",
+      "bytes": 61009
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/verification/run_vendor_rom.ps1",
+      "sha256": "428ae96c86678086b5fdfd45a6fc722dd88ac9cb5a199cb451e5cc87f566f95e",
+      "bytes": 21644
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/verification/baseline_acceptance_coverage.json",
+      "sha256": "68d5dbb6314e03c2fadaeced8b91cb8ab32a275301d0081445f7cdcb37f5b4a7",
+      "bytes": 60516
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/vendor_rom/source_receipt.json",
+      "sha256": "9f9ebad3a901947e07c36932b69493e255abdbc276deecdc9d1a2251d7e56db0",
+      "bytes": 87474
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/rtl/road_candidate_ram.v",
+      "sha256": "c5d80e1ed84c89c1615ec254dabd80437ad3c0edb4abe62f087d2d17f7789eab",
+      "bytes": 6755
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/rtl/road_detection_table_cdc.v",
+      "sha256": "48a2cbfcd71f586bb4c616c7cca71365569e265b50854bfd49377ac1981209d3",
+      "bytes": 14481
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/rtl/road_head_decode_topk.v",
+      "sha256": "c1560e608dfb571b5c268908734d7b3f694fff25be7db13ca802226ed1c5df02",
+      "bytes": 39310
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/rtl/road_nms_serial.v",
+      "sha256": "e73ff1879f34cbac59de850d4b9e4bfd72ea6d6e63046fed8c95e3b2aad1b9f1",
+      "bytes": 26631
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/rtl/road_result_publisher.v",
+      "sha256": "c9b25968c51827f0a1856a5bcf5618c64742c04641629ac0c3ca4412847939f0",
+      "bytes": 14220
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/rtl/road_shared_lut_service.v",
+      "sha256": "434110b3ee9116d759704e6a998060c988910060dde011542c4c9d3fe73a51ad",
+      "bytes": 22880
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/rtl/road_time_snapshot.v",
+      "sha256": "00e3e267f6d479612019e8a63c52099705d69d2b29c0379e76c1fc9ae1eb4921",
+      "bytes": 10822
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/vendor_rom/rtl/road_numeric_rom_reader.v",
+      "sha256": "d22a4ffec8e3b8536408a117865394c38b8999f7d9bb621ca5ca11e193c79421",
+      "bytes": 9125
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/vendor_rom/rtl/road_yolo_numeric_rom_group.v",
+      "sha256": "05f1d9d70acaa9ff96265a24d2b359b09c97cca60a9ceb26e3839fc0b0aae5cb",
+      "bytes": 20462
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/vendor_rom/vendor/ph1p_logic_eram.v",
+      "sha256": "70d89b70bdd51812ad86b91e88526b4604ebb117516efda5af976fcddb2e69af",
+      "bytes": 44271
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/vendor_rom/vendor/ph1p_phy_gsr.v",
+      "sha256": "787312a19b4007bef3b76986bce267966b2d04c1871290ce29905629e38f1524",
+      "bytes": 4536
+    },
+    {
+      "path": "cnn/hw_validation/production/result_publish_joint_20261015/vendor_rom/artifacts/manifest.json",
+      "sha256": "93a05a97f78489fabd511909367be0f8b676680c01e5f74a21d571a88f82ff2b",
+      "bytes": 256502
+    },
+    {
+      "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image/heads_cell_order_112.hex",
+      "sha256": "2fe18d831eba985796ad8735b1774b97c55c580f71f9c4e9a29a7e602f3a154f",
+      "bytes": 362880
+    },
+    {
+      "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image/result_table_97.hex",
+      "sha256": "c5cd21644f6e3bd16fb19726839b20f18c4affa59e33e88062f895e883d3c96c",
+      "bytes": 189
+    },
+    {
+      "path": "cnn/hw_validation/production/postprocess_golden_2fps_20261015/artifacts/real_image/final.json",
+      "sha256": "4e139e132e7e181dc5be0d6256fd9aeed53a9995a617b10fa5b4054b6c2e7141",
+      "bytes": 2298
+    }
+  ],
+  "primitive_hashes": [
+    {
+      "path": "E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\sim_release\\ph1p\\ph1p_logic_dram64x8.v",
+      "sha256": "366af3e3c34a32c9b192d46e8d71d598c4ca8a20827ace1c0919b18a3cf80bb8",
+      "bytes": 11182
+    },
+    {
+      "path": "E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\sim_release\\ph1p\\ph1p_logic_dram32x16.v",
+      "sha256": "dd290114f598698e1e8aa70543a6904b16860bd77467987dcb6b191e4e706223",
+      "bytes": 11132
+    },
+    {
+      "path": "E:\\Anlogic\\TD_6.2.1_Engineer_6.2.168.116\\sim_release\\ph1p\\ph1p_logic_dram.v",
+      "sha256": "e3ccf3c4821d33a3bd3ceac816493d09342b0651862fadd1b3d03fff1f30efcb",
+      "bytes": 13296
+    }
+  ]
+}

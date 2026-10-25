@@ -1,0 +1,45 @@
+冻结图形状适配交接；2026-10-15
+本文件是给唯一图/owner负责人C7的最小差异清单，不表示这些节点已实现或执行。
+依据：production/graph_artifacts/graph.json，SHA256 2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738。
+遵循最新一周2FPS计划：50M是整流程预算，500ms过期不变，19000/38/107为常规资源目标，21216/40/108为硬限。不另领CSP专属MAC或ERAM额度。
+
+一、真实冻结形状（H×W×C）
+对象            图节点       输入/输出         半支路      残差数  PW半支路输入组  末端PW输入组
+CSP2            3..11        72×128×24         12          2       2（尾4lane）    3
+CSP3            14..25       36×64×48          24          3       3               6
+CSP4            28..39       18×32×96          48          3       6               12
+fuse3_td        49..54       reduce96→48       24          1       3               无独立out.conv
+fuse2_td        58..63       reduce48→24       12          1       2（尾4lane）    无独立out.conv
+fuse3_bu        67..72       reduce96→48       24          1       3               无独立out.conv
+fuse4_bu        76..81       reduce192→96      48          1       6               无独立out.conv
+
+CSP3卷积：csp3.blocks.0/1/2.dw.conv 与 .pw.conv，末端csp3.out.conv；残差residual.02/.03/.04。
+CSP4卷积：csp4.blocks.0/1/2.dw.conv 与 .pw.conv，末端csp4.out.conv；残差residual.05/.06/.07。
+PAN实际名称 fuse{3_td,2_td,3_bu,4_bu}.reduce.conv、.block.dw.conv、.block.pw.conv。
+PAN残差为residual.08/.09/.10/.11，结果concat.05/.07/.09/.11。冻结图没有额外PAN末端融合卷积，不能套用CSP2第五层偷偷增层。
+PAN reduce归约组分别12/6/12/24，最大192输入恰为原核上限，不扩大signed33归约合同。
+
+二、最小复用差异
+1. 保留八输入×三输出打包、DW同通道空间三点、PW连续三通道、原RNE/SiLU/残差写回。
+2. 层号/参数来源改为C7固定图描述符，不复制算术。CSP3/4有7个卷积阶段，PAN含reduce+一个残差且无out.conv。
+3. 原client的channel5bit仅够CSP2。扩展外围索引需DW半支路到47、末端输出到95；归约group需到23、input计数需表示192。不能把5bit计数截成0或沿用last_group=1/2。
+4. PW12末组mask0x0f；PW24/48/96/192均是8的整倍数。Cout12/24/48/96均三整除。DW行尾1或2输出时分别使用3或4宽输入并集，mask/地址同步锁存，不跨行凑三路。
+5. CSP4及fuse4_bu真实高度18，最后tile只有2行。y≥18禁止写，DW只对全幅图像外补0；物理4行槽中未用行不能当成真实图像输出。
+6. 当前byte服务只支持CSP2的连续源与两份split/concat映射。PAN reduce输入concat含两来源，td还含nearest×2视图，必须复用graph视图解析：最近邻源坐标floor(y/2),floor(x/2)。不写完整concat/upsample副本。
+7. 每个新node从同包读bias/pre/post和OIHW权重，DW三空间lane必须复制同一通道数值，不能把三通道PW参数误用到DW。
+
+三、halo与公共缓存
+当前完整CSP2验证块采用8×8原支路→6×6第一残差→4×4第二残差，以完整真实CPU张量核对。
+三个残差若合成单块递推，需要10×10原支路→8×8残差0→6×6残差1→4×4残差2；每次DW之前都须把逻辑图像外的上一残差置0，不能让图外偏置/SiLU产生伪halo。
+但不建议直接为CSP3/4建立全套10×10常驻缓存。CSP4朴素同时保留source10×10×48、旁路4×4×48、DW0及residual0各8×8×48已达11712字节，超过公共4ERAM的原始10240B容量（4×20480bit/8=10240B），还没算其它客户。
+更小的部署路线：C7按层遍历全部4×4tile，将真实中间张量留DDR；每阶段使用当前tile及一像素真halo，完成整层写可见屏障后才消费下一残差。这样不递增到10×10，不重复计算相邻tile同一第一残差。
+本批无私有MAC client是完整块功能/退休/地址参照，不应原封不动循环576次当成最终速度路线；逐字节参数/读服务仍是受控功能基线。
+保留旁路直到该PW最后一次旁路读响应消费；DW写cache与PW读cache不能在旧像素尚被其它输出组三次读取时提前覆盖。
+完整源tensor需保留到concat/fuse最后源读，residual0还供第二DW和第二PW旁路，不能在第二DW刚完成时释放。
+共享bank映射、端口数、活动PW权重与源/旁路同时存活账由C7统一裁决，不把上述容量计算写成ERAM已映射通过。
+
+四、接入前必需回归与停止边界
+选定完整图层调度后，先同一C2真实图前缀复测CSP2，再覆盖CSP3/4的三残差、CSP4尾两行、PAN reduce最大24组、nearest/concat地址及错误拒写。
+参数ready之前禁止发组；任务末次实际写→注册退休→层可见性三个事件保留；owner按原返回/最后写退休条件交接。
+不改五个冻结核，不增私有DSP，不为2FPS擅自改II/数值/真实DDR协议或时序例外。若现单owner接口缺旁路/地址元数据或参数预取握手，先提交明确外围包装差异，不偷偷改核心。
+本批未实现CSP3/4/PAN、未运行全幅RTL、TD、视频/DDR并发、后处理、位流或板测。完整2FPS与500ms源龄只能由联合闭环实测。

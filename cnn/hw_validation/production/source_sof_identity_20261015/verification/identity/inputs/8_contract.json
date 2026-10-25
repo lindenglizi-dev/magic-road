@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "inputs": "../interfaces.json is authoritative; this reference uses explicit preedge state and unsigned 32/64-bit fields",
+  "time_channel": "held96={epoch32,now_ms64}; external sole counter; publish idle on time_tick; two request synchronizer stages then detection plus one capture-wait edge; ack on completed mirror copy; source waits returned two-stage ack before reusing held payload",
+  "event_channel": "held128={epoch32,source_frame_id32,capture_ms64}; freeze at admitted AWB SOF; two request synchronizer stages then detection plus one capture-wait edge; destination valid holds full descriptor; ack only valid&&ready; returned ack takes two camera synchronizer stages",
+  "admission": "combinational before SOF edge using old mirror and old event-busy; arm after observed low following reset; every observed rising AWB SOF counts including skipped application frames; source_frame_id reset0 and first eligible SOF ID1; no sof-valid gate",
+  "source_boundary": "SOF is the existing AWB reconstructed frame marker; not proven one-to-one with sensor exposure or CSI packet frames, especially on CSI errors",
+  "wrap": "counter reaches 0xffffffff once; next AWB SOF remains saturated, sets sticky wrap fault, and skips; no subsequent admissions before coordinated common reset with new epoch",
+  "stale": "completed snapshot resets mirror_age0; valid through 120000 subsequent camera edges, invalid on 120001st; sameedge fresh completion refreshes mirror after admission evaluates old state",
+  "reset": "common reset cancels both held-channel toggles, synchronizer state, descriptor valid, mirror, arming, counter and wrapfault; no independent hot reset/epoch switch modeled",
+  "clocks": "100MHz time, nominal60MHz camera, 75MHz HDMI. Camera frequency is configured not measured. With clocks continuous, publication lag about1ms+CDC; camera watchdog about2ms if time stops. Camera stop also stops watchdog; common reset is required for bounded freshness after clock loss",
+  "glyphs": "reference.py FONT is canonical: seven 5-bit rows, bit4 left; glyph35 packs row0[34:30]..row6[4:0]",
+  "layout": "exact11 cells12x16 at x16..147/y16..31; scale2x of5x7 glyph uses cellx0..9/celly0..13 with trailing2 blank columns/rows; white0xffffff foreground, original RGB otherwise; one registered RGB/VS/HS/DE edge; cursor resets on explicit i_sof, x increments onDE, firstDEfall resetsx/incrementsy; glyph uses preedge cursor",
+  "labels": "AGE xxxx ms zero-padded0..9999; AGE_INVALID for10000..UINT64_MAX; unknown UINT64_MAX never rendered as0",
+  "latch": "i_sof in blanking sets pending; first subsequent nonSOF blank edge reads table age after its SOF bank switch; no active pixel before latch; text stable rest of frame; live drawpermit=i_table_draw_valid&&reset_released",
+  "boundary": "No production integration, TD, physical CDC/MTBF or bundled-bus signoff, pixel DMA/slot association, real DDR drain, bitstream, board, training or Flash proof"
+}

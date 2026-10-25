@@ -1,0 +1,41 @@
+{
+  "module": "road_narrow_feature_top",
+  "wide_instance": "core_Inst",
+  "clock_mhz": 100,
+  "reset": "i_rstn asynchronous active low, shared with actual frozen top; partial RX/TX discarded; complete table refill required",
+  "io_bits": 42,
+  "wire_order": "16-bit header then fixed payload word count; least significant word first; unused high padding must be zero",
+  "rx": {
+    "8000": {"words": 1024, "payload": "1024 signed16 table entries, implicit addresses 0..1023; only while not busy"},
+    "8001": {"words": 1, "payload": "block_id[3:0]; start accepted only core start_ready; busy or early start consumed and ignored, partial table never launches"},
+    "8002": {"words": 0, "payload": "cancel, sticky fault until common reset"},
+    "8100": {"words": 11, "payload": "address[31:0],data[159:32],error[160]; only after complete read request TX"},
+    "8101": {"words": 29, "payload": "block[3:0],layer[6:4],channel[13:7],group[18:14],window[21:19],weight[213:22],data[461:214],error[462]; only after complete parameter request TX"},
+    "8102": {"words": 1, "payload": "block[3:0],layer[6:4]; only after complete barrier TX"}
+  },
+  "tx": {
+    "a100": {"words": 2, "payload": "read address[31:0]"},
+    "a101": {"words": 2, "payload": "parameter block[3:0],layer[6:4],channel[13:7],group[18:14],window[21:19]"},
+    "a102": {"words": 4, "payload": "actual write address[31:0],data[39:32],sum[48:40]"},
+    "a103": {"words": 1, "payload": "barrier block[3:0],layer[6:4]"}
+  },
+  "handshake": [
+    "All transfer consumers require valid and ready on rising i_clk; no RX payload committed before complete packet; malformed packet, core fault or explicit cancel may abort a pending TX packet and require reset.",
+    "TX priority read, parameter, write, barrier; snapshot remains stable under stall; shift only accepted payload beat.",
+    "Frozen read_ready/parameter_ready/write_ready pulse only on final accepted TX payload; one gap cycle prevents duplicate capture.",
+    "Frozen response valid held throughout APPLY until actual response_ready; unknown, unexpected or padded packets cause shell fault.",
+    "Barrier request sent once; host response identity forwarded intact to frozen client; client validates block and layer.",
+    "RX and TX independent; host must service each request, providing actual address data/parameter content and truthful write visibility barrier.",
+    "No full weight ROM or image cache; mapped result excludes complete package 56 ERAM ROM. Only transport holding registers are added."
+  ],
+  "cycle_accounting": {
+    "table": "1025 accepted RX words, plus stalls",
+    "parameter_request": "3 accepted TX words, capture cycle and final gap",
+    "parameter_response": "30 accepted RX words plus APPLY wait",
+    "read_request": "3 accepted TX words, capture cycle and final gap",
+    "read_response": "12 accepted RX words plus APPLY wait",
+    "write_export": "5 accepted TX words, capture cycle and final gap",
+    "barrier": "2 accepted TX words and 2 accepted RX words plus APPLY wait",
+    "boundary": "transport cycle counts are not arithmetic core throughput or full-network FPS"
+  }
+}

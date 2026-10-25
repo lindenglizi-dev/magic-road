@@ -1,0 +1,23 @@
+publisher严格门分析：当前123条error，0 strict warning，delivery_ready=false。
+输入：gates/publisher.json；对应RTL SHA c9b25968c51827f0a1856a5bcf5618c64742c04641629ac0c3ca4412847939f0。
+这123条是新模块的诊断，不是旧计算核新增123个回归失败。冻结旧依赖仍逐字节一致。
+
+一、74条格式/模板类（未闭合，不能作豁免）
+header路径与空行、尾随注释列、区域/分组、header历史识别及formatter模板差异。
+本批不为消除格式数字而重排原计算核；新模块记录保留，后续可做纯格式候选并证明token等价。
+
+二、11条位宽/复位/常量或静态未知类（优先实际核实）
+VG085两条：原RTL分别比较i_result_frame_token[31:0]与reg_metadata[63:32]（32对32）、i_now_ms[63:0]与reg_metadata[200:137]（64对64）。报告摘要丢掉了part-select，不能据此把265位整体视为参与比较。人工确认实际切片，真实ModelSim编译和协议极值回归另记；不改检查器，不自动改为PASS。
+VG093一条：i_rstn仅在flag_released组合门控中使用，目的为原始复位当拍撤销全部控制输出，不作为存储载荷。删除该项会破坏即时取消，故保留并等待物理检查，不批量改复位。
+VG122一条：7位计数加7'd1的表达式上界由flag_entry_accept约束。握手前cnt<64；可达结果为1..64，均在7位内，没有合法回绕。65th valid先失败，不再加一。standalone回归覆盖64及65th。
+VG125一条：7'd1显式按计数器位宽写入，不是漏配位宽；数值不变，诊断保留。
+VG138五条：寄存器声明=0与该规则的显式位宽要求冲突于VG015的精确=0约定。本批不改规则、不称通过；复位分支已有显式位宽。
+VG137一条：存在静态无法确定宽度的诊断，状态仍inconclusive。上述人工审查/仿真不能代替检查器完整闭合。
+
+三、38条组合锥/操作预算类（18条VG145、20条VG146）
+发布许可、故障优先和状态转移含多项条件，确实超过严格“三来源/三操作”预算；这不是已测物理setup/hold违例，也不能据功能通过宣布安全。
+本批不靠插寄存器改变外部cancel即时撤销、ready/valid或seal冲突优先级。物理分析由C7对实际顶层排期；若需要流水化，须先明确新增延迟及同拍取消契约，不能只把表达式拆成更多wire伪装合规。
+
+八门（静态报告）
+compile PASS；ast FAIL；readability FAIL；comment PASS；naming FAIL；profile PASS；testbench/toolchain not_requested。
+实际ModelSim协议及整链回归是单独证据，不把not_requested写成实际仿真PASS。C8/冻结旧模块历史失败独立保留，不能以新publisher功能通过替代生产交付。

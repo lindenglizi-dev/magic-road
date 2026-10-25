@@ -1,0 +1,113 @@
+FPGA解码 / Top-K / NMS 精确CPU参考与流式向量交接
+日期：2026-10-15；分支：work/roadyolo；消费者C7计算/后处理，C8整表复制/显示。
+输出根：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/postprocess_golden_2fps_20261015/
+本批仅CPU参考/数据与文档；无训练、无RTL、无TD/位流/板卡；不提交推送，不向其它聊天发消息。
+一周演示目标沿L2F1：连续摄像头/HDMI、全流程≥2FPS，50M拍全流程预算，500ms过期不改；本批不证明上述实时目标。
+
+1. 唯一数值输入与复用边界
+
+共享源直接调用，不修改：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/integer.py
+SHA256 441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040。
+使用其中 sigmoid、round_div_even、_decode、_overlap_half、postprocess。
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/deployment_contract.json
+SHA256 5cff8d5a406dc235a0d5d35cbf72903c0d6b48477e99a0cabf58251331f3a681；没有修改其历史5FPS/精度release_gates，演示优先级由L2F1另行更新。
+唯一参数包：E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/reports/qat_frozen_stem_g10_20261014_v1/package/
+payload SHA256 b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145；原诊断manifest标记保留。
+复用上一批已冻结真实开发图的input_rgb_hwc.npy，没有重做缓存、原图预处理或前缀导出。
+已保存候选目录未提供该图完整heads，因此本批仅执行一次 IntegerModel.forward，保存三尺度INT16 heads。
+来源：VIRAT_S_000200_00_000100_000171_f0000637/raw.png；不是新摄像头图，也不产生新准确率结论。
+原图/预处理输入/包/共享源与生成器绑定在 artifacts/receipt.json。
+新生成该图7个最终框，与既有development17.json相同图、阈值0.5的输出逐项一致；这是回归，不是新的精度测量。
+
+2. 本次核定的边界语义（不得在RTL私自优化掉）
+
+阈值为UINT16 32768，即已测0.5；score >= threshold保留，等号通过。
+sigmoid的input≤−2048为0，input≥2048为65535；内部地址RNE(raw/4)+512，舍入端点用sigmoid_upper。
+score=RNE(obj_uint16*class_uint16/65536)。最大分数实际65534，不是65535；65535×65535的乘积不能16位回绕。
+obj=32768、class=65535的分数恰为32768，半整数最近偶数后通过阈值。
+cell依stride4/8/16、每尺度行优先：S4 0…9215，S8 9216…11519，S16 11520…12095。
+每类独立最小堆，比较key=(score,-cell)。根是最差候选；同分cell小者更优。满堆只有严格更优才替换根。
+Top-K在框解码与零面积过滤之前；不能先删零面积再填满128，否则会与现部署参考不同。
+每类降序(score,-cell)处理Top128；同类NMS严格3*intersection > area_a+area_b才抑制，IoU恰0.5不抑制。
+class0(person)与class1(vehicle)彼此不抑制；输出先person再vehicle，每类最多32、总64。
+几何有效条件是网络Q8的x0<x1且y0<y1；裁边后零面积跳过，但它之前已可能占据Top128。
+源图坐标为一次RNE(network_q8*5/512)。网络框有效而源坐标舍入后塌缩的框，当前参考不会再次删除；测试明确保留此行为。
+tw/th先裁至−1024…896，再按RNE((value+1024)*255/1920)索引256项exp表。
+_decode按现实现先将尺寸和half分别RNE，再由center±half裁到[0,131072]×[0,73728]，不能换成浮点half-width或先源图舍入。
+
+3. 逐级golden位置与格式
+
+本目录artifacts/heads_s4.npy、heads_s8.npy、heads_s16.npy及同名.bin：
+HWC7 INT16 Q7.8，形状72×128×7、36×64×7、18×32×7；.bin为小端HWC共169344字节。
+这里是golden张量序列化，不代表实际DDR里的七字段连续：实际head是concat视图，reg5与cls2分属图中存储，C7须用graph.resolve_byte_address逐元素取数。
+artifacts/real_image/：
+ heads_cell_order_112.hex：12096行，一行七个INT16，低位依次tx/ty/tw/th/obj/person/vehicle。
+ score_stream.jsonl：全cell的obj/person/vehicle概率及两类RNE分数。
+ candidates.jsonl：过阈值候选，附raw4及离线box注释；该注释不要求RTL在Top-K前解码。
+ candidate_raw_160.hex、heap_events.jsonl：通过阈值的RAM记录及每次push/replace/reject后的堆根。
+ top128_sorted.jsonl、top128_raw_160.hex：每类降序Top128，包含明确cell与rank。
+ top128_decoded_160.hex：同一160bit候选槽的解码后记录。
+ nms_events.jsonl：逐候选decision及实际已比较的kept cell、intersection、area_a/b、suppress。
+ result_table_97.hex、final.json：最终源坐标表与完整空表/框数标记。
+默认运行run_cpu.ps1只验证已保存heads/阶段及哈希，不再执行CNN。
+
+以下位布局仅定义本批向量的无歧义序列化，不擅自新增或修改既有RTL核接口：
+RAW候选160bit（每类128槽、每槽四个40bit词）：
+ [15:0]tx [31:16]ty [47:32]tw [63:48]th（signed16原编码）
+ [77:64]cell14 [93:78]score16 [94]class [96:95]scale2 [103:97]x7 [110:104]y7 [159:111]0。
+DECODED候选160bit（Top-K封存后可原槽覆盖，不另领两块RAM）：
+ [17:0]x0 [35:18]y0 [53:36]x1 [71:54]y1，均无符号网络Q8；
+ [85:72]cell14 [101:86]score16 [102]class [103]geometry_valid [159:104]0。
+FINAL97bit：
+ [0]class [16:1]score16 [36:17]source_x0 [56:37]source_y0 [76:57]source_x1 [96:77]source_y1。
+四坐标为20bit unsigned Q12.8，保存已经RNE的整数源像素<<8；不可把网络Q8直接当源坐标，也不可二次RNE。
+HEX每行25位十六进制，最上3个文本填充位为0；只发box_count行，空表0行且result_status=0，不用64个零框冒充空表。
+源表元数据沿原265bit字段合同：epoch/task/source_frame/model各32、box_count7、status2、capture/completion各64。
+本批无真实capture时刻，不伪造时间戳或age；model_id32由C7绑定完整payload SHA，本批不自行分配。
+
+4. 最小流式事件与缓存生命周期交接
+
+输入：frame context先锁定epoch/task/source_frame/model及时间来源；每个112bit cell包仅valid&&ready接收，payload在背压期间稳定。
+cell必须依上述固定顺序，接完12096个完整包才能seal两类堆；不以裸valid或最后一个DDR请求发出作完成。
+一个cell的两类score/heap提交均结束才退休该cell；记录score/cell/raw/mask不可串帧。RAM写被接受与后续可读退休须按实际片上端口语义区分。
+堆未seal时不能在同一个候选RAM原地排序或改写为decoded；seal后停止该帧候选写入。
+排序可复用同一最小堆原地heap-sort：根交换到末端、缩小有效堆再修复，最终得到score降序/cell升序；不需要第二份128记录数组。
+逐候选解码改写同槽后做NMS；keep可压紧到已读取前缀，必须先完整取出当前记录，不能覆盖尚未读取候选。
+NMS每次只读同类已保留≤31记录；满32后停止该类后续候选。另一个类从其独立堆开始。
+IoU输入两组网络Q8 xyxy（各4×18bit），输出intersection/area_a/area_b各40bit、严格比较结果1bit；比较前扩到42bit。
+原合同的40/42bit保留，不因本图范围小自行降位宽；本批没有证明某个硬件乘法器/存储端口实现成本。
+最终entry_valid/ready一次只退休一个97bit框；完整表完成须所有entry退休且count一致，包括count0的有效空表。
+源表保持到C8最后一项完整复制确认；复制ack不是HDMI生效，C8仍仅SOF切pending→active，并按同源时基500ms过期撤框。
+取消/错误不能发布半表或借用上一帧成功表。这里是交接规则，未运行ready/valid、CDC或取消RTL仿真。
+
+5. 有界操作量（不是FPGA周期、不是2FPS通过）
+
+固定全帧：12096 cell；36288次sigmoid读；24192次score乘法/RNE与24192次阈值测试。
+每类K=128，堆深≤7；未满push≤7次key比较；满堆先根比较，替换修复保守≤14次比较，总≤15次/候选。
+两类全部过阈值的保守heap比较上限24192×15=362880；每次修复≤7层，完整记录搬运次数及40bit分词读写必须另计。
+两类原地heap-sort比较保守≤2×128×14=3584；不是对每个新候选无条件扫描全128记录。
+Top-K封存后最多解码256框、读512次exp；候选分数筛选前的离线box注释不计硬件必要工作。
+每类NMS最多128候选、32输出。最坏比较上限：(31×30)/2+(128−31)×31=3472；两类6944对。
+每对需两个轴交集、面积乘法和42bit整数比较；可以缓存已有面积/复用串行算术，但不在本批承诺DSP或单拍II。
+最终最多64条97bit有效entry；原两类160bit×128候选容量40960bit，恰是两ERAM的原始容量预算，不等于已映射两ERAM。
+管理额度解码/TopK/NMS/完整提交2M拍未被本批验证；读取四个40bit词、RAM延迟、共享ROM、排序、NMS、输出反压与CDC等待均须进入C7实际账本。
+CPU一次全网推理约1.27秒仅为参考生成耗时，不能转换成FPGA周期或现场FPS。
+
+6. 回归与小型边界向量
+
+首选紧凑边界交付：本目录boundary_vectors.json；完整输入是固定SHAPES默认INT16_MIN，叠加少量sparse raw7，不需要复制整张低分张量。
+包含10项端到端稀疏head测试：空表、阈值等号/低于阈值、Top128满载同分/每类32总64、满堆替换最差两项、跨尺度cell排序、人车重叠不互抑制、同类重复抑制、裁边零面积、零面积仍占Top-K、源坐标舍入塌缩仍保留。
+另7项算子边界：IoU恰0.5与大于0.5、零面积交集、tw/th下/上裁剪、源图四边、源图RNE中点。
+直接算子框是人工确定性输入，不冒充CNN输出；所有期望来自现integer函数或与其逐项比较。
+artifacts保留全量流式诊断，紧凑包提供相同稀疏输入、Top-K、NMS和97bit结果，消费者优先使用紧凑包。
+artifacts/receipt.json记录首次CPU生成及原包/共享源/所有向量哈希；validation.json记录保存heads重放、位布局/同分/阈值及4个非法输入拒绝。
+没有新RTL端点周期：RTL_cycles=null；CPU操作计数不替代真实综合/时序/2FPS测试；没有新现场精度承诺。
+
+复核命令（工程根目录或任意目录，默认不覆盖、不推理）：
+& 'E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/postprocess_golden_2fps_20261015/run_cpu.ps1'
+首次构建加-Build，artifacts已存在则拒绝覆盖，不能重复执行CNN。
+首次完整位布局/紧凑包回归：设置与run_cpu.ps1相同CUDA隐藏/NumPy2.3.5环境，运行同目录test_golden.py；validation与compact文件独占创建，后续日常复核用默认run_cpu.ps1。
+
+具体剩余项：C7实现同包INT16 head视图读出、共享表访问、串行堆/排序/NMS并测实际端点；C8确认97bit向量映射到其端口、整表复制/SOF/age。
+未知PAXI写可见性、取消排空和联合资源仍由各所有者关闭，不用本CPU参考冒充放行；任何真实端口/II/数值变化另作明确决定。

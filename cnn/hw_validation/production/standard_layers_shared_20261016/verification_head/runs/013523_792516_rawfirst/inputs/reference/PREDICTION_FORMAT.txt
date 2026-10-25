@@ -1,0 +1,33 @@
+Prediction stream reference supplement to FORMAT.txt
+
+prediction_lines160.hex contains the six raw INT16 cls_out/reg_out graph
+allocations in physical address order, with complete allocated padding0.
+Each line is address32<<128 | data128. Address is16-byte aligned; data byte0
+is the lowest address. prediction_backing_ranges.json lists exact planes.
+Only service aligned reads whose entire16-byte interval is in a declared
+allocation. These are controlled CPU-produced testbench planes, not proof
+that actual hardware head producers committed them.
+
+cell_field_addresses32.hex contains84672 original graph byte addresses,
+exactly seven per cell. Order matches head_cells112.hex: S4/S8/S16, row-major,
+reg0/reg1/reg2/reg3/reg4/cls0/cls1. Every address is independently checked with
+the original graph.resolve_byte_address, then the bytes are read back from
+the physical image and must reconstruct all12096 expected112-bit cells.
+head_cell_addresses224.hex contains the same addresses packed seven per cell.
+
+The proposed consumer requires external predictions_committed before start
+and all six planes held stable throughout the read operation. Last source
+read-response consumption and last output-cell acceptance are different
+events; this CPU artifact does not establish either hardware event or DDR
+visibility. No additional full head RAM or DDR protocol is proposed here.
+
+Finalization saves the original21-layer binding as head_generation_binding.json,
+then binds its sources plus this script/supplement and six raw output goldens
+into a final closure shared by tasks/input_binding/verification/prediction
+receipts. The original failure evidence remains present and hash-indexed.
+
+Reproduce the complete final snapshot in this order:
+python cnn/hw_validation/production/standard_layers_shared_20261016/reference_head/generate_head.py
+python cnn/hw_validation/production/standard_layers_shared_20261016/reference_head/finalize_predictions.py
+python cnn/hw_validation/production/standard_layers_shared_20261016/reference_head/check_head.py
+python cnn/hw_validation/production/standard_layers_shared_20261016/reference_head/check_predictions.py

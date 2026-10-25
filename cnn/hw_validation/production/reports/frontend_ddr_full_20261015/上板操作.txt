@@ -1,0 +1,18 @@
+完整前三层DDR临时SRAM测试（不是部署模型）
+
+前提：同目录status.json的stage为AWAITING_USER_FRONTEND_BOARD_TEST，diagnostic_bitgen/receipt.json存在。
+新文件：diagnostic_bitgen/HX1P35A_C7_FRONTEND_DDR_FULL.bit；加载前确认文件名，哈希见receipt.json。
+回退：../stem_ddr_program_banks_20261014/diagnostic_bitgen/HX1P35A_C7_STEM_DDR_DOWN2_BANKS.bit。
+
+1. 保持原HX1P35A供电、JTAG及HDMI连接，不需要摄像头输入。
+2. BitWriter选择实际枚举PH1P35MDG324，PROGRAM_SRAM，沿用已验证5MHz；替换旧文件为上述新bit并运行。不要选择Flash操作。
+3. 初始化和计算后应从等待状态变为绿色，左上TEST，右上心跳继续变化。若30秒仍未变绿，拍下整屏/状态条，不连续盲重试。
+4. 做三次独立复位，每次都应重新初始化、重装1024项表、完成全套计算后恢复绿色。
+5. 最后保持10分钟，记录是否始终绿色、心跳变化、无花屏；保存全屏照片或短视频，并回复具体加载文件名。
+6. 如变红或停在等待：先保存画面和BitWriter日志，可重新PROGRAM_SRAM加载回退文件，勿写Flash。
+
+本次绿色含义：完整512x288输入、2304个Stem tile、576个DW/PW tile的实际计算和DDR交接完成，黄金比较和总计数通过。
+显示page2的128位数据依次为32位writes=0x00013200、reads=0x00017d1c、output_bytes=0x00036000、实际cycles。
+仿真正常cycles=17252079，但实际板测经过mailbox/DDR延迟，不要求等于它。
+绿色后设计停在PASS，不连续重算。保持10分钟证明此诊断的状态与显示稳定，不等于连续推理30分钟或整网5FPS。
+固定测试参数没有识别人车；PW四类golden恰好相同且量化可消去单bit扰动，不能把绿屏当作全DDR位错误覆盖、准确率或整个CNN通过。

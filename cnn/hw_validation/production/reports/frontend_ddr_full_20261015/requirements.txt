@@ -1,0 +1,13 @@
+任务：generate/modify/validate；完整512x288 RGB→Stem3s2→DW3s2→PW前三层DDR闭环。
+承接：stem_ddr_loop_20261015原四块循环取指与八个冻结核。扩大外层调度，不改变内部核接口、II、数值、故障或复位契约。
+模块：road_frontend_layer_sequence产生10800个固定宏命令；road_stem_ddr_sequence执行完整输入装载、彩色/特征halo、计算、导出和DDR写读；road_stem_ddr_board_top只加宽诊断计数并复用原显示、mailbox、DDR IP、时钟与约束。
+输入：16x16周期彩色诊断图，48个128位ROM字自动写满442368B真实DDR输入区。不是训练/实际摄像头数据。离线参考对整个输入和每个实际地址逐项核对。
+张量：输入0x03400000..0x0346bfff NHWC RGB；Stem0x03500000..0x0358ffff tile4x4_hwc；PW0x03600000..0x03635fff tile4x4_hwc。native=byte>>1；单拍128bit地址步长8，全字写无mask尾项。
+规模：2304 Stem tile；576 down2 tile；输入27648写、Stem36864写、PW13824写，总78336写；RGB51357读、DW46207读，总97564读；最终221184 PW字节。每个tile读cache失效且仅保存一个16B字，不能把重复golden代替真实读数据。
+常量ROM：1024x16 SiLU、2048x32测试参数、48x128周期图案、256x128分类golden；只240个有效golden字，其9类Stem/4类PW的全tile等价已由Python验证。完整acc/pre/silu/post仅供TB，不合入综合。
+DDR协议：原mailbox唯一请求与返回，原厂ready分别接受，当前纯诊断不复用地址、不发布输入槽READY，不声称通用写提交/视频仲裁已通过。
+复位：板级整体复位覆盖DDR与所有核；外层异步取消本地valid、cache与计数，释放后重写输入并重新装满1024表。不是可独立复位CNN同时保留DDR在途事务的协议。
+验证：完整输入、Stem/PW实际写值及地址唯一性；真实读顺序/halo/各算术阶段对拍；背压payload保持；共同复位恢复及错误返回/超时闭锁；互斥周期分解；包含实际新调度器的TD资源、慢快max/min及RAM/DSP相关路径。
+资源/时序/精度限制：沿DSP40/ERAM108/Slice21216、100MHz；不新增时序例外。模型参数TEST_ONLY；板上周期性golden不能独立排除周期整数倍地址别名，TB必须全地址核对，最终真模型/随机张量另验。
+八门：compile、ast、readability、comment、naming、profile、testbench、toolchain；原失败保留，诊断批准不等于生产交付通过。
+不做：训练、生产改动、操作板卡、Flash、通用加速器或CRC扩展。新的临时位流须待功能与实际实现证据具备后生成。

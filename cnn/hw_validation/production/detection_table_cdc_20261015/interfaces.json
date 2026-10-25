@@ -1,0 +1,22 @@
+{
+  "version": "SRIF1",
+  "time": {
+    "module": "road_time_snapshot",
+    "ports": {"i_src_clk":1,"i_dst_clk":1,"i_rstn":1,"i_src_epoch":32,"o_src_now_ms":64,"o_src_tick":1,"o_src_busy":1,"o_dst_now_ms":64,"o_dst_epoch":32,"o_dst_time_valid":1,"o_dst_update":1},
+    "source_tick_cycles": 100000,
+    "destination_watchdog_cycles": 150000,
+    "snapshot_bits": 96,
+    "nominal_clocks_hz": [100000000,75000000]
+  },
+  "table": {
+    "module": "road_detection_table_cdc",
+    "parameters": {"AGE_LIMIT_MS":500,"EXPECTED_MODEL_ID":3009235558},
+    "ports": {"i_src_clk":1,"i_dst_clk":1,"i_rstn":1,"i_src_entry_valid":1,"i_src_entry":97,"o_src_entry_ready":1,"i_src_meta_valid":1,"i_src_metadata":265,"o_src_meta_ready":1,"i_src_abort":1,"o_src_copy_ack":1,"o_src_busy":1,"o_src_error":1,"i_dst_copy_enable":1,"i_dst_sof":1,"i_dst_now_ms":64,"i_dst_time_epoch":32,"i_dst_time_valid":1,"i_dst_read_index":6,"o_dst_entry":97,"o_dst_metadata":265,"o_dst_active_valid":1,"o_dst_draw_valid":1,"o_dst_pending_valid":1,"o_dst_copy_busy":1,"o_dst_update":1,"o_dst_age_upper_ms":64,"o_dst_error":1},
+    "metadata_fields": {"epoch":[31,0],"task_id":[63,32],"source_frame_id":[95,64],"model_id":[127,96],"box_count":[134,128],"status":[136,135],"capture_ms":[200,137],"completion_ms":[264,201]},
+    "source_entry_order": "sequential index inferred from accepted count, no fourth staging table",
+    "source_abort": "only partial unsealed table; published payload cannot be cancelled locally",
+    "active_read": "asynchronous LUTRAM read, index must be < active count; otherwise entry zero; metadata/count valid gates all reads",
+    "draw_age": "time valid, matching epoch/model, status0, capture<=completion<=now, now-capture <= AGE_LIMIT_MS-4; age upper=now-capture+4",
+    "reset": "common asynchronous assertion; locally synchronized release after two clocks"
+  }
+}

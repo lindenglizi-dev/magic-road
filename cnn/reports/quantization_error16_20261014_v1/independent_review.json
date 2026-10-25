@@ -1,0 +1,45 @@
+{
+  "role": "review",
+  "agent": "/root/quantization_local_review",
+  "mode": "read_only_static_and_saved_JSON_recalculation",
+  "model_inference_run_by_reviewer": false,
+  "gpu_used_by_reviewer": false,
+  "verdict": "PASS_BOUNDED_DIAGNOSIS_WITH_INTERPRETATION_LIMITS",
+  "verified": {
+    "frozen_input_hashes": 5,
+    "source_hashes": 13,
+    "new_replay_selection": [8, 8],
+    "pre_saturation_probe_uses_unclipped_RNE": true,
+    "pre_values_per_model": 110693376,
+    "pre_clipped_per_model": [0, 0],
+    "post_clipped_original_QAT": [18, 14],
+    "post_clip_layer": "csp3.blocks.1.dw.conv",
+    "residual_clipped_per_model": [0, 0],
+    "S4_S8_unchanged_by_S16_injections": true
+  },
+  "limits": [
+    "Local same-integer-input contrast uses folded FP32 weight and bias, so it is total local quantization error rather than isolated scale error.",
+    "Weights-only contrast keeps FP32 bias and cumulative activations; it cannot be subtracted to form an orthogonal error decomposition.",
+    "Injection uses full floating-path tensors and repairs upstream plus local discrepancy; it is an ideal-tensor intervention, not per-layer causal attribution.",
+    "All three injected tensors affect S16 only; this does not locate S4/S8 causality or establish AP recovery.",
+    "Per-frame mean NRMSE and pooled reference-energy NRMSE differ; local ranking changes with aggregation.",
+    "Uniform half-scale is a one-shot mechanism proposal; calibration-component FP extrema exceed the new range by construction and must be audited."
+  ],
+  "supplemental_root_recalculation": {
+    "method": "For a fixed head shape per frame, pooled_NRMSE=sqrt(sum(rmse^2)/sum((rmse/nrmse)^2)); all included head errors nonzero. Reconstructed from saved per-case scalar statistics; no inference.",
+    "original_pooled_head_NRMSE_S4_S8_S16": [0.47622008528790355, 0.6230710471646672, 0.5552446996180077],
+    "QAT_pooled_head_NRMSE_S4_S8_S16": [0.3985160690103425, 0.5308177056759287, 0.4157827159236402],
+    "original_pooled_S16_after_injections_in_contract_order": [0.16546547136528209, 0.3454151611726387, 0.41912818996022594],
+    "QAT_pooled_S16_after_injections_in_contract_order": [0.18173211332344852, 0.2901270593434437, 0.32641275278012843]
+  },
+  "root_final_verification": {
+    "unit_tests_passed": 3,
+    "final_input_and_snapshot_hash_checks_passed": true,
+    "report_hash_checks_passed": true,
+    "new_training_updates": 0,
+    "log": "tests.log",
+    "test_source_sha256": "e66deddae27c093004d5d1ff9ce395f9cc0b53212831b23f88bd68de1aaa74fe"
+  },
+  "formal_acceptance": false,
+  "half_scale_probe_started": false
+}

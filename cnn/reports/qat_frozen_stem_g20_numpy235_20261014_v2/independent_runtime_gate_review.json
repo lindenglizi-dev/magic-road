@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "status": "PASS_CPU_RUNTIME_TRANSITION_GATE_ONLY",
+  "scope": "Read-only pre-run review of the NumPy 2.3.5 plus two-CPU-thread continuation gate, runtime transition identity, execution contract, and frozen source snapshot.",
+  "review_constraints": {
+    "python_executed_by_reviewer": false,
+    "cpu_training_executed_by_reviewer": false,
+    "gpu_accessed_by_reviewer": false,
+    "production_source_modified_by_reviewer": false
+  },
+  "source_hashes": {
+    "cnn/hw_validation/production/train_qat_numpy235.py": "d6a1a2803d8234ec57a8081dd79c5372c8e75487d45933d4d47d472cd52e8fe8",
+    "cnn/hw_validation/production/train_qat_frozen_stem_continue.py": "8b5833d51154f5bd37317f000d5218578ed637f53d07a2d26914aa0e55a6b778",
+    "cnn/hw_validation/production/test_qat_numpy235.py": "76a1d6c356ec5c5ecf5d75107608df68b1e90de14efe0fd20f37cd6845948827",
+    "cnn/hw_validation/production/evaluate_qat_continuation.py": "acf1101282dd892ed50204fca503f2f9ea8dab40132491e9672ef71ce5261316"
+  },
+  "cpu_gate": {
+    "receipt": "cnn/reports/qat_frozen_stem_g20_numpy235_20261014_v2/integration_check_v1/CPU_resume_check.json",
+    "diagnostic_result": "cnn/reports/qat_frozen_stem_g20_numpy235_20261014_v2/CPU_transition_diagnostic/result.json",
+    "passed": true,
+    "native_child_pid": 39412,
+    "exit_code": 0,
+    "seconds": 93.15868290001526,
+    "cpu_threads": 2,
+    "cuda_hidden": true,
+    "cuda_initialized": false,
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "-1",
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2"
+    },
+    "peak_rss_bytes": 988221440,
+    "minimum_sampled_available_ram_bytes": 3229749248,
+    "parent_cpu_rng_restored": true,
+    "continuous_global_updates": [
+      11,
+      12
+    ],
+    "resumed_global_update": 12,
+    "resumed_second_update_exact": true,
+    "negative_cases_rejected": 4,
+    "candidate_training_started": false,
+    "optimizer_updates_published": 0
+  },
+  "contract_binding": {
+    "training_contract": "cnn/reports/qat_frozen_stem_g20_numpy235_20261014_v2/training_contract.json",
+    "gate_identity_equals_contract_identity": true,
+    "gate_protocol_equals_contract_protocol": true,
+    "gate_ancestry_equals_contract_ancestry": true,
+    "worker_command": [
+      "D:\\Python313\\python.exe",
+      "-u",
+      "-B",
+      "-m",
+      "cnn.hw_validation.production.train_qat_numpy235",
+      "worker"
+    ],
+    "parent_checkpoint_sha256": "f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd",
+    "parent_checkpoint_current_sha256_matches": true,
+    "segment_start_update": 10,
+    "planned_segment_updates": 10,
+    "overall_qat_budget_cap": 100,
+    "automatic_retry": false,
+    "automatic_continuation": false,
+    "formal_acceptance": false
+  },
+  "runtime_transition": {
+    "policy": "explicit_numpy_246_to_235_runtime_transition_v1",
+    "source_numpy_version": "2.4.6",
+    "current_numpy_version": "2.3.5",
+    "intentional": true,
+    "numpy_root": "E:\\project\\qiansai\\.tools\\road_yolo_numpy_235_20261014\\numpy",
+    "torch_version": "2.7.1+cu126",
+    "native_files_bound": 21,
+    "native_files_current_hashes_match": true,
+    "control_result_sha256": "d5275e4f6e6798586caf01d0ee02d38e1a69fa573c3d30f295c32cb83d80ae4a",
+    "runtime_receipt_sha256": "1d98574cc13f576c11ed0f5ae96e7a339046e43b45cf9f41fb384d6ed285becb",
+    "cross_runtime_parent_integer_sha256": "82e0fa11a059b351ccf159c6963e4afeb4199782dccd9c5c91d7880c168bb328",
+    "all_transition_evidence_current_hashes_match": true,
+    "cache_receipt_sha256": "6547202873389b09902beec19e674f862dbb3262754ce5ddaf26a4bb91006f76",
+    "cache_receipt_hash_matches_identity": true
+  },
+  "protocol": {
+    "name": "deployment_exact_qat_frozen_stem_continuation_numpy235_v1",
+    "cpu_resume_check_threads": 2,
+    "gpu_worker_threads": 2,
+    "prior_branch_updates": 10,
+    "segment_updates": 10,
+    "total_updates": 20,
+    "global_qat_updates_after_segment": 30,
+    "actual_samples_per_update": 22,
+    "frozen_layers": [
+      "stem.conv"
+    ]
+  },
+  "source_snapshot": {
+    "directory": "cnn/reports/qat_frozen_stem_g20_numpy235_20261014_v2/execution/sources",
+    "contract_source_count": 27,
+    "snapshot_file_count": 27,
+    "current_source_hash_mismatches": 0,
+    "snapshot_hash_mismatches": 0,
+    "missing_or_extra_snapshot_files": 0,
+    "passed": true
+  },
+  "verdict": {
+    "cpu_runtime_transition_gate": "PASS",
+    "approved_wording": "The controlled NumPy 2.3.5 plus two-CPU-thread runtime transition passed the full continuation and resume gate.",
+    "gpu_training_completion": "NOT_REVIEWED_RUNNING",
+    "numpy_2_4_6_native_root_cause": "UNRESOLVED"
+  },
+  "findings": []
+}

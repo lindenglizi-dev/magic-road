@@ -1,0 +1,99 @@
+C8 bounded final semantic review — 2026-10-16
+Role: review; branch: work/roadyolo. Only review.txt/review.json written.
+Scope: frozen new renderer/wrapper plus read-only AGE, FINAL97/table interface,
+reference, native vendor DRAM, and saved verification/static/timing evidence.
+No RTL edits, simulator/TD execution, production changes, or other-chat actions.
+
+Conclusion
+No confirmed functional RTL defect found within the declared fixed1280x720,
+blank-SOF, stable-per-frame active-table contract. Final18/18 fullframes PASS.
+Functional evidence does not
+close the strict deliverable gate or physical resource/setup/hold acceptance.
+
+Source binding
+road_box_line_overlay.v SHA256:
+49de207e581973a88cc2934082600ba45edbee861a54a4d40bd9b35feee5af79
+road_box_age_overlay.v SHA256:
+d81dbc9d9dbc9a1df2adc29cbfbb7174f70051559618de0079aa097f93eddace
+Frozen AGE SHA256:
+d24c7ca135fb362e2cb1c63eae6068f5a1660dd2ba564f50640774260ca5a502
+Independently rehashed all86 entries in frozen.json: zero changes. Renderer and
+wrapper match the reviewed gate_attempt3 and functional-run snapshots.
+
+Semantic checks
+- FINAL97 fields are extracted as source integer<<8; fractional coordinates skip
+  only their box. No second rounding/scaling, count/table mutation, or new97x64
+  array. The existing active table has one asynchronous read owner.
+- Half-open clipping, x1-1/y1-1 outlines, width1/height1, person priority and
+  nonwhite person/vehicle colors agree with the independent direct reference.
+- PH1P_LOGIC_DRAM is the actual vendor18x1280 asynchronous-read model. Explicit
+  reset/SOF clears cover1280 words; poisoned storage is exercised. Read states
+  do not write. Writes read write_address XOR1; active pixels read current x and
+  clear previous x, and DEfall clears1279. All enabled and dummy addresses stay
+  below1280, including skipped malformed geometry.
+- Signed8 endpoint deltas fit[-64,64]; signed9 prefix sums are checked in[0,64].
+  Full64 overlapping boxes, negative64 and shared-endpoint cancellation pass.
+- Count65 faults and suppresses drawing, rather than clamping to64. Late clear
+  or preparation cannot restore painting midway through an active row. cnt_row
+  advances only at DEfall and SOF resets frame coordinates.
+- Renderer RGB/VS/HS/DE/SOF have one register; AGE adds one aligned register.
+  The final live-invalid mux retains white AGE pixels and otherwise restores
+  equally delayed changing raw RGB, removing already queued nonwhite box color.
+
+Actual evidence reviewed (paths relative to this directory)
+Final index verification/summary.json: PASS_FUNCTIONAL_MODELSIM,18 frames,
+16,588,800 active pixels,49,766,400 RGB bytes; source/tool hashes unchanged.
+1. verification/runs/20261016_013948_bce47e15/summary.json: final18/18 fullframes
+   PASS,16,588,800 exact active pixels, no mismatch, source_unchanged=true.
+   Covers the17 named reference cases plus live_time_invalid_withdraw. Includes
+   real7 full-frame PASS,
+   actual HEAD112->56lane vendorROM->LUT->decode/topK->NMS->publisher->three
+   tables->box->frozenAGE;12096 heads,7 matching FINAL97,27349 ROM requests,
+   1577512 source cycles by this bench's start convention,921600 exact pixels.
+   AGE came from actual time snapshot (age20), not the geometry-age injection.
+2. Original failed runs remain immutable:011322 compile failure,
+   011902 unknown_age input parsing,013321 work-library lock warning. The
+   corrected AGE_HEX UINT64_MAX input is explicitly logged in final run;
+   verification uses isolated work libraries. Earlier real7 and pixel PASS
+   records remain supplemental, not a replacement for final18/18.
+3. verification/runs/20261016_014013_10a83d51/summary.json: randomized64-entry
+   publisher arrival during active video stays pending until blankSOF; complete
+   next-frame921600-pixel comparison PASS. Max per-entry scan total320.
+4. verification/runs/20261016_012603_64ee4efe/video_delay.log: changing raw RGB,
+   exact two video registers, live withdrawal and queued-color removal PASS;
+   normal DEfall-to-ready323 samples=320scan+3 overhead <330budget <370blank.
+5. Final protocol logs: cold full-clear+64-entry scan1601 blank cycles; poisoned RAM,
+   early-clear DE, early-prepare DE, count65 and collapsed-address PASS.
+6. timing_probe/attempt_attempt2/receipt.json: unchanged official VTC+mixer PASS;
+   370 blank samples,39970 SOF-to-DE-transition periods,39971 to pixel
+   consumption.1280clear+320scan fits1601 measured startup cycles. This is
+   raster timing simulation, not physical timing or camera/DDR/HDMI acceptance.
+Known vendor INIT_FILE bounds warnings remain UNRESOLVED:114 per fresh joint
+optimization,2052 across18 frames, plus2 direct native-DRAM protocol warnings.
+Final receipts list no unexpected warnings. They are not erased or called
+strict PASS.
+
+Manual state-bit and resource accounting
+Renderer:48 counter +4 FSM +63 endpoint/prefix/DE +45 output/status =160 bits.
+Wrapper raw RGB shadow:48 bits. Frozen AGE:21 coordinate +19 digits/flags +27
+video output =67 bits. Combined nominal sequential state275 bits;208 newly
+added beyond existing AGE. This excludes combinational reg declarations and
+does not predict post-synthesis encoding/optimization.
+Line map:1280x18=23040 bits. At ideal64 storage bits/Slice,360Slice is only a
+capacity lower bound. Deep-bank read muxes, write decode, control and AGE can
+push total above600Slice. Actual Slice/DSP/ERAM and75MHz setup/hold are PENDING
+TD mapping/implementation.0 newDSP/ERAM and<=600Slice remain intent, not PASS.
+
+Eight public gate states — gate_attempt3 raw frozen reports
+                       compile ast  readability comment naming profile testbench     toolchain
+road_box_line_overlay   passed  failed failed     passed  failed passed  not_requested not_requested
+road_box_age_overlay    passed  failed failed     failed  failed passed  not_requested not_requested
+Renderer450 errors/0 strict warnings; wrapper102 errors/5 strict warnings.
+The static compile field is parser/lint evidence. Separate actual simulation
+PASS results above do not rewrite raw gate states. No format rewrite requested.
+
+Remaining acceptance boundaries
+Strict deliverable gates remain failed as listed above. Final physical
+Slice/DSP/ERAM, setup/hold and whole-system67-layer/DDR/accuracy/board acceptance
+remain unmeasured. No deterministic semantic defect is inferred from these
+pending measurements. No code fix is recommended from this bounded review.

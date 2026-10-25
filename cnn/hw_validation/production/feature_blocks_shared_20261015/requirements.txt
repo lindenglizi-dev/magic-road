@@ -1,0 +1,35 @@
+第六批C4：单一固定块客户端 -> SPPF -> 上行PAN；先封存同实例CSP2/3/4阶段成果。
+只在本目录写入，旧目录只读；分支work/roadyolo，本地保存，不提交/推送。
+payload b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145；physical bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417。
+不训练、不改生产、不TD、不位流、不板/Flash、不时序例外；不改冻结核心端口、II、signed33/RNE/SiLU或共同复位。
+使用readable-verilog-generator generate/modify/validate；八门compile/ast/readability/comment/naming/profile/testbench/toolchain如实报告，不能用功能通过覆盖静态失败。
+
+第一阶段固定接口合同（Python参考通过后才写新RTL）
+模块road_feature_blocks_client，仅一个FSM/工作缓存/权重bank；TB仅一个客户与一个旧算术owner。
+新应用端口i_block_id[3:0]，只在i_start && o_start_ready时锁存，o_block_id[3:0]给出当前归属。
+首批合法block_id=2(CSP2，72x128，half12，5阶段)、3(CSP3，36x64，half24，7阶段)、4(CSP4，18x32，half48，7阶段)。
+其它ID已接受start后粘滞fault，不能有读/参数/核/写/屏障活动；以后实现SPPF/PAN时由独立冻结修订扩展，不提前宣称已支持。
+busy期间i_start和i_block_id任意变化不得切换任务；终层屏障后done一拍、busy仍保持，下一拍idle/start_ready才允许下任务。
+所有固定形状/地址只由已锁存ID查冻结graph，禁止任意H/W/C或任意层列表外部配置。
+参数channel7bit、group5bit、layer3bit、window3bit；新增i_parameter_response_block_id[3:0]和i_barrier_block_id[3:0]检查跨任务归属。
+o_block_id也是参数请求/屏障所属块，响应必须回传同ID；旧core元数据端口不扩，仍单任务退休后才推进。
+逻辑16B对齐读、单在途、128bit返回、32bit字节地址；返回地址必须匹配。读写可见性沿现屏障，不猜真实DDR完成。
+开始每块清行缓存valid；工作缓存/权重数组不复位，每tile/输出组完整覆盖所有使用项。切换不得依赖上块残留。
+统一预留3072B工作byte缓存、24x192bit(576B)权重bank、31B量化参数、16B读行=3695B数据，不含控制/tag/激活寄存器。
+4ERAM目标原始10240B；只一个存储owner与每拍至多一次byte缓存访问。数组不免费，不宣称已映射4ERAM/满足端口时序。
+CSP2 Cin12 PW末组mask0f；CSP4尾tile仅y16/17有效，y18/19禁止写。
+共同复位清控制/身份/valid，服务共同撤销旧响应并重装SiLU；独立取消/热复位晚返回未证明，fault保持占有至共同复位。
+
+第一阶段必测
+同一DUT顺序2->3->4，无复位切换；每块全部输出及acc/pre/SiLU/post/sum/地址一致。
+每块busy期间扰动输入ID/start，不影响锁存ID/参数归属/输出；切换缓存覆盖、随机背压、共同复位重装表再完整序列。
+非法ID、错误响应block_id、错误屏障block_id及真实acc检查器负例；实际请求次数、阶段/状态周期互斥核验。
+源CSP3/CSP4由CPU跨未实现down3/down4生成；同实例2->3->4不是连续CNN依赖链，禁止称已接通骨干。
+
+后续阶段合同
+SPPF squeeze -> 3次5x5 signed INT8 max pool，算法pad=-128，物理尾tile pad=0 -> 四路concat -> out；Python先对拍。
+SPPF后接lateral4/fuse3_td、lateral3/fuse2_td。FusionCSP只有reduce PW/DW/PW残差，无额外out.conv。
+nearest/concat/split/residual按graph；长寿命旁路到末次读消费才回收；下行PAN所需down3_bu/down4_bu缺失时明确断点。
+fuse4_bu最大192输入/24组、应用5bit group、3072B tile/24项weightbank；不加私有工作仓或任意图引擎。
+本周1FPS/100MHz/100M整帧仅目标，资源硬限21216/40/108、管理19000/38/107，未测记UNKNOWN。
+新演示2000ms保留已获用户授权并显示结果年龄；旧500ms正式基线不改。本计算客户不改显示模块。

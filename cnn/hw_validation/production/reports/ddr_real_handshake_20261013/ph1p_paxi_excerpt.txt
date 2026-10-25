@@ -1,0 +1,387 @@
+                                            SALPHOENIX®1P 系列 FPGA IP 用户手册_MIS
+
+
+
+
+                             图 2-7 dhi 连续读时序图
+
+
+2.3 DDRMC 介绍
+
+2.3.1 接口介绍
+
+  本节介绍 IP core 的顶层端口，DDRMC 模式下接口列表如下表所示。
+
+                            表 2-9 DDRMC 接口列表
+
+      端口名称             位宽            方向                         描述
+                               PAXI Interface
+                                                 写地址信号。
+                                                 当 paxi_awvalid 和 paxi_awready 信号
+                                                 同时为高电平时，每一时钟周期传输一
+                                                 个地址。
+                                                 MC_ADDR_WIDTH 的值由用户所选 DDR
+                                                 SDRAM 的行地址宽度（ROW_WIDTH）、列
+     paxi_awaddr   MC_ADDR_WIDTH       I
+                                                 地址宽度（COL_WIDTH）以及 Bank 宽度
+                                                 （BA_WIDTH）、Bank Group 宽度
+                                                 （BG_WIDTH，DDR3 颗粒的该值为 0）决
+                                                 定，其值由如下公式计算：
+                                                 MC_ADDR_WIDTH = ROW_WIDTH +
+                                                 COL_WIDTH + BA_WIDTH + BG_WIDTH
+    paxi_awvalid        1              I         写地址 valid 信号
+    paxi_awready        1              O         写地址 ready 信号
+     paxi_wdata    MC_DATA_WIDTH       I         写数据信号
+     paxi_wstrb    MC_MASK_WIDTH       I         写数据掩码信号，高电平有效
+     paxi_wvalid        1              I         写数据的 valid 信号
+     paxi_wready        1              O         写数据的 ready 信号
+     paxi_wlast         1              I         写数据的最后一个数据指示信号
+     paxi_araddr   MC_ADDR_WIDTH       I         读地址信号
+    paxi_arready        1              O         写地址 ready 信号
+
+IPUG034_1.2                    www.anlogic.com                                     13
+
+2024.09
+                                                   SALPHOENIX®1P 系列 FPGA IP 用户手册_MIS
+       端口名称                 位宽             方向                        描述
+     paxi_arvalid             1             I         写地址 valid 信号
+      paxi_rdata        MC_DATA_WIDTH       O         读数据信号
+      paxi_rlast              1             O         读数据的最后一个数据指示信号
+     paxi_rvalid              1             O         读数据的 valid 信号
+     paxi_rready              1             I         读数据的 ready 信号
+
+
+
+2.3.2 地址映射
+
+2.3.2.1 PAXI 地址至 SDRAM 地址映射
+
+   在 MIS-DDR2/DDR3/DDR4 界面中，用户可以通过“Address Map”选项设置 pAXI 接口的地址到 SDRAM
+                           “BANK_ROW_COL”以及“ROW_BANK_COL”。用户可以根
+地址的映射模式，其可选项为“ROW_COL_BANK”、
+据实际需求选择不同的映射模式。
+
+   1. ROW_COL_BANK 模式
+
+   DDR2 SDRAM 的地址在 ROW_COL_BANK 模式映射关系如下表所示。其中，paxi_axaddr 为用户端的读
+或写地址(paxi_araddr/paxi_awaddr)。
+
+                           表 2-10 DDR2 地址映射（ROW_COL_BANK）
+
+  DDR2 SDRAM 地址                                    pAXI 地址映射
+ Row[ROW_WIDTH-1:0]   paxi_axaddr[COL_WIDTH+BA_WIDTH +: ROW_WIDTH]
+ Col[COL_WIDTH-1:0]   { paxi_axaddr[3+BA_WIDTH +: COL_WIDTH-3], paxi_axaddr[2:0] }
+                      当 DDR2 SDRAM 的 BA_WIDTH = 2 时，
+                      paxi_axaddr[3 +: BA_WIDTH]
+  Ba[BA_WIDTH-1:0]
+                      当 DDR2 SDRAM 的 BA_WIDTH = 3 时，
+                      { paxi_axaddr[3 +: BA_WIDTH-1],paxi_axaddr[3+BA_WIDTH-1 +: 1] }
+   当 SDRAM 为 DDR2 64Mbx8 时，ROW_COL_BANK 模式的地址映射如下图所示，其中 ROW_WIDTH = 13，
+              BA_WIDTH = 2。
+COL_WIDTH = 10，                 paxi_axaddr[24:12]被映射为 SDRAM 的行地址 Row[12:0]，
+                           由下图可知，
+{paxi_axaddr[11:5]，paxi_axaddr[2:0]}被映射为 SDRAM 的列地址 Col[9:0]，paxi_axaddr[4:3]被映
+射为 SDRAM 的 Bank 地址 Ba[1:0]。
+
+
+
+
+IPUG034_1.2                         www.anlogic.com                                     14
+
+2024.09
+                                                             SALPHOENIX®1P 系列 FPGA IP 用户手册_MIS
+
+ paxi_axaddr
+               A24    A23                A12     A11                          A5    A4    A3    A2    A1    A0
+    [24:0]
+
+
+
+
+               Row    Row                Row     Col                          Col   Ba    Ba    Col   Col   Col
+  MemAddr
+               [12]   [11]                [0]    [9]                          [3]   [1]   [0]   [2]   [1]   [0]
+
+
+
+
+                               图 2-5 ROW_COL_BANK 模式地址映射（DDR2 64Mbx8）
+
+    DDR3 SDRAM 的地址在 ROW_COL_BANK 模式映射关系如下表所示。
+
+                                   表 2-11 DDR3 地址映射（ROW_COL_BANK）
+
+   DDR3 SDRAM 地址                                           pAXI 地址映射
+ Row[ROW_WIDTH-1:0]           paxi_axaddr[COL_WIDTH+BA_WIDTH +: ROW_WIDTH]
+ Col[COL_WIDTH-1:0]           { paxi_axaddr[3+BA_WIDTH +: COL_WIDTH-3], paxi_axaddr[2:0] }
+  Ba[BA_WIDTH-1:0]            { paxi_axaddr[3 +: BA_WIDTH-1], paxi_axaddr[3+BA_WIDTH-1 +: 1] }
+    当 SDRAM 为 DDR3 256Mbx16 时，ROW_COL_BANK 模式的地址映射如下图所示，其中 ROW_WIDTH = 15，
+              BA_WIDTH = 3。
+COL_WIDTH = 10，                 paxi_axaddr[27:13]被映射为 SDRAM 的行地址 Row[14:0]，
+                           由下图可知，
+{paxi_axaddr[12:6]，paxi_axaddr[2:0]}被映射为 SDRAM 的列地址 Col[9:0]，{paxi_axaddr[4:3]，
+paxi_axaddr[5]}被映射为 SDRAM 的 Bank 地址 Ba[2:0]。
+
+ paxi_axaddr
+    [27:0]     A27    A26                A13     A12              A7    A6    A4    A3    A5    A2    A1    A0
+
+
+
+
+               Row    Row                Row     Col              Col   Col   Ba    Ba    Ba    Col   Col   Col
+  MemAddr
+               [14]   [13]                [0]    [9]              [4]   [3]   [2]   [1]   [0]   [2]   [1]   [0]
+
+
+
+
+                             图 2-8 ROW_COL_BANK 模式地址映射（DDR3 256Mbx16）
+
+    DDR4 SDRAM 的地址在 ROW_COL_BANK 模式映射关系如下表所示。
+
+                                   表 2-12 DDR4 地址映射（ROW_COL_BANK）
+
+   DDR2 SDRAM 地址                                           pAXI 地址映射
+ Row[ROW_WIDTH-1:0]           paxi_axaddr[COL_WIDTH+BA_WIDTH+BG_WIDTH +: ROW_WIDTH]
+                              { paxi_axaddr[3+BA_WIDTH+BG_WIDTH +: COL_WIDTH-3],
+ Col[COL_WIDTH-1:0]
+                                paxi_axaddr[2:0] }
+  Ba[BA_WIDTH-1:0]            paxi_axaddr[3+BG_WIDTH +: BA_WIDTH]
+  Bg[BG_WIDTH-1:0]            paxi_axaddr[3 +: BG_WIDTH]
+    当 SDRAM 为 DDR4 256Mbx16 时，ROW_COL_BANK 模式的地址映射如下图所示，其中 ROW_WIDTH = 15，
+COL_WIDTH = 10，BA_WIDTH = 2，BG_WIDTH=1。由下图可知，paxi_axaddr[27:13]被映射为 SDRAM 的行
+地址 Row[14:0]，{paxi_axaddr[12:6]，paxi_axaddr[2:0]}被映射为 SDRAM 的列地址 Col[9:0]，
+paxi_axaddr[5:4]被映射为 SDRAM 的 Bank 地址 Ba[1:0]，paxi_axaddr[3]被映射为 SDRAM 的 Bank Group
+地址 Bg[0]。
+
+
+IPUG034_1.2                                     www.anlogic.com                                             15
+
+2024.09
+                                                                    SALPHOENIX®1P 系列 FPGA IP 用户手册_MIS
+
+ paxi_axaddr
+    [27:0]      A27    A26               A13     A12                   A7    A6    A5    A4    A3    A2    A1    A0
+
+
+
+
+                Row    Row               Row     Col                   Col   Col   Ba    Ba    Bg    Col   Col   Col
+ MemAddr
+                [14]   [13]               [0]    [9]                   [1]   [0]   [1]   [0]   [0]   [2]   [1]   [0]
+
+
+
+
+                              图 2-9 ROW_COL_BANK 模式地址映射（DDR4 256Mbx16）
+
+     2. ROW_BANK_COL 模式
+
+     DDR2/3 SDRAM 的地址在 ROW_BANK_COL 模式映射关系如下表所示。
+
+                                   表 2-13 DDR2/3 地址映射（ROW_BANK_COL）
+
+    DDR2 SDRAM 地址                                              pAXI 地址映射
+ Row[ROW_WIDTH-1:0]            paxi_axaddr[COL_WIDTH+BA_WIDTH +: ROW_WIDTH]
+ Col[COL_WIDTH-1:0]            paxi_axaddr[0 +: COL_WIDTH]
+   Ba[BA_WIDTH-1:0]            paxi_axaddr[COL_WIDTH +: BA_WIDTH]
+     当 SDRAM 为 DDR2 64Mbx8 时，ROW_BANK_COL 模式的地址映射如下图所示，其中 ROW_WIDTH = 13，
+              BA_WIDTH = 2。
+COL_WIDTH = 10，                 paxi_axaddr[24:12]被映射为 SDRAM 的行地址 Row[12:0]，
+                           由下图可知，
+paxi_axaddr[9:0]被映射为 SDRAM 的列地址 Col[9:0]，paxi_axaddr[11:10]被映射为 SDRAM 的 Bank 地
+址 Ba[1:0]。
+
+  paxi_axaddr
+                 A24    A23               A12     A11   A10   A9                                                 A0
+     [24:0]
+
+
+
+
+                Row    Row                Row     Ba    Ba    Col                                                Col
+   MemAddr
+                [12]   [11]                [0]    [1]   [0]   [9]                                                [0]
+
+
+
+
+                              图 2-10 ROW_BANK_COL 模式地址映射（DDR2 64Mbx8）
+
+     DDR4 SDRAM 的地址在 ROW_BANK_COL 模式映射关系如下表所示。
+
+                                    表 2-14 DDR4 地址映射（ROW_BANK_COL）
+
+    DDR4 SDRAM 地址                                              pAXI 地址映射
+ Row[ROW_WIDTH-1:0]            paxi_axaddr[COL_WIDTH+BA_WIDTH+BG_WIDTH +: ROW_WIDTH]
+ Col[COL_WIDTH-1:0]            paxi_axaddr[0 +: COL_WIDTH]
+   Ba[BA_WIDTH-1:0]            paxi_axaddr[COL_WIDTH +: BA_WIDTH]
+   Bg[BG_WIDTH-1:0]            paxi_axaddr[COL_WIDTH+BA_WIDTH +: BG_WIDTH]
+     当 SDRAM 为 DDR4 256Mbx16 时，ROW_BANK_COL 模式的地址映射如下图所示，其中 ROW_WIDTH = 15，
+COL_WIDTH = 10，BA_WIDTH = 2，BG_WIDTH = 1。由下图可知，paxi_axaddr[27:13]被映射为 SDRAM 的
+行地址 Row[14:0]，paxi_axaddr[12]被映射为 SDRAM 的 Bank Group 地址 Bg[0]，paxi_axaddr[11:10]
+被映射为 SDRAM 的 Bank 地址 Ba[1:0]，paxi_axaddr[9:0]被映射为 SDRAM 的列地址 Col[9:0]。
+
+
+
+IPUG034_1.2                                      www.anlogic.com                                                 16
+
+2024.09
+                                                                             SALPHOENIX®1P 系列 FPGA IP 用户手册_MIS
+
+  paxi_axaddr
+                A27    A26                      A13     A12    A11     A10        A9                        A0
+     [27:0]
+
+
+
+
+                Row    Row                      Row     Bg     Ba      Ba      Col                         Col
+   MemAddr
+                [14]   [13]                      [0]    [0]    [1]     [0]     [9]                         [0]
+
+
+
+
+                               图 2-11 ROW_BANK_COL 模式地址映射（DDR4 256Mbx16）
+
+     3. BANK_ROW_COL 模式
+
+     DDR2/3 SDRAM 的地址在 BANK_ROW_COL 模式映射关系如下表所示。
+
+                                           表 2-15 DDR2/3 地址映射（BANK_ROW_COL）
+
+  DDR2/3 SDRAM 地址                                                           pAXI 地址映射
+ Row[ROW_WIDTH-1:0]                 paxi_axaddr[COL_WIDTH +: ROW_WIDTH]
+ Col[COL_WIDTH-1:0]                 paxi_axaddr[0 +: COL_WIDTH]
+   Ba[BA_WIDTH-1:0]                 paxi_axaddr[COL_WIDTH+ROW_WIDTH +: BA_WIDTH]
+     当 SDRAM 为 DDR3 256Mbx16 时，BANK_ROW_COL 模式的地址映射如下图所示，其中 ROW_WIDTH = 15，
+              BA_WIDTH = 3。
+COL_WIDTH = 10，                 paxi_axaddr[27:25]被映射为 SDRAM 的 Bank 地址 Ba[2:0]，
+                           由下图可知，
+paxi_axaddr[24:10]被映射为 SDRAM 的行地址 Row[14:0]，paxi_axaddr[9:0]被映射为 SDRAM 的列地址
+Col[9:0]。
+
+ paxi_axaddr
+                A27    A26    A25   A24                       A11    A10     A9                             A0
+    [27:0]
+
+
+
+                Ba     Ba     Ba    Row                       Row    Row     Col                            Col
+ MemAddr
+                [2]    [1]    [0]   [14]                       [1]    [0]    [9]                            [0]
+
+
+
+
+                               图 2-12 BANK_ROW_COL 模式地址映射（DDR3 256Mbx16）
+
+     DDR4 SDRAM 的地址在 BANK_ROW_COL 模式映射关系如下表所示。
+
+                                           表 2-16 DDR4 地址映射（BANK_ROW_COL）
+
+    DDR4 SDRAM 地址                                                           pAXI 地址映射
+ Row[ROW_WIDTH-1:0]                 paxi_axaddr[COL_WIDTH +: ROW_WIDTH]
+ Col[COL_WIDTH-1:0]                 paxi_axaddr[0 +: COL_WIDTH]
+   Ba[BA_WIDTH-1:0]                 paxi_axaddr[COL_WIDTH+ROW_WIDTH +: BA_WIDTH]
+   Bg[BG_WIDTH-1:0]                 paxi_axaddr[COL_WIDTH+ROW_WIDTH+BA_WIDTH +: BG_WIDTH]
+     当 SDRAM 为 DDR4 256Mbx16 时，BANK_ROW_COL 模式的地址映射如下图所示，其中 ROW_WIDTH = 15，
+COL_WIDTH = 10，BA_WIDTH = 2，BG_WIDTH=1。由下图可知，paxi_axaddr[27]被映射为 SDRAM 的 Bank
+Group 地址 Bg[0]，paxi_axaddr[26:25]被映射为 SDRAM 的 Bank 地址 Ba[1:0]，paxi_axaddr[24:10]被
+映射为 SDRAM 的行地址 Row[14:0]，paxi_axaddr[9:0]被映射为 SDRAM 的列地址 Col[9:0]。
+
+
+
+IPUG034_1.2                                            www.anlogic.com                                      17
+
+2024.09
+                                                                       SALPHOENIX®1P 系列 FPGA IP 用户手册_MIS
+
+ paxi_axaddr
+                 A27   A26   A25   A24                    A11   A10    A9                             A0
+    [27:0]
+
+
+
+                 Bg    Ba    Ba    Row                   Row    Row    Col                            Col
+ MemAddr
+                 [0]   [1]   [0]   [14]                   [1]    [0]   [9]                            [0]
+
+
+
+
+                              图 2-13 BANK_ROW_COL 模式地址映射（DDR4 256Mbx16）
+
+
+2.3.2.2 AXI 地址至 pAXI 地址映射
+
+     当用户选择使用 AXI4 接口时，MC 的 Interface Bridge 模块将 AXI4 接口总线的转换为 pAXI 接口
+总线。由于 AXI4 总线的地址是字节地址，因此 axi_axaddr 信号的宽度取决于用户在“DDR Solution
+Configuration”一栏中所设置的“DQ Bytes”值。axi_axaddr 至 paxi_axaddr 存在如下表所示的映射
+关系。
+
+                                      表 2-17 axi_axaddr 至 paxi_axaddr 的映射关系
+
+    DQ Bytes * 8                                                AXI Byte Address
+               64                               axi_axaddr = paxi_axddr[MC_ADDR_WIDTH-1:0]
+               128                        axi_axaddr = { paxi_axddr[MC_ADDR_WIDTH-1:0] , 1’b0 }
+               256                        axi_axaddr = { paxi_axddr[MC_ADDR_WIDTH-1:0] , 2’b00 }
+               512                        axi_axaddr = { paxi_axddr[MC_ADDR_WIDTH-1:0] , 3’b000 }
+
+
+
+2.3.3 接口时序
+
+2.3.3.1 AXI 接口时序
+
+     AXI4 接口时序详情参考 ARM 公司的《AMBA AXI Protocol》文档。
+
+
+2.3.3.2 pAXI 接口时序
+
+     pAXI 接口不同模式的数据读、写操作时序，如下图所示。
+
+     写数据的时序如下图所示。当 paxi_awvalid 信号与 paxi_awready 信号同时为高时，信号握手成
+功，可以进行写数据、地址操作。
+
+
+
+
+IPUG034_1.2                                          www.anlogic.com                                  18
+
+2024.09
+                                      SALPHOENIX®1P 系列 FPGA IP 用户手册_MIS
+
+
+
+
+                  图 2-14 pAXI 接口单次写数据时序图
+
+
+
+
+                   图 2-15 pAXI 接口连续写数据时序图
+
+    此外，pAXI 接口的写数据信号可以在写地址信号后最多 2 个时钟周期后产生，详见下图。
+
+
+
+
+              图 2-16 pAXI 接口写数据延后写地址 2 个 clk 时序图
+
+  读数据的时序如下图所示，当 paxi_awvalid 信号与 paxi_awready 信号同时为 1 时，信号握手成
+功，可以进行读数据操作。
+
+
+
+
+                   图 2-17 pAXI 接口单次读数据时序图
+
+
+
+
+IPUG034_1.2              www.anlogic.com                             19
+
+2024.09
+

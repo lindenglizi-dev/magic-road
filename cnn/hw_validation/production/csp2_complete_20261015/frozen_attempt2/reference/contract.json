@@ -1,0 +1,2154 @@
+{
+  "status": "TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED",
+  "scope": "CPU-only deterministic numeric/TB reference; no road accuracy claim",
+  "package_payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "source_sha256": {
+    "cnn/hw_validation/production/csp2_complete_20261015/reference/generate_reference.py": "f2ee1056ce4ff397f2fd6586fa4f5f0c8a0f18fe2e3e4061bc42e2df8eff63c7",
+    "cnn/hw_validation/production/csp2_complete_20261015/reference/check_reference.py": "8428ba81db6cdb0fb538dc6823e9470c95fd0caab6abff5b6bc1ad40017c23dd",
+    "cnn/integer.py": "441b91d86895fb0c0337583325fb9cc39624026a6759d39da51aaab49a5ca040",
+    "cnn/hw_validation/production/trained_integer.py": "67461152bd45ad78bdf9d5b63644209f71b84bb6462fc368f0873492446bcbb2",
+    "cnn/hw_validation/production/export_qat_front3.py": "92701f33d20605c78409ad405347fac38a99f6de9eed57d19bbfb77076ecf82f",
+    "cnn/hw_validation/production/graph.py": "8df08989729771739e9c1a9c920e9a37e8319b5a0bad92e6e6efca95dba59d54",
+    "cnn/hw_validation/production/graph_artifacts/graph.json": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738"
+  },
+  "input_fixture": {
+    "kind": "deterministic synthetic complete RGB diagnostic frame",
+    "shape_hwc": [
+      288,
+      512,
+      3
+    ],
+    "dtype": "uint8",
+    "period_yx": [
+      16,
+      16
+    ],
+    "R": "(x%16)*17",
+    "G": "(y%16)*17",
+    "B": "(((x%16)*7)^((y%16)*11))&255",
+    "not_road_accuracy_evidence": true
+  },
+  "layout": {
+    "activation_hex": "logical full tensor HWC row-major; channel fastest; not tile order",
+    "weights_hex": "OIHW C-order",
+    "signed_hex": "two's complement",
+    "physical_graph_storage": "tile4x4_hwc; bases are logical byte bases only"
+  },
+  "front_three": [
+    {
+      "name": "stem.conv",
+      "shape_hwc": [
+        144,
+        256,
+        16
+      ],
+      "scalar_values_checked": 589824,
+      "exact": true
+    },
+    {
+      "name": "down2.dw.conv",
+      "shape_hwc": [
+        72,
+        128,
+        16
+      ],
+      "scalar_values_checked": 147456,
+      "exact": true
+    },
+    {
+      "name": "down2.pw.conv",
+      "shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "scalar_values_checked": 221184,
+      "exact": true
+    }
+  ],
+  "csp_stages": [
+    {
+      "index": 0,
+      "name": "csp2.blocks.0.dw.conv",
+      "semantic": "DW",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "sum": "signed16(post)",
+      "output": "post int8"
+    },
+    {
+      "index": 1,
+      "name": "csp2.blocks.0.pw.conv",
+      "semantic": "PW+residual",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "sum": "signed16 bypass+post",
+      "output": "sat8(sum)"
+    },
+    {
+      "index": 2,
+      "name": "csp2.blocks.1.dw.conv",
+      "semantic": "DW",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "sum": "signed16(post)",
+      "output": "post int8"
+    },
+    {
+      "index": 3,
+      "name": "csp2.blocks.1.pw.conv",
+      "semantic": "PW+residual",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "sum": "signed16 bypass+post",
+      "output": "sat8(sum)"
+    },
+    {
+      "index": 4,
+      "name": "csp2.out.conv",
+      "semantic": "fuse",
+      "shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "sum": "signed16(post)",
+      "output": "post int8"
+    }
+  ],
+  "storage": {
+    "source": {
+      "tensor": "down2.pw.conv",
+      "base_byte": 56311808
+    },
+    "stage0": {
+      "tensor": "csp2.blocks.0.dw.conv",
+      "base_byte": 56532992
+    },
+    "stage1": {
+      "tensor": "residual.00",
+      "base_byte": 56643584,
+      "aliases": [
+        "csp2.blocks.0.pw.conv"
+      ]
+    },
+    "stage2": {
+      "tensor": "csp2.blocks.1.dw.conv",
+      "base_byte": 56754176
+    },
+    "stage3": {
+      "tensor": "residual.01",
+      "base_byte": 56864768,
+      "aliases": [
+        "csp2.blocks.1.pw.conv"
+      ]
+    },
+    "stage4": {
+      "tensor": "csp2.out.conv",
+      "semantic_alias": "csp2.fuse.conv",
+      "base_byte": 56975360
+    }
+  },
+  "scales": {
+    "down2.pw.conv": 0.14616077152762827,
+    "split.00.0": 0.14616077152762827,
+    "split.00.1": 0.14616077152762827,
+    "csp2.blocks.0.dw.conv": 0.07822663014329324,
+    "csp2.blocks.0.pw.conv": 0.14616077152762827,
+    "csp2.blocks.1.dw.conv": 0.06004589936864658,
+    "csp2.blocks.1.pw.conv": 0.14616077152762827,
+    "csp2.out.conv": 0.17653082299420214,
+    "residual.00": 0.14616077152762827,
+    "residual.01": 0.14616077152762827,
+    "concat.00": 0.14616077152762827
+  },
+  "padding": {
+    "full_frame_DW0_DW1": "one zero pixel outside the true 72x128 tensor",
+    "window_input": "8x8 branch input is zero only outside the true 72x128 tensor",
+    "residual0_for_DW1": "values whose residual0 coordinate is outside 72x128 are forced to zero; biased conv/SiLU values are never padding",
+    "target_tiles": "all 4x4 targets are real in-frame coordinates"
+  },
+  "files": {
+    "vectors": {
+      "input_rgb.hex": {
+        "shape": [
+          288,
+          512,
+          3
+        ],
+        "bits": 8,
+        "dtype": "uint8"
+      },
+      "source.hex": {
+        "shape": [
+          72,
+          128,
+          24
+        ],
+        "bits": 8,
+        "dtype": "int8"
+      },
+      "stage0_acc.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 32
+      },
+      "stage0_pre.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage0_silu.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage0_post.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 8
+      },
+      "stage0_sum.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage0_output.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 8
+      },
+      "stage1_acc.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 32
+      },
+      "stage1_pre.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage1_silu.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage1_post.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 8
+      },
+      "stage1_sum.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage1_output.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 8
+      },
+      "stage2_acc.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 32
+      },
+      "stage2_pre.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage2_silu.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage2_post.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 8
+      },
+      "stage2_sum.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage2_output.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 8
+      },
+      "stage3_acc.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 32
+      },
+      "stage3_pre.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage3_silu.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage3_post.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 8
+      },
+      "stage3_sum.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 16
+      },
+      "stage3_output.hex": {
+        "shape": [
+          72,
+          128,
+          12
+        ],
+        "bits": 8
+      },
+      "stage4_acc.hex": {
+        "shape": [
+          72,
+          128,
+          24
+        ],
+        "bits": 32
+      },
+      "stage4_pre.hex": {
+        "shape": [
+          72,
+          128,
+          24
+        ],
+        "bits": 16
+      },
+      "stage4_silu.hex": {
+        "shape": [
+          72,
+          128,
+          24
+        ],
+        "bits": 16
+      },
+      "stage4_post.hex": {
+        "shape": [
+          72,
+          128,
+          24
+        ],
+        "bits": 8
+      },
+      "stage4_sum.hex": {
+        "shape": [
+          72,
+          128,
+          24
+        ],
+        "bits": 16
+      },
+      "stage4_output.hex": {
+        "shape": [
+          72,
+          128,
+          24
+        ],
+        "bits": 8
+      }
+    },
+    "parameters": {
+      "silu.hex": {
+        "shape": [
+          1024
+        ],
+        "bits": 16,
+        "layout": "index"
+      },
+      "stage0_weights.hex": {
+        "shape": [
+          12,
+          1,
+          3,
+          3
+        ],
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage0_bias.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage0_pre_multiplier.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage0_pre_shift.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage0_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage0_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage1_weights.hex": {
+        "shape": [
+          12,
+          12,
+          1,
+          1
+        ],
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage1_bias.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage1_pre_multiplier.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage1_pre_shift.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage1_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage1_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage2_weights.hex": {
+        "shape": [
+          12,
+          1,
+          3,
+          3
+        ],
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage2_bias.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage2_pre_multiplier.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage2_pre_shift.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage2_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage2_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage3_weights.hex": {
+        "shape": [
+          12,
+          12,
+          1,
+          1
+        ],
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage3_bias.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage3_pre_multiplier.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage3_pre_shift.hex": {
+        "shape": [
+          12
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage3_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage3_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage4_weights.hex": {
+        "shape": [
+          24,
+          24,
+          1,
+          1
+        ],
+        "bits": 8,
+        "layout": "OIHW"
+      },
+      "stage4_bias.hex": {
+        "shape": [
+          24
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage4_pre_multiplier.hex": {
+        "shape": [
+          24
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage4_pre_shift.hex": {
+        "shape": [
+          24
+        ],
+        "bits": 8,
+        "layout": "flat"
+      },
+      "stage4_post_multiplier.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 32,
+        "layout": "flat"
+      },
+      "stage4_post_shift.hex": {
+        "shape": [
+          1
+        ],
+        "bits": 8,
+        "layout": "flat"
+      }
+    },
+    "windows": [
+      {
+        "origin_yx": [
+          0,
+          0
+        ],
+        "input8_shape_hwc": [
+          8,
+          8,
+          12
+        ],
+        "residual0_shape_hwc": [
+          6,
+          6,
+          12
+        ],
+        "residual1_shape_hwc": [
+          4,
+          4,
+          12
+        ],
+        "fuse_shape_hwc": [
+          4,
+          4,
+          24
+        ],
+        "files": {
+          "top_left_stage0_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "top_left_stage0_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage0_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage0_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_stage0_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage0_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_stage1_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "top_left_stage1_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage1_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage1_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_stage1_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage1_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_stage2_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "top_left_stage2_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage2_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage2_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_stage2_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage2_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_stage3_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "top_left_stage3_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage3_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage3_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_stage3_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_left_stage3_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_stage4_acc.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 32
+          },
+          "top_left_stage4_pre.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "top_left_stage4_silu.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "top_left_stage4_post.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "top_left_stage4_sum.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "top_left_stage4_output.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "top_left_input8.hex": {
+            "shape": [
+              8,
+              8,
+              12
+            ],
+            "bits": 8
+          },
+          "top_left_residual0_valid_mask.hex": {
+            "shape": [
+              6,
+              6
+            ],
+            "bits": 8
+          },
+          "top_left_fuse_input.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          }
+        },
+        "outside_residual0_zero_count": 132,
+        "exact": true
+      },
+      {
+        "origin_yx": [
+          0,
+          124
+        ],
+        "input8_shape_hwc": [
+          8,
+          8,
+          12
+        ],
+        "residual0_shape_hwc": [
+          6,
+          6,
+          12
+        ],
+        "residual1_shape_hwc": [
+          4,
+          4,
+          12
+        ],
+        "fuse_shape_hwc": [
+          4,
+          4,
+          24
+        ],
+        "files": {
+          "top_right_stage0_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "top_right_stage0_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage0_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage0_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_stage0_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage0_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_stage1_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "top_right_stage1_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage1_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage1_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_stage1_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage1_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_stage2_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "top_right_stage2_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage2_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage2_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_stage2_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage2_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_stage3_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "top_right_stage3_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage3_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage3_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_stage3_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "top_right_stage3_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_stage4_acc.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 32
+          },
+          "top_right_stage4_pre.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "top_right_stage4_silu.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "top_right_stage4_post.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "top_right_stage4_sum.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "top_right_stage4_output.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "top_right_input8.hex": {
+            "shape": [
+              8,
+              8,
+              12
+            ],
+            "bits": 8
+          },
+          "top_right_residual0_valid_mask.hex": {
+            "shape": [
+              6,
+              6
+            ],
+            "bits": 8
+          },
+          "top_right_fuse_input.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          }
+        },
+        "outside_residual0_zero_count": 132,
+        "exact": true
+      },
+      {
+        "origin_yx": [
+          68,
+          0
+        ],
+        "input8_shape_hwc": [
+          8,
+          8,
+          12
+        ],
+        "residual0_shape_hwc": [
+          6,
+          6,
+          12
+        ],
+        "residual1_shape_hwc": [
+          4,
+          4,
+          12
+        ],
+        "fuse_shape_hwc": [
+          4,
+          4,
+          24
+        ],
+        "files": {
+          "bottom_left_stage0_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "bottom_left_stage0_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage0_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage0_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage0_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage0_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage1_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "bottom_left_stage1_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage1_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage1_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage1_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage1_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage2_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "bottom_left_stage2_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage2_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage2_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage2_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage2_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage3_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "bottom_left_stage3_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage3_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage3_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage3_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage3_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage4_acc.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 32
+          },
+          "bottom_left_stage4_pre.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage4_silu.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage4_post.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "bottom_left_stage4_sum.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "bottom_left_stage4_output.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "bottom_left_input8.hex": {
+            "shape": [
+              8,
+              8,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_left_residual0_valid_mask.hex": {
+            "shape": [
+              6,
+              6
+            ],
+            "bits": 8
+          },
+          "bottom_left_fuse_input.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          }
+        },
+        "outside_residual0_zero_count": 132,
+        "exact": true
+      },
+      {
+        "origin_yx": [
+          68,
+          124
+        ],
+        "input8_shape_hwc": [
+          8,
+          8,
+          12
+        ],
+        "residual0_shape_hwc": [
+          6,
+          6,
+          12
+        ],
+        "residual1_shape_hwc": [
+          4,
+          4,
+          12
+        ],
+        "fuse_shape_hwc": [
+          4,
+          4,
+          24
+        ],
+        "files": {
+          "bottom_right_stage0_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "bottom_right_stage0_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage0_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage0_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage0_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage0_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage1_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "bottom_right_stage1_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage1_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage1_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage1_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage1_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage2_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "bottom_right_stage2_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage2_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage2_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage2_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage2_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage3_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "bottom_right_stage3_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage3_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage3_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage3_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage3_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage4_acc.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 32
+          },
+          "bottom_right_stage4_pre.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage4_silu.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage4_post.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "bottom_right_stage4_sum.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "bottom_right_stage4_output.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "bottom_right_input8.hex": {
+            "shape": [
+              8,
+              8,
+              12
+            ],
+            "bits": 8
+          },
+          "bottom_right_residual0_valid_mask.hex": {
+            "shape": [
+              6,
+              6
+            ],
+            "bits": 8
+          },
+          "bottom_right_fuse_input.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          }
+        },
+        "outside_residual0_zero_count": 132,
+        "exact": true
+      },
+      {
+        "origin_yx": [
+          32,
+          60
+        ],
+        "input8_shape_hwc": [
+          8,
+          8,
+          12
+        ],
+        "residual0_shape_hwc": [
+          6,
+          6,
+          12
+        ],
+        "residual1_shape_hwc": [
+          4,
+          4,
+          12
+        ],
+        "fuse_shape_hwc": [
+          4,
+          4,
+          24
+        ],
+        "files": {
+          "interior_stage0_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "interior_stage0_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage0_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage0_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_stage0_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage0_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_stage1_acc.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 32
+          },
+          "interior_stage1_pre.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage1_silu.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage1_post.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_stage1_sum.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage1_output.hex": {
+            "shape": [
+              6,
+              6,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_stage2_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "interior_stage2_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage2_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage2_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_stage2_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage2_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_stage3_acc.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 32
+          },
+          "interior_stage3_pre.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage3_silu.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage3_post.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_stage3_sum.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 16
+          },
+          "interior_stage3_output.hex": {
+            "shape": [
+              4,
+              4,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_stage4_acc.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 32
+          },
+          "interior_stage4_pre.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "interior_stage4_silu.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "interior_stage4_post.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "interior_stage4_sum.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 16
+          },
+          "interior_stage4_output.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          },
+          "interior_input8.hex": {
+            "shape": [
+              8,
+              8,
+              12
+            ],
+            "bits": 8
+          },
+          "interior_residual0_valid_mask.hex": {
+            "shape": [
+              6,
+              6
+            ],
+            "bits": 8
+          },
+          "interior_fuse_input.hex": {
+            "shape": [
+              4,
+              4,
+              24
+            ],
+            "bits": 8
+          }
+        },
+        "outside_residual0_zero_count": 0,
+        "exact": true
+      }
+    ]
+  },
+  "verification": {
+    "conv_exact_vs_integer_scalar_full_tensor": true,
+    "window_conv_exact_vs_integer_scalar": true,
+    "full_corners_and_interior_windows": true,
+    "training_updates": 0,
+    "CUDA_initialized": false,
+    "RTL_or_simulation_or_TD_or_bitstream_or_board": false
+  }
+}

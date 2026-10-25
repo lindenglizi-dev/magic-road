@@ -1,0 +1,49 @@
+2026-10-14：真实QAT-G10前三层数据准备完成
+
+结论
+Stem、down2 DW、down2 PW已使用保留G10的真实整数参数生成数据，满足进入现有RTL仿真对拍的数据条件。
+本轮只做CPU数据提取、计算和核对，耗时11.856秒，退出0；未训练、未修改RTL、未运行HDL仿真/综合、未生成位流或操作板卡。
+它不是精度修复或验收：输入仍是原固定测试RGB，QAT-G10的正式精度与量化损失门槛仍未通过。
+
+一、真实模型绑定
+checkpoint f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd
+payload    b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145
+manifest   93a05a97f78489fabd511909367be0f8b676680c01e5f74a21d571a88f82ff2b
+直接读取已通过load_package的真实QAT包，未重新量化、修改尺度或训练权重；与原export_parity的checkpoint和identity一致。
+18项前三层参数字段加1024项SiLU表，共19段/3527字节；从160-bit物理词跨边界取出，逐segment SHA及390字段读取器中的相应字段一致。
+实际参数保存在parameters/，黄金阶段数组在oracle/stages.npz，现有RTL格式的数据在vectors/。
+
+二、具体准备了什么
+保持原四块窗口：16个Stem tile（4096字节），4个down2 tile，256个唯一DDR写地址，289次halo读取，1536字节PW输出。
+有效程序6092条、容量8192条。操作/地址/kind上32位与原程序逐项相同；装载值换为真实QAT参数，原TEST_ONLY输入/程序/权重/golden/核源码未覆盖。
+参数装载1134项、SiLU装载1024项。全部按当前Stem/down2 kind编号解回：负INT8权重必须符号扩展到signed32，偏置/乘数/移位/post控制均与真实参数一致。
+stem_addresses.hex、halo_map.hex、read_indices.hex、once_constants.vh与旧四块窗口逐字节相同。
+reference.json只在本新目录明确标记为RETAINED_QAT_G10_REAL_PARAMETERS_SYNTHETIC_INPUT；保留原生成器字面标签记录，不修改旧报告来冒充真实模型历史。
+
+三、数值验证
+两条计算路径：
+  A. conv_exact向量化INT64卷积，Python-int有符号RNE/饱和，直接读取真实payload的SiLU表。
+  B. 复用原四块reference.py的标量integer.conv2d/requantize/silu生成器，仅在调用时绑定本实验ROOT/参数目录。
+比较12个stage：Stem/DW/PW各自acc、pre、SiLU、post；合计26624个值逐项完全一致，非只比较最终输出。
+INT8全输入范围下的保守累加绝对值上界：Stem229278、DW86510、PW122108；均在INT32内，signed33所有部分和安全。
+3项新增测试通过：160-bit跨词及非法范围；正负RNE中点/饱和及全部65536个INT16 SiLU输入；装载符号扩展/kind/STOP后的真实负例。
+独立只读代码/产物审查通过，未让审查者运行推理或HDL工具。
+
+四、验证边界
+仅覆盖左上32×32输入窗口，经Stem16×16、DW/PW8×8计算；四个down2 tile分别覆盖左上角、上边、左边和一个内部块，不覆盖整帧右/下边界。
+这是合成RGB+真实QAT参数夹具，不是摄像头、道路图精度、全67层或板测证据。没有更新17图开发指标或重新选择部署阈值。
+RTL_compared=false；八项RTL交付门本轮均NOT_RUN，之前的严格门禁问题仍保留，数据通过不能清零。
+QAT候选预算仍36/100，本轮新增更新0；不自动追加训练。
+
+五、下一步（尚未执行）
+1. 在新仿真目录使用本次vectors/，明确绑定当前冻结的8个核心、four sequence/mailbox和真实厂商RAM模型；不把旧TEST_ONLY向量混入。
+2. 核对include和readmemh路径、编译源清单及哈希，保持原RTL接口/II/数值行为。现有物理布局异常不以改约束绕过，也不重复启动物理任务。
+3. 先跑正常路径，核对全部26624个阶段值、256W/289R和最终1536字节；原reference程序与地址不得截断或连续化误改。
+4. 再复用原背压、长停顿、晚复位、读错误/数据错误等回归；覆盖重装表、参数完整性、输出保持和重复/丢失检查。
+5. 只有真实QAT参数的逐级RTL数值全部一致才计划扩层；任何字段/时序错误先最小修复并保存失败，不自动接67层或上板。
+首次实现物理/生产/位流/板卡、端口/II/提交时序或外设协议变化仍须对应授权。本轮只完成数据里程碑，没有执行以上仿真。
+
+证据
+status.json、verification_receipt.json、identity.json、independent_review.json；sources/记录调用源码，inputs/保留原包快照。
+verification_receipt SHA256=e959ab3d8cfe5c3c2f4efbe539c6467a11b04982817742ca6d09a3e6a2175e73。
+导出源码SHA256=92701f33d20605c78409ad405347fac38a99f6de9eed57d19bbfb77076ecf82f。

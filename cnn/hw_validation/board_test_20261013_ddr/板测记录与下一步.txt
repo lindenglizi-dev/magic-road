@@ -1,0 +1,41 @@
+DDR 小范围板上自检记录
+日期：2026-10-13（北京时间）
+
+结论：HX1P35A / PH1P35MDG324 的本版独占 DDR 小范围写读自检通过，三次复位后恢复绿色，10 分钟保持稳定。
+
+一、证据对应
+
+用户明确确认所加载文件为：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ddr_display_cdc_20261013/diagnostic_bitgen_attempt2/HX1P35A_C7_DDR_DIAG.bit
+
+本地位流重新计算 SHA256，与生成收据一致：
+9250eadc204e53da4bf4d211dc7d662c3937c251b49433875be869e2a0b3ffdc
+
+下载截图可见 PROGRAM_SRAM、PH1P35MDG324、正确的 diagnostic_bitgen_attempt2/HX1P35A_C7_DDR_DIAG.bit 文件后缀。
+视频共 994 帧、30 FPS，约 33.13 秒。本轮检查 0、5、10、15、20、25、30、33 秒的画面：可见绿色 TEST、诊断条，以及按板上按钮附近的短暂黑屏和之后恢复绿色。公共复位会同时复位显示链，复位阶段短暂黑屏与该行为相符。
+“三次复位”和“10 分钟稳定”的完整统计来自用户现场观察；没有把 33 秒视频登记成 10 分钟录像。未独立解码诊断条中的计数和数据。
+
+二、这一步实际关闭的问题
+
+本版实际 DDR IP、请求器和显示链已获得板上成功运行证据。绿色 PASS 对应两个互补轮次完成全部比较，每轮四个 native 地址 0/8/16/24；每次启动共 8 写、8 读，覆盖 64 字节独立空间，累计比较 128 字节。
+
+这证明该固定请求顺序在当前板卡上可真实写入、读回，复位后能重新成功。它补上了之前仅有受控端点仿真的实板证据。
+测试完成后停在 PASS，10 分钟记录是供电与显示保持稳定，不是 DDR 持续读写压力测试。旧实现报告中的 NOT_RUN 是生成位流时的历史快照；本目录 board_result.json 是该位流新增的板测收据。为保持冻结证据，未覆盖旧报告或哈希清单。
+
+三、下一阶段按这个顺序推进
+
+1. 扩展地址与掩码：复用 ddr_offline_boundaries_20261013 的已有向量，不重造通用 DMA。其已有 194 个有效地址槽，两轮写后逆序读用于检查地址别名，另有 140 组掩码写读；合计 528 次有效写、528 次有效读。46 个非法读写请求只在适配器拒绝测试中使用，不能向真实 DDR 发送越界访问。
+2. 扩展版继续独占 DDR，按实际 PH1P 地址单位转换，同时测小范围进位、规划张量首末块和容量边界。先证明实际区域可用，再讨论视频并发；当前 64 字节测试未覆盖这些区域。
+3. 检查连续写后读、最早读返回、复位恢复和实际等待周期，逐字比较。AW/W 分别握手、写数据保持和读归属继续复用已验证机制。小测试通过不自动给输入槽提供通用“写完成”信号；需为实际搬运顺序确定有依据的读可见性规则。
+4. 以上通过后接已有 Stem 输出 → DDR → down2 DW/PW 小块，使用现有黄金张量逐项核对，统计计算与 DDR 等待，再接视频优先仲裁和输入槽。
+
+对应已有材料：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ddr_offline_boundaries_20261013/CNN张量搬运接入方案.md
+
+本次仅登记并保存板测证据，未新建扩展版 RTL 或位流。下一次需要用户操作时，提供新位流路径及明确的预期结果；本版四地址测试无需再重复。
+
+四、原始附件
+
+本目录 board_video.mp4、programmer.png 已保存附件副本，并在 board_result.json 登记 SHA256；frame_XXs.jpg 是本轮抽查帧。
+视频原件：D:/xwechat_files/wxid_uhebnxa3s4iv12_4383/msg/video/2026-10/9d5352b5ab3e33703e296050078818fe.mp4
+截图原件：C:/Users/lenovo/AppData/Local/Temp/codex-clipboard-b10c9239-4d27-46bf-addb-55083bd007fc.png

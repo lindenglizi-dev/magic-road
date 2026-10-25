@@ -1,0 +1,77 @@
+RoadYOLO C9 第六批：检测结果发布接入报告
+状态：本批功能验收覆盖已完成（31项基线覆盖＋2项补充）；严格交付门、物理及整机验收仍未通过。
+
+基础功能证据：不是伪造单次31/31收据
+verification/runs/20261015_231535_293_7770b808/summary.json：整体FAIL，22个已执行中21个PASS，故障恢复TB启动误判失败保留。只复用其中明确PASS的21项，不复用失败项。
+verification/runs/20261015_233428_736_e114ca7d/summary.json：剩余10项10/10 PASS，使用修正启动握手的冻结TB快照。
+两批合计覆盖31项基线验收=1项独立协议测试+30项真实厂商ROM整链用例；功能RTL/数值/时钟配置相同，TB握手修正及哈希差异显式保留。没有把原FAIL文件倒改PASS，也不声称存在一次全部31项通过的完整run。
+另有33场景/500拍Python→RTL输出/状态逐项一致，属于独立发布器证据，不混入真实ROM用例数。
+补充verification/runs/20261015_234212_068_637d4424/summary.json：2/2 PASS，源文件前后不变。覆盖held META共同复位并恢复，以及前一pending空表未SOF切换时第二空表封存并等待确认。
+完整用例→冻结run→TB/RTL/tool哈希索引：verification/baseline_acceptance_coverage.json。所有FAIL收据保留。
+
+本批在整体中的位置
+现有HEAD112→真实G10 ROM/LUT→TopK→NMS→【新增publisher】→原C8 source→pending→SOF active。
+本批闭合的是后处理到完整显示表的事务链，不是从摄像头像素到67层CNN的整网链。
+没有修改生产工程、冻结算术核、旧500ms基线；没有训练、TD、位流、上板或Flash操作。
+
+实现位置
+rtl/road_result_publisher.v：仅新增上下文/计数/状态控制，FINAL97直接转发，没有第四张框表。
+spec/result_publish_joint/road_result_publisher_spec.md：35端口、状态/复位/握手契约及两张周期图。
+reference.py、reference/：33项/500拍Python语义，模型SHA df6cee7ffee12b7f11b84e250a91aa99f8146d773ac8fb1f2f2f7919e6731e43。
+Python→RTL真实逐拍回放已通过：reference/trace_runs/20261015_232123_100/result.json；500拍×13输出=6500字段及1000个边沿后状态/计数字段一致。publisher SHA c9b25968c51827f0a1856a5bcf5618c64742c04641629ac0c3ca4412847939f0，trace向量SHA25b7a230fd7f933c1ab80c5206964f858b7e328ca82b6fb5b3e2fb525b69b142。
+verification/：真实56-lane厂商ROM与冻结后处理、C8三表/time联测及独立协议测试。
+frozen_dependencies.json、check_frozen.py：68个旧源/复制文件逐字节一致的前后核对。
+
+核心事务规则
+start锁epoch/task/source/model/capture；task对应frame_token。没有source空闲及计算启动许可时不消耗描述符。
+NMS框valid/ready直接进入原source；按实际握手计数，最多64。错误token、第65个valid、非法done/count/time均不写成功表。
+合法done锁completion和count，下一阶段才meta_valid。metadata保持到C8接受，末框与meta不同时接受；0框也是新完整结果。
+seal前fault/cancel撤销部分source表；seal后保持至copy_ack，不用NMSdone当退休；只有共同reset能取消已提交事务。
+已避免故障组合回路：NMS故障输出受cancel门控，因此fault当拍阻止source写入，进入寄存ABORT后才发pipeline_cancel；外部preseal cancel仍即时生效。
+发布器声明的时序存储为metadata265+count7+state3+release2=277位，不含组合state_next；这不是综合资源数。
+
+保留的测试失败及最小修正
+首次完整run在random7复位检查报TB_ERROR100：旧TB要求随机表入口反压期间外部start_ready必须高。新发布器按合同正确保持ready低；该断言把合法等待误作复位失败。
+只改TB观察为C2空闲及publisher/table所有权已释放，保留随后真实启动握手检查；不改publisher或冻结RTL。原失败run保留。
+另在执行前修正长输出反压测试：必须先接受start，再故意拉低输出ready；不能一开始就堵住本合同要求的启动可写许可。
+ModelSim首次沙箱DLL重定位失败保留；同机获准本地运行。WaveDrom/规范路径权限失败及重跑见tool_failures.txt。
+第二次完整run 21项通过后，部分输出故障恢复场景卡在第二帧cell0。精确复现记录verification/runs/20261015_232956_869_52b43982：第一帧12096项全部实际接受，send结束1587171拍，故障ABORT1589845拍；第二帧实际接受输入0项、publisher仍IDLE。不是第一帧少输入或RTL重复接受。
+根因：TB start_frame在下降沿读取ready，但随机entry_ready也在该下降沿更新。ready可在计划上升沿前降为0，旧任务仍撤下start_valid，实际从未完成start握手。只修TB为始终在上升沿检查ready并保持valid至实际接受；不改RTL。修复定点verification/runs/20261015_233140_157_efbc497b/summary.json已PASS，第二帧12096项实际接受，正确7框/265位metadata，仅恢复帧发布。剩余场景另留新快照，不能把原FAIL收据倒改成PASS。
+
+精确测量边界
+正常源100MHz，目标平均75MHz；每1,237,500目标拍一次SOF，周期16.5ms。SOF相位为明确受控的首有效像素脉冲，不是完整VTC/摄像头仿真。
+首轮冒烟采用6.667ns半拍，实际约74.996250MHz；正式完整候选采用6.667/6.666/6.667ns量化半拍，平均75MHz。不同快照数据分开保存，不混用。
+端点start→meta_accept→copy_ack→active为互斥区间；entry/meta/copy等待只是包含其中的子计数，不额外相加。
+本报告copy_ack端点是源上升沿publisher实际采样C8 ack高并退休的边沿，不是ack寄存器首次NBA拉高，后者可能早10ns。active是目标SOF更新后1ps的观察点。不能不对齐观察定义就与旧C8收据作延迟差分。
+当前正常SOF相位中实测ack先于active；这不是跨所有SOF相位的协议保证。若复制完成紧邻SOF，目标可能先active再等ack返回源域，仍安全，因为完整表已复制且source继续冻结。本批没有穷举这种相位，旧C8组件证据与本批证据分开。
+新实例AGE_LIMIT_MS=2000；旧500不改。raw age1996→upper2000允许、1997→2001禁画；未知/失联为AGE_INVALID且无绘制许可。
+边界/1秒身份更新采用另组显式受控coherent时间，不是实际等1秒的FPS测量。正常组沿真实road_time_snapshot。
+capture/source身份当前仍受控，未接真实AWB SOF。unique_sources是TB观察，不是新增硬件FPS计数器；年龄文字绘制由C8另一任务承担，此处只有原数值输出。
+数值包仍为TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED，组件一致不等于模型精度验收。
+
+当前实际端点（来自平均75MHz完整run中已通过的正常组；单位微秒）
+场景              start→meta     meta→ack     ack→active      start→active
+真实7框            15775.140      0.180        724.630634      16499.950634
+正常空表            6169.160      0.080      10330.710634      16499.950634
+TopK ties满64框     7892.680      0.930       8606.340634      16499.950634
+6944比较满64框     11717.280      0.930       4781.740634      16499.950634
+此表仅selected SOF相位，不是整网或板测帧率；active等待取决于完成时刻相对SOF的位置。
+真实7框start→NMSdone仍1,577,513源拍，metadata接受为1,577,514拍；新publisher正常增加1拍提交阶段。框直通没有新增框传输缓存延迟。
+6944比较场景NMS request占用7200拍，含256个current请求和6944个previous比较请求；multiply占用282880拍=20×(256+2×6944)。该场景不是所有输入全后处理总周期的上界。
+pending满载补充实测：第一空表6.169245ms封存、6.169325ms确认，16.500035634ms才active。第二空表12.338505ms已封存，却保持到16.500095ms才收到复制确认，再在33.000035634ms的下一SOF active。两份265位元数据和所有越界读零一致，两个不同source仅计2次新结果，没有半表或提前释放。
+第二空表meta→ack=4.161590ms包含等待前一pending切换，不能把它叫计算变慢或当ROM等待。copy_wait_dst仅统计copy_busy且copy_enable=0，不覆盖pending-full等待；端点与原因单列，不能把0计数解释为没有等待。
+
+仍未通过
+publisher严格门123条error/0 strict warning：74格式模板、11位宽/复位/常量或静态未知、38组合锥预算；见gate_analysis.txt，未豁免或改门限。
+静态compile/comment/profile通过；ast/readability/naming失败；testbench/toolchain静态项not_requested，实际ModelSim记录另列。
+验证TB门分别保留：整链最新309条注释格式诊断，独立协议55条；trace TB严格门255条，包含端口less formatter解析限制及级联项。trace实际ModelSim编译/500拍仿真为0错误0警告，不能把静态解析失败说成实际编译失败，也不能反向用仿真抹掉静态FAIL。
+冻结C8及旧计算链历史门禁失败独立保留。厂商加密INIT_FILE越界警告未解决；仅按原精确白名单记录，不能称零警告。
+verification/final_verification_receipt.json最终汇总：已接受的三个冻结快照中厂商已知警告336条（3次fresh优化×112），29次明确命中缓存优化，意外警告0。无厂商primitive修改或警告屏蔽。
+本批没有真实资源、布局布线、setup/hold/recovery/removal或板测证据，不能宣布整机已可部署。
+
+下一项最有价值的接续
+先向C7交付本批真实端点和完整源码闭包，由统一实际顶层资源/时序验证包含publisher及三表，不拿旧壳数字替代。
+已实际读取C8最终交付及interfaces.json；其稳定identity SHA dbe6056ef93f231e192afd287264fd3173329401d8b57ba29a497dc7875970b5、age overlay SHA d24c7ca135fb362e2cb1c63eae6068f5a1660dd2ba564f50640774260ca5a502。本批未复制/实例化它们，不把存在交付文件当接通。
+接续应把128位{epoch,source_frame_id,capture_ms}与同身份完整READY输入槽配对，再补应用task/model/slot描述符给publisher；不能只收到SOF身份就启动CNN。AWB标称60MHz，SOF不可与analysis_valid相与。旧slots同时承担异常下一SOF取消，接admit时须保留原始帧边界取消功能。
+年龄文字要求与表同一个、已对齐mixer输出的消隐SOF，并在下一消隐拍锁新年龄。本批表测试用首有效像素周期脉冲；这是功能/端点探针，不可不经相位/视频延迟核对就把该脉冲接进文字组件。C7统一接线时必须共同决定消隐SOF，保持RGB/VS/HS/DE同延迟和live draw许可。
+共享ROM两客户竞争、剩余卷积衔接、DDR及原视频框叠加仍归各对应批次；此处不扩建CRC探针或第二套计算缓存。

@@ -1,0 +1,109 @@
+CSP2 scheduled-layer final evidence review
+Date: 2026-10-15
+Review mode: bounded read-only inspection of saved evidence; no simulation, gate, synthesis, training, or finalizer rerun
+Result: PASS_SAVED_FULL_FRAME_CSP2_FUNCTION_EVIDENCE_WITH_DECLARED_LIMITS
+
+Reviewed sealed evidence
+------------------------
+  finalize.py
+    SHA-256 2630a5b8058f8aa09ead75f0b9aaa958b610024ad7910b16e50e08dca3555b98
+  final_checks.json
+    SHA-256 66ee2f5394313a4818c45ec220ad2f33a7598f746974fcefd7e4e0b5a8c20d00
+  cycle_ledger.json
+    SHA-256 12725a294e2eb7f8f73cec33637cdfd1821519241204b99e6f9288f2be258f15
+  integration_sources.json
+    SHA-256 f6859d655c2ddc6b3436095205f4aca97de6e10ae08c1ada4a4a43b926a14ed6
+  frozen/input_binding.json
+    SHA-256 fa7566e55ea3eaf83977771cd51a664f32bf21954253207a41dd043c20dd1b0c
+  frozen/static_gate/gate.json
+    SHA-256 9e872e96dfbd947a30fb49c68332c3ba5e13446f28a380985051849d053b9192
+
+The 39 command/status/receipt/compile/simulation files named in final_checks.json currently match every recorded SHA-256. The finalizer records that 130 original inputs and 92 staged inputs were rechecked against frozen/input_binding.json. The finalizer source performs that immutable-input verification before accepting receipts, verifies each saved command-log digest, and independently parses the saved ledgers rather than trusting only the TB PASS marker.
+
+Functional cases and complete runs
+----------------------------------
+Seven functional cases and one checker-negative case have sealed statuses:
+
+  case 0       PASS_FUNCTION_CASE
+    one complete run: 19,426,266 cycles
+  case 1       PASS_FUNCTION_CASE
+    run 1 unstalled: 19,426,266 cycles
+    run 2 randomized endpoint backpressure: 20,209,755 cycles
+  case 2       PASS_FUNCTION_CASE
+    one complete post-reset/reload run: 19,426,266 cycles
+  case 3       PASS_FUNCTION_CASE
+    expected wrong-read-address fault at 99 cycles, zero outputs
+  case 4       PASS_FUNCTION_CASE
+    expected wrong-parameter-layer fault at 686 cycles, zero outputs
+  case 5 kind0 PASS_FUNCTION_CASE
+    expected wrong-core-output-address fault at 764 cycles, zero writes
+  case 5 kind1 PASS_FUNCTION_CASE
+    expected wrong-barrier-layer fault at 3,941,973 cycles, exactly 110,592 stage-0 outputs
+  case 99      PASS_REAL_CHECKER_NEGATIVE
+    deliberate golden-accumulator comparison corruption produced the required
+    "NEGATIVE_ACC injected acc mismatch" Fatal and no CSP_LAYER_PASS marker
+
+This is exactly four complete 72x128 five-stage runs: case0/run1, case1/run1, case1/run2, and case2/run1. Every complete run records and the finalizer independently asserts:
+
+  outputs/intermediate comparisons  663,552 each
+  tasks                            258,048
+  arithmetic groups                589,824
+  logical line reads               109,166
+  parameter requests                78,336
+  barriers                                5
+
+The finalizer closes the previously identified read/parameter-count gap by asserting every stage against independent constants:
+
+  stage outputs     [110592, 110592, 110592, 110592, 221184]
+  stage tasks       [ 55296,  36864,  55296,  36864,  73728]
+  stage groups      [110592,  73728, 110592,  73728, 221184]
+  stage reads       [ 30210,  20736,  16748,  13824,  27648]
+  stage parameters  [ 27648,   4608,  27648,   4608,  13824]
+
+For each complete run it also requires five stage rows, seventeen mutually exclusive state rows, one barrier per stage, stage-cycle sum = endpoint cycles, state-cycle sum = endpoint cycles = accounted cycles, and nonnegative exclusive-cycle categories. The saved finalizer result records that its positive self-check passed and that a deliberately incremented stage-0 read count was rejected.
+
+ModelSim return-code and diagnostic interpretation
+--------------------------------------------------
+All eight saved compilations have native and validated return code 0 with 0 compile errors and 0 compile warnings. The seven functional simulation commands have native and validated return code 0 and no Error/Fatal record. Twelve preserved ModelSim elaboration/runtime warnings appear in the simulations and are explicitly retained; they are not reported as compile warnings.
+
+Case99 is a real negative-checker result despite ModelSim's native process return code 0: the runner's saved command record maps native_returncode=0 to validated_returncode=1 because the transcript contains the required ModelSim Fatal. The finalizer requires this nonzero validated code, the exact mismatch text, and absence of a PASS marker. Therefore the negative is not a false success caused by ModelSim's process exit behavior.
+
+Source and arithmetic closure
+-----------------------------
+The seven functional-source hashes in integration_sources.json all match the current frozen files:
+
+  road_csp_first_probe.v       7b2d47045787a38842001f97fc27ce212cc2e5b0ce9776fc60634b487c6d4f0d
+  road_dynamic_postprocess.v   81f63fb75558090994586a41a42d0f7206bb60620be810d70b293232fc49bd8a
+  road_dynamic_requant.v       80fda130210764ffabd543f6e480943faf4137f18bd93d56948d598e9dcdb05f
+  road_mac_probe.v             4b8bde2194511dd6a892a556a744d1b6f6a878b26a06170210299bd8aa6f45fb
+  road_round_shift.v           cb8f1e308e5832eecc9d5a0cebb86df221ea5f12abe97a5796dc49bea04b382d
+  silu_shared_unit.v           5f357b493c7b3f941d9fa954a0ce5ec09091e466b641474360d2f64d0e42c938
+  road_csp_layer_client.v      e4fde0787df87bc30271b4ee5b6476f61b33b754b3f3373bb69c480dbf5b6d4e
+
+The selected frozen TB remains SHA-256 8c38d0c5dfd1de801480d1de2d838c38dd0a8ade3b584fdacf7fba06cb7f2368. finalize.py additionally requires each of the six reused arithmetic sources to hash-identically match the prior immutable frozen_attempt2 source. The published closure remains client_MAC_instances=0, testbench_one_arithmetic_owner=true, arithmetic_changed=false. No independent private arithmetic was introduced.
+
+Cycle and system-budget boundary
+--------------------------------
+The actual saved unstalled CSP2 result is 19,426,266 cycles; the randomized-backpressure result is 20,209,755 cycles. The 8,000,000-cycle CSP2 management target is not met; the unstalled excess is 11,426,266 cycles. These values supersede the old 59,619,664 mechanical tile-class projection as the functional simulation measurement for this bounded client, but they remain CSP2-only ModelSim endpoint measurements.
+
+The system-budget labels are unchanged:
+
+  clock assumption                    100,000,000 Hz
+  system 2 FPS budget                  50,000,000 cycles (500 ms)
+  system 1 FPS alternative budget     100,000,000 cycles
+  unstalled CSP2 fraction of 2 FPS budget  0.38852532
+  unstalled CSP2 fraction of 1 FPS budget  0.19426266
+  result expiry                               500 ms
+
+Passing within either whole-system budget is not established because this evidence covers only the full 72x128 CSP2 block. It excludes the rest of the CNN, video pipeline, real DDR/ROM service, unique-owner integration, synthesis, placement/routing, bitstream, board operation, accuracy, and FPS qualification. LUT preload is excluded and controlled endpoint waits are not real DDR waits.
+
+Strict gate status and delivery boundary
+----------------------------------------
+The strict static gate remains failed and unchanged: delivery_ready=false, 3,438 errors, and 5 strict warnings. Public states are compile/ast/readability/comment/naming/profile/testbench=failed and toolchain=not_requested. The clean ModelSim compile and functional simulations do not erase or reinterpret those static-gate failures.
+
+The correct final status is therefore exactly the published boundary:
+
+  FULL_FRAME_CSP2_FUNCTION_PASS_8M_BUDGET_NOT_MET_NOT_DEPLOYMENT
+
+No actual DDR, ROM reader, unique owner, full graph, synthesis, place/route, bitstream, board, accuracy, FPS, or deployment readiness claim is supported.
+

@@ -1,0 +1,245 @@
+{
+  "modules": [
+    {
+      "name": "road_csp_tile_schedule",
+      "feature": "csp_schedule",
+      "rtl_path": "road_csp_tile_schedule.v",
+      "description": "固定左上首残差4×4×12任务计数器；无数据通路或通用微码",
+      "interfaces": {
+        "protocol": "discrete",
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "100MHz同域时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "共同低有效异步取消，释放由现顶层保证",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "与start_ready握手启动，忙时不接受",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_loaded",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "来自冻结核，复位后重装1024项才允许启动",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_group_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "操作数适配器和核共同接受本组",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_task_done",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "最后一个有效结果被本地存储接受的单周期事件",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_core_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "共同核故障，优先取消，恢复必须共同复位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_start_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "空闲且表已满且健康时允许启动",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_group_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "当前组描述符有效，背压保持",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_first",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "两组中的首组",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_last",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "两组中的末组",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_pw",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "0 DW，1 PW",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "输出tile行0至3",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "DW三点起点0或3；PW单位置0至3",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_channel",
+            "direction": "output",
+            "width": 4,
+            "role": "native",
+            "description": "DW同一通道0至11；PW输出起点0/3/6/9",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_mask",
+            "direction": "output",
+            "width": 3,
+            "role": "native",
+            "description": "DW尾空间点001，其余111",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_input_mask",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "DW并集15/9，PW输入12，末组显式mask",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_task_index",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "固定任务序号0至159",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "当前tile尚未完整结束",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "160个任务全部本地提交后单周期完成",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "早到完成或核故障粘滞，禁止发布",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_hz": 100000000
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "parameters": [],
+      "behavior": [
+        "DW y/channel/x0或3，96任务；PW y/x/channel0或3或6或9，64任务。",
+        "每任务两组；仅valid与ready推进组，WAIT收到最后结果提交才推进任务。",
+        "未装满表拒绝启动；忙时start忽略；提前task_done故障；reset立即取消旧描述符。"
+      ],
+      "constraints": [
+        "仅本固定tile，不生成全局DDR地址，不证明写可见性，不改变冻结核II或接口。"
+      ],
+      "corner_cases": [
+        "DW末点、阶段切换、最终PW、任意反压、WAIT复位、早到done。"
+      ],
+      "verification_cases": [
+        "320组逐项同冻结mac_tasks；随机ready/完成延迟、长反压、逐状态复位、故障。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "task",
+          "scenario": "task",
+          "title": "双组及完整结果提交后推进",
+          "description": "两次group握手后等待task_done；背压不改变当前描述符。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "group_valid",
+                "wave": "01..0.1."
+              },
+              {
+                "name": "group_ready",
+                "wave": "01.10..."
+              },
+              {
+                "name": "group",
+                "wave": "x=..=x=.",
+                "data": [
+                  "first",
+                  "last",
+                  "next first"
+                ]
+              },
+              {
+                "name": "task_done",
+                "wave": "0....10."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

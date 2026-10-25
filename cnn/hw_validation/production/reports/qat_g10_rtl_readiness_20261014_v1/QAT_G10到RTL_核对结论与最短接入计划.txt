@@ -1,0 +1,84 @@
+2026-10-14 23:00 北京时间：QAT-G10到当前独立RTL接入审计
+工程分支work/roadyolo，仅本地保存；本轮未改RTL/约束/生产源清单，未训练/推理/仿真/综合/生成位流/操作板卡。
+
+一、结论
+不是“已经可以直接把CNN转成RTL”。当前可复用计算原语和前三层固定窗口调度，真实QAT权重尚未进入硬件链。
+最短下一项是：从已保留QAT-G10包提取Stem、down2 DW/PW真实参数，生成同一固定RGB窗口的逐级整数golden，先校验现有装载kind/地址/符号，再用原RTL做真实参数对拍。不要先造新加速器或直接铺开67层。
+QAT-G10仅作为精度未达标的数值联调基准，不能作为生产发布通过模型。正式P95/R85、量化损失<=1pp、整机5FPS仍未通过。
+
+二、当前究竟完成了什么
+软件包：真实QAT-G10包读取校验通过，67卷积、106节点、390参数字段，来源checkpoint和export identity完全一致。
+checkpoint f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd
+manifest   93a05a97f78489fabd511909367be0f8b676680c01e5f74a21d571a88f82ff2b
+payload    b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145
+physical   bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417
+140522字节payload、143360字节物理ROM、20字节词、14组×512词、4个40位lane。已有181张量/18275904值的导出对拍，是软件QAT与整数包对拍，不是RTL对拍。
+共用writer沿用PTQ诊断状态字符串，但provenance明确QAT训练10更新及checkpoint；不能只凭这个字符串否定QAT身份，也不能由此声称可正式部署。
+
+硬件小窗口：当前11个自有模块构成固定测试程序→Stem tile→单在途PAXI mailbox→真实DDR交接→down2 DW16/PW16→24→逐项比较。
+once版：4个Stem tile、1KB、64W/64R、1个down2、384字节PW。实际诊断壳综合布局布线报告为14492 Slice/25 ERAM/30 DSP，setup+0.066ns、hold+0.020ns；不是整网资源/时序。
+对应板记录为用户报告3次复位回绿、稳定10分钟，没有新增照片视频；一次性读写结束后停止，不是10分钟持续DDR压力。once旧status仍写NOT_RUN，独立board_result.json记录后续用户观察，二者按时间和位流SHA区分。
+four版：16个Stem tile、4KB、256唯一写、289次重叠halo读、4个down2、1536字节PW。13/13功能回归保存通过，真实核+两时钟邮箱仿真125824/128083周期；这些不是完整CNN周期/FPS。
+
+最新物理阻塞：four的physical_attempt4/5均在布局pseudo-net阶段访问异常。attempt5返回3221225477（0xC0000005），176.66秒，日志末尾coredump；无有效新物理通过、无位流、未板测。
+本轮早期读取status还是FUNCTIONAL_PASS_PHYSICAL_RUNNING，最终已同步为BLOCKED_TD_PLACEMENT_ACCESS_VIOLATION。两份快照均保留，不用目录修改时间或旧running字段推断进程仍在运行。
+另一个rom_current_down2/位置约束分支有独立内部setup失败记录，不能与once诊断壳的正裕量混为同一设计。
+
+三、已核对的复用项和真正缺口
+可复用：road_mac_probe的24-MAC/signed33；road_round_shift的RNE；road_dynamic_requant；road_dynamic_postprocess的动态pre/SiLU/post及INT16旁路；共享SiLU；Stem/down2局部调度和装载完整性；单在途mailbox作为诊断链工具。
+8个复用核哈希有明确绑定，主核算法、II和端口本轮完全未改。QAT/TEST_ONLY的393段布局一致，三张LUT相同；参数字段译码及160-bit布局可以承接。
+但现有测试权重与QAT的差异为Stem431/432、DW142/144、PW382/384，390个参数段均不同。旧TEST_ONLY golden/板测不能转为QAT证据。
+前三层字段offset、dtype和loader kind详见field_mapping.json，后续不再凭编号猜映射。
+
+当前已核对源码闭包未接入的部分：
+1. 完整67卷积/106节点的固定图执行，通用通道/尾块/tile/halo/view I/O，而不是固定Stem3→16、DW16、PW16→24窗口。
+2. 3次maxpool5×5、12个residual及其sat8写回、split/concat/nearest视图地址。
+3. 三尺度INT16 Q7.8 head的组装和169344字节输出；现动态后处理有原语，但shared frontend导出只有INT8，不等于head链已实现。
+4. FPGA exp/sigmoid解码、两类Top128、严格IoU>0.5 NMS、每类32框上限和源图坐标还原。Python整数定义存在，不是RTL已完成。
+5. 完整64框payload CDC、SOF切pending/active、500ms过期和画框。当前HDMI显示的是TEST状态，不是检测框。
+6. AWB四RGB lane→精确2/5缩放、双输入槽/epoch/frame生命周期、持续视频优先三客户DDR仲裁和输入发布屏障。
+7. 整网真实布局布线、全帧周期/资源/30分钟持续运行和正式独立精度测试。
+上述是当前审计闭包和实际top的缺口，不以有限搜索宣称整个工作区绝对不存在任何研究原型。
+
+特别不能直接复用为通用DMA的点：mailbox写成功仅证明AW/W分别接受，不是DDR提交。一次性唯一地址、全局共同复位的小窗口没有证明地址复用、局部取消、输入槽回收、多客户读归属或通用写读可见性。
+文档与实验还存在需版本化协调的差别：integration_contract.md记录DDR user约66.667MHz、byte>>1尚未验证；当前独立板实验是约133.33MHz、受限范围使用byte/2。不能把实验结论直接写成官方视频工程时钟/所有地址/并发已验证。
+
+四、八项门禁与本轮验证
+门禁                  当前只读sequence快照结果
+compile               failed（formatter静态解析，不是ModelSim编译结论）
+ast                   failed
+readability           failed
+comment               failed
+naming                failed
+profile               failed
+testbench             not_requested
+toolchain             not_requested
+严格只读review为193 errors/0 strict warnings；含control parser strict failure，不能当作193个已证实硬件功能错误。补入原include常量后同样结果，未改源码/门槛。
+原三文件严格RTL门为779 errors/20 strict warnings；13项ModelSim功能回归单独列证据，不清零严格失败项。
+本轮依赖预检required_ok=true、WaveDrom及erie依赖存在；推荐context-engineering未装导致总退出1，不安装额外依赖，不影响只读审查。
+首次从技能目录执行review因报告越过其workspace边界被拒；改从项目cwd、显式PYTHONPATH运行成功生成失败门禁报告。这是调用路径修正，不是RTL修复。
+两位独立只读审查者核对模型包和硬件闭包；不把它们的源码分析当新仿真/综合。
+
+五、可执行的最短接入顺序（以下尚未执行）
+里程碑1：只生成真实QAT前三层数据，不改RTL。
+  a. 新建独立实验目录，不覆盖TEST_ONLY程序/golden/已上板位流。
+  b. 只从上述已绑定payload提取Stem、DW、PW参数；逐字段回读一致，检查signed INT8符号扩展、INT32 bias、31-bit非负乘数、shift0..62及未对齐20-byte ROM词边界。
+  c. 复用原固定512×288 RGB向量，使唯一实验变量是实际QAT参数；输入仍为测试图，不能冒称摄像头/开发精度验证。
+  d. 输出左上16×16×16 Stem、8×8×16 DW、8×8×24 PW的acc/pre/SiLU/post，共26624个阶段值；保持tile/halo布局、先写再实读回下层的路径。
+  e. 检查signed33/INT32边界、RNE中点、sat8与输入pixel−128只做一次；逐字节校验现有kind映射与参数解包。任一失败先定位，不往后接层。
+  完成物：参数提取收据、输入/参数/输出哈希、逐级golden、现有装载格式的独立向量；不生成bitstream，不训练。
+
+里程碑2：真实QAT前三层RTL对拍。
+  先核对现有源码与测试入口，复用真实核心和厂商RAM证据，跑已有连续/停顿/复位/错误用例并比较全部阶段，不只看末尾绿灯。
+  原算术核、II及实际外设协议保持；任何必须改的端口/提交时序/数值契约先单独说明。严格解析失败、功能工具结果和交付就绪状态分别报告，不绕过。
+  four当前物理阻塞由独立物理工作流处理，本聊天不重复启动同样的布局任务、不改约束、不自动上板。
+
+里程碑3：真实参数通过后才分段扩展固定图。
+  优先P2/CSP残差与视图，再扩其他主干/融合/head；每次输出实际张量和读写地址对拍。POOL/残差/视图没有golden就不硬接。
+  这时以真实逐层周期/DDR等待更新完整预算；不能把小窗口时间外推成>=5FPS，也不能把诊断壳资源与视频模板简单相加判整机装得下。
+
+里程碑4：完成head后再接FPGA解码/TopK/NMS与64框CDC/显示，最后合入摄像头/视频并发及自主启动。
+  生产阈值尚未冻结，3276只是近期诊断floor、0.5只是对照阈值；不得写死成已冻结部署阈值。
+  正式生产/位流/板卡、跨域/DDR协议变更仍需对应明确授权和证据。当前不能承诺25号一定达到整机正式验收。
+
+本轮已完成审计，没有把以上四个里程碑记作已实现。下一项推荐仅执行里程碑1的数据-only提取与对拍。

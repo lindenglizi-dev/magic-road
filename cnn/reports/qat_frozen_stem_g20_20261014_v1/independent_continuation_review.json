@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "role": "independent_continuation_runner_review",
+  "reviewed_at": "2026-10-14",
+  "repository": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "branch": "work/roadyolo",
+  "scope": "Read-only review of the frozen-Stem G10-to-G20 continuation runner and its narrow contract tests. The review covers parent binding, inherited history/model/optimizer/RNG, global update 11-20 scheduling, CPU/GPU preflight boundaries, frozen Stem exclusion, checkpoint protocol isolation, watchdog limits, source snapshots, and downstream evaluator constraints. No CUDA context, GPU check, training update, evaluator run, retry, or source modification was performed by this reviewer.",
+  "verdict": {
+    "source_review": "PASS",
+    "unit_contract_tests": "PASS",
+    "actual_CPU_continuation_gate": "FAIL_NO_PASS_RECEIPT",
+    "GPU_or_training_authorized": false,
+    "formal_acceptance": false,
+    "summary": "The frozen source addresses the reviewed continuation hazards and its two non-update contract tests pass. However, the first real CPU continuation gate exited during update 11 without producing CPU_resume_check.json. The cause is not established. Therefore the required execution gate is not satisfied and GPU preflight or training must not start from this artifact root."
+  },
+  "frozen_sources": {
+    "cnn/hw_validation/production/train_qat_frozen_stem_continue.py": "2a41274d767df227658b7b141236abfd3ddc4f727be1db685e82f2293a6e2596",
+    "cnn/hw_validation/production/test_qat_frozen_stem_continue.py": "ccfe6de7957777999cdd55624635d5af8b49c59e1db8112d607d8a6ac2f3e9a0",
+    "parent_checkpoint": "cnn/runs/qat_frozen_stem_g10_20261014_v1/last.pt",
+    "parent_checkpoint_sha256": "f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd"
+  },
+  "review_findings": [
+    {
+      "id": "G20-CONTINUATION-001",
+      "severity": "P1",
+      "status": "fixed_before_source_freeze",
+      "finding": "The first version copied a cache receipt into the new G20 output but continuation prepare still let captured base.prepare read the old unfrozen-G10 output receipt, making the new receipt decorative.",
+      "resolution": "prepare now verifies the new receipt against the reviewed parent and temporarily redirects only base.OUT while frozen.prepare/base.prepare runs. base.UPDATES remains 10, so the original ten-order ReplayWindow contract is still validated. The previous base.OUT is restored in a finally block.",
+      "evidence": "train_qat_frozen_stem_continue.py:82-98"
+    },
+    {
+      "id": "G20-CONTINUATION-002",
+      "severity": "P2",
+      "status": "fixed_before_source_freeze",
+      "finding": "Completion initially validated update_0020.pt and last.pt separately without proving they were the same committed bytes.",
+      "resolution": "Completion now requires SHA256(last.pt) == SHA256(update_0020.pt) == the worker completion-event checkpoint hash before accepting export parity.",
+      "evidence": "train_qat_frozen_stem_continue.py:424-432"
+    },
+    {
+      "id": "G20-CONTINUATION-003",
+      "severity": "BLOCKER",
+      "status": "open_execution_gate_failed",
+      "finding": "The coordinator-owned real CPU continuation gate exited with code 1 after reporting 5 of 11 microbatches in update 11. No traceback, CPU_resume_check.json, or completed resume checkpoint was preserved; integration_check_v2 exists but is empty.",
+      "impact": "There is no actual CPU continuity/resume pass for the frozen source. Source review and unit tests cannot substitute for this required gate.",
+      "required_action": "Do not start GPU preflight or training. Preserve the failed empty directory and any external diagnostic evidence. Any later attempt must be an explicitly authorized fresh gate location with no automatic retry or silent cleanup, and must complete the full continuous-versus-resumed update 11/12 comparison before execution can be reconsidered."
+    }
+  ],
+  "positive_source_checks": [
+    "prepare requires the exact parent checkpoint SHA256 plus fixed decision, control comparison, export parity, package manifest, and independent completion-review hashes before constructing a continuation identity (lines 23-36, 82-108).",
+    "validate_parent requires the parent candidate identity/protocol, cursor 10, 220 presentations, ten exact history rows, all four RNG keys, 132 optimizer parameter IDs, 132 finite momentum buffers, and frozen-Stem evidence (lines 53-79).",
+    "The new identity and protocol are isolated from G10: they bind the parent identity/protocol/history hashes, fixed parent checkpoint, global budget count, segment length, and cycle-two schedule hash (lines 109-135).",
+    "The continuation schedule maps only global updates 11-20 to the ten reviewed replay orders. The prior ten history rows are copied from the parent and are never recomputed (lines 44-50, 139-149, 342-359).",
+    "update_0010 is created only after loading the parent model and complete optimizer state, restoring parent RNG, running a no-step GPU preflight, and restoring parent RNG again. Candidate validation requires update_0010 model/optimizer and all four RNG streams to equal the parent exactly (lines 130-136, 200-207, 326-341).",
+    "The CPU gate deep-copies published reference states before later updates, compares continuous and resumed update 12 model/optimizer/RNG/cursors, rejects four negative restore cases, and raises if the restored parent CPU RNG streams differ (lines 217-277).",
+    "The GPU preflight uses a CPU model loaded with the parent model state, checks bit-exact CPU/GPU forward traces, requires all yielded gradients finite and at least one nonzero element, performs no optimizer update, and clears gradients (lines 280-305).",
+    "The frozen model factory still exposes only 132 trainable non-Stem parameters. load_state asserts Stem remains requires_grad false and absent from optimizer state; every update additionally checks Stem weight/bias exact with no gradient or optimizer state through the inherited frozen update wrapper.",
+    "All CUDA device access in worker is after preflight_ready and watchdog GO. The exact GPU UUID is checked before model migration; TF32 is disabled and deterministic algorithms are enabled (lines 308-326).",
+    "execute refuses an existing run/execution, snapshots every identity-bound source before run_protected, declares the 75 C and 30-minute stops, caps the global count at 30/100, and disables automatic retry and continuation (lines 392-450)."
+  ],
+  "unit_verification": {
+    "command_scope": "CUDA hidden, bytecode disabled, no update loop",
+    "tests": 2,
+    "seconds": 14.619,
+    "result": "PASS",
+    "coverage": [
+      "Exact parent cursor and 132 optimizer states.",
+      "Fixed parent checkpoint binding and global budget metadata.",
+      "Explicit global update 11-20 to replay-order 1-10 mapping.",
+      "Initial continuation checkpoint preserves parent model, optimizer, CPU RNG, and ten history rows through validate_state."
+    ]
+  },
+  "actual_CPU_gate_evidence": {
+    "result": "FAILED_INCOMPLETE",
+    "reported_process_exit_code": 1,
+    "last_reported_progress": "update 11, microbatch 5 of 11",
+    "traceback_preserved": false,
+    "integration_check_directory_exists": true,
+    "integration_check_directory_empty": true,
+    "CPU_resume_check_present": false,
+    "cause": "UNDETERMINED",
+    "note": "A sandbox or job-control limit is one possibility under investigation, but no evidence currently establishes that explanation or excludes a runtime defect."
+  },
+  "retry_boundary": {
+    "automatic_retry": false,
+    "same_directory_retry_possible": false,
+    "reason": "cpu_check uses exclusive CHECK_DIR creation, and the failed directory is intentionally preserved.",
+    "requirement": "Any future attempt must be explicitly authorized and use a fresh evidence path while retaining the failed directory and a failure receipt."
+  },
+  "downstream_constraint": "The existing generic evaluate_qat.py is hard-coded to a ten-update candidate and will reject trained_steps=20. A separately reviewed G20-compatible evaluation path is required after, and only after, the CPU gate and protected continuation succeed.",
+  "evidence_boundary": "This report approves the frozen source contract only. It does not approve execution, accuracy, old256 continuation, formal acceptance, production release, or FPGA deployment."
+}

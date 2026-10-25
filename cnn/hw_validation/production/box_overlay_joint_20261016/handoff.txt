@@ -1,0 +1,91 @@
+第七批C8：64框＋AGE显示链交接
+工程：lab1_sc500_road_vision；分支work/roadyolo；仅独立验证目录。
+
+一、先看未通过项
+1. 未运行TD：实际Slice/DSP/ERAM、75MHz setup/hold、物理CDC均未签核。
+   新增0DSP/0ERAM、D组≤600Slice仍是目标，不能写成综合结果。
+2. 严格交付未通过：gate_attempt3两份报告分别为450 errors/0 strict warnings、102 errors/5 strict warnings。
+   不合并为552个独立硬件故障；不同报告含跨层重复上下文。原始八门状态不改。
+3. 本批不含完整67层、摄像头→DDR→CNN闭环、精度或板测FPS验收。
+4. 功能已闭合，不等于上述三项通过：verification/runs/20261016_013948_bce47e15/summary.json
+   单次18/18整帧通过，每帧921600像素/2764800 RGB字节，共16588800像素/49766400字节。
+
+二、实现在哪里、做了什么
+rtl/road_box_line_overlay.v：64框逐行事件准备及一拍像素叠加。
+rtl/road_box_age_overlay.v：上述框层＋只读复用旧AGE，视频总延迟两拍；实时撤销排队框色。
+interfaces.json：实际端口、FINAL97字段、颜色、复位、消隐与资源合同。
+specifications/source/：与实际源码端口核对后的同名接口说明与WaveDrom周期图。
+资源与接线边界.txt：C7接线点、完整原表读口、视频同步和资源核算边界。
+reference/：17种完整1280×720 RGB黄金向量，独立直接画框与行事件参考。
+verification/：实际厂商RAM/ROM联合TB、每次输入快照、日志、RGB与工具哈希。
+
+原三表active唯一异步读口
+  → 消隐时每框5拍串行准备
+  → 唯一1280×18bit行事件图
+  → 有效区两类前缀/点事件与1px边缘
+  → 旧AGE白字
+  → 与RGB等延迟的VS/HS/DE。
+
+不增加第四张97×64完整框表；不展开64份全xy比较树；不反压视频。
+person绿优先vehicle青；AGE白字最后优先。最终draw_valid失效立即恢复等延迟原图，
+不等AGE更新或下一帧；利用固定非白框色合同保留白色文字，改色必须重新验证。
+真实NMS已经得到源整数像素<<8，此处不二次舍入/缩放。半开框右/下边为x1-1/y1-1。
+
+三、当前实际证据
+正常64框扫描320拍；DEfall到line_ready观察端点323拍，官方普通行消隐370拍，功能余47拍。
+复位/SOF显式清1280字后准备64框，首行实测1601拍；官方SOF到DE转换39970拍，
+到首有效像素消费39971拍。转换与消费口径相差一拍，不作为加速效果。
+固定RGB、VS、HS、DE总两拍；另有变化原图RGB逐拍对拍及排队框色立即撤回测试。
+官方窗口测量真正实例化未改uivtc和hdmi_mixer；完整RGB联合TB采用一致1650×750光栅模型，
+不把后者写成摄像头/DDR/HDMI发送器整机仿真。
+
+真实7框路径：保存的12096组HEAD112→实际56lane ROM→共享LUT→解码/Top-K/NMS
+→实际publisher→三表CDC/时间服务→新框层→旧AGE，整帧逐RGB字节比较通过。
+7框为2person/5vehicle；27349次ROM请求；AGE由实际time snapshot提供，帧锁存年龄20ms。
+该TB begin_result返回计数→NMS done为1577512 source cycles；不能与旧TB不同起点相差一拍当成优化。
+此路径从保存网络头开始，不是从摄像头像素跑完整67层。
+0/1/32/33/64、四边/塌缩/1px、同类64重叠、负64/同端点抵消、随机、过期/未知年龄等注入场景
+只证明显示算法与协议，不是识别演示。实际表在有效期到达，pending等到消隐SOF才完整切换。
+原生PH1P_LOGIC_DRAM模型先随机污染，再验证全清；不依赖初始化零或同地址读写行为。
+count65故障且不绘；准备迟到整行原图透传，不半行补画或降低合法64容量。
+
+四、失败具体原因与最小修复
+verification/runs/20261016_011322_c3d4b84e：最初TB声明/编译失败，原目录保留。
+verification/runs/20261016_011902_38d808a8：unknown_age整帧首差byte362217。
+独立age_argument_diagnostic证明ModelSim2020.4的%d plusarg将UINT64_MAX读成00000000ffffffff，
+错误地使测试时间有效；仅改TB/runner为%h，ffffffffffffffff输入与unknown_age整帧补测通过。
+先前“AGE采样窗口被临时边界探针污染”的猜测未得到证实，不作为根因。
+verification/runs/20261016_013321_b9bb4bc0：共享仿真work库产生vopt-6 Waiting for lock警告，
+虽然已完成case像素比较通过，整批仍记FAIL。仅隔离每case编译库/ROM与工作目录，未扩大警告白名单。
+两次工具修复未改两个冻结RTL，失败目录不删除、不改写为通过。
+厂商INIT_FILE part-select越界警告仍保留：每个独立联合优化114条（旧ROM112＋新DRAM2），
+最终18例总2052条、协议探针另2条，未知警告0条；早期缓存优化可出现0条，不代表厂商问题已修好。
+额外非已知警告仍阻断验证；逐例实际计数见verification/summary.json。
+
+五、严格检查如何分类，不用功能PASS遮盖
+gate_attempt3/road_box_line_overlay.json：compile/comment/profile通过；ast/readability/naming失败；
+testbench/toolchain原始字段not_requested。实际ModelSim证据独立存放。
+gate_attempt3/road_box_age_overlay.json：compile/profile通过；ast/readability/comment/naming失败；
+testbench/toolchain原始字段not_requested。
+优先语义项：VG097/VG137厂商实例或空输出连接的解析/位宽不确定；VG153子实例输出驱动可见性；
+VG145/146/147组合依赖锥/操作预算超限。空rdoq、o_draw_permit是未使用输出，不补假驱动。
+实际RAM读改写经过旧字寄存器、有效读写错址已有回归，但不据此宣布所有静态项为误报或时序通过。
+格式/表达项：VG060注释列对齐、VG138未显式定宽常量、VG125较宽常量等单列；本批不重写整个历史库。
+静态厂商纯接口仅供检查，不是仿真模型；实际ModelSim使用原厂完整DRAM/ERAM模型。
+readable-python-generator/readable-script-generator当前不可用，因此不宣称对应严格门通过。
+
+六、资源与下一步决定
+行事件图23040bit，按64bit/Slice理想容量为360Slice，只是存储下限估算。
+手工顺序位：renderer160＋原图影子48＋旧AGE67＝275bit，其中新增208bit；不是实际寄存器/Slice报告。
+1280深读选择/写译码、几何控制及AGE仍需映射，可能超过600Slice。
+本批交付后由C7统一安排包含实际新框层/AGE、三表和真实视频边界的资源/时序验证；
+不能引用旧壳资源替代此路径。本批C8没有TD授权，不私自启动综合/布局布线。
+如映射超预算，先按实际面积/最差路径定位行事件存储选择结构，不自动降64框、加ERAM或放宽时序。
+全机资源硬限21216Slice/40DSP/108ERAM不变；新1FPS演示/2000ms年龄口径不冒充原5FPS验收。
+
+七、封存与复跑入口
+最终verification/summary.json、review.json、component_results.json、source_manifest.json、status.json
+和artifact_hashes.json共同构成本批收据。frozen.json保护86项依赖，旧C8源身份294项及C9冻结68记录逐项复核。
+verify.py每次新建隔离目录并保存失败，不覆盖旧运行；timing_probe/run_probe.py只测官方光栅窗口；
+gate.py新建严格报告目录；collect.py仅在完整功能收据通过后封存，绝不将严格/物理字段改为通过。
+不训练、不改生产、不生成位流、不上板、不写Flash，不新增时序例外或改变算术核/II/复位合同。

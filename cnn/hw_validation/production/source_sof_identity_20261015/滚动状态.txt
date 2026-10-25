@@ -1,0 +1,17 @@
+第六批 C8：真实AWB源帧身份、同源时间镜像与年龄文字
+当前状态：两个新增RTL实际ModelSim回归均通过；13组CPU参考通过；规格端口/WaveDrom已绑定最终源码。严格门禁和物理签核仍未闭合，不能合称生产通过。
+新增目录：cnn/hw_validation/production/source_sof_identity_20261015/
+当前分支：work/roadyolo；不提交/推送。
+
+本次范围：唯一100MHz绝对毫秒计时器 -> 冻结96bit时间镜像到标称60MHz AWB -> 真正AWB SOF冻结128bit身份事件回100MHz。另在75MHz HDMI域复用固定点阵方式展示年龄。
+2000ms是新演示表实例已批准门限，旧500ms表/时间组件保持只读；没有回改正式精度或原验收规则。
+
+新增来源边界：官方清单选择hdl_source/awb.v，O_tuser直接透传，O_tvalid另行延迟。新源帧计数指每个观察到的AWB重建SOF，含应用跳帧；不是传感器曝光时刻，也未证明异常CSI短包帧与AWB一一对应。不能声称已数尽所有异常传感器帧。
+60MHz是480Mbps/8解串与当前配置推导的标称频率，不是板测。摄像头时钟停止同时停止本地失联计数；时钟失锁恢复要求共同复位才有有界新鲜度保证。
+
+实际slot credit、像素采集/DMA、DDR写可见性仍是未接通边界；身份事件通过不会自动使输入槽READY。
+未跑TD、未修改生产/MIPI/HDMI主链、未生成位流、未操作板卡或Flash、未训练。
+新严格八门已运行：identity165错误/0警告，overlay178错误/1严格警告，详见gate_attempt2；首次gate记录保留。实际编译/仿真零错误零警告，详见verification/identity_attempt2和overlay_attempt3。
+身份端点SOF→descvalid最大39.959ns；正常时间发布→完整镜像最大63.391ns。文字16帧87040像素逐项一致。
+旧严格失败和历史功能/物理证据不覆盖、不删除。最终交接入口：最终交付_源帧时间与年龄文字.txt。
+首次受限环境Python/WaveDrom调用失败已保留；通过已批准本地工具执行后canonical规格生成成功，不是RTL功能错误。

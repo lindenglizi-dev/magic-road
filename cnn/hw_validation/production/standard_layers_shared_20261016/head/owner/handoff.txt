@@ -1,0 +1,33 @@
+角色：rtl_classifier / verify，bounded standard arithmetic owner。
+范围：仅head/owner目录，当前work/roadyolo。无residual、无私有tile/weight/result数组，原五核不改。
+
+最终选源（不是按mtime选择）：
+runs/20261016_013711_704214_case0/rtl/road_standard_arithmetic_owner.v
+SHA256 244eb1939b68e91a88a21366fccde37026ac3ed2d502869d65df18b4d62aaf2d
+rtl/road_standard_arithmetic_owner.v与上述选源逐字节hash相同。
+该run的binding.json绑定原五核、厂商ERAM/GSR、ModelSim三工具和全部数字/RTL输入；status.json为PASS_FUNCTION。
+
+接口：沿固定32端口，新增i_activate，signed16 o_output_data与o_output_int16；表端10bit地址/signed16数据。无residual/bypass/sum。
+首组锁存output mask/tags/addresses/pre/post/activate。有效tag须唯一。后续组只改变操作数/lane_mask/last，bias仅原MAC first使用。
+MAC三路结果仅ACC交接一次。DPP原保持输出直接连单写端；最后remaining路真实valid&&ready才回IDLE。
+所有核共同reset；owner两沿准入释放。错误身份、重复退休、类型或INT8符号扩展错误保持FAULT/busy到共同reset。
+main发现且本owner修复了valid以!fault门控时的组合反馈：输入已接受坏组只在下一沿state导出fault；原MAC/DPP或错误输出的独立fault仍立即阻止成功输出。
+
+实跑：run.py simulate --case N，真实ModelSim 2020.4，编译零error/zero warning。
+精确同owner hash的16个隔离场景通过：0、1/2/3、10..19、21、99。详见handoff.json各case的run/status/binding SHA。
+CASE0：12任务、mask1/3/7、INT8/raw INT16、多组尾输入mask、bias一次、首组后mode/quant/tag/address扰动、保持输出及随机反压；逐ACC/PRE/SiLU/POST/final对拍；1607拍包含装表，不作吞吐指标。
+CASE1/2/3：GROUP/ACC/OUTPUT共同复位，取消旧输出、重装完整SiLU表后恢复。
+CASE10..19：重复首组身份、缺first、中途first、input_fault、MAC溢出、错tag、错raw类型、INT8高字节损坏、重复输出tag、非法前乘数。
+CASE21：真实client valid=input_valid&&!owner_fault的坏first负例，保持FAULT/busy，无组合振荡或成功写。
+CASE99：真实ACC checker期望值翻转一位后必须报数值错，收据PASS_CHECKER_NEGATIVE；不是正常PASS。
+SiLU1024表SHA05d6d7062a6b6d0c9178562168d7f8e1554182bb99878b85a0cb6faeb71a25a6，与冻结CSP contract核对；不重跑ROM7168穷举。
+
+八门独立于实跑：gates/20261016_014305_768440/gate.json。
+compile=passed；ast/readability/comment/naming=failed；profile=passed；testbench/toolchain=not_requested（静态工具的状态，真实ModelSim实跑见上）。
+740 errors/1 strict warning，未豁免。包括真实组合来源/运算预算VG145/146/147，三段式状态任务识别VG144，格式/注释，接口所要求o_output_int16的VG156，以及接口/驱动分析不完备项。
+VG085报告3处wire_pp_tag==reg_tags：实际代码每处均取16bit reg_tags slice对16bit tag，保留原报告且不把整门归为纯格式。
+只对新增owner尝试的formatter不幂等，diagnostic_first/second和status在formatted/保留，不写回qualified源。candidate_explicit_tasks只保存未qualified局部风格/状态任务候选，不进入joint。
+canonical source-crosscheck和SVG已生成：spec_contract.json、rtl/road_standard_arithmetic_owner_spec.md、spec/waveforms/；独立TB也有同名spec与SVG。
+
+未覆盖：严格交付门未闭合，不是生产准入；未TD、未物理时序/资源、未DDR/整层/整网/精度/板卡；未训练、未commit/push、无跨chat消息。
+协调/验证读取：handoff.json、以上精确qualified run和gate；不要选formatted/candidate目录替换joint源。

@@ -1,0 +1,18 @@
+任务：独立固定CSP3/CSP4逐层全幅功能验证，不是任意网络引擎。
+先运行CSP3 36x64x48，再运行CSP4 18x32x96；各三个半通道DW/PW残差单元和末端PW，共7阶段。
+唯一模型payload=b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145；原包资格标记不改。
+CPU只生成必要层输入/golden，不训练；CPU生成的上游前缀不能宣称已在RTL串通。
+复用只读csp2_layer_scheduled_20261015/frozen/reused的同一包装与五冻结核；客户无私有MAC、SiLU、完整ROM。
+现核64/192/96等端口、II、数值和共同复位不变；仅外围layer/channel/group循环与固定图地址适配。
+每阶段完整遍历全幅，所有有效输出恰算一次，最后任务退休及整层写可见性屏障后进入下一阶段。
+逻辑16B对齐读、单一在途；64bit核输入仍由有界局部字节读口串行拼装，不假设8个免费RAM口。
+CSP4最后tile只有2个有效输出行，y18/y19禁止计算和写回；物理padding与逻辑DW补零分开。
+公共4ERAM容量目标10240B，不为本客户另领RAM；实际映射、端口、Slice、DSP、时序未综合不得称通过。
+graph.json是唯一逻辑byte地址权威；split/concat为视图，残差融合alias必须与graph及同包尺度一致。
+正常、随机反压、共同复位重新装表、错误响应/输出/屏障与检查器真实负例；逐项核对acc/pre/SiLU/post/sum/output/地址。
+报告完整start接受至末层可见性后done采样端点，预装表单列；互斥周期账不重加重叠流水活动。
+本周目标真实完整CNN争取1FPS，100MHz整机100M拍；2FPS后续优化，500ms过期未放宽。
+CSP2旧8M失败及旧2FPS收据保持只读，不为追8M修改冻结核或II；未测后续图周期UNKNOWN。
+只写本独立目录，不训练、不改生产、不运行TD、不生成位流、不操作板/Flash、不新增时序例外、不提交推送、不向其它聊天发消息。
+PAN本批仅输出确切生产者依赖与复用差异，不实现或增加通用调度。
+按readable-verilog-generator记录规格/周期图及compile/ast/readability/comment/naming/profile/testbench/toolchain八门实际状态。

@@ -1,0 +1,373 @@
+{
+  "modules": [
+    {
+      "name": "road_paxi_mailbox",
+      "feature": "stem_ddr_down2_once",
+      "rtl_path": "road_paxi_mailbox.v",
+      "description": "100MHz到约133.33MHz的单槽冻结请求响应邮箱与真实原生PAXI有限端点。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "source_clock",
+            "description": "100MHz源域时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "source_reset",
+            "description": "源域异步断言同步释放复位"
+          },
+          {
+            "name": "i_ddr_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "ddr_clock",
+            "description": "约133.33MHz DDR用户时钟"
+          },
+          {
+            "name": "i_ddr_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "ddr_reset",
+            "description": "DDR域异步断言同步释放复位"
+          },
+          {
+            "name": "i_phy_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "phy_status",
+            "description": "DDR PHY持续可用状态"
+          },
+          {
+            "name": "i_req_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "request_valid",
+            "description": "源请求有效"
+          },
+          {
+            "name": "i_req_write",
+            "direction": "input",
+            "width": 1,
+            "role": "request_write",
+            "description": "高电平写低电平读"
+          },
+          {
+            "name": "i_req_addr",
+            "direction": "input",
+            "width": 25,
+            "role": "request_address",
+            "description": "原生PAXI请求地址"
+          },
+          {
+            "name": "i_req_data",
+            "direction": "input",
+            "width": 128,
+            "role": "request_data",
+            "description": "完整写载荷"
+          },
+          {
+            "name": "o_req_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "request_ready",
+            "description": "唯一槽可接受请求"
+          },
+          {
+            "name": "o_rsp_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "response_valid",
+            "description": "源响应已经完整复制"
+          },
+          {
+            "name": "o_rsp_data",
+            "direction": "output",
+            "width": 128,
+            "role": "response_data",
+            "description": "冻结读响应数据"
+          },
+          {
+            "name": "o_rsp_error",
+            "direction": "output",
+            "width": 4,
+            "role": "response_error",
+            "description": "四类响应错误位"
+          },
+          {
+            "name": "i_rsp_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "response_ready",
+            "description": "源端消费确认"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "sticky_fault",
+            "description": "同步到源域的粘滞故障"
+          },
+          {
+            "name": "i_awready",
+            "direction": "input",
+            "width": 1,
+            "role": "paxi_awready",
+            "description": "写地址接受条件"
+          },
+          {
+            "name": "o_awaddr",
+            "direction": "output",
+            "width": 25,
+            "role": "paxi_awaddr",
+            "description": "冻结原生写地址"
+          },
+          {
+            "name": "o_awvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "paxi_awvalid",
+            "description": "写地址保持有效"
+          },
+          {
+            "name": "i_wready",
+            "direction": "input",
+            "width": 1,
+            "role": "paxi_wready",
+            "description": "写数据接受条件"
+          },
+          {
+            "name": "o_wdata",
+            "direction": "output",
+            "width": 128,
+            "role": "paxi_wdata",
+            "description": "冻结写数据"
+          },
+          {
+            "name": "o_wstrb",
+            "direction": "output",
+            "width": 16,
+            "role": "paxi_wstrb",
+            "description": "全零高有效掩码"
+          },
+          {
+            "name": "o_wvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "paxi_wvalid",
+            "description": "AW接受后下一拍开始保持写数据"
+          },
+          {
+            "name": "o_wlast",
+            "direction": "output",
+            "width": 1,
+            "role": "paxi_wlast",
+            "description": "唯一写数据拍末拍"
+          },
+          {
+            "name": "i_arready",
+            "direction": "input",
+            "width": 1,
+            "role": "paxi_arready",
+            "description": "读地址接受条件"
+          },
+          {
+            "name": "o_araddr",
+            "direction": "output",
+            "width": 25,
+            "role": "paxi_araddr",
+            "description": "冻结原生读地址"
+          },
+          {
+            "name": "o_arvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "paxi_arvalid",
+            "description": "读地址保持有效"
+          },
+          {
+            "name": "i_rvalid",
+            "direction": "input",
+            "width": 1,
+            "role": "paxi_rvalid",
+            "description": "读返回有效"
+          },
+          {
+            "name": "i_rlast",
+            "direction": "input",
+            "width": 1,
+            "role": "paxi_rlast",
+            "description": "单拍读返回末拍"
+          },
+          {
+            "name": "i_rdata",
+            "direction": "input",
+            "width": 128,
+            "role": "paxi_rdata",
+            "description": "完整读返回载荷"
+          },
+          {
+            "name": "o_rready",
+            "direction": "output",
+            "width": 1,
+            "role": "paxi_rready",
+            "description": "已为唯一读预留返回槽"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "i_clk=100MHz source; i_ddr_clk approximately 133.33MHz DDR user; clocks are asynchronous in verification"
+      },
+      "reset": {
+        "assertion": "Both local resets derive from one common raw reset and assert asynchronously",
+        "release": "Each domain releases synchronously; one-sided restart is forbidden"
+      },
+      "behavior": [
+        "Accept exactly one source request and freeze its type, address and data until the matching response is consumed.",
+        "Cross request and response ownership with two-stage synchronized toggles; copy only a payload that the sending domain keeps frozen.",
+        "Hold AW until accepted, then present W on the immediately following DDR cycle and hold it until accepted; a write response is not a commit response.",
+        "Reserve one read slot before AR acceptance and accept an R beat on the same edge as AR when RLAST is asserted.",
+        "Hold source response data and error unchanged under arbitrary response backpressure."
+      ],
+      "constraints": [
+        "Native address is in [0x1a00000,0x2000000) and aligned to stride 8.",
+        "WSTRB is 16'h0000 and WLAST follows WVALID.",
+        "C_TIMEOUT defaults to 27'h7ffffff; the testbench alone overrides it with 8.",
+        "No asynchronous FIFO, commit input, retry, slot reuse or timing exception is introduced."
+      ],
+      "corner_cases": [
+        "Independent AW and W backpressure without allowing W before AW acceptance.",
+        "AR and R accepted on the same edge, delayed R, missing RLAST and unsolicited R.",
+        "PHY loss, endpoint timeout, long source response backpressure and common reset in each active stage."
+      ],
+      "verification_cases": [
+        "normal, split_aw_w, random_stalls, long_response_backpressure, ar_same_edge, bad_rlast, unsolicited_r, phy_lost, timeout, common_reset_positions, no_stale_response, asynchronous_clock_conservation"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "request_cdc",
+          "title": "Frozen request crosses to DDR domain",
+          "scenario": "asynchronous request publication",
+          "description": "The source payload is frozen before req_toggle_src changes and remains frozen through the whole transaction.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "req valid/ready",
+                "wave": "01.0......"
+              },
+              {
+                "name": "source payload hold",
+                "wave": "x=........",
+                "data": [
+                  "request A"
+                ]
+              },
+              {
+                "name": "req_toggle_src",
+                "wave": "0.1......."
+              },
+              {
+                "name": "i_ddr_clk",
+                "wave": "P........."
+              },
+              {
+                "name": "req_toggle_sync_ddr",
+                "wave": "0...1....."
+              },
+              {
+                "name": "DDR payload copy",
+                "wave": "0....10..."
+              }
+            ]
+          }
+        },
+        {
+          "id": "write_sequence",
+          "title": "AW followed immediately by W",
+          "scenario": "independent write backpressure",
+          "description": "W is forbidden before AW acceptance; its first valid cycle is the immediately following DDR cycle.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_ddr_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "o_awvalid",
+                "wave": "01..0....."
+              },
+              {
+                "name": "i_awready",
+                "wave": "0..10....."
+              },
+              {
+                "name": "o_wvalid",
+                "wave": "0....1..0."
+              },
+              {
+                "name": "i_wready",
+                "wave": "0.......10"
+              },
+              {
+                "name": "write response publish",
+                "wave": "0........1"
+              }
+            ],
+            "head": {
+              "text": "AW hold -> AW accept -> next-cycle W hold -> W accept"
+            }
+          }
+        },
+        {
+          "id": "response_cdc",
+          "title": "Frozen response and consume acknowledgement",
+          "scenario": "long source backpressure",
+          "description": "DDR response payload remains frozen until source valid/ready consumption returns its acknowledged toggle.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_ddr_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "rsp_toggle_ddr",
+                "wave": "0.1......."
+              },
+              {
+                "name": "DDR response hold",
+                "wave": "x=........",
+                "data": [
+                  "response A"
+                ]
+              },
+              {
+                "name": "i_clk",
+                "wave": "P........."
+              },
+              {
+                "name": "o_rsp_valid",
+                "wave": "0...1...0."
+              },
+              {
+                "name": "i_rsp_ready",
+                "wave": "0.......10"
+              },
+              {
+                "name": "rsp_ack_toggle_src",
+                "wave": "0........1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

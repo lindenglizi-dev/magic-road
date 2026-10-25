@@ -1,0 +1,45 @@
+C9 第七批阶段报告：READY才开工，输入最后读才释放
+2026-10-16；工程work/roadyolo；独立候选frame_ready_dispatch_20261016。
+
+尚未通过（先明确）
+1. 真实摄像头slot-credit跨域、DMA/write_visible、实际最后输入读返回与复位排空尚未接入，因此不是摄像头/DDR/67层CNN闭环。
+2. 新dispatcher严格交付门209 error/0 strict warning，delivery_ready=false；格式/模板项及控制/位宽/组合预算项分别说明在strict_gate_review.txt。
+3. 新候选资源和100MHz物理时序未测，本批不允许C9跑TD；不以历史壳资源替代新实际顶层。
+4. 真实ROM仿真有112条既有厂商加密INIT_FILE边界警告，未解决、未屏蔽；无意外警告。当前数值包只具PTQ诊断资格，不是QAT/精度/板测通过。
+
+本次得到的可检查成果
+新增rtl/road_frame_ready_dispatch.v，36端口，同域100MHz；两条128位身份上下文，不复制publisher、不增图像RAM/第四张框表。
+源epoch/frame必须和已分配槽唯一配对，只有真实完整READY才claim；claim成功后保持225位job，实际job握手才增加task。
+同源capture_ms保留，槽内部诊断时间故意不等时也不会替换成更近时间。
+NNdone与最后输入消费各自记录；只有匹配实际last_read才释放原slots。copy_ack未连输入释放；最后读先到允许槽重捕获，但新同槽身份受旧上下文反压。
+错误/重复身份不覆盖，错误/早/重复done或last不释放；持有输入期间所有权丢失进FAULT等协调reset；FFFFFFFF最后task后饱和锁住新claim。
+声明顺序存储364位（含两身份256位），不等于物理FF/Slice资源报告。
+
+验证证据（不是仅保存计划）
+A. reference/self_check_receipt.json：Python40场景/244周期PASS，实际模型hash 9624c4247244ff95a733939be8f09df0537e4178f0a136c2f7a3cf8f98862aa8。
+B. reference/late_ambiguity_regression.json：同四个IDLE/CLAIM/JOB/RUN无incoming负例，修前真实失败4/4，修后失败0/4。根因与快照见review_issue.txt、retained_before_unique_guard/。
+C. verification/runs/20261016_011729_746_4b7ddac1/summary.json：实际ModelSim 2/2 PASS，实际编译0 error/0 warning；协议TB18场景9.44us，包含迟到重复身份、背压、半帧隔离、无槽跳帧、早/错/重复释放、NNdone不释放、重捕获反压、复位和task极值。
+D. 同一收据实际厂商56-lane ROM＋decode/TopK/NMS＋publisher＋三表：受控head两帧7框→空表；2个job、2个独立last-consume释放、2个完整metadata、2个copy_ack、2次active切换；逐字段/逐条目比对，不用checksum替代。
+E. 71项复用依赖，原源与复制源hash运行前后均一致；当前核、原slots、原C8和publisher未覆盖。新RTL hash 07defcc9d78d37029d68757bda97fec2b39e55f85d17658f55a709352e9be9bd。
+F. dispatcher_spec.json及spec/frame_ready_dispatch/下三组周期图已生成并与实际36端口交叉核对；规范不替代RTL仿真。
+
+真实ROM后处理端点（不包括CNN/DDR输入，不能外推整网FPS）
+7框：job接受→metadata 1,577,514个100MHz周期；metadata→copy_ack 170ns；copy_ack→下一显示SOF active约724.541us。
+空表：job接受→metadata 616,916周期；metadata→copy_ack 80ns；copy_ack→active约10.331ms。
+该局部后处理两帧都满足2M周期局部预算；100M周期/1FPS是总协调当前演示规划，整网没有据此通过。
+7框27,349个ROM物理词请求/返回全部消费；空表没有LUT请求是合法零候选路径，不将其当作CNN加速。
+扫描内lut_wait等忙/等待可能与其他级重叠，summary中子模块计数不简单相加成端点时间。
+
+真实缺陷及处理成本
+发现：身份保存时唯一，另一物理槽随后变同epoch/frame；旧逻辑仍可能claim。不是训练/ROM精度问题，而是检查只发生在入队。
+修复：一个共享运行期双槽重复键guard覆盖选择、claim和未读完所有权检查；不改数值/核/II/接口，不加缓存深度。
+独立只读审阅确认：FREE/QUARANTINE/不同身份不会误阻断；实际输入已释放后不妨碍旧task完成退休。
+保留第一次2/2 PASS，明确它没有覆盖新负例；同时保留新增TB三元表达式词法错误失败（不是RTL行为失败）。修后重新实际编译与仿真，不用旧PASS替代。
+
+下一步（接入而非继续探针）
+详见integration_contract.txt，交给总协调按现有owner接入：
+1. 摄像头整帧接纳credit及槽元数据安全排序，区分原始SOF异常取消与合格帧新分配。
+2. 同一epoch/frame完整442368B DMA与实际写后读可见服务；不拿AW/W或固定等拍当READY。
+3. 真实最后输入响应消费/无在途/无后续读取事实连接本模块释放，复位后先排空真实DDR再复用槽/epoch。
+4. 共享67层owner/三尺度真实head承接job上下文，再统一实际顶层资源时序与板测。
+本批不启动训练、不改生产、不跑TD、不生成位流、不上板/Flash、不新增时序例外、不提交推送、不向其他聊天发送消息。

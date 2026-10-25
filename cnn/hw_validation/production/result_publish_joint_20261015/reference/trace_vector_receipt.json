@@ -1,0 +1,424 @@
+{
+  "status": "PASS",
+  "cycles": 500,
+  "case_count": 33,
+  "vector_bits": 850,
+  "input_order": [
+    {
+      "name": "i_rstn",
+      "direction": "input",
+      "width": 1,
+      "role": "reset",
+      "description": "\u5171\u540c\u4f4e\u6709\u6548\u5f02\u6b65\u65ad\u8a00\uff1b\u672c\u5730\u4e24\u62cd\u91ca\u653e\u8bb8\u53ef\uff0c\u6700\u65e9\u7b2c\u4e09\u8fb9\u6cbf\u63a5\u6536",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_cancel",
+      "direction": "input",
+      "width": 1,
+      "role": "cancel",
+      "description": "\u540c\u57df\u53d6\u6d88\uff1bseal\u524d\u7acb\u5373\u64a4\u9500\uff0cWAIT_ACK\u5ffd\u7565",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_start_valid",
+      "direction": "input",
+      "width": 1,
+      "role": "start valid",
+      "description": "\u5b8c\u6574\u63cf\u8ff0\u7b26\u6709\u6548\uff0c\u7b49\u5f85ready\u671f\u95f4\u4fdd\u6301\u6240\u6709\u5b57\u6bb5",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_start_epoch",
+      "direction": "input",
+      "width": 32,
+      "role": "epoch",
+      "description": "\u4efb\u52a1epoch",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_start_task_id",
+      "direction": "input",
+      "width": 32,
+      "role": "task identity",
+      "description": "\u4efb\u52a1\u6807\u8bc6\uff0c\u540c\u65f6\u4f5c\u4e3apipeline frame_token",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_start_source_frame_id",
+      "direction": "input",
+      "width": 32,
+      "role": "source identity",
+      "description": "\u7269\u7406\u6e90\u5e27\u6807\u8bc6\uff0c\u8df3\u5e27\u4e0d\u91cd\u7f16\u53f7",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_start_model_id",
+      "direction": "input",
+      "width": 32,
+      "role": "model identity",
+      "description": "\u6a21\u578b\u5305\u6807\u8bc6",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_start_capture_ms",
+      "direction": "input",
+      "width": 64,
+      "role": "capture timestamp",
+      "description": "\u540c\u6e90road_time_snapshot\u65f6\u95f4\u6233\uff0c\u4e0d\u8de8\u57df\u76f4\u91c7",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_now_ms",
+      "direction": "input",
+      "width": 64,
+      "role": "completion timestamp",
+      "description": "\u552f\u4e00road_time_snapshot.o_src_now_ms\uff1b\u5408\u6cd5done\u8fb9\u6cbf\u9501\u5b58",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_pipeline_start_ready",
+      "direction": "input",
+      "width": 1,
+      "role": "start ready",
+      "description": "\u539fC2\u542f\u52a8\u8bb8\u53ef\uff1b\u4e0d\u80fd\u7528\u4e8e\u7ec4\u5408\u95e8\u63a7o_pipeline_start_valid",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_entry_valid",
+      "direction": "input",
+      "width": 1,
+      "role": "entry valid",
+      "description": "\u539fNMS\u7684FINAL97\u6709\u6548\uff0c\u7b49\u5f85ready\u671f\u95f4\u4fdd\u6301",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_entry",
+      "direction": "input",
+      "width": 97,
+      "role": "final entry",
+      "description": "FINAL97\u539f\u6837\u76f4\u901a\uff0c\u4e0d\u4fdd\u5b58\u7b2c\u56db\u5f20\u8868",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_result_frame_token",
+      "direction": "input",
+      "width": 32,
+      "role": "result identity",
+      "description": "NMS\u5f53\u524d\u4efb\u52a1token\uff0c\u6bcf\u6761entry\u53cadone\u68c0\u67e5",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_result_count",
+      "direction": "input",
+      "width": 7,
+      "role": "result count",
+      "description": "NMS\u5df2\u63a5\u53d7\u6570\uff1bdone\u5fc5\u987b\u7b49\u4e8e\u672c\u6a21\u5757\u5b9e\u9645\u63a5\u53d7\u8ba1\u6570\u4e14\u81f3\u591a64",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_result_done",
+      "direction": "input",
+      "width": 1,
+      "role": "result complete",
+      "description": "NMS\u5b8c\u6210\u8109\u51b2\uff1b\u4e0d\u5f97\u4e0eentry_valid\u540c\u62cd",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_pipeline_fault",
+      "direction": "input",
+      "width": 1,
+      "role": "pipeline failure",
+      "description": "C2/NMS/LUT/reader\u6545\u969c\u805a\u5408\uff1b\u4e0d\u80fd\u7ec4\u5408\u53cd\u9988\u5230pipeline_cancel",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_table_entry_ready",
+      "direction": "input",
+      "width": 1,
+      "role": "table entry ready",
+      "description": "C8 source\u6761\u76ee\u63a5\u6536\u8bb8\u53ef\uff1bstart\u65f6\u4e5f\u9700\u53ef\u5199",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_table_meta_ready",
+      "direction": "input",
+      "width": 1,
+      "role": "table metadata ready",
+      "description": "C8 source seal\u8bb8\u53ef",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_table_copy_ack",
+      "direction": "input",
+      "width": 1,
+      "role": "copy acknowledgement",
+      "description": "\u5df2seal\u5b8c\u6574\u8868\u590d\u5236\u786e\u8ba4\uff1b\u552f\u4e00\u6b63\u5e38\u9000\u4f11\u4e8b\u4ef6",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_table_busy",
+      "direction": "input",
+      "width": 1,
+      "role": "table ownership",
+      "description": "C8 source\u975e\u7a7a/\u5fd9\u6307\u793a\uff1b\u542f\u52a8\u9700\u8981\u5176\u4e3a0",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "i_table_error",
+      "direction": "input",
+      "width": 1,
+      "role": "table failure",
+      "description": "C8\u6e90\u7aef\u9519\u8bef\uff0cseal\u524d\u64a4\u9500",
+      "clock_domain": "i_clk"
+    }
+  ],
+  "output_order": [
+    {
+      "name": "o_start_ready",
+      "direction": "output",
+      "width": 1,
+      "role": "start ready",
+      "description": "released\u4e14IDLE\u4e14\u65e0cancel/fault/error\u4e14C8 source\u7a7a/\u53ef\u5199\u4e14pipeline ready",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_pipeline_start_valid",
+      "direction": "output",
+      "width": 1,
+      "role": "start valid",
+      "description": "i_start_valid\u4e14can_accept_except_pipeline_ready\uff1b\u72ec\u7acb\u4e8epipeline ready\uff0c\u53cc\u65b9\u540c\u8fb9\u6cbf\u63a5\u53d7",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_pipeline_frame_token",
+      "direction": "output",
+      "width": 32,
+      "role": "pipeline identity",
+      "description": "IDLE\u76f4\u901astart_task_id\uff0c\u975eIDLE\u8f93\u51fa\u9501\u5b58task",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_pipeline_model_id",
+      "direction": "output",
+      "width": 32,
+      "role": "pipeline model",
+      "description": "IDLE\u76f4\u901astart_model_id\uff0c\u975eIDLE\u8f93\u51fa\u9501\u5b58model",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_pipeline_cancel",
+      "direction": "output",
+      "width": 1,
+      "role": "pipeline cancellation",
+      "description": "released && (stateABORT || (i_cancel && state!=WAIT_ACK))\uff1b\u6545\u969c\u53ea\u80fd\u7ecfABORT\u5bc4\u5b58\u8fb9\u754c\u9a71\u52a8",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_entry_ready",
+      "direction": "output",
+      "width": 1,
+      "role": "entry ready",
+      "description": "\u4ec5RUN\u4e14\u65e0RUN\u5931\u8d25\uff0c\u56de\u4f20C8 entry_ready\uff1b\u8ba1\u6570\u53ea\u968fentry valid&&ready\u589e\u52a0\u3002\u88f8ready\u4e0d\u6784\u6210\u63a5\u53d7\uff0ctoken\u68c0\u67e5\u7531entry_valid\u6216done\u89e6\u53d1",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_table_entry_valid",
+      "direction": "output",
+      "width": 1,
+      "role": "table entry valid",
+      "description": "\u4ec5RUN\u4e14\u65e0RUN\u5931\u8d25\uff0c\u76f4\u901ai_entry_valid",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_table_entry",
+      "direction": "output",
+      "width": 97,
+      "role": "table entry data",
+      "description": "\u59cb\u7ec8\u76f4\u63a5\u8fde\u63a5i_entry\uff0c\u4e0d\u5bc4\u5b58\u3001\u4e0d\u5efa\u6570\u7ec4",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_table_meta_valid",
+      "direction": "output",
+      "width": 1,
+      "role": "table metadata valid",
+      "description": "\u4ec5META\u4e14\u65e0META\u5931\u8d25\uff1b\u4e0e\u672bentry\u5206\u62cd\uff0cready\u524d\u4fdd\u6301",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_table_metadata",
+      "direction": "output",
+      "width": 265,
+      "role": "SRIF1 metadata",
+      "description": "\u5b8c\u6574\u9501\u5b58\u4e0a\u4e0b\u6587\uff1b\u6210\u529fdone\u9501count/completion\uff0c\u4fdd\u6301\u5230\u9000\u4f11/\u4e0b\u4e00\u4efb\u52a1\uff0creset\u6e05\u96f6",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_table_abort",
+      "direction": "output",
+      "width": 1,
+      "role": "table source abort",
+      "description": "released\u4e14ABORT\u6216RUN/META\u672c\u62cd\u5931\u8d25\uff1bWAIT_ACK\u4e3a0",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_busy",
+      "direction": "output",
+      "width": 1,
+      "role": "transaction busy",
+      "description": "released\u4e14state!=IDLE\uff0c\u4ecestart\u63a5\u53d7\u540e\u81f3copy_ack\u9000\u4f11\u6216ABORT\u7ed3\u675f",
+      "clock_domain": "i_clk"
+    },
+    {
+      "name": "o_error",
+      "direction": "output",
+      "width": 1,
+      "role": "error pulse",
+      "description": "released\u4e14ABORT\uff0c\u5355\u62cd\u9519\u8bef\uff0c\u65e0\u65b0\u589e\u7c98\u6ede\u8bca\u65ad",
+      "clock_domain": "i_clk"
+    }
+  ],
+  "layout": "new_case, ordered inputs except i_clk, ordered outputs, state_after[2:0], accepted_after[6:0]",
+  "cases": [
+    {
+      "case": "success_0",
+      "first_cycle": 0
+    },
+    {
+      "case": "success_1",
+      "first_cycle": 28
+    },
+    {
+      "case": "success_64",
+      "first_cycle": 57
+    },
+    {
+      "case": "start_block_i_cancel",
+      "first_cycle": 149
+    },
+    {
+      "case": "start_block_i_pipeline_fault",
+      "first_cycle": 152
+    },
+    {
+      "case": "start_block_i_table_error",
+      "first_cycle": 155
+    },
+    {
+      "case": "start_block_i_table_busy",
+      "first_cycle": 158
+    },
+    {
+      "case": "start_block_i_pipeline_start_ready",
+      "first_cycle": 161
+    },
+    {
+      "case": "start_block_i_table_entry_ready",
+      "first_cycle": 164
+    },
+    {
+      "case": "entry_stall",
+      "first_cycle": 167
+    },
+    {
+      "case": "entry_65",
+      "first_cycle": 200
+    },
+    {
+      "case": "entry_token",
+      "first_cycle": 270
+    },
+    {
+      "case": "done_with_entry",
+      "first_cycle": 277
+    },
+    {
+      "case": "done_count",
+      "first_cycle": 284
+    },
+    {
+      "case": "done_count_65",
+      "first_cycle": 291
+    },
+    {
+      "case": "done_token",
+      "first_cycle": 361
+    },
+    {
+      "case": "done_time",
+      "first_cycle": 368
+    },
+    {
+      "case": "run_cancel",
+      "first_cycle": 375
+    },
+    {
+      "case": "run_fault",
+      "first_cycle": 382
+    },
+    {
+      "case": "run_table_error",
+      "first_cycle": 389
+    },
+    {
+      "case": "done_cancel",
+      "first_cycle": 396
+    },
+    {
+      "case": "meta_i_cancel",
+      "first_cycle": 402
+    },
+    {
+      "case": "meta_i_pipeline_fault",
+      "first_cycle": 409
+    },
+    {
+      "case": "meta_i_table_error",
+      "first_cycle": 416
+    },
+    {
+      "case": "meta_i_entry_valid",
+      "first_cycle": 423
+    },
+    {
+      "case": "fault_feedback",
+      "first_cycle": 430
+    },
+    {
+      "case": "held_cancel",
+      "first_cycle": 435
+    },
+    {
+      "case": "consecutive_tokens",
+      "first_cycle": 444
+    },
+    {
+      "case": "reset_IDLE",
+      "first_cycle": 458
+    },
+    {
+      "case": "reset_RUN",
+      "first_cycle": 464
+    },
+    {
+      "case": "reset_META",
+      "first_cycle": 472
+    },
+    {
+      "case": "reset_WAIT_ACK",
+      "first_cycle": 481
+    },
+    {
+      "case": "reset_ABORT",
+      "first_cycle": 491
+    }
+  ],
+  "sha256": {
+    "cycle_trace.json": "b9c97be63fd8ff2432334075f3faad5b2d2c77799d67a650b70c5d5749021752",
+    "publisher_spec.json": "785b633dbb3ea04e9ab67aa15f643bdf50c1c4ba26decdc555c149fdbeecf8e8",
+    "reference.py": "df6cee7ffee12b7f11b84e250a91aa99f8146d773ac8fb1f2f2f7919e6731e43",
+    "publisher_trace.hex": "25b7a230fd7f933c1ab80c5206964f858b7e328ca82b6fb5b3e2fb525b69b142",
+    "generate_trace_vectors.py": "22aa9315958f8a8ecc2224dbd9e777ac900c6f559254c331d06e13b665711a92"
+  }
+}

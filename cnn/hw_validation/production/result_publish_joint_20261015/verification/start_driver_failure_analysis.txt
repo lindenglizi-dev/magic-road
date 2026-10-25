@@ -1,0 +1,7 @@
+Observed failure and bounded diagnosis
+
+Run20261015_231535_293_7770b808 retained21successful matrix results, then failed late_response_error_cancel_recover. The failed simulator was confirmed by full command line asPID9380 for this exact mode7 run and stopped; source snapshot/hash receipt retained.
+Focused failing run20261015_232956_869_52b43982 added actual accepted-cell counting and last-eight-ID tracing. Frame1 accepted12096cells exactly once, ID12095 accepted atcycle1587170, send_cells returned1587171, and publisher ABORT occurred1589845 after one accepted NMS output. There is no evidence of duplicate/missing cells in that frame.
+Recovery frame2 never started: its first cell timed out atcycle1689857 with actualacceptedcells0, publisherIDLE, C2FREE, start_ready1, cancel0, pipeline_cancel0, late_error_arm0. The old helper sampled ready during the falling-edge region before the randomized ready gate finished updating, then pulsed valid for only one rising edge. Ready could fall before that edge, so no actual start handshake occurred.
+Surgical testbench correction: wait for the first rising edge before checking ready, then hold valid and continue checking at rising edges until ready. Remove the extra unconditional rising-edge wait after that decision. No functional RTL, arithmetic, protocol or frozen-source changes were made.
+The new producer cell timeout fails immediately with frame/index/actualacceptedcount/state details instead of repeatedly continuing a known failed stream. It never converts a failed input transaction into success.

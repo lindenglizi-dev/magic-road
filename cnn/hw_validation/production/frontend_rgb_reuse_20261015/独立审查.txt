@@ -1,0 +1,12 @@
+S1独立只读审查（review角色，2026-10-15）
+比较旧/新真实sequence及冻结core，未发现新增语义问题。原层加载器字节一致；真实差异8行功能逻辑，其他核、mailbox、端口不变。
+R14→G15复用，B回原地址流水读新tag/lane0；R15回原流水到G0，再复用到B1。
+padding、cache invalid、tag mismatch和lane15都禁止复用；tile DECODE仍清cache-valid。
+lane/channel/halo地址只在真实装载接受后推进，backpressure期间保持；ST_ADDRESS与HALO里的lane赋值状态互斥。
+last优先于reuse，合法末项为B/channel2，不会额外自环或多推进加载器。
+故障同沿只可能结算已发生握手，随后sticky fault禁止推进；共同复位清缓存/lane/所有游标并重装全流程。
+冻结Stem子核本来就支持连续valid&&ready装载写入，S1利用现有能力，没有改算术II或数值。
+DDR读数/读序不变，理论只少350778×4个映射状态拍；实际RTL证据由verification单列，审查本身未启动仿真或TD。
+接入C7时必须区分request accept、read response accept、core_load accept、core_done、output accept、write response。
+当前write response/o_writes只表示原mailbox接受AW/W，不是可见或commit。真实多客户可见性/取消/槽释放按C9语义证据和协调决定，不在S1中猜测或添加普通AXI B接口。
+限制仍在：周期图案、固定测试权重、相同PW类golden不是部署模型验证；S1物理资源/时序尚未执行。

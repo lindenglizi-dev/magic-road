@@ -1,0 +1,22 @@
+{
+  "task_classes": ["modify", "validate"],
+  "intent": "Extend only the once-only outer sequencer to sixteen Stem producers and four adjacent down2 consumers",
+  "baseline": "../stem_ddr_down2_once_20261014",
+  "requirements": "requirements.txt",
+  "python_model": "reference.py",
+  "rtl_target": "rtl/road_stem_ddr_sequence.v",
+  "wrapper_target": "rtl/road_stem_ddr_board_top.v",
+  "generation": "prepare.py mechanically copies frozen sources and applies checked outer width/metadata changes; make_board.py retains clock/DDR/HDMI shell",
+  "ports_changed": {"o_writes": [7,9], "o_reads": [7,9], "o_output_bytes": [9,11]},
+  "core_interfaces_changed": false,
+  "clock_reset_ii_numeric_changed": false,
+  "table_reload_entries": 1024,
+  "ram": {"program": [8192,64], "stem_golden": [256,128], "addresses": [256,32], "halo_map": [512,16], "pw_golden": [2048,8]},
+  "cycle_contract": "All transport advances on ready and valid. Each tile completes compute and full export before next halo. Total categories mutually exclusive. No fixed DDR response latency.",
+  "display_payload_bits": 256,
+  "physical_io_bits": 51,
+  "verification": ["positive and mutated vector contract", "13 direct cases", "actual two-clock integration", "retained source hashes", "strict deliverable gates", "actual integrated TD", "program initialization and connectivity"],
+  "gates": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"],
+  "diagnostic_only": true,
+  "production_delivery_claim": false
+}

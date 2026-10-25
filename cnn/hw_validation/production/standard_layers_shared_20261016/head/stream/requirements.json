@@ -1,0 +1,11 @@
+{
+  "module": "road_head_cell_stream",
+  "intent": "Read six frozen INT16 prediction planes and stream12096x112bit cells directly to existing decoder; no complete on-chip prediction array",
+  "clock_reset": "100MHz, common asynchronous assertion/two-edge synchronous release with read service; fault/cancel retains busy until common reset",
+  "start": "start valid/ready locks frame_token/model only when predictions_committed; all six DDR planes remain stable until last read response consumed and final cell accepted",
+  "order": "S4 72x128, S8 36x64, S16 18x32; each row-major; seven little-endian INT16 fields reg0..4 thencls0..1; cell_id0..12095",
+  "memory": "one outstanding aligned128bit logical read; response address match and error check; one16B line cache and one14B cell register only",
+  "retirement": "a read retires only valid&&ready; last field already copied before cell valid; final cell accepted before done and owner release; ready backpressure freezes full cell/context",
+  "boundary": "Needs complete committed prediction producer externally; reference full planes do not prove31layer hardware prefix/full network/DDR visibility, physical mapping or FPS",
+  "verification": ["all12096 cells/84672 fields and exact source byte addresses", "head scale and row/tile boundaries", "H18 tail rows", "random read and cell backpressure", "request/response reset and cancellation owner", "wrong address/error", "no full prediction RAM"]
+}

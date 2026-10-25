@@ -1,0 +1,10 @@
+任务：generate + validate；独立road_shared_lut_service，唯一ROM-reader客户端最小适配。
+顺序：requirements → 本文件 → canonical spec/WaveDrom → Python映射穷举 → RTL → 实际仿真及八门。
+复用：唯一G10模型包manifest、原二字节表、ROM-R1的既有读接口；不拥有或复制ROM源。
+采用18拍串行除20换取无乘除法宏、无额外RAM；报告实际查询时延，不改reader固定等待。
+默认两表都是偶数基址，真实包没有跨20字节词的条目；仍实现lane19聚合，测试仅通过奇数基址重定位触达。
+取消不能当作无标签reader的即时flush：已接受ROM读进入DRAIN消费旧响应；排空前不接新查表。
+共同复位才清reader sticky fault；单侧热复位不在本组件证明范围。所有valid等待时payload保持。
+主代理拥有requirements/spec/reference/rtl/handoff；verify代理仅拥有verification/，不能改RTL或其他目录。
+不训练、不TD、不生产集成、不bitstream/板卡、不commit/push、不跨聊天发消息；C7负责真实ROM接线。
+readable-python-generator/readable-script-generator未安装，按最小stdlib/现有工具执行并独立记录缺项，不冒充其门禁通过。

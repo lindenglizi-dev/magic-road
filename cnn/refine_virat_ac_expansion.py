@@ -31,6 +31,9 @@ def corrected(manifest, patch, edits):
         for target, reason in edit.get('remove', {}).items():
             assert reason and target in actions and target not in originals
             del actions[target]
+        for target, reason in edit.get('delete_source', {}).items():
+            assert reason and target in actions and target in originals
+            actions[target].update(action='D', reason=reason)
         for target, change in edit.get('modify', {}).items():
             assert target in actions and change['reason']
             actions[target].update(change)
@@ -99,6 +102,7 @@ def build():
                            patch_sha256=sha256_file(PATCH), page_sha256=sha256_file(PAGE),
                            inspection=edits['inspection'],
                            removed_teacher_proposals=sum(len(e.get('remove', {})) for e in edits['images'].values()),
+                           deleted_source_proposals=sum(len(e.get('delete_source', {})) for e in edits['images'].values()),
                            modified_boxes=sum(len(e.get('modify', {})) for e in edits['images'].values()),
                            added_boxes=sum(len(e.get('add', [])) for e in edits['images'].values()),
                            uncertain_regions=sum(len(e.get('uncertain', [])) for e in edits['images'].values()),

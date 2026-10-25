@@ -1,0 +1,91 @@
+{
+  "top": "tb_csp_layer_client",
+  "language": "Verilog-2001",
+  "required_plusargs": ["+CASE=<0..5>", "+VECTORS=<csp2_complete_20261015/reference/road_input>"],
+  "optional_plusargs": ["+FAULT_KIND=<0|1>", "+RESET_STAGE=<0..4>", "+NEGATIVE_ACC=1"],
+  "positive_marker": "CSP_LAYER_PASS case=N runs=... cycles=... outputs=... acc=... pre=... silu=... post=...",
+  "fault_marker": "CSP_LAYER_EXPECTED_FAULT case=N kind=... cycles=... outputs=... acc=... pre=... silu=... post=...",
+  "progress_marker": "CSP_LAYER_PROGRESS case=N run=... stage=... cycles=... reads=... groups=... tasks=... outputs=...",
+  "raw_state_marker": "CSP_LAYER_STATE case=N run=... state=... cycles=...",
+  "stage_marker": "CSP_LAYER_STAGE case=N run=... stage=... cycles=... reads=... groups=... tasks=... outputs=... barriers=...",
+  "runner_cases": [
+    {
+      "case": 0,
+      "plusargs": [],
+      "marker": "CSP_LAYER_PASS",
+      "expected_fields": {"runs": 1, "outputs": 663552, "acc": 663552, "pre": 663552, "silu": 663552, "post": 663552}
+    },
+    {
+      "case": 1,
+      "plusargs": [],
+      "marker": "CSP_LAYER_PASS",
+      "expected_fields": {"runs": 2, "outputs": 663552, "acc": 663552, "pre": 663552, "silu": 663552, "post": 663552}
+    },
+    {
+      "case": 2,
+      "plusargs": ["+RESET_STAGE=2"],
+      "marker": "CSP_LAYER_PASS",
+      "expected_fields": {"runs": 1, "outputs": 663552, "acc": 663552, "pre": 663552, "silu": 663552, "post": 663552}
+    },
+    {
+      "case": 3,
+      "plusargs": [],
+      "marker": "CSP_LAYER_EXPECTED_FAULT",
+      "expected_fields": {"kind": 0, "outputs": 0}
+    },
+    {
+      "case": 4,
+      "plusargs": [],
+      "marker": "CSP_LAYER_EXPECTED_FAULT",
+      "expected_fields": {"kind": 0, "outputs": 0}
+    },
+    {
+      "case": 5,
+      "plusargs": ["+FAULT_KIND=0"],
+      "marker": "CSP_LAYER_EXPECTED_FAULT",
+      "expected_fields": {"kind": 0}
+    },
+    {
+      "case": 5,
+      "plusargs": ["+FAULT_KIND=1"],
+      "marker": "CSP_LAYER_EXPECTED_FAULT",
+      "expected_fields": {"kind": 1, "outputs": 110592}
+    }
+  ],
+  "case_meanings": {
+    "0": "one unstalled full-frame five-stage run",
+    "1": "one unstalled run followed by one full run with deterministic parameter, read, core, and write stalls without LUT reload",
+    "2": "common reset in the selected active stage, mandatory LUT reload, and one clean full-frame restart",
+    "3": "wrong 16-byte read response address",
+    "4": "wrong parameter response layer identity",
+    "5": "FAULT_KIND 0 wrong arithmetic output address; FAULT_KIND 1 wrong visibility barrier layer"
+  },
+  "full_frame_counts": {
+    "stage_outputs": [110592, 110592, 110592, 110592, 221184],
+    "stage_tasks": [55296, 36864, 55296, 36864, 73728],
+    "stage_groups": [110592, 73728, 110592, 73728, 221184],
+    "outputs": 663552,
+    "tasks": 258048,
+    "groups": 589824,
+    "barriers": 5
+  },
+  "read_contract": {
+    "request_alignment_bytes": 16,
+    "response_bits": 128,
+    "lane_order": "byte n is response[n*8 +: 8]",
+    "outstanding": 1,
+    "visibility": "source is always readable; stage bytes become readable only after that stage matching barrier"
+  },
+  "negative_checks": [
+    {
+      "wrapper_case": 99,
+      "invokes": ["+CASE=0", "+NEGATIVE_ACC=1"],
+      "expected_exit": "nonzero",
+      "required_log_regex": "NEGATIVE_ACC injected acc mismatch",
+      "forbidden_marker": "CSP_LAYER_PASS"
+    }
+  ],
+  "watchdog_cycles": 50000000,
+  "native_timeout_seconds": 2400,
+  "evidence_boundary": "ModelSim functional closure only. No synthesis, timing, physical DDR, bitstream, board, or model-accuracy claim."
+}

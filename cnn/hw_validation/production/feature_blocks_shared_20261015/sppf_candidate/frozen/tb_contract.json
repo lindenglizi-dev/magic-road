@@ -1,0 +1,439 @@
+{
+  "top": "tb_feature_sppf_client",
+  "language": "Verilog-2001",
+  "parameters": {},
+  "required_plusargs": [
+    "+CASE=<0..3>",
+    "+VECTORS_ROOT=<frozen/reference>"
+  ],
+  "optional_plusargs": [
+    "+NEGATIVE_POOL=1"
+  ],
+  "positive_marker": "FEATURE_SPPF_PASS",
+  "fault_marker": "FEATURE_SPPF_EXPECTED_FAULT",
+  "stage_marker": "FEAT_SPPF_STAGE",
+  "raw_state_marker": "FEAT_SPPF_STATE",
+  "run_marker": "FEAT_SPPF_RUN",
+  "abort_marker": "FEAT_SPPF_ABORT",
+  "runner_cases": [
+    {
+      "case": 0,
+      "plusargs": [],
+      "marker": "FEATURE_SPPF_PASS",
+      "expected_fields": {
+        "blocks": 2,
+        "runs": 2,
+        "outputs": 331776,
+        "acc": 290304,
+        "pre": 290304,
+        "silu": 290304,
+        "post": 290304,
+        "groups": 746496,
+        "tasks": 110592,
+        "reads": 41832,
+        "parameters": 69120,
+        "barriers": 12,
+        "pools": 41472,
+        "concat_values": 1769472,
+        "negative_pool_outputs": 1628,
+        "table_loads": 1,
+        "aborted_runs": 0,
+        "long_pool_stalls": 0
+      },
+      "meaning": "Real CSP4 then SPPF with no reset or CPU injection between blocks"
+    },
+    {
+      "case": 1,
+      "plusargs": [],
+      "marker": "FEATURE_SPPF_PASS",
+      "expected_fields": {
+        "blocks": 2,
+        "runs": 2,
+        "outputs": 331776,
+        "acc": 290304,
+        "pre": 290304,
+        "silu": 290304,
+        "post": 290304,
+        "groups": 746496,
+        "tasks": 110592,
+        "reads": 41832,
+        "parameters": 69120,
+        "barriers": 12,
+        "pools": 41472,
+        "concat_values": 1769472,
+        "negative_pool_outputs": 1628,
+        "table_loads": 1,
+        "aborted_runs": 0,
+        "long_pool_stalls": 0
+      },
+      "meaning": "Full chain with deterministic parameter/read/core/write/barrier backpressure"
+    },
+    {
+      "case": 2,
+      "plusargs": [],
+      "marker": "FEATURE_SPPF_PASS",
+      "expected_fields": {
+        "blocks": 2,
+        "runs": 2,
+        "outputs": 331776,
+        "acc": 290304,
+        "pre": 290304,
+        "silu": 290304,
+        "post": 290304,
+        "groups": 746496,
+        "tasks": 110592,
+        "reads": 41832,
+        "parameters": 69120,
+        "barriers": 12,
+        "pools": 41472,
+        "concat_values": 1769472,
+        "negative_pool_outputs": 1628,
+        "table_loads": 2,
+        "aborted_runs": 1,
+        "long_pool_stalls": 0
+      },
+      "meaning": "Run CSP4 plus SPPF through stage2 128 writes; common reset/LUT reload; repeat full clean CSP4->SPPF chain"
+    },
+    {
+      "case": 3,
+      "plusargs": [],
+      "marker": "FEATURE_SPPF_PASS",
+      "expected_fields": {
+        "blocks": 2,
+        "runs": 2,
+        "outputs": 331776,
+        "acc": 290304,
+        "pre": 290304,
+        "silu": 290304,
+        "post": 290304,
+        "groups": 746496,
+        "tasks": 110592,
+        "reads": 41832,
+        "parameters": 69120,
+        "barriers": 12,
+        "pools": 41472,
+        "concat_values": 1769472,
+        "negative_pool_outputs": 1628,
+        "table_loads": 1,
+        "aborted_runs": 0,
+        "long_pool_stalls": 64
+      },
+      "meaning": "Full chain, first pool write held for 64 consecutive cycles while busy block ID/start keep perturbing"
+    },
+    {
+      "case": 99,
+      "plusargs": [
+        "+CASE=0",
+        "+NEGATIVE_POOL=1"
+      ],
+      "marker": "NEGATIVE_POOL injected pool mismatch",
+      "expected_exit": "nonzero",
+      "forbidden_marker": "FEATURE_SPPF_PASS",
+      "meaning": "First real accepted pool write compared to golden XOR1 must fatal."
+    }
+  ],
+  "block_counts": {
+    "4": {
+      "shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "half_channels": 48,
+      "tile_rows": 5,
+      "tile_cols": 8,
+      "tile_count": 40,
+      "last_tile_valid_rows": 2,
+      "stage_outputs": [
+        27648,
+        27648,
+        27648,
+        27648,
+        27648,
+        27648,
+        55296
+      ],
+      "stage_physical_bytes": [
+        30720,
+        30720,
+        30720,
+        30720,
+        30720,
+        30720,
+        61440
+      ],
+      "stage_tasks": [
+        13824,
+        9216,
+        13824,
+        9216,
+        13824,
+        9216,
+        18432
+      ],
+      "stage_groups": [
+        27648,
+        55296,
+        27648,
+        55296,
+        27648,
+        55296,
+        221184
+      ],
+      "stage_reads": [
+        3588,
+        3456,
+        3588,
+        3456,
+        3588,
+        3456,
+        3456
+      ],
+      "stage_parameters": [
+        7680,
+        3840,
+        7680,
+        3840,
+        7680,
+        3840,
+        15360
+      ],
+      "outputs": 221184,
+      "tasks": 87552,
+      "groups": 470016,
+      "reads": 24588,
+      "parameters": 49920,
+      "barriers": 7
+    },
+    "5": {
+      "shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "stage_kinds": [
+        "PW96to24",
+        "signed_maxpool5x5",
+        "signed_maxpool5x5",
+        "signed_maxpool5x5",
+        "concat_PW96to96"
+      ],
+      "stage_outputs": [
+        13824,
+        13824,
+        13824,
+        13824,
+        55296
+      ],
+      "stage_numeric": [
+        13824,
+        0,
+        0,
+        0,
+        55296
+      ],
+      "stage_tasks": [
+        4608,
+        0,
+        0,
+        0,
+        18432
+      ],
+      "stage_groups": [
+        55296,
+        0,
+        0,
+        0,
+        221184
+      ],
+      "stage_parameters": [
+        3840,
+        0,
+        0,
+        0,
+        15360
+      ],
+      "stage_reads": [
+        3456,
+        3060,
+        3060,
+        3060,
+        4608
+      ],
+      "stage_physical_bytes": [
+        15360,
+        15360,
+        15360,
+        15360,
+        61440
+      ],
+      "outputs": 110592,
+      "acc": 69120,
+      "pre": 69120,
+      "silu": 69120,
+      "post": 69120,
+      "tasks": 23040,
+      "groups": 276480,
+      "parameters": 19200,
+      "reads": 17244,
+      "barriers": 5,
+      "pools": 41472,
+      "concat_values": 1769472,
+      "negative_pool_outputs": 1628,
+      "source": "actual visible CSP4 output at 0x0376b000"
+    }
+  },
+  "sequence_counts": {
+    "blocks": 2,
+    "runs": 2,
+    "outputs": 331776,
+    "acc": 290304,
+    "pre": 290304,
+    "silu": 290304,
+    "post": 290304,
+    "groups": 746496,
+    "tasks": 110592,
+    "reads": 41832,
+    "parameters": 69120,
+    "barriers": 12,
+    "pools": 41472,
+    "concat_values": 1769472,
+    "negative_pool_outputs": 1628
+  },
+  "raw_states": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "new_pool_states": {
+    "17": "POOL_READ",
+    "18": "POOL_COMPARE",
+    "19": "POOL_WRITE"
+  },
+  "marker_fields": {
+    "FEATURE_SPPF_PASS": [
+      "case",
+      "blocks",
+      "runs",
+      "cycles",
+      "accounted",
+      "sequence_cycles",
+      "overhead_cycles",
+      "outputs",
+      "acc",
+      "pre",
+      "silu",
+      "post",
+      "groups",
+      "tasks",
+      "reads",
+      "parameters",
+      "barriers",
+      "pools",
+      "concat_values",
+      "long_pool_stalls",
+      "table_loads",
+      "aborted_runs",
+      "aborted_cycles",
+      "aborted_outputs",
+      "busy_id_perturb_cycles",
+      "busy_start_cycles",
+      "negative_pool_outputs"
+    ],
+    "FEAT_SPPF_RUN": [
+      "block",
+      "case",
+      "run",
+      "cycles",
+      "accounted",
+      "groups",
+      "tasks",
+      "outputs",
+      "acc",
+      "pre",
+      "silu",
+      "post",
+      "reads",
+      "parameters",
+      "barriers",
+      "pools",
+      "concat_values"
+    ],
+    "FEAT_SPPF_STAGE": [
+      "block",
+      "case",
+      "run",
+      "stage",
+      "cycles",
+      "reads",
+      "parameters",
+      "groups",
+      "tasks",
+      "outputs",
+      "barriers"
+    ],
+    "FEAT_SPPF_STATE": [
+      "block",
+      "case",
+      "run",
+      "state",
+      "cycles"
+    ],
+    "FEAT_SPPF_ABORT": [
+      "block",
+      "case",
+      "cycles",
+      "outputs"
+    ]
+  },
+  "memory_contract": {
+    "base": "0x0372c000",
+    "end_exclusive": "0x03799000",
+    "bytes": 446464,
+    "CPU_source": "Only CSP4 original source 0x0372c000..0x0373b000",
+    "SPPF_source": "SPPF reads actual client-written CSP4 output; no CPU source assignment or live-memory prefill",
+    "visibility": "Only real accepted DUT writes followed by matching block/layer barrier set visible; visible and written survive block4->block5; common reset clears both",
+    "pool": "signed INT8 max of 25 values; algorithm padding -128; physical y18/y19 fill0 without writing padding",
+    "sum": "signed9 extension of pool result; pool bypasses acc/pre/SiLU/post"
+  },
+  "read_contract": {
+    "alignment_bytes": 16,
+    "response_bits": 128,
+    "outstanding": 1,
+    "SPPF_exact_stage_reads": [
+      3456,
+      3060,
+      3060,
+      3060,
+      4608
+    ],
+    "independent_verification": "Coordinate enumeration of valid H18W32 tile/halo byte sequence with persistent per-stage line tag; not fit to RTL logs."
+  },
+  "cycle_contract": {
+    "block": "Accepted start rising edge through entering DONE rising edge inclusive; state0 accepted-start assigned stage0. Sum20state=sumstages=cycles=accounted.",
+    "clean": "Two complete runs only, <100M total cycles; initial LUT excluded.",
+    "reset": "CASE2 prefix_mode validates original CSP4 but suppresses complete STATE/STAGE/RUN and totals. Abort marks full prefix sequence through same-negedge rstn=0, including partial SPPF. Then two complete clean runs.",
+    "sequence": "First accepted start through final idle; overhead=sequence-clean-aborted. Common reset reload only overhead. Progress markers may show aborted prefix and are not complete-run evidence."
+  },
+  "root_runner_usage": "root invokes frozen single client+owner with +CASE=N +VECTORS_ROOT=<frozen/reference>; wrapper99 invokes +CASE=0 +NEGATIVE_POOL=1; no -g parameters. root alone runs ModelSim/TD.",
+  "watchdog_cycles": 130000000,
+  "native_timeout_seconds": 2400,
+  "evidence_boundary": "CSP4->SPPF is a real client memory dependency. Earlier down3/down4 remain CPU-only. No physical DDR/ERAM mapping/resource/timing/full network FPS/QAT/accuracy/bitstream/board claim."
+}

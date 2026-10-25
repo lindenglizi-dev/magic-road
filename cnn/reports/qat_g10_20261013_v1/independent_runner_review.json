@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "role": "independent_review",
+  "reviewed_at": "2026-10-13",
+  "repository": "E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision",
+  "branch": "work/roadyolo",
+  "scope": "Read-only review of the fresh 10-update QAT runner, deployment-exact model, replay/cache binding, watchdog handoff, checkpoint/resume semantics, and optional evaluator contract. No CUDA context, GPU training, or model update was started by this review.",
+  "verdict": {
+    "fresh_run_gpu_gate": "PASS_AFTER_REVIEW_FIXES",
+    "manual_resume_gate": "NOT_APPROVED",
+    "formal_acceptance": false,
+    "summary": "No unresolved blocker was found for the single fresh run through execute() after the three live fixes below. Manual resume remains deliberately outside the approved path and must not be invoked directly."
+  },
+  "review_findings": [
+    {
+      "id": "QAT-RUNNER-001",
+      "severity": "P0",
+      "status": "fixed_before_GPU",
+      "files": [
+        "cnn/hw_validation/production/train_qat.py:114",
+        "cnn/hw_validation/production/train_qat.py:125",
+        "cnn/hw_validation/production/train_qat.py:137",
+        "cnn/loss.py:222"
+      ],
+      "finding": "The initial microbatch implementation averaged already foreground-normalized YOLOX losses by sample count, which was not the 22-sample objective when microbatches had different foreground counts.",
+      "current_resolution": "Each microbatch now backpropagates its recovered loss numerator, accumulated gradients are divided once by the update-wide foreground count, and the recorded loss uses the same denominator. test_train_qat.py compares loss, pre-clip norm, and SGD parameters against one full 22-sample YOLOXLoss update.",
+      "execution_decision": "The stale CPU gate is not reusable; integration_check_v2 must pass for the corrected source identity."
+    },
+    {
+      "id": "QAT-RUNNER-002",
+      "severity": "P0",
+      "status": "fixed_before_GPU",
+      "files": [
+        "cnn/hw_validation/production/train_qat.py:288",
+        "cnn/hw_validation/production/train_qat.py:289",
+        "cnn/hw_validation/production/train_qat.py:292"
+      ],
+      "finding": "PyTorch exposes CUDA device uuid as a _CUuuid object whose string form is the bare UUID. The original object/string and bare/prefixed comparisons would reject the intended GPU-a85887e6-358e-1ebb-cf09-81b558fa321a. The original check also followed model migration to CUDA.",
+      "current_resolution": "The runner converts the property to string, removes the optional GPU- prefix, compares case-insensitively, rejects a missing value, and performs the check before moving the model to CUDA.",
+      "execution_decision": "The watchdog must still report the exact prefixed UUID before sending GO."
+    },
+    {
+      "id": "QAT-RUNNER-003",
+      "severity": "P1",
+      "status": "fixed_before_GPU",
+      "files": [
+        "cnn/hw_validation/production/train_qat.py:28",
+        "cnn/hw_validation/production/train_qat.py:276",
+        "cnn/hw_validation/production/evaluate_qat.py:108"
+      ],
+      "finding": "After moving the corrected CPU gate to integration_check_v2, the evaluator initially still loaded the stale root-level CPU_resume_check.json and would reject or mis-bind the completed candidate.",
+      "current_resolution": "The evaluator now reads integration_check_v2/CPU_resume_check.json and compares its complete identity and protocol with the final checkpoint.",
+      "execution_decision": "Evaluation remains diagnostic development17 only and is not formal acceptance."
+    },
+    {
+      "id": "QAT-RUNNER-004",
+      "severity": "P2",
+      "status": "open_not_on_fresh_execute_path",
+      "files": [
+        "cnn/hw_validation/production/train_qat.py:173",
+        "cnn/hw_validation/production/train_qat.py:190",
+        "cnn/hw_validation/production/train_qat.py:294"
+      ],
+      "finding": "validate_state does not enforce candidate/formal_acceptance kind. A directly invoked worker --resume can accept the CPU integration checkpoint (candidate=false), then emit later checkpoints as candidate=true.",
+      "impact": "This does not affect the approved fresh execute() path because execute refuses an existing RUN and passes no resume argument. It makes any future/manual resume unsafe until candidate kind and an authorized RUN-local path are enforced.",
+      "required_action": "Do not invoke worker or --resume directly for this run. Before authorizing a later resume, require candidate=true, formal_acceptance=false, a checkpoint under RUN, and an explicit protected launcher path."
+    },
+    {
+      "id": "QAT-RUNNER-005",
+      "severity": "P2",
+      "status": "evidence_boundary",
+      "files": [
+        "cnn/hw_validation/production/train_qat.py:279",
+        "cnn/hw_validation/production/train_qat.py:283",
+        "cnn/run_post_review_s.py:311",
+        "cnn/run_post_review_s.py:367",
+        "cnn/run_post_review_s.py:381"
+      ],
+      "finding": "The watchdog ownership guarantee is provided by execute() -> run_protected(). The worker's supervised-start flag plus GO input is not an authenticated proof that the watchdog exists.",
+      "impact": "No issue when the exact execute() entrypoint is used. A human must not bypass it by launching worker directly.",
+      "required_action": "Treat training_contract.json plus execution/segment artifacts as the only authorized launch evidence."
+    }
+  ],
+  "positive_checks": [
+    "ReplayWindow validates exactly ten frozen orders, 22 distinct rows per order, 11 new plus 11 replay, and coverage of every selected training row (cnn/replay_sampling.py:11-34).",
+    "Actual sample keys are checked against the frozen order before an optimizer update is published (cnn/hw_validation/production/train_qat.py:112-133).",
+    "A pause request discards the partial update gradients and publishes only the last committed complete-update checkpoint (cnn/hw_validation/production/train_qat.py:114-117, 302-307).",
+    "Every fresh checkpoint is exclusive-create plus fsync plus atomic replace, and last.pt is copied through a temporary file (cnn/hw_validation/production/train_qat.py:160-170, 309-318).",
+    "The fresh path is bounded to ten updates, AMP and TF32 are disabled, deterministic algorithms are requested, and no automatic retry or continuation is configured (cnn/hw_validation/production/train_qat.py:72-78, 285-287, 359-362).",
+    "The independent watchdog requires fresh telemetry for the requested UUID before GO, hard-stops at 75 C, hard-stops on telemetry loss or the 30-minute boundary, and owns only the launched process (cnn/training_watchdog.py:19-37, 56-116).",
+    "Dataset manifest/content, replay schedule, package graph/scales/payload, cache index/RGB, training protocol, source files, Python executable, Torch, and NumPy identities are bound into the checkpoint identity (cnn/hw_validation/production/train_qat.py:43-88).",
+    "The cache receipt reports exhaustive raw-versus-cache equality for all 86 train and 17 validation rows; prepare() independently reopens the cache against the current dataset snapshot and pinned index.",
+    "qat_exact.py keeps activation and per-output-channel weight scales frozen, corrects every node's forward value to the integer reference, preserves STE gradients, and rejects nonfinite values, INT32 bias overflow, and signed33 bound violations (cnn/hw_validation/production/qat_exact.py:34-46, 109-141, 177-238)."
+  ],
+  "source_sha256": {
+    "cnn/hw_validation/production/train_qat.py": "cc205662b82c5b75df692406a9ddd1dd426954506c909edf1e839a0110a4b8ca",
+    "cnn/hw_validation/production/qat_exact.py": "2c03d9eef2378ee1304e0fe0fe607fd8411f5eb7486058d6f1fb07d6f768821c",
+    "cnn/hw_validation/production/evaluate_qat.py": "c68406af54f8398c5c3774be69a064adec85c886d66f6951eaf0c8301da6dd08",
+    "cnn/hw_validation/production/test_train_qat.py": "416ee57b29cc4d6cda78dc80286b26a9414529cbed0973ef07ff6addf39cb222",
+    "cnn/replay_sampling.py": "22749d9ea891c060536ba7b87fa5434ed59ffa6340463efb2b3c23984d432ad6",
+    "cnn/run_post_review_s.py": "a54ec50373c57837722e87d850a731c07fe5f6851ff59bf996c1243884226738",
+    "cnn/training_watchdog.py": "31084e6aec5599fa0db2bc5ee10608c46188d3bfbb3b2d0acd24c9250ce012e2",
+    "cnn/reports/qat_g10_20261013_v1/cache_receipt.json": "0dacdeef4084edde6a2146412ce926a9a4e55eecaf292aff113ea4508654c7eb"
+  },
+  "verification": {
+    "commands": [
+      "git rev-parse --show-toplevel; git branch --show-current; git status --short",
+      "python -c ast.parse(...) over train_qat.py, qat_exact.py, evaluate_qat.py, and test_train_qat.py"
+    ],
+    "results": [
+      "Repository and branch confirmed.",
+      "AST_OK 4."
+    ],
+    "not_run": [
+      "No CUDA API, GPU check, GPU training, or evaluator run.",
+      "No full CPU resume gate was run by this reviewer; the coordinator owns that gate.",
+      "No model weights, cache, checkpoint, or production source were modified by this reviewer."
+    ]
+  }
+}

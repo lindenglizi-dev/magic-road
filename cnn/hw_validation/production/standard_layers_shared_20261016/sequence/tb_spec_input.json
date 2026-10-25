@@ -1,0 +1,69 @@
+{
+  "feature": "sequence_tb",
+  "name": "tb_standard_layer_sequence",
+  "rtl_path": "tb_standard_layer_sequence.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "o_test_complete",
+        "direction": "output",
+        "width": 1,
+        "role": "test_complete",
+        "description": "全部调度/取消复位断言通过才置高，非生产端口",
+        "clock_domain": "i_clk"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "local_sync_two_flops_or_owner_gating"
+  },
+  "parameters": {},
+  "behavior": [
+    "独立内部100MHz时钟与共同reset激励。",
+    "6240条Python固定指令逐次比层/行/列，随机请求背压和完成延迟，31层末tile才done。",
+    "非法层拒绝、取消不释放owner、共同reset恢复；受控tile端点不执行任何卷积或真实DDR。"
+  ],
+  "constraints": [
+    "仅Verilog testbench，不可综合，不代表物理实现或完整数值层计算"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "11数值向量、protocol、phase_reset，逐项DECODED160对拍"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "协议示意：省略内部变长计算，用空白间隔表示；不是固定总时延。仅valid与ready同拍消费。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p.........."
+          },
+          {
+            "name": "tile_start_valid",
+            "wave": "01..0....10"
+          },
+          {
+            "name": "tile_start_ready",
+            "wave": "0..10....10"
+          },
+          {
+            "name": "tile_done",
+            "wave": "0......10.."
+          }
+        ]
+      }
+    }
+  ]
+}

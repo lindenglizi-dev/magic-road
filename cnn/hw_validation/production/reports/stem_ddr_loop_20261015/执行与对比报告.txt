@@ -1,0 +1,38 @@
+2026-10-15：板测基线冻结与固定循环取指
+
+本轮已完成：将已上板BANKS版冻结；记录用户三次复位恢复绿色、10分钟稳定；以固定阶段/计数器替代展开命令ROM，并完成真实功能和物理验证。
+
+回退点
+../stem_ddr_program_banks_20261014/diagnostic_bitgen/HX1P35A_C7_STEM_DDR_DOWN2_BANKS.bit
+SHA256 9b8dd66127b7ac88d1b065707689e3ce3d681c80f182556c1f8cd8a7058b3aa6。
+旧源码、约束、数据库和失败记录未覆盖；本次用户观察记于board_baseline.json。该文件内引用的旧bitgen收据仍保持生成时NOT_RUN，外层status记录后续USER_REPORTED通过。
+
+设计变化
+新rtl/road_frontend_load_sequence.v：20个有界阶段、段内/参数/像素/tile计数，FETCH沿读取真实数据ROM并返回原64位命令；ADVANCE沿才推进。外层road_stem_ddr_sequence的原状态、接口及所有握手保持。
+小ROM声明：1024×16表、2048×32参数、4096×9像素，共118784 bits=14848B；旧两bank共524288 bits=65536B。声明数据量下降77.34%，不等于块RAM节省。
+参数/RGB/SiLU的扩展规则逐位保持原程序；8个算术/调度依赖及mailbox未改。
+
+功能
+Python重建6092条命令与旧program.hex逐位一致。
+独立RTL对比17704条命令，包含两次完整运行、中途参数阶段复位及78208次保持检查；ModelSim无错误/警告。
+原13例结果、错误码与每例周期完全相同。正常直接端点122921拍。
+100/133MHz实际mailbox受控端点：正常125824、随机128083拍，所有bin、256写、289读、1536PW字节均与旧版相同。没有声称加速。
+原直接回归脚本编译命令已包含loader，但哈希字典漏记它；脚本已修补，旧成功收据保留，并以direct_manifest_supplement.json绑定独立loader/双时钟闭包里的同一哈希。
+
+真实安路实现
+一次完整流程退出0，耗时718.78s。器件PH1P35MDG324/-3、CNN100MHz，原SDC及显示CDC规则不变。
+整壳含DDR/HDMI/算术/循环控制：Slice15474，DSP30，ERAM15，PLB2414/2652=91.03%。
+相对BANKS：Slice15820→15474，减少346；PLB2482→2414，减少68；DSP/ERAM不变。命令数据主要仍映射为LUT，未实现“ROM减少所以少用若干ERAM”的结论。
+全量setup+0.030ns、hold+0.020ns、recovery+0.223ns、removal+0.061ns，无负裕量；覆盖98.39%。
+原实现报告clock definition4，经同一pr.db重新读原三份SDC后归零，路径统计和最差值未改变，没有重新布局或新增例外。
+setup最差仍位于DDR PHY 100→133MHz；recovery最紧在DDR域复位到mailbox返回数据寄存器，网络占比98%；具体端点见comparison.json。
+
+未通过/边界
+当前严格门RTL894 errors/20 strict warnings，TB580 errors/0 warnings，全部原报告保留；修改前782/20及469/0是不同对象范围，不等于数值错误增减。
+23输入/49输出未指定板级delay、dummy/SYN-5025原诊断仍保留，外部接口未完整签核。没有编造IO delay。
+本候选未单独生成位流或上板；通过的板测记录属于旧BANKS回退点。
+readable-verilog-generator流程完成真实端口规格和周期图；严格交付门未闭合，不能称生产ready。无端口TB的canonical规格限制沿原诊断保留。
+
+下一步已经执行
+../frontend_ddr_full_20261015/已建立真正整层DDR调度：完整输入先写DDR、2304个Stem tile从DDR加载halo并写完整Stem、576个DW/PW tile读取实际Stem并写完整PW。该目录单独保存新参考、RTL、测试、实现及结果。
+不要求用户再重复加载这一中间循环版本，最终以整层候选的实际报告决定下一次板测文件。

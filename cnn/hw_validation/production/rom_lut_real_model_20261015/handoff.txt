@@ -1,0 +1,65 @@
+RoadYOLO C2 第五批稳定交接：真实G10 ROM与LUT（2026-10-15）
+
+一、结论与读取顺序
+实际厂商模型下：7168个160bit词/143360字节全部一致；1024 sigmoid+256 exp逐项一致。
+主代理另外从实际CSV重新拼出143360字节并核对SHA，独立检查1287条LUT记录和动态身份。
+功能通过，严格RTL门禁未通过，资源/时序/整机1FPS未测；这不是生产发布或正式精度验收。
+首先读final_receipt.json（主代理独立核对）、package_receipt.json（模型绑定），
+然后verification/final_summary.json与verification/handoff.md（实际工具及失败记录）。
+正式本机ModelSim收据：verification/reports/20261015_220747_038075_final/summary.json。
+
+二、旧模型缺口已在新候选内修正，不倒改旧数据
+旧ROM-R1/artifacts payload：66284020976ae8a6decd841403a27c09b04ce5bbf4c8c6e3073368d8832abd43。
+当前新候选payload：b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+当前physical：bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417。
+140522有效字节+2838零填充；word7026低两字节有效，其余18字节及后141词为padding。
+已有trained_integer.write_package已经导出正确56个lane。本批直接逐文件校验/导入并反向重建，
+没有重编码权重/量化，也没有调用会生成旧测试权重的numeric_package.write_package。
+artifacts/包含正确56lane及原manifest、payload、physical和words，原manifest诊断状态原样保留。
+不因新ROM读对就宣称QAT/精度已合格。旧ROM-R1源码和artifacts全程只读。
+
+三、C9/C7最小稳定源与接线
+rtl/road_numeric_rom_reader.v：R1原源字节一致，SHA d22a4ffec8e3b8536408a117865394c38b8999f7d9bb621ca5ca11e193c79421。
+rtl/road_yolo_numeric_rom_group.v：R1原源字节一致，SHA 05f1d9d70acaa9ff96265a24d2b359b09c97cca60a9ceb26e3839fc0b0aae5cb。
+rtl/road_shared_lut_service.v：上一批原源字节一致，SHA 434110b3ee9116d759704e6a998060c988910060dde011542c4c9d3fe73a51ad。
+rtl/road_real_model_lut_top.v：仅两模块纯接线，完整hash在final_receipt.json实际snapshot闭包。
+顶层client端口为既有lut_req/rsp身份字段及i_clk/i_rstn/i_cancel/o_fault，见requirements.json。
+可用本top替换受控LUT端点，不能在top之外再实例化旧服务或第二reader。
+一个reader→14组→56个PH1P_LOGIC_ERAM是静态实例组织，不是TD最终资源报告。
+reader的初始化路径固定artifacts/group_XX_lane_X.dath，仿真/集成工作目录须提供本批正确文件。
+不要混入旧R1/artifacts或依赖同名文件搜索路径。C7最终共享ROM仲裁/参数客户接线尚未完成。
+本批不拥有候选表，不复制MAC，不新增完整ROM硬件。仿真的不可变文件副本不是第二个硬件ROM。
+
+四、保持不变的握手、取消与测量边界
+reader仍cnt_wait==7，不推进R2、不缩短等待、不改变接口/II/数值/复位。
+LUT i_cancel只进原服务，不复位reader：已接受无标签读必须DRAIN消费/丢弃后才接新请求。
+共同复位仍接reader和服务，服务两级释放不变；单侧热复位及外部DDR排空不在本次证明范围。
+reader请求接受边沿→首次response_valid边沿8拍；LUT接受边沿→完整响应边沿29拍。
+1280项各1次真实ROM读；每条29拍之和37120只是响应延迟合计，不是总运行窗口或整网周期。
+取消已接受读的真实晚返回DRAIN实测8拍；客户端反压37拍、WAIT/held-response复位均通过。
+全部场景1287读/1286返回：差额为共同WAIT复位故意终止的一条，不用该故障提前退出作加速。
+三种错误身份/索引均保持原身份、error1/data0且0次ROM读。未强制ready/data/fault。
+真实reader地址7168非法故障观察37拍，不完成且不再ready；无伪造真实ROM随机fault。
+受控fault/奇数跨词的旧证据只引用shared_lut_service_1fps_20261015/，不得冒充本次真实ROM。
+
+五、工具、失败、规格与八门
+实际ModelSim SE-64 2020.4，真实ph1p_logic_eram.v/ph1p_phy_gsr.v，完整源/数据/工具hash和命令见实际summary。
+最终vlib/vlog/vsim均返回0，编译0错误/0警告；每个仿真top112个vendor INIT_FILE part-select警告事件保留。
+warnings数组有114条相关行，另2条是工具计数汇总，不是额外警告事件；未编辑厂商模型或压警告。
+失败目录完整保留：普通沙箱WinError623 DLL启动失败；首次授权运行的vsim -lib路径选择错误。
+只修本批runner的库选择，不改RTL；最终成功与历史失败分开，不把旧STARTED误判成还在运行。
+根gates/closure.json：compile passed；ast/readability/comment/naming/profile failed；
+testbench/toolchain静态调用not_requested；1610 errors/10 strict warnings，严格delivery_ready=false。
+TB注释门最后2/3项失败另列；默认不扫描TB使其其他静态passed为0文件，不能伪报有效AST验证。
+实际厂商编译/执行通过独立报告，不覆盖上述严格失败，不宣称八门全绿。
+四个设计模块canonical规格及SVG：spec_t/spec_r/spec_g/spec_l，top实际端口核对版在spec_top_check/。
+TB仅人工意图规格，无受管周期图；readable-python/script-generator未安装，不伪报对应门禁。
+
+六、可复跑入口（不要重复已完成任务）
+在本候选根：python stage_package.py（CPU字节绑定与冻结校验，不推理/训练）。
+实际仿真：python verification/run_real_rom.py --attempt-label new_manual_run --timeout 180。
+需本机ModelSim现有vlib/vlog/vsim及厂商目录；普通沙箱曾DLL失败，已授权的同源本机运行成功。
+每次仿真新建snapshot/报告，不覆盖旧失败；不需要重跑head13项或训练。
+只复核已保存结果：python stage_package.py --verify-report verification/reports/20261015_220747_038075_final/summary.json。
+下一步C9接真实head/候选RAM/NMS形成带此唯一ROM的最终框表；C7统一共享仲裁与物理实现排期。
+本周1FPS/100M及总后处理2M仍为预算，500ms过期未变；未训练、TD、生产修改、位流、板/Flash、提交或推送。

@@ -1,0 +1,12 @@
+{
+  "task_class": ["generate", "validate"],
+  "requirements": "requirements.txt",
+  "interfaces": "interfaces.json",
+  "python_before_rtl": ["reference_table.py", "reference/reference_srif.py"],
+  "rtl": ["rtl/road_detection_table_cdc.v", "rtl/road_time_snapshot.v"],
+  "reused_structure": "frozen payload plus toggle request/ack; not old unacknowledged track CDC",
+  "verification": "dual non-integer-ratio clocks; counts0/1/32/33/64; random gaps; long copy stalls; pending full; simultaneous last/SOF; resets at all copy positions; bad epoch/model/status; time loss; age500 and separate2000",
+  "strict_matrix": ["compile", "ast", "readability", "comment", "naming", "profile", "testbench", "toolchain"],
+  "scope": "component simulation and static gates only, no physical implementation, bitstream, training or production",
+  "physical_followup": "whole-top real CDC/bundled-data timing, RAM mapping and resources scheduled by C7"
+}

@@ -1,0 +1,725 @@
+{
+  "name": "csp_tile_integrated",
+  "modules": [
+    {
+      "name": "road_csp_tile_integrated",
+      "rtl_path": "rtl/road_csp_tile_integrated.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "100MHz\u540c\u57df\u65f6\u949f",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "\u5171\u540c\u5f02\u6b65\u4f4e\u6709\u6548\u590d\u4f4d",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u7a7a\u95f2\u65f6\u8868valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_addr",
+            "direction": "input",
+            "width": 10,
+            "role": "native",
+            "description": "\u987a\u5e8f\u8868\u5730\u5740",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_data",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "Q7.8\u8868\u9879",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u771f\u5b9e\u8868\u63e1\u624b\u8bb8\u53ef",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u5b8c\u6574\u8868\u6fc0\u6d3b\u72b6\u6001",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_source_begin",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u6e05\u7406\u6e90\u6709\u6548\u72b6\u6001",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_source_begin_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u5b8c\u6574\u9000\u4f11\u540e\u624d\u5141\u8bb8\u66ff\u6362\u6e90",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_source_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u6e90\u5b57\u8282valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_source_address",
+            "direction": "input",
+            "width": 10,
+            "role": "native",
+            "description": "624\u5b57\u8282\u903b\u8f91\u6e90\u7d22\u5f15",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_source_data",
+            "direction": "input",
+            "width": 8,
+            "role": "native",
+            "description": "\u6e90INT8\u5b57\u8282",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_source_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u6e90\u5b57\u8282\u63a5\u53d7\u8bb8\u53ef",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_source_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "624\u4e2a\u4e0d\u540c\u6e90\u5b57\u8282\u9f50\u5168",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u5355tile\u542f\u52a8\u8bf7\u6c42",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_start_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u6e90\u4e0e\u8868\u5b8c\u6574\u4e14\u7a7a\u95f2",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_cancel",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u8fb9\u6cbf\u524d\u53d6\u6d88\u4e14\u7c98\u6ede",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u771f\u5b9e\u5916\u90e8\u5199\u8bb8\u53ef",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u5b8c\u6574\u5916\u90e8\u5199\u8f7d\u8377valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "\u771f\u5b9eINT8\u8f93\u51fa",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_tag",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "DW\u6216PW\u8f93\u51fa\u8eab\u4efd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_address",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "\u51bb\u7ed3\u56fe\u903b\u8f91\u5b57\u8282\u5730\u5740",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_sum",
+            "direction": "output",
+            "width": 9,
+            "role": "native",
+            "description": "signed9\u6b8b\u5dee\u548c",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u4efb\u52a1\u6216\u9002\u914d\u5360\u6709",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u672b\u6b21\u5b9e\u9645\u5199\u540e\u7684\u5355\u62cd\u5b8c\u6210",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u7c98\u6ede\u6545\u969c",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "624\u552f\u4e00\u6e90\u5b57\u8282\u53ca1024\u8868\u9879\u5b8c\u6574\u540e\u5355start\u542f\u52a8\uff0c\u786c\u4ef6\u4ea7\u751f\u5168\u90e8\u63cf\u8ff0\u7b26\u548c\u64cd\u4f5c\u6570",
+        "DW\u5355\u7aef\u53e3\u6e90RAM\u62fc\u88c5\uff1bPW\u53ea\u6d88\u8d39192\u4e2a\u5b9e\u9645DW\u5199\u9f50\u540e\u7684\u7f13\u5b58\u54cd\u5e94",
+        "\u6700\u540e\u6709\u6548\u5916\u90e8\u5199\u63e1\u624b\u6ce8\u518c\u4e3a\u4e0b\u4e00\u62cd\u9000\u4f11\u8109\u51b2\u518d\u63a8\u8fdb\u4efb\u52a1\uff1bDW\u5199\u5165\u7f13\u5b58\u4e0e\u5916\u90e8\u89c2\u5bdf\u540c\u6b65\u63a5\u53d7",
+        "source_begin\u53ea\u6e05\u6e90\u6709\u6548\u6027\uff0cstart\u53ea\u6e05\u7f13\u5b58\u6709\u6548\u6027\uff0c\u8de8tile\u4fdd\u7559SiLU\u8868"
+      ],
+      "constraints": [
+        "\u4ec5\u9996\u6b8b\u5deetile\uff0c\u4e0d\u4ee3\u8868\u5b8c\u6574CSP2\u3001\u6574\u7f51\u3001\u771f\u5b9eDDR\u6216\u7269\u7406\u5b9e\u73b0",
+        "\u4fdd\u7559\u51bb\u7ed3\u7b97\u672f\u7aef\u53e3\u3001II\u548c\u6570\u503c"
+      ],
+      "corner_cases": [
+        "\u5b8c\u6574\u6e90\u4e0e\u8868\u4e4b\u524d\u7981\u6b62\u542f\u52a8",
+        "\u6e90\u91cd\u590d\u548c\u8d8a\u754c\u5199\u7c98\u6ede\u9519\u8bef",
+        "\u590d\u4f4d\u53d6\u6d88\u5168\u90e8\u5728\u9014\u6709\u6548\u4f4d",
+        "\u8f93\u51fa\u53cd\u538b\u4fdd\u6301"
+      ],
+      "verification_cases": [
+        "320\u7ec4\u3001160\u4efb\u52a1\u3001384\u8f93\u51fa\u548c\u5404\u4e2d\u95f4\u503c\u9010\u9879\u4e00\u81f4",
+        "192\u5b9e\u9645DW\u5199\u9a71\u52a8128\u6b21PW\u7f13\u5b58\u8bfb",
+        "\u968f\u673a\u4e0e\u957f\u53cd\u538b",
+        "\u4e09\u9636\u6bb5\u590d\u4f4d",
+        "\u4e24\u6b21\u4e0d\u540c\u8f93\u5165tile\u4e0d\u590d\u4f4d\u6838\u5fc3\u6216\u91cd\u88c5\u8868",
+        "\u5916\u90e8\u53d6\u6d88\u963b\u6b62\u540c\u62cd\u5199"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "sequence",
+          "title": "\u56fa\u5b9atile\u8fb9\u754c\u4e0e\u5b8c\u6210",
+          "scenario": "sequence",
+          "description": "\u7701\u7565\u5b9e\u9645\u7b97\u672f\u5ef6\u8fdf\uff1bdone\u4e25\u683c\u6765\u81ea\u6700\u540e\u5b9e\u9645\u5199",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..|....."
+              },
+              {
+                "name": "i_start",
+                "wave": "010|....."
+              },
+              {
+                "name": "o_busy",
+                "wave": "011|11110"
+              },
+              {
+                "name": "write_accept",
+                "wave": "0..|...10"
+              },
+              {
+                "name": "o_done",
+                "wave": "0..|....1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "road_csp_dw_cache",
+      "rtl_path": "rtl/road_csp_dw_cache.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "\u540c\u57df\u65f6\u949f",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "\u5171\u540c\u5f02\u6b65\u590d\u4f4d",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u542f\u52a8\u65b0tile\u65f6\u540c\u6b65\u6e05\u6709\u6548\u4f4d",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u771f\u5b9eDW\u5199\u8bf7\u6c42",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_index",
+            "direction": "input",
+            "width": 8,
+            "role": "native",
+            "description": "0\u81f3191\u903b\u8f91\u7d22\u5f15",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_data",
+            "direction": "input",
+            "width": 8,
+            "role": "native",
+            "description": "\u771f\u5b9eDW\u5b57\u8282",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "PW\u516b\u8f93\u5165\u7ec4\u8bf7\u6c42",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_pixel",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "4x4\u50cf\u7d20\u4f4d\u7f6e",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_group",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u516b\u52a0\u56db\u8f93\u5165\u5206\u7ec4",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u54cd\u5e94\u6d88\u8d39\u8bb8\u53ef",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_write_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u91c7\u96c6\u9636\u6bb5\u5199\u8bb8\u53ef",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_write_legal",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u5f53\u524dDW\u7d22\u5f15\u5408\u6cd5\u4e14\u672a\u5199",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "192\u4e2a\u4e0d\u540c\u7ed3\u679c\u5df2\u9f50\u5168",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_write_count",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "\u552f\u4e00\u5b9e\u9645\u5199\u6570\u91cf",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u975e\u6cd5\u5199\u7c98\u6ede\u9519\u8bef",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_read_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u5b8c\u6574\u5c4f\u969c\u53ca\u54cd\u5e94\u7a7a\u95f4\u8bb8\u53ef",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u6ce8\u518c\u7f13\u5b58\u54cd\u5e94valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 64,
+            "role": "native",
+            "description": "\u516b\u5b57\u8282\u5b9e\u9645\u7f13\u5b58\u503c",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_mask",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "\u672b\u7ec4\u53ea\u4f4e\u56dblane\u6709\u6548",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_pixel",
+            "direction": "output",
+            "width": 4,
+            "role": "native",
+            "description": "\u54cd\u5e94\u50cf\u7d20\u8eab\u4efd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_group",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u54cd\u5e94\u5206\u7ec4\u8eab\u4efd",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "i_clear\u540c\u6b65\u64a4\u9500\u4f4d\u56fe\u3001\u8ba1\u6570\u53ca\u54cd\u5e94valid\uff0c\u4e0d\u590d\u4f4dRAM\uff0c\u4e0d\u6e05\u9664\u7c98\u6ede\u6545\u969c",
+        "192\u4e0d\u540c\u6709\u6548\u5199\u4e4b\u540e\u5141\u8bb8PW\u8bf7\u6c42\uff0c\u54cd\u5e94\u4e00\u69fd\u5e76\u4fdd\u6301\u81f3\u771f\u5b9e\u63a5\u53d7"
+      ],
+      "constraints": [
+        "\u4ec5\u9996\u6b8b\u5deetile\uff0c\u4e0d\u4ee3\u8868\u5b8c\u6574CSP2\u3001\u6574\u7f51\u3001\u771f\u5b9eDDR\u6216\u7269\u7406\u5b9e\u73b0",
+        "\u4fdd\u7559\u51bb\u7ed3\u7b97\u672f\u7aef\u53e3\u3001II\u548c\u6570\u503c"
+      ],
+      "corner_cases": [
+        "\u5b8c\u6574\u6e90\u4e0e\u8868\u4e4b\u524d\u7981\u6b62\u542f\u52a8",
+        "\u6e90\u91cd\u590d\u548c\u8d8a\u754c\u5199\u7c98\u6ede\u9519\u8bef",
+        "\u590d\u4f4d\u53d6\u6d88\u5168\u90e8\u5728\u9014\u6709\u6548\u4f4d",
+        "\u8f93\u51fa\u53cd\u538b\u4fdd\u6301"
+      ],
+      "verification_cases": [
+        "320\u7ec4\u3001160\u4efb\u52a1\u3001384\u8f93\u51fa\u548c\u5404\u4e2d\u95f4\u503c\u9010\u9879\u4e00\u81f4",
+        "192\u5b9e\u9645DW\u5199\u9a71\u52a8128\u6b21PW\u7f13\u5b58\u8bfb",
+        "\u968f\u673a\u4e0e\u957f\u53cd\u538b",
+        "\u4e09\u9636\u6bb5\u590d\u4f4d",
+        "\u4e24\u6b21\u4e0d\u540c\u8f93\u5165tile\u4e0d\u590d\u4f4d\u6838\u5fc3\u6216\u91cd\u88c5\u8868",
+        "\u5916\u90e8\u53d6\u6d88\u963b\u6b62\u540c\u62cd\u5199"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "sequence",
+          "title": "\u56fa\u5b9atile\u8fb9\u754c\u4e0e\u5b8c\u6210",
+          "scenario": "sequence",
+          "description": "\u7701\u7565\u5b9e\u9645\u7b97\u672f\u5ef6\u8fdf\uff1bdone\u4e25\u683c\u6765\u81ea\u6700\u540e\u5b9e\u9645\u5199",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..|....."
+              },
+              {
+                "name": "i_clear",
+                "wave": "010|....."
+              },
+              {
+                "name": "o_loaded",
+                "wave": "100|..111"
+              },
+              {
+                "name": "i_read_valid",
+                "wave": "0..|...10"
+              },
+              {
+                "name": "o_output_valid",
+                "wave": "0..|....1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tb_csp_tile_integrated",
+      "rtl_path": "tests/tb_csp_tile_integrated.v",
+      "clock": {
+        "name": "clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u6240\u6709\u5f53\u524d\u573a\u666f\u68c0\u67e5\u901a\u8fc7",
+            "clock_domain": "clk"
+          }
+        ]
+      },
+      "behavior": [
+        "\u53ea\u4f9b\u5e94\u6e90\u3001\u8868\u548c\u5916\u90e8\u80cc\u538b\uff0c\u4e0d\u9a71\u52a8\u5185\u90e8\u4efb\u52a1\u3001\u64cd\u4f5c\u6570\u6216\u5b8c\u6210",
+        "\u771f\u5b9e\u6838\u5fc3\u5404\u9636\u6bb5\u4e0e\u540c\u5305\u6574\u6570golden\u5bf9\u62cd\uff0c\u91cd\u590dtile\u6539\u53d8\u6e90\u4ee5\u6355\u83b7\u65e7\u7f13\u5b58"
+      ],
+      "constraints": [
+        "\u4ec5\u9996\u6b8b\u5deetile\uff0c\u4e0d\u4ee3\u8868\u5b8c\u6574CSP2\u3001\u6574\u7f51\u3001\u771f\u5b9eDDR\u6216\u7269\u7406\u5b9e\u73b0",
+        "\u4fdd\u7559\u51bb\u7ed3\u7b97\u672f\u7aef\u53e3\u3001II\u548c\u6570\u503c"
+      ],
+      "corner_cases": [
+        "\u5b8c\u6574\u6e90\u4e0e\u8868\u4e4b\u524d\u7981\u6b62\u542f\u52a8",
+        "\u6e90\u91cd\u590d\u548c\u8d8a\u754c\u5199\u7c98\u6ede\u9519\u8bef",
+        "\u590d\u4f4d\u53d6\u6d88\u5168\u90e8\u5728\u9014\u6709\u6548\u4f4d",
+        "\u8f93\u51fa\u53cd\u538b\u4fdd\u6301"
+      ],
+      "verification_cases": [
+        "320\u7ec4\u3001160\u4efb\u52a1\u3001384\u8f93\u51fa\u548c\u5404\u4e2d\u95f4\u503c\u9010\u9879\u4e00\u81f4",
+        "192\u5b9e\u9645DW\u5199\u9a71\u52a8128\u6b21PW\u7f13\u5b58\u8bfb",
+        "\u968f\u673a\u4e0e\u957f\u53cd\u538b",
+        "\u4e09\u9636\u6bb5\u590d\u4f4d",
+        "\u4e24\u6b21\u4e0d\u540c\u8f93\u5165tile\u4e0d\u590d\u4f4d\u6838\u5fc3\u6216\u91cd\u88c5\u8868",
+        "\u5916\u90e8\u53d6\u6d88\u963b\u6b62\u540c\u62cd\u5199"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "sequence",
+          "title": "\u56fa\u5b9atile\u8fb9\u754c\u4e0e\u5b8c\u6210",
+          "scenario": "sequence",
+          "description": "\u7701\u7565\u5b9e\u9645\u7b97\u672f\u5ef6\u8fdf\uff1bdone\u4e25\u683c\u6765\u81ea\u6700\u540e\u5b9e\u9645\u5199",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p..|..."
+              },
+              {
+                "name": "o_test_complete",
+                "wave": "0..|..1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "road_csp_tile_program",
+      "rtl_path": "rtl/road_csp_tile_program.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "\u540c\u57df\u65f6\u949f",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "\u6ce8\u518c\u54cd\u5e94\u590d\u4f4d",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_enable",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "IDLE\u6355\u83b7\u63cf\u8ff0\u7b26\u65f6\u8bfb\u53d6",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_weight_index",
+            "direction": "input",
+            "width": 6,
+            "role": "native",
+            "description": "56\u8bcd\u7d27\u51d1\u6743\u91cd\u5730\u5740",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_parameter_index",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "16\u8bcd\u53c2\u6570\u5730\u5740",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_weight",
+            "direction": "output",
+            "width": 192,
+            "role": "native",
+            "description": "\u6ce8\u518c\u6743\u91cd\u8bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_parameter",
+            "direction": "output",
+            "width": 248,
+            "role": "native",
+            "description": "\u6ce8\u518c\u53c2\u6570\u8bcd",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "\u663e\u5f0f\u5e38\u91cfcase\uff0c\u4e0d\u4f7f\u7528\u6570\u7ec4readmemh\uff0c\u5168\u90e8\u503c\u7531\u540c\u4e00\u51bb\u7ed3\u6574\u6570\u5305\u751f\u6210",
+        "\u771f\u5b9e\u63cf\u8ff0\u7b26\u6355\u83b7\u6cbf\u8bfb\u53d6\uff0c\u4e0b\u4e00\u62cdPREPARE\u6d88\u8d39\uff1breset\u6e05\u54cd\u5e94\uff0c\u65e0\u4f7f\u80fd\u65f6\u4fdd\u6301"
+      ],
+      "constraints": [
+        "\u4ec5\u9996\u6b8b\u5deetile\uff0c\u4e0d\u4ee3\u8868\u5b8c\u6574CSP2\u3001\u6574\u7f51\u3001\u771f\u5b9eDDR\u6216\u7269\u7406\u5b9e\u73b0",
+        "\u4fdd\u7559\u51bb\u7ed3\u7b97\u672f\u7aef\u53e3\u3001II\u548c\u6570\u503c"
+      ],
+      "corner_cases": [
+        "\u5b8c\u6574\u6e90\u4e0e\u8868\u4e4b\u524d\u7981\u6b62\u542f\u52a8",
+        "\u6e90\u91cd\u590d\u548c\u8d8a\u754c\u5199\u7c98\u6ede\u9519\u8bef",
+        "\u590d\u4f4d\u53d6\u6d88\u5168\u90e8\u5728\u9014\u6709\u6548\u4f4d",
+        "\u8f93\u51fa\u53cd\u538b\u4fdd\u6301"
+      ],
+      "verification_cases": [
+        "320\u7ec4\u3001160\u4efb\u52a1\u3001384\u8f93\u51fa\u548c\u5404\u4e2d\u95f4\u503c\u9010\u9879\u4e00\u81f4",
+        "192\u5b9e\u9645DW\u5199\u9a71\u52a8128\u6b21PW\u7f13\u5b58\u8bfb",
+        "\u968f\u673a\u4e0e\u957f\u53cd\u538b",
+        "\u4e09\u9636\u6bb5\u590d\u4f4d",
+        "\u4e24\u6b21\u4e0d\u540c\u8f93\u5165tile\u4e0d\u590d\u4f4d\u6838\u5fc3\u6216\u91cd\u88c5\u8868",
+        "\u5916\u90e8\u53d6\u6d88\u963b\u6b62\u540c\u62cd\u5199"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "sequence",
+          "title": "\u56fa\u5b9atile\u8fb9\u754c\u4e0e\u5b8c\u6210",
+          "scenario": "sequence",
+          "description": "\u7701\u7565\u5b9e\u9645\u7b97\u672f\u5ef6\u8fdf\uff1bdone\u4e25\u683c\u6765\u81ea\u6700\u540e\u5b9e\u9645\u5199",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_enable",
+                "wave": "010..."
+              },
+              {
+                "name": "o_weight",
+                "wave": "x.====",
+                "data": [
+                  "weights"
+                ]
+              },
+              {
+                "name": "o_parameter",
+                "wave": "x.====",
+                "data": [
+                  "params"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+"""31固定层替换候选独立验证；headINT16/激活INT8分型，使用各自参数表/物理行镜像。"""
+from __future__ import annotations
+
+import argparse
+import csv
+from datetime import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parent
+PACKAGE = ROOT.parent
+PROJECT = PACKAGE.parents[3]
+SKILL = Path('C:/Users/lenovo/.codex/skills/readable-verilog-generator')
+MODEL = Path('D:/modeltech64_2020.4/win64')
+VENDOR = Path('E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/sim_release/ph1p')
+REUSED = PACKAGE.parent / 'feature_blocks_shared_20261015/frozen_attempt2/reused'
+TABLE = REUSED.parent / 'reference/csp3/parameters/silu.hex'
+CORES = ('road_mac_probe','road_dynamic_postprocess','road_dynamic_requant','road_round_shift','silu_shared_unit')
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+
+
+def save(path, value):
+    path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--label',default='local')
+    parser.add_argument('--only',type=int)
+    parser.add_argument('--mode',type=int,default=0)
+    parser.add_argument('--negative',action='store_true')
+    parser.add_argument('--random',type=int,default=1)
+    parser.add_argument('--gates',action='store_true')
+    parser.add_argument('--protocol-suite',action='store_true')
+    parser.add_argument('--workstore-source',type=Path,help='Only select after coordinator accepts the C4 source/latency receipt')
+    parser.add_argument('--reference-set',choices=('original','extended','head'),default='head')
+    parser.add_argument('--owner-source',type=Path,required=True)
+    parser.add_argument('--owner-receipt',type=Path,required=True)
+    parser.add_argument('--owner-gated-receipt',type=Path,required=True)
+    parser.add_argument('--head-scale',choices=('S16','S8','S4'))
+    parser.add_argument('--representative-per-layer',action='store_true')
+    parser.add_argument('--timeout',type=int,default=180)
+    args = parser.parse_args()
+    if not re.fullmatch(r'[a-zA-Z0-9_]+',args.label):
+        raise ValueError('safe attempt label required')
+    report = ROOT / 'runs' / (datetime.now().strftime('%H%M%S_%f')+'_'+args.label[:12])
+    report.mkdir(parents=True)
+    snapshot = report / 'inputs'
+    snapshot.mkdir()
+    reference = PACKAGE / {'original':'reference','extended':'reference_extended','head':'reference_head'}[args.reference_set]
+    original = {}
+    def include(source, destination):
+        original[str(source)] = sha(source)
+        destination.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(source,destination)
+    manifest = read(reference / 'artifact_manifest.json')
+    for relative,digest in manifest.items():
+        if sha(reference / relative) != digest:
+            raise ValueError('reference manifest mismatch: '+relative)
+        include(reference / relative,snapshot / 'reference' / relative)
+    include(reference / 'artifact_manifest.json',snapshot / 'reference/artifact_manifest.json')
+    for path,digest in read(reference / 'input_binding.json')['source_sha256'].items():
+        if sha(Path(path)) != digest:
+            raise ValueError('original reference input changed: '+path)
+        original[path] = digest
+    for name in ('requirements.json','codegen_plan.txt','ports.json'):
+        include(PACKAGE / name,snapshot / name)
+    include(PACKAGE / 'head/client/requirements.json',snapshot / 'head_requirements.json')
+    include(PACKAGE / 'head/client/ports.json',snapshot / 'head_ports.json')
+    owner_receipt=read(args.owner_receipt)
+    if not owner_receipt.get('status','').startswith('PASS'):
+        raise ValueError('new arithmetic owner has no accepted functional receipt')
+    owner_run=args.owner_receipt.resolve().parent
+    owner_binding=read(owner_run / 'binding.json')
+    for path,digest in owner_binding['source_vector_sha256'].items():
+        if sha(owner_run / path)!=digest: raise ValueError('new owner immutable closure changed: '+path)
+    for section in ('tool_sha256','frozen_sources'):
+        for path,digest in owner_binding[section].items():
+            if sha(Path(path))!=digest: raise ValueError('new owner tool/frozen source changed: '+path)
+    if sha(args.owner_source)!=owner_binding['source_vector_sha256']['rtl\\road_standard_arithmetic_owner.v']:
+        raise ValueError('new owner source differs from qualified immutable run')
+    include(args.owner_receipt.resolve(),snapshot / 'owner_qualification.json')
+    include(owner_run / 'binding.json',snapshot / 'owner_binding.json')
+    include(owner_run / 'simulation.log',snapshot / 'owner_simulation.log')
+    gated_run=args.owner_gated_receipt.resolve().parent
+    gated_status=read(args.owner_gated_receipt)
+    gated_binding=read(gated_run / 'binding.json')
+    if gated_status.get('status')!='PASS_FUNCTION' or gated_status.get('case')!=21:
+        raise ValueError('owner gated-valid bad-input regression is not qualified')
+    for path,digest in gated_binding['source_vector_sha256'].items():
+        if sha(gated_run / path)!=digest: raise ValueError('owner gated-valid regression immutable input changed')
+    if sha(args.owner_source)!=gated_binding['source_vector_sha256']['rtl\\road_standard_arithmetic_owner.v']:
+        raise ValueError('owner source differs from gated-valid negative qualified version')
+    for name in ('status.json','binding.json','simulation.log'):
+        include(gated_run / name,snapshot / 'owner_gated_regression' / name)
+    include(args.owner_source.resolve(),snapshot / 'reused/road_standard_arithmetic_owner.v')
+    for path in (PACKAGE / 'head/client/rtl').glob('*.v'):
+        include(path,snapshot / 'rtl' / path.name)
+    for name in CORES:
+        include(REUSED / (name+'.v'),snapshot / 'reused' / (name+'.v'))
+    for name in ('ph1p_logic_eram.v','ph1p_phy_gsr.v'):
+        include(VENDOR / name,snapshot / 'vendor' / name)
+    include(TABLE,snapshot / 'silu.hex')
+    for name in ('tb_standard_tile_client.v','run_standard_tile.py','physical_backend.py'):
+        include(ROOT / name,snapshot / 'verification' / name)
+    if args.workstore_source:
+        from physical_backend import connect_physical
+        qualified=PACKAGE.parent / 'workstore_feature_20261016/storage_frozen'
+        binding=read(qualified / 'input_binding.json')
+        for section in ('original_sha256','staged_sha256'):
+            for path,digest in binding[section].items():
+                if sha(Path(path))!=digest: raise ValueError('C4 qualification closure changed: '+path)
+                original[path]=digest
+        expected='0d9f78544ce6e726a8ff042d7be0f5a2aee7d717bfbde0495a98a78dea25eb1c'
+        if sha(args.workstore_source)!=expected: raise ValueError('C4 source differs from qualified frozen endpoint')
+        include(qualified / 'input_binding.json',snapshot / 'c4_qualification/input_binding.json')
+        for number in (0,1,99):
+            status=read(qualified / f'workstore_case{number}/status.json')
+            wanted='PASS_REAL_CHECKER_NEGATIVE' if number==99 else 'PASS_FUNCTION_CASE'
+            if status['status']!=wanted: raise ValueError('C4 endpoint case is not qualified')
+            for name in ('status.json','receipt.json','commands.json','simulation.log','compile.log'):
+                include(qualified / f'workstore_case{number}' / name,snapshot / f'c4_qualification/case{number}' / name)
+        observation=PACKAGE.parent / 'workstore_feature_20261016/native_endpoint_observation_attempt3/receipt.json'
+        obs=read(observation)
+        if obs['byte_request_to_response_valid_cycles']!=[2] or obs['weight_request_to_response_valid_cycles']!=[4] or obs['complete_case_pass']:
+            raise ValueError('C4 partial native timing observation contract changed')
+        include(observation,snapshot / 'c4_qualification/native_endpoint_observation_receipt.json')
+        include(args.workstore_source.resolve(),snapshot / 'reused/road_feature_workstore.v')
+        path=snapshot / 'verification/tb_standard_tile_client.v'
+        path.write_text(connect_physical(path.read_text(encoding='utf-8')),encoding='utf-8')
+    tools = {name:dict(path=str(MODEL / (name+'.exe')),sha256=sha(MODEL / (name+'.exe'))) for name in ('vlib','vlog','vsim')}
+    descriptor = read(snapshot / 'reference/tasks.json')
+    param_count = len(read(snapshot / 'reference/parameter_responses.json'))
+    base_by_layer = {12:56975360,13:57196544,26:57708544,27:57819136}
+    cases = []
+    for layer in descriptor['layers']:
+        h,w,c=layer['input_shape_hwc']
+        layer_root=snapshot / 'reference' / layer['name']
+        if args.reference_set!='original':
+            lines={int(word,16)>>128:int(word,16)&((1<<128)-1) for word in (layer_root / 'input_lines160.hex').read_text().splitlines()}
+            ranges=read(layer_root / 'input_backing_ranges.json')['allocations']
+            if not all(address%16==0 and any(r['base']<=address and address+16<=r['end'] for r in ranges) for address in lines):
+                raise ValueError('physical line is outside declared backing allocation')
+            for word in (layer_root / 'input_physical40.hex').read_text().splitlines():
+                packed=int(word,16); address=packed>>8
+                if ((lines[address&~15]>>((address%16)*8))&255)!=(packed&255):
+                    raise ValueError('physical byte image differs from line image')
+        else:
+            base=base_by_layer[layer['layer_id']]
+            values=[int(word,16) for word in (layer_root / 'input_hwc8.hex').read_text().splitlines()]
+            physical=bytearray(((h+3)//4)*(w//4)*16*c)
+            for y in range(h):
+                for x in range(w):
+                    start=((((y//4)*(w//4)+x//4)*16+(y%4)*4+x%4)*c)
+                    physical[start:start+c]=bytes(values[(y*w+x)*c:(y*w+x+1)*c])
+            lines={base+offset:int.from_bytes(physical[offset:offset+16],'little') for offset in range(0,len(physical),16)}
+        line_base=min(lines)
+        if max(lines)-line_base>=262144*16: raise ValueError('source image exceeds testbench direct line index')
+        (layer_root / 'line_image128.hex').write_text(''.join(f'@{(address-line_base)//16:x}\n{data:032x}\n' for address,data in sorted(lines.items())),encoding='ascii')
+        (layer_root / 'line_present1.hex').write_text(''.join(f'@{(address-line_base)//16:x}\n1\n' for address in sorted(lines)),encoding='ascii')
+        for case in layer['cases']:
+            case_root = snapshot / 'reference' / case['directory']
+            transactions = list(csv.DictReader((case_root / 'wif1_transactions.csv').open(encoding='utf-8')))
+            byte_rows = [r for r in transactions if r['channel']=='byte']
+            weight_rows = [r for r in transactions if r['channel']=='weight']
+            for rows,name,width,shift in ((byte_rows,'byte_trace29.hex',8,16),(weight_rows,'weight_trace390.hex',192,384)):
+                packed=[]
+                for row in rows:
+                    address=int(row['address_or_group']); write=int(row['write'])
+                    request=int(row['request_hex'],16); response=int(row['response_hex'],16)
+                    word=(((write << (12 if width==8 else 5))|address)<<shift)|(request<<width)|response
+                    packed.append(f'{word:0{(shift+(13 if width==8 else 6)+3)//4}x}\n')
+                (case_root / name).write_text(''.join(packed),encoding='ascii')
+            task_rows=read(case_root / 'tasks.json')
+            (case_root / 'task_output_int16.hex').write_text(''.join(f'{int(row.get("output_int16",False)):x}\n' for row in task_rows),encoding='ascii')
+            if args.reference_set!='head':
+                writes=[int(word,16) for word in (case_root / 'output_writes40.hex').read_text().splitlines()]
+                (case_root / 'output_writes48.hex').write_text(''.join(f'{((word>>8)<<16)|(word&255):012x}\n' for word in writes),encoding='ascii')
+            (case_root / 'task_quant248.hex').write_text(''.join(f'{r["quant248"]:062x}\n' for r in task_rows),encoding='ascii')
+            cached_line=None
+            expected_reads=[]
+            for word in (case_root / 'fill_source_addresses32.hex').read_text().splitlines():
+                address=int(word,16)
+                if address!=0xffffffff and address&~15!=cached_line:
+                    cached_line=address&~15
+                    if cached_line not in lines: raise ValueError('fill references absent physical source line')
+                    expected_reads.append(cached_line)
+            (case_root / 'source_read_addresses32.hex').write_text(''.join(f'{address:08x}\n' for address in expected_reads),encoding='ascii')
+            outputs=sum(int(r['mask']).bit_count() for r in task_rows)
+            activated_outputs=sum(int(row['mask']).bit_count() for row in task_rows if not row.get('output_int16',False))
+            cfg=[layer['layer_id'],case['tile_y'],case['tile_x'],h,w,c,line_base,case['groups'],case['tasks'],outputs,param_count,len(byte_rows),len(weight_rows),h*w*c,len(expected_reads),activated_outputs]
+            (case_root / 'cfg.hex').write_text(''.join(f'{n:08x}\n' for n in cfg),encoding='ascii')
+            cases.append(dict(layer=layer,case=case,root=case_root,cfg=cfg))
+    closure={p.relative_to(snapshot).as_posix():sha(p) for p in snapshot.rglob('*') if p.is_file()}
+    receipt=dict(status='STARTED',reference_set=args.reference_set,original_sha256=original,snapshot_sha256=closure,tools=tools,
+                 physical_workstore_selected=bool(args.workstore_source),physical_resource_mapping_proven=False,
+                 python=dict(path=sys.executable,sha256=sha(Path(sys.executable))),commands=[],tests=[],
+                 boundaries=[('Actual C4 WIF1 selected; arrays only independently score expected transactions; mapping unproven' if args.workstore_source else 'Behavioral WIF1 only; arrays are testbench endpoint state, not physical4ERAM'),
+                             'Actual sole arithmetic owner and five frozen arithmetic source files',
+                             'Representative tiles from CPU tensors; no actual preceding hardware producer',
+                             'No full ROM7168 rerun, synthesis, DDR, board, whole network, accuracy or FPS claim'])
+    def persist(): save(report / 'summary.json',receipt)
+    def command(name,argv,cwd=snapshot,timeout=None):
+        temporary = report / 'runtime_tmp'
+        temporary.mkdir(exist_ok=True)
+        try:
+            result=subprocess.run(list(map(str,argv)),cwd=cwd,capture_output=True,text=True,encoding='utf-8',errors='replace',
+                                  timeout=timeout or args.timeout,env=dict(os.environ,PYTHONPATH=str(SKILL),TEMP=str(temporary),TMP=str(temporary)))
+            native_code=result.returncode
+            content=result.stdout+result.stderr
+        except (OSError, subprocess.TimeoutExpired) as error:
+            native_code=-998
+            content=repr(error)
+        log=report / (name+'.log'); log.write_text(content,encoding='utf-8')
+        effective=native_code or int(bool(re.search(r'\*\* (?:Error|Fatal):',content)))
+        receipt['commands'].append(dict(name=name,argv=list(map(str,argv)),cwd=str(cwd),returncode=native_code,
+                                        effective_returncode=effective,log_sha256=sha(log)))
+        persist(); return effective,content
+    persist()
+    for name,arguments in dict(dependencies=['scripts.python.toolchain.manage_skill_dependencies','check','--settings','config/defaults.json'],
+                               renderer=['scripts.python.toolchain.wavedrom_runtime','--settings','config/defaults.json','check'],
+                               readiness=['scripts.python.toolchain.preflight_verilog_toolchain','--settings','config/defaults.json','--readiness','execute']).items():
+        command(name,[sys.executable,'-B','-m',*arguments],SKILL,60)
+    if args.gates:
+        command('strict_gate',[sys.executable,'-B','-m','scripts.python.validation.generated_deliverable_gate',snapshot,'--include-testbench',
+                              '--json',report / 'gate.json','--markdown',report / 'gate.md'],SKILL,300)
+    code,_=command('vlib',[MODEL / 'vlib.exe','work'])
+    if code: raise RuntimeError('vlib failed: '+str(report))
+    sources=[*sorted((snapshot / 'vendor').glob('*.v')),*[snapshot / 'reused' / (n+'.v') for n in CORES],snapshot / 'reused/road_standard_arithmetic_owner.v',snapshot / 'rtl/road_standard_tile_client.v',snapshot / 'verification/tb_standard_tile_client.v']
+    if args.workstore_source:
+        sources.insert(-2,snapshot / 'reused/road_feature_workstore.v')
+    code,content=command('compile',[MODEL / 'vlog.exe','-work','work',*sources])
+    if code:
+        receipt['status']='COMPILE_FAILED';persist();print(report);return 1
+    chosen=cases if args.only is None else [cases[args.only]]
+    if args.representative_per_layer:
+        chosen=[item for item in chosen if item['case']['case']==0]
+    if args.head_scale:
+        lower,upper={'S16':(98,104),'S8':(90,96),'S4':(82,88)}[args.head_scale]
+        chosen=[item for item in chosen if lower<=item['layer']['layer_id']<=upper]
+    runs=[(cases[0],mode,False) for mode in range(1,13)]+[(cases[0],0,True)] if args.protocol_suite else [(item,args.mode,args.negative) for item in chosen]
+    for number,(item,mode,negative) in enumerate(runs):
+        trace=report / f'trace_{number}.csv'
+        layer_root=snapshot / 'reference' / item['layer']['name']
+        argv=[MODEL / 'vsim.exe','-c','-lib','work','PH1P_PHY_GSR','tb_standard_tile_client',
+              '+VECTOR_ROOT='+(snapshot / 'reference').as_posix(),'+LAYER_ROOT='+layer_root.as_posix(),
+              '+CASE_ROOT='+item['root'].as_posix(),'+TABLE='+(snapshot / 'silu.hex').as_posix(),'+TRACE='+trace.as_posix(),
+              f'+MODE={mode}',f'+NEGATIVE={int(negative)}',f'+RANDOM={args.random}',
+              '-do','onerror {quit -code 1}; onbreak {quit -code 1}; run -all; quit -code 0']
+        code,content=command('simulation_'+str(number),argv)
+        marker='STANDARD_TILE_PROTOCOL_PASS' if mode else 'STANDARD_TILE_PASS'
+        passed=(bool(code) and 'ACC_MISMATCH task=0 negative=1' in content and marker not in content) if negative else code==0 and content.count(marker)==1
+        receipt['tests'].append(dict(layer=item['layer']['layer_id'],case=item['case']['case'],mode=mode,negative=negative,
+                                     status='PASS_REAL_CHECKER_NEGATIVE' if passed and negative else 'PASS' if passed else 'FAILED',
+                                     metrics=[line for line in content.splitlines() if 'STANDARD_TILE_' in line],trace_sha256=sha(trace) if trace.exists() else None))
+        persist();print(item['layer']['layer_id'],item['case']['case'],receipt['tests'][-1]['status'],flush=True)
+        if not passed: break
+    receipt['snapshot_unchanged']=all(sha(snapshot / p)==d for p,d in closure.items())
+    receipt['original_unchanged']=all(sha(Path(p))==d for p,d in original.items())
+    receipt['status']='PASS' if receipt['snapshot_unchanged'] and receipt['original_unchanged'] and all(t['status'].startswith('PASS') for t in receipt['tests']) else 'FAILED_PRESERVED'
+    persist();print(report);return 0 if receipt['status']=='PASS' else 1
+
+
+if __name__=='__main__':
+    raise SystemExit(main())

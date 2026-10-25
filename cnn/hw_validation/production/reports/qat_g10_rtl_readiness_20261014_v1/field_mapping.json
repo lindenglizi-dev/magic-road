@@ -1,0 +1,15 @@
+{
+  "authority": "retained QAT-G10 package manifest; same existing Stem/down2 loader field kinds",
+  "byte_order": "little",
+  "physical_layout": {"word_bytes": 20, "groups": 14, "words_per_group": 512, "lanes": 4, "lane_bytes": 5},
+  "layer_offsets": {
+    "stem.conv": {"weights": 0, "bias": 432, "pre_multiplier": 496, "pre_shift": 560, "post_multiplier": 576, "post_shift": 580},
+    "down2.dw.conv": {"weights": 581, "bias": 725, "pre_multiplier": 789, "pre_shift": 853, "post_multiplier": 869, "post_shift": 873},
+    "down2.pw.conv": {"weights": 874, "bias": 1258, "pre_multiplier": 1354, "pre_shift": 1450, "post_multiplier": 1474, "post_shift": 1478}
+  },
+  "field_dtypes": {"weights": "int8 OIHW", "bias": "int32", "pre_multiplier": "nonnegative int32 per output channel", "pre_shift": "uint8 validated 0..62", "post_multiplier": "nonnegative int32 per tensor", "post_shift": "uint8 validated 0..62"},
+  "stem_loader": {"2": "432 signed weights", "3": "16 biases", "4": "16 pre multipliers", "5": "16 pre shifts", "6": "post multiplier, post shift"},
+  "down2_loader": {"2": "144 DW weights", "3": "16 DW biases", "4": "384 PW weights", "5": "24 PW biases", "6": "DW pre multipliers[16] then PW pre multipliers[24]", "7": "DW shifts[16], PW shifts[24], DW post multiplier, PW post multiplier, DW post shift, PW post shift"},
+  "warnings": ["sign-extend INT8 weights to signed32 loader payload", "post and pre shifts are stored as UINT8 but must pass the 6-bit port range", "byte offsets may be unaligned across 20-byte ROM words", "do not reuse TEST_ONLY coefficients or golden values as real QAT proof"],
+  "generated_new_vectors": false
+}

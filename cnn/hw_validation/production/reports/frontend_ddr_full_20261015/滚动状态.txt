@@ -1,0 +1,9 @@
+2026-10-15 完整前三层DDR验证
+当前：8项最终ModelSim回归通过；完整前三层实际TD布局布线完成，原约束同DB复核通过。位流生成及板测状态以status.json为准。
+已完成：旧BANKS冻结与用户板测记录；循环取指四tile等周期回归及物理验证；2304个Stem和576个DW/PW tile完整DDR张量遍历。
+实测：正常17252079周期，随机17714841；Slice15794/DSP30/ERAM13/PLB2472；setup+0.037/hold+0.020/recovery+1.751/removal+0.064ns，覆盖98.42%。
+未通过：完整67层、真实QAT参数、摄像头视频并发、解码/NMS、持续5FPS、模型精度；严格门RTL912/20，TB137/0；外部IO契约未完整签核。
+位流已生成：diagnostic_bitgen/HX1P35A_C7_FRONTEND_DDR_FULL.bit，1789544字节，SHA256 aff0dd4f46f70dbd460262fea32aebc887ae4c30dc01c7a4cb323d30aab925cb。
+当前等待：用户实际板测。本版尚未上板，不自动下载/写Flash；原BANKS位流和2242项旧文件核查均保留，changed=[]。
+下一步：板上完整前三层确认；承接CSP/深PW调度，同时依据Stem占63.26%的证据提出单变量吞吐优化，不混入改精度门槛或盲目缩网。
+入口：执行与对比报告.txt；机器证据comparison.json、verification/suite_manifest.json；RTL位置rtl/，冻结算术reused/。

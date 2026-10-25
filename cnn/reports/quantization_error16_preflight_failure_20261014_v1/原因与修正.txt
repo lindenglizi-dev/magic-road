@@ -1,0 +1,7 @@
+首次CPU诊断在缓存预检查停止，未开始16图推理，无参数更新。
+错误：stale cache identity, manifest, or preprocessing。
+原因：新诊断误调用仅接受相同运行库身份的原缓存入口；已有缓存由NumPy2.4.6制作，本轮使用已验证的隔离2.3.5。
+修正：复用已有train_qat_numpy235的native_runtime_identity、expected_cache_receipt、transition_cache_binding。
+这些函数验证既有跨版本对拍收据、原生库哈希、原缓存字节/索引及除NumPy版本外完全一致的预处理身份。
+没有放松缓存身份检查、重做缓存或修改训练数据。旧脚本副本和首次日志保留。
+首次日志：../quantization_error16_20261014_v1.measure.log。

@@ -1,0 +1,16 @@
+PASS_BOUNDED_CSP2_FULL_STAGE_SCHEDULE_ADDRESS_AUDIT
+scope: Python schedule/logical-byte audit; no new convolution golden, RTL, synthesis, timing, or FPS claim
+frame: 72x128; tiles: 576 (18x32)
+stage tasks: DW0=55296 PW0=36864 DW1=55296 PW1=36864 fuse=73728; total=258048
+stage outputs: 110592,110592,110592,110592,221184; total=663552; each address exactly once
+eight-byte groups: DW0=110592 PW0=73728 DW1=110592 PW1=73728 fuse=221184; total=589824
+DW cache: useful 300..432 B/tile; PW/fuse data including separate residual/source branch: 384 B/tile
+local cache port model: one byte/cycle; eight-byte assembly takes 8 planned cycles (not measured)
+local storage upper model: 432+96+31+16=575 B; 4 ERAM raw=10240 B, capacity only; tags/control/overhead excluded
+graph: source=0x035B4000; 70 allocations unique/non-overlapping; address unit remains unverified logical byte
+legacy diagnostic 0x03600000 overlaps DW0 [0x035EA000,0x03605000); not independent scratch
+lifetime: source retained through fuse; DW intermediates through the next PW; residual0 through DW1/PW1; residual1 through fuse
+old measured interior tile: cycles=104966 reads=9504; mutually-exclusive states sum exactly to cycles
+old parameter request state: 1280 cycles (1.219442%); request+wait=6.097212%
+old 59619664-cycle full-frame value is a 4/60/32/480 tile-class mechanical projection, not measurement
+immutable prior reference and C2 real-road manifests: all recorded hashes verified; assets reused in place

@@ -1,0 +1,18 @@
+独立组件：RoadYOLO连续摄像头2FPS采集，create/validate。
+本目录只实现精确彩色2/5缩放和外部事件驱动的双输入槽控制，未接真实DDR/摄像头/视频、未跑TD、未生成位流。
+不修改S1/生产/冻结算术、真实PAXI、500ms阈值、模型或训练。新增DMA/CDC只在方案中预留，不伪造写可见事件。
+缩放源1280x720、AWB96高lane优先（95:72、71:48、47:24、23:0），每lane RGB=23:16/15:8/7:0。
+输出512x288，最多2个像素/周期，48bit内R/G/B低byte优先；mask00/01/11，允许串行实现只用01但必须报告吞吐/输入突发适用范围。
+水平5→2权重(2,2,1,0,0)/(0,0,1,2,2)，水平11bit和；纵向使用相同权重，13bit和最大6375，二维最后一次RNE除25，禁止先除5。
+不能反压摄像头；内部有界队列不足/几何不符/新SOF打断则帧错误，半帧不发布。SOF可能在首valid前，eol核对几何而不把任意valid下降当新行。
+缩放2ERAM目标，RAM采用匹配PH1P_LOGIC_ERAM并用厂商模型对拍，无完整帧片上RAM。LUTRAM弹性队列和控制必须计入D共享1100Slice预算，物理未映射须明确。
+输入行AWB可能320拍连续四lane突发；CPU先核对有界队列、行间隔/最大突发，不拿2FPS平均率证明端口吞吐。
+槽状态FREE/CAPTURING/WAIT_VISIBLE/READY/READING/QUARANTINE；SOF无FREE整帧跳过，读取或捕获槽不得覆盖。
+槽READY只由外部write_visible且身份匹配及完整442368字节/无帧错驱动；不接AW/W accepted、不固定等N拍。
+身份epoch32/frame_id32/timestamp64，slot1、base32；本组件同一控制时钟，跨域传输由后续唯一服务接入，不把原始异域脉冲直连。
+读claim使用valid/ready，payload为slot/epoch/frame_id，源保持到接受；外部选择最新READY；读取槽只在身份匹配的last_read_consumed释放，非CNN done。
+last_read_consumed合同含最后实际响应已消费、无在途/未来输入读取且服务允许复用；不自行提供真实DDR退休保证。
+早/旧/重放visible、非法claim/release不得污染新代或释放活跃槽；异常半帧进隔离，不自动清空旧事务并复用。
+组件TB可驱动write_visible/末读事件，但标为受控外部合同，不能称真实DDR屏障/实板完成。
+资源硬限21216Slice/40DSP/108ERAM，常规19000/38/107；C8与检测共用D1100/0/6，缩放2、DMA/CDC2、TopK/NMS2。
+全部新增RTL有同名规格及规定WaveDrom，八门真实状态与实际ModelSim分别保存；原门禁失败不粉饰。

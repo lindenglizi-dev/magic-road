@@ -1,0 +1,35 @@
+真实QAT：CSP2首个残差单元数据里程碑
+完成时间：2026-10-15 10:00:09 北京时间；CPU计算与校验6.774秒。
+
+已完成
+1. 从原G10数值包提取DW12 stride1、PW12→12的12个参数字段及共享SiLU，13段共2526字节；160-bit ROM跨词提取与原包逐字段一致。未重新定标或训练。
+2. 输入复用已通过前三层RTL/双时钟仿真的真实QAT PW8×8×24数据，并核对其tile顺序与之前1536项PW golden完全一致；原RGB仍为合成输入，不是道路精度评估。
+3. 正确选24通道的后12通道进入分支，前12通道保持旁路。左上4×4×12输出使用6×6×12 halo，其中300个真实值、132个真正上/左越界补零值；已知窗口外但图像内部的数据报错，不伪装成补零。
+4. 输出2304项golden：DW/PW各acc、pre、SiLU、post共1536值，另有前半旁路、残差bypass、signed9和、最终sat8各192值。8个卷积阶段与独立标量实现逐项一致；较大上下文的有效4×4区域也完全一致；残差与既有整数图语义一致。
+5. 生成现有24MAC接口的160个任务、320组输入，HEX解码归约的384个有效acc与卷积golden一致，无重复/缺失输出。DW按同通道3+1空间点，PW按8+4输入通道处理，尾lane补零。尚未输入RTL，不能称MAC硬件本轮通过。
+6. split读地址、12通道紧密存储写地址、128-bit低字节优先打包、native beat加byte lane、融合残差storage_alias均核对。软件影子内存384次字节写对应24个完整beat；不先写未加残差的PW结果，不覆盖原输入或前半旁路。
+7. 新4项边界测试及原3项参考回归共7项通过：包含65536种INT8残差组合、缺halo拒绝、尾lane、重复/错误first/output mask和跨tile地址。真实本图残差饱和0次，极值饱和由独立单元测试覆盖，不能声称真实本图覆盖了饱和。
+
+数值边界
+DW和PW保守累加绝对值上界分别71383、104003，当前参数对所有INT8输入满足signed33部分和与INT32最终值边界。
+残差两端沿原包同一尺度，signed9范围[-256,254]，最终饱和到[-128,127]；不修改网络、量化尺度或验收阈值。
+byte地址、native beat和byte lane分别保留，奇数字节不能直接右移丢失低位；该转换仅供本独立实验参考，未使能生产DMA或证明真实DDR地址/写可见性。
+
+验证状态与限制
+本次是Python数据/参考准备，未写或修改RTL、未仿真/综合/布局布线、未生成位流/操作板卡、未训练或做数值全网前向，CUDA未初始化。
+分支只覆盖第一残差单元的一个左上4×4 tile；未覆盖图像右/下边界、第二残差、concat、CSP2最终PW及整网。
+本轮没有执行新的八项RTL门禁。上轮两控制器静态记录仍为403错误、0 strict warning：compile/ast/readability/comment/naming/profile failed，testbench/toolchain not_requested；上轮厂商RAM初始化警告及真实DDR/物理阻塞也未解决。
+readable-verilog-generator按“Python参考先行”保留数值/地址边界；Ponytail复用已有卷积、量化、图地址与ROM解包函数，不增加依赖或新通用加速器。
+当前技能目录未提供readable-python-generator/readable-script-generator，故不声明它们的严格门禁已通过；本次Python功能测试不替代后续RTL或技能交付门禁。
+分支work/roadyolo，仅本地保存。精度、5FPS、整机资源/时序和正式验收均没有因本次数据通过而达标。
+
+下一步（尚未执行）
+以本次参数/halo/golden/MAC任务及地址表实现独立的12通道stride1首残差RTL探针：输入真实前层数据→DW→PW→signed9残差/饱和→输出比较。
+先将acc/pre/SiLU/post/residual和实际写地址逐项对拍，再做背压/复位/故障；保持原24MAC、II、RNE、SiLU与外设协议，不从固定16通道stride2 down2接线冒充适配完成。
+这一步通过后，再接第二残差及concat/PW，按固定图扩展；本轮不自动追加训练、整网重写或上板。
+
+文件入口
+contract.json：固定数值、布局及失败条件；graph_segment.json：原图节点3—6。
+parameters/：原包字段HEX；vectors/：逐级golden及24个写beat；golden.npz：原始形状。
+mac_tasks.json：160个24MAC任务；addresses.json：432个halo映射、192个输出映射、24个写beat。
+identity.json及verification_receipt.json：输入/源码/参数/产物哈希与对拍结果；status.json：本轮数据就绪，不是RTL通过。

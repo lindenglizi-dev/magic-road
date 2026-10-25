@@ -1,0 +1,59 @@
+road_capture_slots 有界只读审查（2026-10-15）
+================================================
+
+审查范围
+--------
+- rtl/road_capture_slots.v
+- reference_slots.py
+- interfaces.json
+- gate/road_capture_slots.json（只读取既有结果；未重跑门禁）
+
+本审查没有修改 RTL，没有运行 TD、综合、位流或板测。
+
+结论
+----
+在 interfaces.json 所声明的组件边界内，未发现新的可执行语义缺陷，不需要修改端口。两槽的状态保护、同拍优先级、跨槽并行事件、早到/旧代 visible 与 last 的拒绝行为，以及 2 槽 generate 展开后的位宽，均与声明契约一致。
+
+这不是“交付门禁通过”结论。既有 gate/road_capture_slots.json 仍记录 strict=true、delivery_ready=false、repair_required=true、errors=464、strict_warnings=7。尤其 VG153 对 generate 内的驱动关系无法确认，仍有 12 个 BLOCKER；本次人工审查不能消除这些门禁事实。
+
+逐拍语义证据
+------------
+1. SOF 分配只看边沿前状态：allocate 在第 70 行由 capture_present 和 o_free_mask 组合产生；allocate_slot 在第 71 行先选 slot0，否则选 slot1。READING 同拍 release 后才成为 FREE，因此不会被同拍 SOF 旁路分配，符合 interfaces.json 的 pre-edge FREE 约束。
+
+2. CAPTURING 的优先级明确：第 134--144 行依次执行 SOF 或 frame_error -> QUARANTINE、capture_end 几何检查、有效 end 后 WAIT_VISIBLE/READY。end_good 第 72--73 行同时要求 442368 bytes、无 frame_error、无 SOF。因此：
+   - SOF 与 capture_end/visible 同拍时，旧捕获进入 QUARANTINE，新帧跳过；
+   - frame_error 与 capture_end 同拍时，旧捕获进入 QUARANTINE；
+   - 合法 capture_end 与匹配 visible 同拍时，visible_eligible 第 102--105 行允许直接进入 READY；
+   - 早到 visible（CAPTURING 且无合法 end）不改变状态，并由第 200 行置 sticky protocol_error。
+
+3. READING 受到状态保护：第 155--158 行只有匹配 slot、epoch、frame_id 的 last_read_consumed 可以释放。visible、claim、capture_end 均不能把 READING 改成其他状态。旧代或发错槽的 last 不释放，并由第 201 行置 sticky protocol_error。
+
+4. 旧代 visible 受到 identity 与状态双重保护：第 95--108 行要求 slot、epoch、frame_id 匹配，且状态为 WAIT_VISIBLE，或为“同拍合法结束”的 CAPTURING。错误 identity、READY/READING/FREE/QUARANTINE 状态中的 visible 均不发布，并置 protocol_error。
+
+5. claim 与 release 不会在同拍穿透：claim_match 使用 state_current==READY；release_accept 使用 state_current==READING。故 READY 上同拍 claim+last 只会进入 READING，last 被拒绝；WAIT_VISIBLE 上同拍 visible+claim 只会进入 READY，claim 不会抢先进入 READING。这与 reference_slots.py 第 27、31 行显式使用 prior 状态一致。
+
+6. SOF 中断与另一槽事件彼此保留。每个槽在 generate 中独立以 state_current 计算 state_next：
+   - slot0=CAPTURING、slot1=WAIT_VISIBLE，SOF+slot1 匹配 visible：slot0->QUARANTINE，slot1->READY；
+   - slot0=CAPTURING、slot1=READY，SOF+slot1 匹配 claim：slot0->QUARANTINE，slot1->READING；
+   - slot0=CAPTURING、slot1=READING，SOF+slot1 匹配 last：slot0->QUARANTINE，slot1->FREE。
+   最后一项也由 reference_slots.py 第 66--68 行固定。三种情况均为 skipped 新帧；SOF 中断同时使 protocol_error 置位，但不吞掉另一槽的有效事件。
+
+7. 复位为异步本地取消：第 119--124、165--175、180--203 行在 i_rstn=0 时把两槽置 FREE、metadata 清零、脉冲及 protocol_error 清零。o_capture_active 与 o_claim_ready 还显式受 i_rstn 门控。o_free_mask 在复位期间会随已复位状态显示 2'b11；这是“状态已取消为 FREE”的直接可见结果，不是隐藏的 capture/claim 接受。
+
+8. 复位后的第一个有效边沿仍用 FREE 前态判断。旧 visible/last 即使携带全零 identity，也因状态不是 WAIT_VISIBLE/READING 而被拒绝；不会仅靠复位后的全零 metadata 发布或释放。
+
+generate、位宽与驱动
+--------------------
+- bank=0/1 时，第 104--113 行只驱动各 2-bit 向量的单独 bit；第 114--116 行分别展开为 epochs/frame_ids 的 [31:0]、[63:32] 与 timestamps 的 [63:0]、[127:64]。切片无重叠，声明宽度与 interfaces.json 的 64/64/128 位一致。
+- `(slot == bank)` 和 `(allocate_slot == bank)` 中 bank 是 elaboration-time genvar 常量 0 或 1；对当前固定两槽功能没有数值歧义。不过门禁对该 generate 层次没有完成 elaboration，VG085/VG137 仍把相关表达式宽度判为 inconclusive。
+- 既有 VG153 明确把 capture_mask、visible_accept、release_accept、claim_match、bank 报为 undriven，并把 o_free_mask、o_ready_mask、o_reading_mask、o_quarantine_mask、o_slot_epochs、o_slot_frame_ids、o_slot_timestamps 报为 undriven_output，共 12 个 BLOCKER。源码第 104--116 行存在对应 generate 连续赋值，人工展开未见重叠或漏位；这只能说明“未看到实际多驱动/漏驱动”，不能把工具的 driver-unknown 结论改写成门禁已消除。当前 gate 中 multiple_drivers 虽显示 passed/applicable=false，也不能替代 elaborated driver 检查。
+
+剩余限制与后续必须验证项
+------------------------
+1. 复位只取消本地状态，不产生内部唯一 generation。若真实 DDR/PAXI 中尚有复位前写响应，且上层在复位后复用了相同 epoch/frame_id，旧 visible 理论上可以在新帧到达 WAIT_VISIBLE 或合法 capture_end 同拍时误匹配。RTL 第 4 行和 interfaces.json 已把“真实 DDR 先 drain，再复用 generation”列为调用方前提；不满足该前提会形成真实错误，不能由本组件状态机自行识别。
+
+2. i_write_visible 目前只是组件测试中的受控外部事实；interfaces.json 明确说明真实 PAXI 可见性保证尚未实现。因此本审查只证明事件被正确消费，不证明 DDR 写已真正全局可见。
+
+3. reference_slots.py 覆盖了早 visible、旧 visible、旧 last、合法 release、坏长度、同拍 end+visible、SOF 中断+另一槽 release；它没有建模异步复位、sticky protocol_error、输出脉冲/掩码，也没有固定 SOF 中断同时另一槽 visible/claim 的断言。上述未覆盖项本次仅由源码逐拍审查确认，仍应在后续组件 TB 中补成可执行用例。
+
+4. 在 generate 驱动能够被目标综合/展开工具确认、严格门禁重新关闭，以及真实 DDR reset/drain/visibility 接口被集成验证之前，本组件不能据此审查件宣称生产就绪。

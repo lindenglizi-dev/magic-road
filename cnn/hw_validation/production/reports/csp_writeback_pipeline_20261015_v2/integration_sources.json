@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "scope": "首CSP联合候选的固定输入清单；尚未集成或批准生产交付",
+  "path_base": "this_report_directory",
+  "sources": [
+    {
+      "path": "rtl/road_csp_first_probe.v",
+      "sha256": "7b2d47045787a38842001f97fc27ce212cc2e5b0ce9776fc60634b487c6d4f0d",
+      "role": "五级写回及冻结算术核包装",
+      "evidence": "status.json",
+      "strict_ready": false
+    },
+    {
+      "path": "integration_inputs/road_csp_tile_schedule.v",
+      "sha256": "47b2c5cba1c4521ac511a43b6321717b003bfa3fb154e3d076fa1f25601b066d",
+      "role": "160任务、320组固定描述符调度",
+      "evidence_relative_to_repo": "cnn/hw_validation/production/reports/csp_tile_schedule_20261015/simulation_attempt6/receipt.json",
+      "actual_arithmetic_in_source_evidence": false,
+      "strict_ready": false
+    },
+    {
+      "path": "integration_inputs/road_csp_dw_cache.v",
+      "sha256": "0210c7f66bb61181a63945af3cac3eb7da08253c97acb12558ed45fad0ee7997",
+      "role": "192字节逻辑DW结果及PW八输入组读缓存",
+      "evidence_relative_to_repo": "cnn/hw_validation/production/reports/csp_dw_cache_20261015/simulation_attempt4/receipt.json",
+      "strict_ready": false
+    }
+  ],
+  "arithmetic_sources": "reused/*.v; explicit hashes are in input_binding.json and final_checks.json",
+  "one_shared_arithmetic_array": true,
+  "parameter_identity_relative_to_repo": "cnn/hw_validation/production/reports/qat_g10_csp_first_data_20261015_v2/identity.json",
+  "package_manifest_sha256": "93a05a97f78489fabd511909367be0f8b676680c01e5f74a21d571a88f82ff2b",
+  "numeric_package_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "checkpoint_sha256": "f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd",
+  "remaining_connections": [
+    "DW halo、权重、偏置、量化参数读取及有效载荷保持",
+    "PW操作数必须来自当前tile实际DW缓存响应，不能用预存golden",
+    "task_done绑定最后一个有效外部写接受，不能由PP完成或TB定时产生",
+    "缓存完整写入与PW发射许可、tile重复使用的局部清理",
+    "保留接口及实际II，收口与本次相关的控制/源闭包门禁",
+    "联合顶层真实周期、综合资源和setup/hold"
+  ],
+  "scheduler_cache_integrated": false,
+  "production_delivery_ready": false
+}

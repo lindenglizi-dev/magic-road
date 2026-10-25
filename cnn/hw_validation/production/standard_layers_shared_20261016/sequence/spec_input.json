@@ -1,0 +1,191 @@
+{
+  "feature": "road_standard_layer_sequence",
+  "name": "road_standard_layer_sequence",
+  "rtl_path": "rtl/road_standard_layer_sequence.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "input",
+        "width": 1,
+        "role": "clk",
+        "clock_domain": "i_clk",
+        "description": "统一100MHz上升沿时钟"
+      },
+      {
+        "name": "i_rstn",
+        "direction": "input",
+        "width": 1,
+        "role": "rstn",
+        "clock_domain": "i_clk",
+        "description": "共同低有效异步复位，本地两级同步释放"
+      },
+      {
+        "name": "i_cancel",
+        "direction": "input",
+        "width": 1,
+        "role": "cancel",
+        "clock_domain": "i_clk",
+        "description": "取消当前查表，已接受的ROM读必须排空后再接新任务"
+      },
+      {
+        "name": "i_start_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "start_valid",
+        "clock_domain": "i_clk",
+        "description": "start_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_layer_id",
+        "direction": "input",
+        "width": 7,
+        "role": "layer_id",
+        "clock_domain": "i_clk",
+        "description": "layer_id：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_tile_start_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "tile_start_ready",
+        "clock_domain": "i_clk",
+        "description": "tile_start_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_tile_done",
+        "direction": "input",
+        "width": 1,
+        "role": "tile_done",
+        "clock_domain": "i_clk",
+        "description": "tile_done：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_tile_fault",
+        "direction": "input",
+        "width": 1,
+        "role": "tile_fault",
+        "clock_domain": "i_clk",
+        "description": "tile_fault：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_start_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "start_ready",
+        "clock_domain": "i_clk",
+        "description": "start_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_busy",
+        "direction": "output",
+        "width": 1,
+        "role": "busy",
+        "clock_domain": "i_clk",
+        "description": "busy：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_done",
+        "direction": "output",
+        "width": 1,
+        "role": "done",
+        "clock_domain": "i_clk",
+        "description": "done：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_fault",
+        "direction": "output",
+        "width": 1,
+        "role": "fault",
+        "clock_domain": "i_clk",
+        "description": "本组件故障状态，不得发布为成功表"
+      },
+      {
+        "name": "o_tile_start_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "tile_start_valid",
+        "clock_domain": "i_clk",
+        "description": "tile_start_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_layer_id",
+        "direction": "output",
+        "width": 7,
+        "role": "layer_id",
+        "clock_domain": "i_clk",
+        "description": "layer_id：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_tile_y",
+        "direction": "output",
+        "width": 7,
+        "role": "tile_y",
+        "clock_domain": "i_clk",
+        "description": "tile_y：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_tile_x",
+        "direction": "output",
+        "width": 7,
+        "role": "tile_x",
+        "clock_domain": "i_clk",
+        "description": "tile_x：按requirements中对应事务/计数合同使用"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "local_sync_two_flops_or_owner_gating"
+  },
+  "parameters": {},
+  "behavior": [
+    "start握手锁存31个固定节点之一；形状case来自冻结graph，不接受任意外部H/W。",
+    "逐tile发起并等待真实客户端done；客户端done契约要求全部未决消费且写屏障通过。",
+    "x先增4，行尾y增4；最后tile done后整层done；受控端点只证明调度，不是整层计算。",
+    "故障/cancel保持owner至共同reset，不以固定等待替代退休。"
+  ],
+  "constraints": [
+    "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+    "不改变冻结算术核/数值，不复制公共存储"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "11数值向量、protocol、phase_reset，逐项DECODED160对拍"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "协议示意：省略内部变长计算，用空白间隔表示；不是固定总时延。仅valid与ready同拍消费。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p.........."
+          },
+          {
+            "name": "tile_start_valid",
+            "wave": "01..0....10"
+          },
+          {
+            "name": "tile_start_ready",
+            "wave": "0..10....10"
+          },
+          {
+            "name": "tile_done",
+            "wave": "0......10.."
+          }
+        ]
+      }
+    }
+  ]
+}

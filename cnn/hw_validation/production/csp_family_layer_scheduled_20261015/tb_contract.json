@@ -1,0 +1,73 @@
+{
+  "top": "tb_csp_family_client",
+  "language": "Verilog-2001",
+  "parameters": {"C_FAMILY": [3, 4]},
+  "required_plusargs": ["+CASE=<0..5>", "+VECTORS=<reference/csp3|reference/csp4>"],
+  "optional_plusargs": ["+FAULT_KIND=<0|1>", "+RESET_STAGE=<0..6>", "+NEGATIVE_ACC=1"],
+  "positive_marker": "CSP_FAMILY_PASS family=F case=N runs=... cycles=... accounted=... outputs=... acc=... pre=... silu=... post=... groups=... tasks=... reads=... parameters=... barriers=...",
+  "fault_marker": "CSP_FAMILY_EXPECTED_FAULT family=F case=N kind=K runs=... cycles=... accounted=... outputs=... acc=... pre=... silu=... post=... groups=... tasks=... reads=... parameters=... barriers=...",
+  "progress_marker": "CSP_FAMILY_PROGRESS family=F case=N run=... stage=... cycles=... reads=... parameters=... groups=... tasks=... outputs=...",
+  "raw_state_marker": "CSP_FAMILY_STATE family=F case=N run=... state=<0..16> cycles=...",
+  "stage_marker": "CSP_FAMILY_STAGE family=F case=N run=... stage=<0..6> cycles=... reads=... parameters=... groups=... tasks=... outputs=... barriers=...",
+  "run_marker": "CSP_FAMILY_RUN family=F case=N run=... cycles=... accounted=... groups=... tasks=... outputs=... acc=... pre=... silu=... post=... reads=... parameters=... barriers=...",
+  "runner_cases": [
+    {"case": 0, "plusargs": [], "marker": "CSP_FAMILY_PASS", "meaning": "one unstalled complete seven-stage run"},
+    {"case": 1, "plusargs": [], "marker": "CSP_FAMILY_PASS", "meaning": "one complete run with deterministic parameter, read, core and write stalls"},
+    {"case": 2, "plusargs": ["+RESET_STAGE=2"], "marker": "CSP_FAMILY_PASS", "meaning": "common reset after 128 stage-2 writes, LUT reload and clean full restart"},
+    {"case": 3, "plusargs": [], "marker": "CSP_FAMILY_EXPECTED_FAULT", "expected_fields": {"kind": 0, "outputs": 0}, "meaning": "wrong 16-byte read response address"},
+    {"case": 4, "plusargs": [], "marker": "CSP_FAMILY_EXPECTED_FAULT", "expected_fields": {"kind": 0, "outputs": 0}, "meaning": "wrong parameter response layer identity"},
+    {"case": 5, "plusargs": ["+FAULT_KIND=0"], "marker": "CSP_FAMILY_EXPECTED_FAULT", "expected_fields": {"kind": 0}, "meaning": "wrong arithmetic output address"},
+    {"case": 5, "plusargs": ["+FAULT_KIND=1"], "marker": "CSP_FAMILY_EXPECTED_FAULT", "expected_fields_by_family": {"3": {"kind": 1, "outputs": 55296}, "4": {"kind": 1, "outputs": 27648}}, "meaning": "wrong first visibility barrier layer"},
+    {"case": 99, "plusargs": ["+CASE=0", "+NEGATIVE_ACC=1"], "marker": "NEGATIVE_ACC injected acc mismatch", "meaning": "real checker negative; process must fail and no PASS marker may appear"}
+  ],
+  "family_counts": {
+    "3": {
+      "shape_hwc": [36, 64, 48],
+      "half_channels": 24,
+      "tile_rows": 9,
+      "tile_cols": 16,
+      "tile_count": 144,
+      "stage_outputs": [55296, 55296, 55296, 55296, 55296, 55296, 110592],
+      "stage_tasks": [27648, 18432, 27648, 18432, 27648, 18432, 36864],
+      "stage_groups": [55296, 55296, 55296, 55296, 55296, 55296, 221184],
+      "stage_reads": [9776, 8064, 8112, 6912, 8112, 6912, 9216],
+      "stage_parameters": [13824, 3456, 13824, 3456, 13824, 3456, 13824],
+      "outputs": 442368,
+      "tasks": 175104,
+      "groups": 552960,
+      "barriers": 7
+    },
+    "4": {
+      "shape_hwc": [18, 32, 96],
+      "half_channels": 48,
+      "tile_rows": 5,
+      "tile_cols": 8,
+      "tile_count": 40,
+      "last_tile_valid_rows": 2,
+      "stage_outputs": [27648, 27648, 27648, 27648, 27648, 27648, 55296],
+      "stage_physical_bytes": [30720, 30720, 30720, 30720, 30720, 30720, 61440],
+      "stage_tasks": [13824, 9216, 13824, 9216, 13824, 9216, 18432],
+      "stage_groups": [27648, 55296, 27648, 55296, 27648, 55296, 221184],
+      "stage_reads": [3588, 3456, 3588, 3456, 3588, 3456, 3456],
+      "stage_parameters": [7680, 3840, 7680, 3840, 7680, 3840, 15360],
+      "outputs": 221184,
+      "tasks": 87552,
+      "groups": 470016,
+      "barriers": 7,
+      "padding_rule": "physical y18/y19 bytes remain poisoned and unwritten; no golden write is required"
+    }
+  },
+  "read_contract": {
+    "request_alignment_bytes": 16,
+    "response_bits": 128,
+    "lane_order": "byte n is response[n*8 +: 8]",
+    "outstanding": 1,
+    "visibility": "source is always readable; valid intermediate bytes become readable only after their matching accepted barrier; CSP4 physical tail bytes read as zero"
+  },
+  "negative_checks": [
+    {"wrapper_case": 99, "invokes": ["+CASE=0", "+NEGATIVE_ACC=1"], "expected_exit": "nonzero", "required_log_regex": "NEGATIVE_ACC injected acc mismatch", "forbidden_marker": "CSP_FAMILY_PASS"}
+  ],
+  "watchdog_cycles": 100000000,
+  "native_timeout_seconds": 2400,
+  "evidence_boundary": "ModelSim functional closure only. No synthesis, timing, physical DDR, bitstream, board, full-network throughput, QAT qualification or accuracy claim."
+}

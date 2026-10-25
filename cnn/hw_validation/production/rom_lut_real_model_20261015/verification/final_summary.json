@@ -1,0 +1,72 @@
+{
+  "status": "FUNCTIONAL_PASS_WITH_VENDOR_WARNINGS_AND_STATIC_GATE_LIMITATIONS",
+  "qualified_receipt": "reports/20261015_220747_038075_final/summary.json",
+  "qualified_snapshot": "reports/20261015_220747_038075_final/inputs",
+  "current_tb_and_runner_match_qualified_snapshot": true,
+  "snapshot_unchanged_after_simulation": true,
+  "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "physical_sha256": "bab36c254dfeb21ad21f4c600018be962f9352ddde79dcb08e64e7bd117ec417",
+  "payload_bytes": 140522,
+  "padding_bytes": 2838,
+  "physical_bytes": 143360,
+  "simulator": "ModelSim SE-64 2020.4, same local host with sandbox escalation",
+  "compile": {"returncode": 0, "errors": 0, "warnings": 0},
+  "reader": {
+    "status": "PASS", "returncode": 0, "words": 7168, "compared_bytes": 143360,
+    "csv_rows": 7168, "group_edges": 28, "valid_tail_word": 7026,
+    "tail_valid_bytes": 2, "tail_padding_bytes": 18,
+    "latency_accept_edge_to_first_valid_edge": {"min": 8, "max": 8},
+    "max_response_hold_cycles": 37, "wait_common_reset": true,
+    "held_response_common_reset": true, "invalid_address": 7168,
+    "invalid_fault_without_completion_observed_cycles": 37,
+    "vendor_warning_events": 112
+  },
+  "lut": {
+    "status": "PASS", "returncode": 0, "sigmoid_entries": 1024, "exp_entries": 256,
+    "exhaustive_rom_reads": 1280,
+    "latency_client_accept_edge_to_first_valid_edge": {"min": 29, "max": 29, "sum": 37120},
+    "dynamic_full_identity": true, "idle_request_fields_changed_after_acceptance": true,
+    "max_client_response_hold_cycles": 37,
+    "cancel_before_rom_accept_no_read": true, "cancel_after_rom_accept_real_late_return": true,
+    "drain_cycles": 8, "restart_after_drain": true,
+    "common_reset_during_real_rom_wait": true, "common_reset_during_held_client_response": true,
+    "invalid_requests_without_rom_read": 3,
+    "invalid_cases": ["wrong_model", "exp_index_256", "exp_index_1023"],
+    "all_scenario_rom_reads": 1287, "all_scenario_rom_returns": 1286,
+    "difference_reason": "One accepted read deliberately terminated by common WAIT reset",
+    "reader_wait_cycles_all_scenarios": 10289,
+    "successful_queries_all_scenarios": 1284, "csv_rows_including_three_errors": 1287,
+    "vendor_warning_events": 112
+  },
+  "vendor_warning": {
+    "code": "vopt-2697", "source": "ph1p_logic_eram.v:165",
+    "message": "INIT_FILE part-select MSB/LSB out of bounds",
+    "events_per_top": 112, "all_warning_lines_preserved": true,
+    "receipt_warning_array_lines_per_top": 114,
+    "extra_two_lines": "ModelSim count summaries; not additional warning events",
+    "vendor_source_modified": false
+  },
+  "failed_attempts": [
+    {"path": "reports/20261015_220321_258395_sandbox", "classification": "PROCESS_LAUNCH_FAILED", "reason": "Windows WinError623 DLL relocation before vlib starts", "supplement": "reports/sandbox_failure.md", "original_summary_status": "STARTED"},
+    {"path": "reports/20261015_220416_076918_escalated", "classification": "SIMULATION_LOAD_FAILED", "compile_returncode": 0, "reason": "Runner passed an absolute path as vsim -lib name; vopt-2253", "fixed_by": "Keep physical work library in snapshot cwd; select -lib work"}
+  ],
+  "prior_successful_attempt": "reports/20261015_220510_055624_library_fix/summary.json",
+  "tb_static_gate_reports": {
+    "reader": "gates/reader_final.json", "reader_comment_errors": 2,
+    "lut": "gates/lut_final.json", "lut_comment_errors": 3,
+    "remaining_issue": "Task declarations require pure leading purpose comments",
+    "initial_failures_retained": ["gates/reader_initial.json", "gates/lut_initial.json"],
+    "limitation": "Default deliverable gate excludes testbench AST/quality scan: files=0/modules=0; default passed static compile/AST/readability states do not prove TB analysis",
+    "testbench_and_toolchain_in_static_gate": "not_requested; actual ModelSim evidence is separate"
+  },
+  "production_rtl_static_gate": "../gates/closure.json; separate parent-owned report, not all green",
+  "controlled_endpoint_prior_evidence": {
+    "path": "../../shared_lut_service_1fps_20261015/verification/reports/final_summary.json",
+    "sha256": "0cd604838dbc9db58c3d9e060fae4a3dff4a3983a60b781e157ab15b9fc2b5b",
+    "scope": "Prior controlled endpoint fault injection and odd relocation only; not real PH1P ROM evidence"
+  },
+  "missing_skill_gates": ["readable-python-generator not available; stdlib runner used", "readable-script-generator not available; no installation or claimed gate pass"],
+  "spec_boundary": "Companion TB specs are intent documents; governed WaveDrom rendering was not run",
+  "not_measured": ["Physical resource mapping", "Timing closure", "Silicon RAM guarantees", "Shared arbitration with CNN", "DDR write visibility", "Full postprocessing integration", "Full-network accuracy", "Full-network 1FPS", "Board or Flash"],
+  "budget_only": {"total_network_cycles_at_100MHz": 100000000, "total_postprocess_cycles": 2000000}
+}

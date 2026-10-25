@@ -1,0 +1,30 @@
+DDR 扩展版：临时上板操作
+
+这次换新文件，旧四地址测试不用再做。新测试覆盖 194 个地址，528 次写入和 528 次读回。
+仅使用 BitWriter 的 PROGRAM_SRAM；不要选择 Flash、Create Flash File 或 PROGRAM_FLASH。
+
+一、加载
+1. 保持之前相同的板卡供电、JTAG、HDMI1 连接。设备应为 PH1P35MDG324。
+2. BitWriter 保持 PROGRAM_SRAM、5 MHz。移除列表中的旧任务项（不是删除磁盘文件），添加下面唯一文件：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ddr_extended_board_20261013/diagnostic_bitgen_attempt2/HX1P35A_C7_DDR_EXTENDED.bit
+3. 确认文件末尾为 EXTENDED.bit，点击 Run，等待下载完成。
+
+二、应该看到什么
+1. 初始化与测试可能短暂显示等待颜色，随后为绿色背景、左上 TEST、右上蓝色明暗心跳。
+2. 顶部诊断条自动轮换四页。新旧版本外观相近，必须通过文件名确认，不能仅凭绿色认定加载了新版本。
+3. 绿色表示本次启动的全部 528 写/528 读比较通过。测试结束后停止发 DDR 请求，保持绿色不代表在持续跑 DDR 压力测试。
+
+三、请你操作并回传
+1. 按 K4（已确认的 C7 复位键）再释放；公共复位期间短暂黑屏正常。确认重新出现绿色。
+2. 共做三次复位，每次等重新绿色再做下一次；最后保持运行 10 分钟，观察有无红屏、花屏或心跳停止。
+3. 回传下载列表截图，以及清晰拍到整个顶部诊断条和心跳的至少 5 秒视频；文字确认三次复位和 10 分钟结果即可。不必再提供标注数据。
+
+四、异常时
+出现红色，不要反复刷写或更换配置。先拍下完整屏幕及至少 5 秒诊断条视频，说明发生在刚加载、哪次复位或保持阶段。
+等待超过 10 秒仍不绿、持续黑屏或心跳停止，同样保留现象；新诊断的板测状态仍记未通过。
+需要恢复时，用 PROGRAM_SRAM 加载此前已验证文件：
+E:/project/qiansai/anlogic_topic2_work/lab1_sc500_road_vision/cnn/hw_validation/production/reports/ddr_display_cdc_20261013/diagnostic_bitgen_attempt2/HX1P35A_C7_DDR_DIAG.bit
+不需要写 Flash，也不要以本诊断替换正式识别演示。
+
+五、通过之后
+下一步接已有计算结果→DDR→下一层 DW/PW 小块，逐项核对真实存储闭环，不再扩大地址探针。视频并发、完整 CNN、识别精度均在后续分别验证。

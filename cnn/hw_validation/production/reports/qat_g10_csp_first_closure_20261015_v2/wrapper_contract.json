@@ -1,0 +1,363 @@
+{
+  "name": "csp_first_closure",
+  "modules": [
+    {
+      "name": "road_csp_first_probe",
+      "rtl_path": "rtl/road_csp_first_probe.v",
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge",
+        "frequency_mhz": 100
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "constraints": [
+        "\u53ea\u9a8c\u8bc1\u72ec\u7acb\u6570\u636e\u901a\u8def\uff0c\u4e0d\u5ba3\u79f0\u6574\u7f51\u3001\u771f\u5b9eDDR\u6216\u7269\u7406\u5b9e\u73b0\u901a\u8fc7",
+        "\u4e0d\u5f97\u4fee\u6539\u51bb\u7ed3\u7b97\u672f\u6838\u3001II\u6216\u5916\u8bbe\u534f\u8bae",
+        "first/last\u5fc5\u987b\u7531\u4e0a\u6e38\u6309\u4efb\u52a1\u987a\u5e8f\u9a71\u52a8\uff1b\u9519\u5e8f\u6301\u7eed\u80cc\u538b\uff0c\u6ca1\u6709\u81ea\u52a8\u91cd\u8bd5\u6216\u672c\u5730\u8d85\u65f6"
+      ],
+      "corner_cases": [
+        "\u672a\u88c5\u8868\u7981\u6b62\u8ba1\u7b97",
+        "\u5143\u6570\u636e\u4fdd\u6301\u5230\u6700\u540e\u6709\u6548\u5199\u7aef\u63a5\u53d7",
+        "\u590d\u4f4d\u53d6\u6d88\u65e7token\u5e76\u91cd\u65b0\u88c5\u8868",
+        "\u6545\u969c\u4e0d\u81ea\u52a8\u6062\u590d"
+      ],
+      "verification_cases": [
+        "\u771f\u5b9eQAT\u9636\u6bb5\u9010\u9879\u5bf9\u62cd\u4e0eDW\u5b9e\u9645\u8f93\u51fa\u9a71\u52a8PW",
+        "\u8f93\u5165\u6c14\u6ce1\u3001\u8f93\u51fa\u957f\u80cc\u538b\u53ca\u4e09\u5904\u590d\u4f4d\u91cd\u8dd1",
+        "\u4efb\u52a1\u9519\u8bef\u3001INT32\u672b\u7ec4\u6ea2\u51fa\u3001\u975e\u6cd5\u79fb\u4f4d",
+        "\u5408\u6210\u6b63\u8d1f\u9971\u548c\u8d2f\u7a7f\u5b8c\u6574\u5199beat",
+        "\u9996\u7ec4\u540e\u5143\u6570\u636e\u6bd2\u5316\u4ecd\u4fdd\u6301\u9ec4\u91d1\u7ed3\u679c",
+        "\u672a\u88c5\u8868\u3001\u975e\u6cd5first\u987a\u5e8f\u548c\u5360\u6709\u65f6\u6539\u8868\u5747\u4e0d\u63a5\u53d7",
+        "\u96f6mask\u3001\u91cd\u590dtag\u6545\u969c\u4e14\u4e0d\u53d1\u5e03\u8f93\u51fa",
+        "\u90e8\u5206\u88c5\u8868\u590d\u4f4d\u5fc5\u987b\u5b8c\u6574\u91cd\u8f7d",
+        "127/128/-129/-128\u6b8b\u5dee\u4e34\u754c\u70b9",
+        "\u7a7a\u95f2\u88c5\u8868\u4e0e\u9996\u7ec4\u540c\u62cd\u65f6\u53ea\u6536\u88c5\u8868\uff1b\u5df2\u6709\u5f52\u7ea6\u4e0d\u88ab\u672a\u83b7\u51c6\u7684\u88c5\u8868\u8bf7\u6c42\u963b\u65ad"
+      ],
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "100MHz\u540c\u57df\u65f6\u949f",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "\u5168\u90e8\u6838\u5fc3\u5171\u540c\u4f4e\u6709\u6548\u5f02\u6b65\u590d\u4f4d\uff0c\u91cd\u65b0\u88c5\u8868\u540e\u8ba1\u7b97",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u7a7a\u95f2\u8868\u9879valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_addr",
+            "direction": "input",
+            "width": 10,
+            "role": "native",
+            "description": "\u987a\u5e8f1024\u9879SiLU\u5730\u5740",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_table_data",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "\u539f\u5305signed16\u8868\u9879",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u771f\u5b9e\u8868\u9879\u63a5\u53d7\u8bb8\u53ef",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_table_loaded",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u5b8c\u6574\u8868\u91cd\u8f7d\u5b8c\u6210",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u7ec4valid\uff0c\u7b49\u5f85ready\u65f6\u8f7d\u8377\u4fdd\u6301",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_first",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u9996\u7ec4\u9501\u5b58\u4efb\u52a1\u5143\u6570\u636e",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_last",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u672b\u7ec4\u5173\u95ed\u5f52\u7ea6",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_lane_mask",
+            "direction": "input",
+            "width": 8,
+            "role": "native",
+            "description": "\u516b\u8f93\u5165\u69fdmask",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_activation_data",
+            "direction": "input",
+            "width": 64,
+            "role": "native",
+            "description": "\u516bsigned8\u4f4e\u5b57\u8282\u4f18\u5148\u6fc0\u6d3b",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_weight_data",
+            "direction": "input",
+            "width": 192,
+            "role": "native",
+            "description": "\u4e09\u8def\u5404\u516bsigned8\u6743\u91cd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_bias_data",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "\u4e09signed32\u504f\u7f6e\uff0c\u4ec5first\u52a0\u5165",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_input_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u5355\u4efb\u52a1\u7ec4\u51c6\u5165",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_mask",
+            "direction": "input",
+            "width": 3,
+            "role": "native",
+            "description": "\u9996\u7ec4\u9501\u5b58\u7684\u4e09\u8f93\u51famask",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tags",
+            "direction": "input",
+            "width": 48,
+            "role": "native",
+            "description": "\u4e09\u5916\u90e8\u6807\u8bc6\uff0c\u540416\u4f4d",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_addresses",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "\u4e09\u903b\u8f91\u5b57\u8282\u5730\u5740\uff0c\u540432\u4f4d",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pre_multipliers",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "\u4e09\u975e\u8d1fsigned32\u524d\u4e58\u6570",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_pre_shifts",
+            "direction": "input",
+            "width": 18,
+            "role": "native",
+            "description": "\u4e09\u516d\u4f4d\u524d\u79fb\u4f4d\uff0c\u8303\u56f40\u523062",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_post_multiplier",
+            "direction": "input",
+            "width": 32,
+            "role": "native",
+            "description": "\u5171\u4eab\u975e\u8d1fsigned32\u540e\u4e58\u6570",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_post_shift",
+            "direction": "input",
+            "width": 6,
+            "role": "native",
+            "description": "\u5171\u4eab\u540e\u79fb\u4f4d0\u523062",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_residual",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u878d\u5408\u65c1\u8def\u6a21\u5f0f",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_bypass_data",
+            "direction": "input",
+            "width": 24,
+            "role": "native",
+            "description": "\u4e09signed8\u65c1\u8def\u503c",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_input_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u4efb\u52a1\u6545\u969c\u8f93\u5165",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_output_ready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "\u6700\u7ec8\u5199\u7aef\u63a5\u53d7",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u5b8c\u6574\u5199\u56de\u8f7d\u8377\u6709\u6548\u5e76\u4fdd\u6301",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_data",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "sat8\u7ed3\u679c",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_tag",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "\u5199\u56de\u6807\u8bc6",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_address",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "\u5199\u56de\u903b\u8f91\u5b57\u8282\u5730\u5740",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_output_sum",
+            "direction": "output",
+            "width": 9,
+            "role": "native",
+            "description": "\u9971\u548c\u524dsigned9\u89c2\u5bdf\u503c",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "\u6545\u969c\u7c98\u6ede\uff0c\u5171\u540c\u590d\u4f4d\u6e05\u9664",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "\u5355\u5f52\u7ea6\u4e0a\u4e0b\u6587\uff0cfirst\u63a5\u53d7\u9501\u5b58\u5143\u6570\u636e\uff0clast\u540e\u7b49\u5f85\u539fMAC\u7ed3\u679c",
+        "\u52a8\u6001\u91cd\u5b9a\u6807\u3001SiLU\u53ca\u540e\u91cd\u5b9a\u6807\u590d\u7528\u51bb\u7ed3\u6838\u5fc3",
+        "\u91cf\u5316\u8f93\u51fa\u771f\u5b9e\u63a5\u53d7\u65f6\u8ba1\u7b97signed9\u65c1\u8def\u548c\u5e76sat8\uff0c\u540c\u6b65\u9501\u5b58\u5730\u5740\u4e0etag",
+        "\u5199\u69fd\u80cc\u538b\u4fdd\u6301\uff0c\u6700\u7ec8\u6709\u6548\u5199\u63a5\u53d7\u540e\u624d\u5f00\u653e\u65b0\u4efb\u52a1",
+        "\u7a7a\u95f2\u4e14i_table_valid\u4e3a1\u65f6\u9996\u7ec4ready\u4e3a0\uff0c\u88c5\u8868\u4f18\u5148\uff1b\u5df2\u62e5\u6709\u5f52\u7ea6\u65f6\u88c5\u8868\u8bf7\u6c42\u4e0d\u963b\u65ad\u5408\u6cd5\u540e\u7eed\u7ec4"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "hold",
+          "title": "\u5355\u4e8b\u52a1\u53ca\u5199\u56de\u4fdd\u6301",
+          "scenario": "backpressure",
+          "description": "\u5951\u7ea6\u793a\u610f\uff1b\u7ad6\u7ebf\u7701\u7565\u5b9e\u9645\u6838\u5fc3\u5ef6\u8fdf\uff0c\u4e0d\u662f\u5b9e\u6d4b\u5468\u671f",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p..|....."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "1..|....."
+              },
+              {
+                "name": "i_input_valid",
+                "wave": "011|0...."
+              },
+              {
+                "name": "o_input_ready",
+                "wave": "011|0...."
+              },
+              {
+                "name": "i_first",
+                "wave": "010|0...."
+              },
+              {
+                "name": "i_last",
+                "wave": "001|0...."
+              },
+              {
+                "name": "o_output_valid",
+                "wave": "0..|.1110"
+              },
+              {
+                "name": "i_output_ready",
+                "wave": "1..|.0011"
+              },
+              {
+                "name": "o_output_data/tag/address",
+                "wave": "x..|.=.==",
+                "data": [
+                  "A",
+                  "B",
+                  "C"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "description": "\u9996\u6b8b\u5dee\u72ec\u7acb\u6570\u636e\u901a\u8def\u4e0e\u6709\u754c\u5bf9\u6297\u56de\u5f52\uff1b\u4e0d\u4ee3\u8868\u5b8c\u6574CNN\u6216\u53ef\u90e8\u7f72\u5b9e\u73b0\u3002"
+    }
+  ]
+}

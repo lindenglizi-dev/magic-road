@@ -1,0 +1,124 @@
+第六批 C8 最终交付：源帧时间与年龄文字
+日期：2026-10-15；分支work/roadyolo；独立候选，非生产顶层。
+
+一、先看未通过项
+1. 严格门禁未闭合：identity165 error/0 warning，overlay178 error/1 strict warning。两者compile通过，但AST/readability/naming失败；identity comment/profile通过，overlay comment/profile失败。原始testbench/toolchain字段为not_requested；实际ModelSim编译和执行证据另列，不能回填成八门全通过。
+2. 未跑TD，没有新Slice/DSP/ERAM、setup/hold或物理CDC/MTBF/bundled-bus签核结果。ASYNC_REG只是六条同步链的识别提示，不代表安路工具已认可或时序已通过。
+3. 实际slot credit、完整像素DMA、写可见性、publisher/真实活动表/文字的联合顶层仍未接通；本批只能交付身份与文字组件，不是摄像头CNN闭环。
+4. 当前源帧号统计所有观察到的AWB重建SOF，包括应用跳帧。异常CSI短包帧与AWB是否一一对应尚未证明，不应把它称作传感器曝光编号或已覆盖全部异常物理帧。
+
+二、完成了什么
+新增RTL位置：
+rtl/road_source_sof_identity.v
+rtl/road_age_overlay.v
+身份最终SHA：dbe6056ef93f231e192afd287264fd3173329401d8b57ba29a497dc7875970b5
+文字最终SHA：d24c7ca135fb362e2cb1c63eae6068f5a1660dd2ba564f50640774260ca5a502
+规格、端口和WaveDrom：specifications/source/spec/source_sof_identity/。
+CPU参考：reference/reference.py；13组自检、22字形、16年龄向量、33792个标签像素；8个参考文件已冻结。
+稳定端口和逐边沿合同：interfaces.json。
+实际来源链、文件行号和30份源码哈希：source_inventory.txt/json。
+
+结构（箭头是冻结请求/确认，不是逐位同步动态宽总线）：
+唯一100MHz road_time_snapshot.o_src_now_ms/o_src_tick
+  -> held96 {epoch32,ms64} -> 两级request + 额外稳定拍 -> 标称60MHz AWB时间镜像
+  -> 实际AWB SOF，旧镜像有效、credit足够、无在途时，整帧接纳
+  -> held128 {epoch32,source_frame_id32,capture_ms64}
+  -> 两级request + 额外稳定拍 -> 100MHz描述符valid/ready -> 真实接受才ACK
+
+已有结果表/同源HDMI时间（本批不重复publisher）
+  -> 75MHz活动表age_upper与实时draw_valid
+  -> 固定AGE文字 + RGB/VS/HS/DE共同延迟一拍 -> 原HDMI发送器
+
+三、源SOF与输入接线义务
+官方CNN模板 cnn/template/design_top_wrapper.v:668-671 的O_analysis_*仍未连接。本批没有写该文件。
+实际AWB选user_source/hdl_source/awb.v，不是isp/awb/awb.v。
+isp_top.O_analysis_sof=awb_O_tuser；所选AWB O_tuser直接透传，O_tvalid另走延迟。因此i_camera_sof不能用analysis_sof && analysis_valid。
+时钟i_camera_clk应为S_csi_rx_clk：MIPI恢复字节时钟。480Mbps/8得到标称60MHz，不是100MHz控制时钟，也不是板测。
+源SOF是在像素处理链重建的标记，当前正常配置源码推导为单拍；未跑整ISP波形来证明CSI→AWB映射/延迟。capture_ms是AWB边界的保守系统时间，不是曝光时刻。
+
+100MHz端口：
+i_time_now_ms <- 既有road_time_snapshot.o_src_now_ms
+i_time_tick <- 既有road_time_snapshot.o_src_tick
+i_time_epoch <- 稳定epoch所有者；必须在一次共同复位区间内不变
+o_desc_payload[127:96]=epoch，[95:64]=source_frame_id，[63:0]=capture_ms
+o_desc_valid && i_desc_ready才算消费；接收者必须锁存整个128bit。
+该描述符不含task_id/model_id/slot，不能仅收到它就启动CNN。应用层仍要等待同一epoch/frame的完整输入槽READY与可靠DDR写可见性。
+
+AWB端口：
+o_frame_admit在真实SOF采样边沿之前组合有效；同一边沿必须使用o_admit_epoch/frame_id/capture_ms。不能等寄存o_capture_accepted再开始第一批像素。
+i_capture_credit必须是同域且在SOF前稳定的真实接纳额度，至少要求已有FREE槽、无进行中的采集、缩放器可接新帧及必要DMA空间。不是把常数1连上就叫集成完成。
+同拍新到的镜像不参与本拍接纳；忙、无额度、无时间、过期则整帧跳过，帧号仍递增。没有中途补接或视频反压。
+帧号到0xffffffff允许最后合法身份一次；下一SOF饱和并粘滞故障，不回卷。共同复位并换新epoch后恢复。
+
+注意现有采集组件的真实约束：
+road_capture_slots.i_sof不仅用于分配，还用于发现前一帧未结束的异常；不能简单把所有原始SOF盲目替换为admit后就丢掉异常帧取消。
+也不能把全部原始SOF直接送给旧自动分配逻辑，否则在身份busy/时间无效时仍可能分配未获身份的帧。
+下一联合候选需在应用适配处同时保留“原始帧边界用于取消”和“合格边界用于新分配”，并让pre-edge选中的槽与本身份匹配；本批未实现这一适配。
+槽FREE/READY、写后读可见性及最后读消费的释放规则沿旧合同；源事件ACK绝不是DDR写完成或释放槽。
+
+四、同源时间、安全边界及实测
+没有第二个绝对计时器；本地cnt_mirror_silence只是失联边沿计数。
+时间和身份两个保持通道互不等待。源payload从request发布到返回ACK同步完成持续不变。
+接纳时间来自已完整接收的旧镜像，镜像滞后只会把capture_ms变旧，从而保守增加年龄；绝不在描述符到达时重新盖一个“现在”的时间戳。
+现有表的age_upper=snapshot_ms-capture_ms+4ms保持不变。新增源镜像的旧值只增加保守量；既有+4ms上界仍以活跃标称时钟及既有时间通道假设为条件，不能当作时钟故障后的无条件实时时钟保证。
+摄像头镜像在完整更新后120000条无更新边沿仍有效，第120001条失效；标称60MHz约2.0000167ms。
+摄像头停钟也停止失联计数，因此停钟/失锁恢复应共同复位；本地计数不能承诺停钟期间继续监控墙钟时间。
+独立热复位和真实DDR晚返回排空未证明。
+
+最终identity_attempt2实测，单一100MHz绝对计时器，标称60MHz数字时钟：
+- 仿真15.101782638ms；9次接纳、7次真实消费、2次被共同复位刻意取消、10次跳过。
+- 100014个描述符反压边沿；held96检查110087边沿，held128检查60042边沿。
+- 5次共同复位，含镜像等待、事件等待、输出持有；120001精确失效、恢复、同拍旧镜像和帧号边界通过。
+- 帧号极限是明确标注的人工状态注入，不是跑了四十亿帧。
+- 7条完整事件端点：SOF接纳→描述符valid最大39.959ns；valid→真实accept最大1000140ns（刻意背压）；accept→源busy解除最大23.347ns。三个最大值不来自同一事务，不相加当总延迟。
+- 活跃时钟下publication→镜像完整复制最大63.391ns/4摄像头拍；观测到的活跃镜像滞后最大1ms。
+- 停摄像头时钟的排队样例publication→copy为1100222.663ns，单列故障情况，不混入正常上界。
+上述最大值是本确定时钟相位/刺激的实测；SOF刺激含高频边界压力，不是板上摄像头FPS。
+
+五、AGE文字接线与行为
+接口i_clk=75MHz，i_rstn使用像素域已同步释放复位。
+i_age_upper_ms连接现有table.o_dst_age_upper_ms，i_table_draw_valid连接其实时draw许可。
+文字仅11个固定12×16单元，位置x16..147/y16..31，5×7点阵二倍放大；空点透明、墨点白色。没有通用字符存储器或64路画框比较树。
+0..9999ms显示AGE xxxx ms；全一未知或超过四位显示AGE_INVALID，不能截低位变成0ms。
+合法空表可以显示其已知年龄但draw为0；已过期但仍已知的年龄可显示例如AGE 2001 ms，仍绝不从文字重新产生画框许可。
+新演示table实例AGE_LIMIT_MS=2000由C9/C7接入；旧500ms表/时间源码和旧收据未修改，也未改原正式精度/验收门槛。
+i_sof与表切换使用同一消隐内单拍事件。文字在它之后第一个消隐边沿锁存，以观察表切换的NBA结果；第一个活动像素必须晚于此锁存边沿。
+不要把首有效像素的USER直接当该消隐SOF。可沿mixer输出VS上升沿产生本边界，且与对应RGB/DE延迟一致；原mixer已有三个寄存级，不应拿原VTC事件不加对齐就接入。
+帧内数字冻结；o_draw_permit始终等于复位许可&&实时table_draw_valid，安全失效立即撤框，不等待文字/下一SOF。
+新文字组件不画检测框；C7的框叠加者必须真使用live draw许可，不能只把这个输出接到未使用的诊断端。
+官方模板插入点：mixer输出S_hdmi_out_*之后、hdmi_tx之前；RGB/VS/HS/DE共同多一拍。保持原图在文字外透明。
+最终overlay_attempt3：16帧、87040像素逐项对拍（9508墨点、77532透传）、87616同步对齐边沿、16次即时撤许可检查均通过，编译/仿真零错误零警告。
+本TB用NBA模拟表在SOF换bank；尚未实例化真实结果表/publisher联合验证。
+
+六、资源与严格诊断，不隐藏真实状态
+源码级时序状态位：identity536，文字67，合计603。只统计本次新增组件的顺序寄存状态；不含原时间器、三表、publisher、采集或DDR。不是TD映射FF数，更不是Slice用量。
+没有新增存储数组或变量乘法器；字形常量和14bit常数十进制/字符间距运算仍需TD确认真实映射，不宣称ERAM/DSP为实测零。
+硬限21216Slice/40DSP/108ERAM与管理19000/38/107保持不变。
+严格报告在gate_attempt2/，首次gate/也保留。重点未闭合：
+- identity：VG073双时钟、VG099/100本地复位分发、VG137位宽事实不确定、VG145/146预边沿接纳组合锥、VG155顶层valid别名与内部valid寄存器的握手识别，以及参数约束/格式/命名。
+- overlay：VG137宽度推导、VG153点阵组合case驱动识别、VG145/146字符选择/位索引/RGB锥，和多目标过程/注释/格式项。
+手工确认desc清除与ACK均为desc_valid_o&&i_desc_ready；所有字形case有default，逐像素和握手仿真通过。但这些事实不删除或豁免上述门禁记录，也不证明物理时序。
+如后续需要切分接纳或文字路径，须保留真实SOF同拍接纳和视频等延迟契约，不能为消掉诊断把admit延迟一拍或让元数据错位。
+没有改全局检查器或新增时序例外。
+
+七、冻结、复现与下一步
+旧table候选479个artifact、采集候选228个artifact及12项直接冻结依赖均前后校验无变化，见各guard.json与frozen_check.json。
+无属性的初版identity保留在retained_before_attributes/；其8f6ccfe9...版本曾实际通过。最终版只加六处同步链属性，attribute_only_receipt.json证明去属性/空白后内容相同，并用同TB重新通过。
+运行入口（工作目录必须为本新目录）：
+D:/Python313/python.exe -B -X utf8 run.py
+D:/Python313/python.exe -B -X utf8 prepare.py --source
+D:/Python313/python.exe -B -X utf8 verify.py all
+D:/Python313/python.exe -B -X utf8 gate.py
+D:/Python313/python.exe -B -X utf8 collect.py
+重跑生成新的attempt目录，不覆盖旧失败。全部构建/运行输出限定本目录。
+首个Python受限调用和ModelSim DLL623启动失败保留；获准本地工具执行后成功，不是RTL功能失败。身份属性追加代理末尾模型容量报错，但补丁实际上已落盘，已通过内容比对和最终回归确认，未更换代理模型。
+readable-python-generator/readable-script-generator当前未安装，未声称这两项严格门通过；Python参考、实际工具和日志证据已保留。
+
+下一最小实施顺序由C7统一集成，不再扩展本地探针：
+1. 把本身份事件的epoch/frame/capture接入C9已有publisher上下文，和真实READY槽按身份配对，不把source ACK当输入READY。
+2. 实际连接AWB source/admit/槽取消与分配语义，并验证完整帧、忙时跳帧、异常下一SOF、写可见性和最后读释放。
+3. 将本AGE适配接现有活动表与原视频，跑真实表/publisher、2000ms过期与正常空表联合仿真；原500ms回归保留单列。
+4. 由C7在包含这些实际模块的统一顶层做资源、时序和CDC诊断；不要拿本603状态位代替资源报告。
+本批未训练、未改生产、未跑TD、未生成位流、未上板/写Flash、未提交推送。
+
+总结：源帧身份/同源时间和年龄字形两个组件已获得实际功能证据；下一步需要真实接线与联合验证，而不是继续增加通用加速器或把局部通过包装成整网通过。

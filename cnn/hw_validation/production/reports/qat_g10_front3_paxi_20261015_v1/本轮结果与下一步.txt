@@ -1,0 +1,49 @@
+真实QAT前三层双时钟PAXI联调
+完成时间：2026-10-15 09:38:28（北京时间）
+
+结论
+PASS_REAL_QAT_FRONT3_PAXI_2_OF_2。实际ModelSim编译0错误、0警告，正常/随机停顿两项全部通过，编译与执行共12.164秒。
+复用已有共享核、sequence、mailbox及测试台，未修改RTL行为、端口、II、数值、复位、时钟配置或生产工程。新增代码只是复用原命令的隔离验证启动器。
+
+本次实际测量
+计算时钟100MHz；存储端时钟约133.33MHz，仿真相位偏移1.7ns。
+                         正常              随机停顿
+端点总周期              125824             128083
+100MHz对应局部时间      1.25824ms          1.28083ms
+AW/W各实际接受数        256/256            256/256
+AR/R各实际接受数        289/289            289/289
+最终PW输出字节数        1536               1536
+10项互斥周期分类和总周期闭合。随机模式独立控制AW/W/AR ready并改变R返回等待；没有改变输入参数或网络。
+256个唯一写字逐项比较真实Stem数据；端点保存实际W载荷，289次读含重叠halo复读，覆盖全部256个已写地址；最终1536字节PW输出逐项一致。
+本次双时钟测试不包含内部26624阶段逐项观察；该逐级证据在上一轮直接端点13项测试中通过，不能将两个测试范围混写。
+
+数值、源码和执行绑定
+真实QAT-G10 payload：b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145。
+checkpoint：f58ce4501104e818c8a6fb10e378d7e7668b937b1332f3530180d4806029d3dd。
+使用上一轮通过的同一QAT program/golden，不使用旧TEST_ONLY参数。旧命令的源码、include和VECTORS路径均改到本轮隔离副本；路径与完整命令见commands.json。
+启动前后绑定原始/暂存文件、厂商RAM模型及模板中工具；结束额外复核253个原始/暂存哈希与2份实际日志PASS标记，均一致。
+哈希正例和篡改反例自检通过。本机ModelSim沿现有已批准流程运行，未再次尝试已知会阻止ModelSim启动的隔离环境。没有安装依赖。
+
+CDC与PAXI边界
+源端在请求接受时冻结op/address/data，并保持到源响应真正消费；DDR端等请求toggle跨两级同步后在空闲阶段复制载荷。
+DDR端冻结响应并发布toggle，源端等两级同步后复制；源响应valid/data/error保持到ready，消费后ack跨回DDR域，才结束该响应所有权。
+两域必须共同复位；当前测试只做初始复位，并未覆盖双时钟运行中复位/晚返回/错误注入，也不证明异步物理亚稳态或复位释放时序。
+当前mailbox为单在途：先AW真实接受，再提出W，二者各遵守ready；读返回有唯一owner和预留槽。
+写响应只表示AW/W接受，不是DDR提交。受控端点在W接受时直接存储、之后允许读回；不能据此证明真实控制器通用写读可见性、地址复用、多客户仲裁或取消排空。
+
+未通过项与未执行项
+严格静态门仍未通过：本次扫描sequence和mailbox两份RTL，共403 errors、0 strict warnings；compile/ast/readability/comment/naming/profile为failed，testbench/toolchain在该静态门为not_requested。
+上一轮193项只扫描sequence，本轮扫描范围增大，不应把403-193解释为新增数值故障。实际ModelSim编译与仿真结果独立记录，不清除静态失败。
+运行时并非零警告：mode0优化时有两条厂商ph1p_logic_eram.v的vopt-2697 INIT_FILE越界警告，另有原命令onerror/onbreak的宏用法提示。旧TEST_ONLY集成日志及上一轮直接测试有相同警告；本轮未发现对应数据不一致，但根因/初始化物理保证仍未闭合。厂商实现为加密模型，未修改、解密或屏蔽警告；编译0警告不包括这些运行/优化阶段警告。
+未训练、未评精度、未综合/布局布线、未生成位流、未操作板卡；未改生产工程/约束，保持work/roadyolo，仅本地保存。
+未运行真实DDR控制器/器件；没有完成67层/全帧、pool/residual/views、三尺度预测、decode/NMS、64框显示或视频并发。现有物理布局访问异常仍未解决。
+上述局部周期不是整网FPS；不能宣称P95/R85、资源时序、>=5FPS或30分钟板测达标。
+
+下一步：固定图分段扩展（未执行）
+先建立CSP2第一残差单元的数据契约和golden：split.00→csp2.blocks.0.dw.conv→csp2.blocks.0.pw.conv→residual.00。
+该分支为12通道DW3×3/stride1和PW12→12，旁路来自原24通道张量后一半；残差按原尺度对齐、signed9加法、sat8，不重新选量化尺度。
+先核对真实参数段、channel12尾lane、split地址和一个4×4输出所需真实halo，逐级acc/pre/SiLU/post/residual及写地址对拍；不能把局部截取边界误当真实图像边界补零。
+保留前12通道旁路，随后才扩第二残差、concat和PW24→24，形成完整CSP2。现有固定down2 scheduler不是已支持12通道/stride1的通用执行器，不能直接接线宣布实现。
+原24MAC/RNE/SiLU核、II和PAXI协议保持；若需要改变任何对外行为，先单列决策和验证，不靠改约束绕过问题。
+
+证据：status.json、input_binding.json、commands.json、run/compile.log、run/mode_0.log、run/mode_1.log、static_gate.json。

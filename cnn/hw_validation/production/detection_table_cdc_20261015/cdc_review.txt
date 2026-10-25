@@ -1,0 +1,92 @@
+SRIF1 time/table CDC 有界只读审查（2026-10-15）
+===================================================
+
+范围与冻结身份
+--------------
+- requirements.txt、interfaces.json
+- 连续视频1FPS目标与第四批任务_20261015.txt（new1FPS）
+- 后处理共享RAM与接口约定_20261015.txt（SRIF1/PIF1）
+- reference/contract.json、reference_table.py
+- rtl/road_time_snapshot.v
+- rtl/road_detection_table_cdc.v
+
+本次读取时实际 SHA256 已复核为：
+- road_time_snapshot.v = 00e3e267f6d479612019e8a63c52099705d69d2b29c0379e76c1fc9ae1eb4921
+- road_detection_table_cdc.v = 4cf6c0ab45c40c0718519ca6aba93dd3c5b60a7edba13f1beb01a66547d0d599
+
+只新增本审查文件；未修改 RTL/门禁，未运行 TD、综合、布局布线、位流或板测，也未重跑功能仿真。
+
+结论
+----
+在上述冻结源码和已声明的数字 CDC 假设内，未发现新的可执行语义缺陷，不需要改端口。time96 的冻结/请求/稳定等待/确认、150001 拍失联边界，三表 source-held→pending→active 所有权，count0 完整表，末复制与 SOF 无旁路，sealed abort，以及显示身份/时间/溢出过滤均与 SRIF1 合同一致。
+
+这不是物理 CDC 或生产就绪结论。96/265/97-bit bundled-data 的布线偏斜、同步器 MTBF、LUTRAM 推断/映射、时序约束、实际 PLL/时钟存活和 TD 均未由本审查验证。
+
+一、road_time_snapshot 语义
+--------------------------
+1. 源时间独立前进。第 79--81、95--110、169--187 行使 100000 个源拍递增 1 ms；busy 只跳过本次快照发布，不停止 src_now_ms。该模块没有 table pending/copy_enable 输入，因此时间握手不会被框表 pending 阻塞。
+
+2. payload 保持正确。发布拍同时把 `{src_now_ms+1, i_src_epoch}` 写入 96-bit reg_held_snapshot 并翻转 request（第 180--196 行）。busy 定义为 request 与经两级返回的 ack 不同；busy 期间 flag_publish 为假，所以 payload 到源观察 ack 前不会覆写。
+
+3. 目标请求路径是 2FF 加额外稳定拍。request 先经过 flag_request_meta、flag_request_sync（第 216--232 行）；发现新 toggle 的拍只更新 request_seen 并置 capture_pending（第 234--250 行）；下一目标拍才从冻结 96-bit 总线同时捕获 time/epoch，并用已经记录的 request_seen 回 ack（第 112--128、252--259 行）。ack 不会早于 payload 捕获。
+
+4. watchdog 边界无 off-by-one。捕获拍把 silence 清零并置 time_valid；之后第 1..150000 个无更新目标拍结束时仍有效，第 150001 个无更新拍进入时旧计数为 150000，第 136--137 行撤销有效。因此满足 contract 的“elapsed=150000 有效，elapsed=150001 无效”。更新与超时同拍时 capture_pending 优先，立即恢复有效。
+
+5. 看门狗只撤销 time_valid，不修改已捕获 now/epoch，也不充当第二绝对时钟；新快照到达可恢复。首次捕获前 time_valid 保持 0。
+
+二、road_detection_table_cdc 所有权与复制
+-----------------------------------------
+1. RTL 只有三份完整 entry 存储：source 97x64、destination A 97x64、destination B 97x64（第 68、174--175 行），以及各自一份 265-bit metadata。没有第四份完整表；单个组合读数 reg_destination_entry 不是表复制。
+
+2. source 顺序写入并在 seal 后冻结。entry 只在 accepted count 0..63 写入；metadata ready 要求 count<=64、等于已接受 entry 数、且本拍没有 entry valid（第 85--92、122--146 行）。seal 后 entry/meta ready 均为 0，request 只翻转一次。
+
+3. 最后一项复制完成后才产生目标 ack。非空表逐项写入非 active bank；只有 `copy_index+1==entry_count` 的末项写入拍才置 pending 并翻转 ack（第 260--274 行）。ack 再经源端 2FF 返回，源随后清 sealed/count 并脉冲 copy_ack（第 101--109、149--154 行），所以 source 在目标已采样末项之前不能覆写。
+
+4. pending/active 旋转不冲突。新 copy 只在 pending、copy_busy、metadata_wait 都为空时开始，并固定选 `!active_bank`（第 233--239 行）。pending 未被 SOF 采用前阻塞下一请求捕获；源 toggle/payload 会保持等待，不会丢请求或覆盖 pending。
+
+5. 末 copy + SOF 不旁路。SOF 判断的是边沿前 pending_valid（第 225 行）；末项写入或 count0 metadata 完成在同一 always block 后面才置 pending，因此同拍 SOF 看不到新表。已有 pending 在 SOF 被采用的同拍也不会启动等待中的下一 copy，因为第 233 行仍看到边沿前 pending_valid=1；最早下一目标拍才开始。
+
+6. count0 是完整有效表。metadata 稳定拍发现 count=0 时直接建立 pending 并 ack；下一 SOF 令 active_present=1、active 的 nonempty 标志=0。输出 `o_dst_active_valid` 连接 active_present（第 320 行），所以 count0 仍表示“完整表存在/清框”；entry 输出保持 0，`o_dst_draw_valid` 由 nonempty 标志门控为 0。这里不能把内部 flag_active_valid_dst 的名字误读为接口 active_valid 语义。
+
+7. 局部 abort 符合所有权边界。未 seal 时 abort 只把 accepted count 清零，未清 RAM 但旧内容由新 count 隔离；seal 后 abort 仅产生 source_error，不清 sealed、不改 request、不撤 pending/copy，仍须等复制 ack 或共同复位。若 sealed abort 恰与正常 ack 同拍，错误脉冲和正常释放可同时发生，但已发布事务没有被取消。
+
+8. RAM 未复位是合同允许行为：source count/sealed、destination active_present/pending/copy 状态全部复位为无效，未清 RAM/metadata 在新 valid 建立前不会从接口泄漏为有效表。
+
+三、显示过滤与算术边界
+----------------------
+1. 只有非空 active 表才可能 draw：flag_active_valid_dst 在 SOF 时由 pending count!=0 建立；异步 entry read 还要求 read_index<count，否则输出 97'd0。
+
+2. draw 同时要求：time_valid；metadata epoch 等于 time epoch；model_id 等于 0xB35D4A66；status==0；count<=64；capture<=completion<=now；以及保守 age upper 不超过 AGE_LIMIT_MS（第 294--322 行）。非0 status 的 count0..64 诊断表可完整复制/激活，但不会绘框。
+
+3. 未来时间不会被无符号减法伪装成新鲜：timestamp_order 单独拒绝 capture>completion 或 completion>now。age 路径把 now/capture 扩为 65 bit后相减，再以 65 bit加 4；若 64-bit delta+4 上溢，bit64=1 使 age 无效。telemetry 对 future capture 返回0，对加4溢出饱和为 64'hFFFFFFFFFFFFFFFF，但两种情况 draw 均为0。
+
+4. source seal 时 count 必须等于实际 accepted entry 数；目标只按该 count 复制。因此逻辑模型下 count 与 copied entries 一致。物理 bundled-data 采样错误不在此数字检查能够证明的范围。
+
+四、共同复位与旧请求隔离
+------------------------
+1. 两模块都用 i_rstn 对每域的两级 release 链异步清零，再只让功能逻辑使用本域第二级 release；i_rstn 释放后经过两个本域上升沿，功能逻辑才在后续边沿离开复位。没有把 release 同步器首级分发给功能逻辑。
+
+2. time 的 request/ack/meta/sync/seen/pending/valid 与 table 的 request/ack/meta/sync/seen、sealed、pending、active_present、copy_busy 均由共同复位清为同一 toggle 代次。RAM/metadata 即便保留旧位，valid/count 隔离且不存在 toggle mismatch，因此共同复位后不会自行重放旧请求。
+
+3. 该结论要求两域都接同一个 i_rstn。单域热复位恢复、一个时钟永久停摆时的系统恢复不在接口合同内，也未被本审查扩展支持。
+
+五、现有证据（只读，不是本次执行）
+----------------------------------
+- 既有 time_multims 收据绑定当前 time hash，记录 request→update 固定4个目标拍、busy 往返6..7个源拍。
+- 既有 time_watchdog_recovery 收据绑定当前 time hash，记录 watchdog_elapsed_dst_cycles=150001 后失效并恢复。
+- 既有 table_counts_random 与 table_stall_pending_sof 收据绑定当前 table hash，覆盖 counts 0/1/32/33/64、随机 copy stall、pending 满、SOF 交换和 last-copy+SOF 无旁路。
+- 上述只是受控 ModelSim 组件仿真；本次没有重跑，也不能替代物理 CDC/MTBF、综合/实现或整机证据。
+
+六、现存八门状态（gate_attempt2，绑定当前冻结哈希）
+-----------------------------------------------------
+- road_time_snapshot：compile passed；ast failed(1)；readability failed(97)；comment passed；naming failed(4)；profile passed；testbench not_requested；toolchain not_requested。strict errors=98，warnings=0，delivery_ready=false。
+- road_detection_table_cdc：compile passed；ast failed(7)；readability failed(625)；comment failed(111)；naming failed(133)；profile passed；testbench not_requested；toolchain not_requested。strict errors=743，warnings=0，delivery_ready=false。
+
+这些主要是当前严格格式/结构门禁事实；本轮按任务要求不做格式重写，也不把独立 ModelSim 收据倒填成 gate 的 testbench/toolchain passed。功能语义审查无新增 bug，不等于八门关闭。
+
+剩余风险
+--------
+1. ASYNC_REG 属性、2FF 控制和额外稳定拍只建立逻辑协议；尚无物理 CDC 报告、MTBF、bundle 最大偏斜/保持约束或跨域 LUTRAM 实际映射证据。
+2. 真实 100/75MHz、时钟持续活跃、snapshot <=1ms、滞后<=3ms 及 +4ms 裕量仍需最终顶层时钟/约束/TD 证明。
+3. 实际 C7/C9 source producer 必须遵守 ready/valid、metadata count 等于已接受 entry 数、sealed 后保持，以及共同复位约束；本组件不提供异步 FIFO、CRC 或单域热复位恢复。
+4. 在八门问题关闭、目标器件综合/实现和真实顶层 CDC 通过前，不应宣称资源、时序或生产签核完成。

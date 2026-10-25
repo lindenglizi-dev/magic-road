@@ -1,0 +1,229 @@
+{
+  "schema": "road-qat-saved-development17-comparison-diagnostics-v1",
+  "scope": "DEVELOPMENT17_READ_ONLY_SAVED_OUTPUT_DIAGNOSTIC_NOT_ACCEPTANCE",
+  "status": "FAIL_G20_CONTINUATION_GATE_NO_OLD256",
+  "method": {
+    "model_inference_run": false,
+    "training_run": false,
+    "gpu_used": false,
+    "inputs": "saved predictions, ground truth, ignore regions, postprocess contract, and saturation summaries only",
+    "matching": "exact cnn.metrics fixed-score greedy matching: predictions descending by score; one-to-one same-class valid-GT match at IoU >= 0.5 before ignore-region handling",
+    "score_threshold": 0.5,
+    "iou_threshold": 0.5,
+    "saved_prediction_floor": 0.04998779296875,
+    "camera_grouping": {
+      "VIRAT": "first four underscore-delimited image-id fields",
+      "PETS09": "first two underscore-delimited image-id fields"
+    },
+    "fn_categories": {
+      "saved_subthreshold_geometric_match": "unmatched GT has an otherwise unclaimed saved same-class prediction with IoU >= 0.5 and score < 0.5",
+      "saved_candidate_iou_below_0_5": "unmatched GT has saved same-class predictions, but its best saved prediction has IoU < 0.5",
+      "greedy_competition_or_duplicate": "a saved prediction with IoU >= 0.5 exists, but was already assigned by the metrics greedy order",
+      "no_saved_same_class_candidate": "no same-class candidate remains in the saved postprocessed predictions; this is not evidence that no raw or score-below-floor candidate existed"
+    }
+  },
+  "input_bindings": {
+    "candidate_report": {
+      "path": "cnn/reports/qat_frozen_stem_g20_numpy235_20261014_v2/evaluation/development17.json",
+      "sha256": "b7820b4cece842c7a58880fb9e4f87aa1944f345cdf6972ff6dc09c3a8726f5b"
+    },
+    "parent_report": {
+      "path": "cnn/reports/qat_frozen_stem_g10_20261014_v1/evaluation/development17.json",
+      "sha256": "10052bdaeaff450beb86ad5cd079eaae98df4325ccb2c2a881835d64364be09a"
+    },
+    "candidate_saturation": {
+      "path": "cnn/reports/qat_frozen_stem_g20_numpy235_20261014_v2/evaluation/saturation_diagnostics.json",
+      "sha256": "7e6666267319dfe1b48c5299126fa1858e491ff3e62f794fc30f14dcb0ae4a33"
+    },
+    "parent_saturation": {
+      "path": "cnn/reports/qat_frozen_stem_g10_20261014_v1/evaluation/saturation_diagnostics.json",
+      "sha256": "2b875a51d59639549128b21e6c92d0ccc261ee9e0778416566e6b89f2d74ede9"
+    },
+    "candidate_gate": {
+      "sha256": "e538d40bb4891d721e239e04632ac54201077a04ac022ead23218ca76d86d6eb",
+      "status": "FAIL_G20_CONTINUATION_GATE"
+    },
+    "parent_gate": {
+      "sha256": "770ac33aff13198f4573ea42489f68394b548922558ede4bb53a156a1619c495",
+      "status": "PASS_QAT_G10_DEVELOPMENT17_RESTORATION"
+    },
+    "metrics_source_sha256": "8cddbf6b713668edc4b4104f2054954ec0462e81efa6593d4c1e31866d1d7fb3",
+    "identity_checks": {
+      "image_ids_equal": true,
+      "ground_truth_equal": true,
+      "ignore_regions_equal": true,
+      "postprocess_equal": true,
+      "image_count": 17
+    }
+  },
+  "fixed_0_5_counts": {
+    "overall": {
+      "person": {
+        "parent": {"tp": 27, "fp": 29, "fn": 65, "ignored_predictions": 0},
+        "candidate": {"tp": 24, "fp": 41, "fn": 68, "ignored_predictions": 0},
+        "delta_candidate_minus_parent": {"tp": -3, "fp": 12, "fn": 3, "ignored_predictions": 0}
+      },
+      "vehicle": {
+        "parent": {"tp": 15, "fp": 31, "fn": 72, "ignored_predictions": 0},
+        "candidate": {"tp": 7, "fp": 12, "fn": 80, "ignored_predictions": 0},
+        "delta_candidate_minus_parent": {"tp": -8, "fp": -19, "fn": 8, "ignored_predictions": 0}
+      }
+    },
+    "by_camera": {
+      "VIRAT_S_000200_00": {
+        "frames": 2,
+        "person": {
+          "parent": {"tp": 0, "fp": 3, "fn": 2},
+          "candidate": {"tp": 1, "fp": 3, "fn": 1},
+          "delta_candidate_minus_parent": {"tp": 1, "fp": 0, "fn": -1}
+        },
+        "vehicle": {
+          "parent": {"tp": 3, "fp": 2, "fn": 4},
+          "candidate": {"tp": 0, "fp": 1, "fn": 7},
+          "delta_candidate_minus_parent": {"tp": -3, "fp": -1, "fn": 3}
+        }
+      },
+      "VIRAT_S_010107_02": {
+        "frames": 2,
+        "person": {
+          "parent": {"tp": 0, "fp": 1, "fn": 6},
+          "candidate": {"tp": 1, "fp": 1, "fn": 5},
+          "delta_candidate_minus_parent": {"tp": 1, "fp": 0, "fn": -1}
+        },
+        "vehicle": {
+          "parent": {"tp": 7, "fp": 5, "fn": 47},
+          "candidate": {"tp": 4, "fp": 4, "fn": 50},
+          "delta_candidate_minus_parent": {"tp": -3, "fp": -1, "fn": 3}
+        }
+      },
+      "pets09_s2l1": {
+        "frames": 13,
+        "person": {
+          "parent": {"tp": 27, "fp": 25, "fn": 57},
+          "candidate": {"tp": 22, "fp": 37, "fn": 62},
+          "delta_candidate_minus_parent": {"tp": -5, "fp": 12, "fn": 5}
+        },
+        "vehicle": {
+          "parent": {"tp": 5, "fp": 24, "fn": 21},
+          "candidate": {"tp": 3, "fp": 7, "fn": 23},
+          "delta_candidate_minus_parent": {"tp": -2, "fp": -17, "fn": 2}
+        }
+      }
+    }
+  },
+  "saved_candidate_attribution": {
+    "overall": {
+      "person": {
+        "fn_parent": {"saved_subthreshold_geometric_match": 19, "saved_candidate_iou_below_0_5": 46, "greedy_competition_or_duplicate": 0, "no_saved_same_class_candidate": 0},
+        "fn_candidate": {"saved_subthreshold_geometric_match": 25, "saved_candidate_iou_below_0_5": 43, "greedy_competition_or_duplicate": 0, "no_saved_same_class_candidate": 0},
+        "fn_delta": {"saved_subthreshold_geometric_match": 6, "saved_candidate_iou_below_0_5": -3, "greedy_competition_or_duplicate": 0, "no_saved_same_class_candidate": 0},
+        "fp_parent": {"duplicate_or_competition_iou_ge_0_5": 0, "localization_overlap_iou_0_to_0_5": 17, "zero_iou_background_or_wrong_location": 12},
+        "fp_candidate": {"duplicate_or_competition_iou_ge_0_5": 2, "localization_overlap_iou_0_to_0_5": 26, "zero_iou_background_or_wrong_location": 13},
+        "fp_delta": {"duplicate_or_competition_iou_ge_0_5": 2, "localization_overlap_iou_0_to_0_5": 9, "zero_iou_background_or_wrong_location": 1},
+        "saved_subthreshold_score_summary": {
+          "parent": {"count": 19, "min": 0.101165771484375, "median": 0.248779296875, "max": 0.495452880859375},
+          "candidate": {"count": 25, "min": 0.0873565673828125, "median": 0.33612060546875, "max": 0.49822998046875}
+        },
+        "inaccurate_best_iou_summary": {
+          "parent": {"count": 46, "min": 0.0, "mean": 0.2392394949739012, "max": 0.49926282776173303},
+          "candidate": {"count": 43, "min": 0.0, "mean": 0.2839251424772184, "max": 0.4970765870092753}
+        }
+      },
+      "vehicle": {
+        "fn_parent": {"saved_subthreshold_geometric_match": 27, "saved_candidate_iou_below_0_5": 45, "greedy_competition_or_duplicate": 0, "no_saved_same_class_candidate": 0},
+        "fn_candidate": {"saved_subthreshold_geometric_match": 32, "saved_candidate_iou_below_0_5": 47, "greedy_competition_or_duplicate": 1, "no_saved_same_class_candidate": 0},
+        "fn_delta": {"saved_subthreshold_geometric_match": 5, "saved_candidate_iou_below_0_5": 2, "greedy_competition_or_duplicate": 1, "no_saved_same_class_candidate": 0},
+        "fp_parent": {"duplicate_or_competition_iou_ge_0_5": 0, "localization_overlap_iou_0_to_0_5": 9, "zero_iou_background_or_wrong_location": 22},
+        "fp_candidate": {"duplicate_or_competition_iou_ge_0_5": 0, "localization_overlap_iou_0_to_0_5": 5, "zero_iou_background_or_wrong_location": 7},
+        "fp_delta": {"duplicate_or_competition_iou_ge_0_5": 0, "localization_overlap_iou_0_to_0_5": -4, "zero_iou_background_or_wrong_location": -15},
+        "saved_subthreshold_score_summary": {
+          "parent": {"count": 27, "min": 0.063934326171875, "median": 0.255706787109375, "max": 0.49346923828125},
+          "candidate": {"count": 32, "min": 0.0526580810546875, "median": 0.2339324951171875, "max": 0.4797210693359375}
+        },
+        "inaccurate_best_iou_summary": {
+          "parent": {"count": 45, "min": 0.0, "mean": 0.2701378852494168, "max": 0.49454881685967916},
+          "candidate": {"count": 47, "min": 0.0, "mean": 0.2263497779016551, "max": 0.4971436091831748}
+        }
+      }
+    },
+    "by_camera_counts": {
+      "VIRAT_S_000200_00": {
+        "person": {
+          "fn_parent": {"low_score": 1, "inaccurate_box": 1, "competition": 0, "no_saved_candidate": 0},
+          "fn_candidate": {"low_score": 0, "inaccurate_box": 1, "competition": 0, "no_saved_candidate": 0},
+          "fp_parent": {"duplicate": 0, "localization": 0, "zero_iou": 3},
+          "fp_candidate": {"duplicate": 0, "localization": 0, "zero_iou": 3}
+        },
+        "vehicle": {
+          "fn_parent": {"low_score": 3, "inaccurate_box": 1, "competition": 0, "no_saved_candidate": 0},
+          "fn_candidate": {"low_score": 3, "inaccurate_box": 4, "competition": 0, "no_saved_candidate": 0},
+          "fp_parent": {"duplicate": 0, "localization": 1, "zero_iou": 1},
+          "fp_candidate": {"duplicate": 0, "localization": 1, "zero_iou": 0}
+        }
+      },
+      "VIRAT_S_010107_02": {
+        "person": {
+          "fn_parent": {"low_score": 1, "inaccurate_box": 5, "competition": 0, "no_saved_candidate": 0},
+          "fn_candidate": {"low_score": 1, "inaccurate_box": 4, "competition": 0, "no_saved_candidate": 0},
+          "fp_parent": {"duplicate": 0, "localization": 0, "zero_iou": 1},
+          "fp_candidate": {"duplicate": 0, "localization": 0, "zero_iou": 1}
+        },
+        "vehicle": {
+          "fn_parent": {"low_score": 9, "inaccurate_box": 38, "competition": 0, "no_saved_candidate": 0},
+          "fn_candidate": {"low_score": 14, "inaccurate_box": 35, "competition": 1, "no_saved_candidate": 0},
+          "fp_parent": {"duplicate": 0, "localization": 4, "zero_iou": 1},
+          "fp_candidate": {"duplicate": 0, "localization": 3, "zero_iou": 1}
+        }
+      },
+      "pets09_s2l1": {
+        "person": {
+          "fn_parent": {"low_score": 17, "inaccurate_box": 40, "competition": 0, "no_saved_candidate": 0},
+          "fn_candidate": {"low_score": 24, "inaccurate_box": 38, "competition": 0, "no_saved_candidate": 0},
+          "fp_parent": {"duplicate": 0, "localization": 17, "zero_iou": 8},
+          "fp_candidate": {"duplicate": 2, "localization": 26, "zero_iou": 9}
+        },
+        "vehicle": {
+          "fn_parent": {"low_score": 15, "inaccurate_box": 6, "competition": 0, "no_saved_candidate": 0},
+          "fn_candidate": {"low_score": 15, "inaccurate_box": 8, "competition": 0, "no_saved_candidate": 0},
+          "fp_parent": {"duplicate": 0, "localization": 4, "zero_iou": 20},
+          "fp_candidate": {"duplicate": 0, "localization": 1, "zero_iou": 6}
+        }
+      }
+    }
+  },
+  "saturation_comparison": {
+    "convolution": {
+      "parent": {"pre_endpoint_count": 0, "output_endpoint_count": 25, "value_count": 117611712, "pre_rate": 0.0, "output_rate": 2.1256386438792762e-7},
+      "candidate": {"pre_endpoint_count": 0, "output_endpoint_count": 0, "value_count": 117611712, "pre_rate": 0.0, "output_rate": 0.0},
+      "delta_candidate_minus_parent": {"pre_endpoint_count": 0, "output_endpoint_count": -25},
+      "changed_nodes": [
+        {"node": "csp3.blocks.1.dw.conv", "parent_output_endpoint_count": 25, "candidate_output_endpoint_count": 0, "parent_pre_endpoint_count": 0, "candidate_pre_endpoint_count": 0}
+      ]
+    },
+    "residual": {
+      "parent": {"saturated_count": 0, "value_count": 12220416, "rate": 0.0},
+      "candidate": {"saturated_count": 0, "value_count": 12220416, "rate": 0.0},
+      "changed_nodes": []
+    },
+    "interpretation": "Observed endpoint saturation decreased while development17 accuracy regressed. These aggregate counters are not detection-aligned and do not establish either saturation or its removal as a cause."
+  },
+  "evidence_summary": [
+    "Vehicle loses 8 true positives and gains 8 false negatives overall; the true-positive loss occurs in every camera group (-3, -3, -2), while false positives fall by 19.",
+    "The 8 additional vehicle false negatives decompose within saved outputs into +5 saved below-threshold geometric matches, +2 saved inaccurate-box cases, and +1 greedy competition case.",
+    "Person loses 3 true positives and gains 3 false negatives overall while false positives rise by 12; pets09_s2l1 contributes TP -5 and FP +12, partly offset by TP +1 in each VIRAT group.",
+    "The person false-negative shift is +6 saved below-threshold geometric matches and -3 inaccurate-box cases; the 12 added person false positives are +9 localization overlaps, +2 duplicates, and +1 zero-IoU case.",
+    "No case was categorized as having no saved same-class candidate in either report. This statement applies only after the saved postprocess floor and suppression stages."
+  ],
+  "unknown_boundaries": [
+    "UNKNOWN: candidates below the saved score floor of 0.04998779296875 are absent, so their existence or geometry cannot be inferred.",
+    "UNKNOWN: candidates removed by top-K, per-class max-box limits, or NMS are absent, so no-saved-candidate cannot be promoted to no-raw-candidate.",
+    "UNKNOWN: saved-output attribution is descriptive and does not identify a training or quantization root cause.",
+    "UNKNOWN: aggregate node saturation counters are not linked to individual detections and cannot establish causality.",
+    "This is a 17-image development diagnostic, not acceptance evidence. The continuation gate failed, so old256 was not run."
+  ],
+  "decision": {
+    "continuation_gate": "FAIL",
+    "old256_run": false,
+    "automatic_follow_on_authorized": false
+  }
+}

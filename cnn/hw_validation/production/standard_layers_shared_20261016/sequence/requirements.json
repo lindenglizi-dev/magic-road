@@ -1,0 +1,10 @@
+{
+  "module": "road_standard_layer_sequence",
+  "intent": "Turn one of the31 frozen standard layer jobs into all aligned4x4 tile jobs; no arbitrary graph engine or data storage",
+  "reset": "100MHz common asynchronous assert/two-edge release; cancel/fault retains busy until common reset",
+  "ownership": "system grants unique compute/workstore owner for the whole busy interval; tile_done is accepted only in WAIT after tile start handshake and denotes all source/WIF/core responses retired plus output barrier accepted",
+  "order": "fixed layer_id selects frozen H/W; tile_y outer, tile_x inner, x/y step4; H18 final tile has valid two rows handled by actual client",
+  "handshake": "tile start payload held until ready; advance only actual tile_done; layer done only after final tile_done; no fake timeout retirement",
+  "boundary": "sequence coverage is not full-layer numerical output, actual CSP/backbone chain or DDR write visibility; actual client must be connected and retired",
+  "verification": ["all31 frozen shape schedules", "all tile identities in exact order", "start and completion delays", "no early owner release", "illegal layer/cancel/reset"]
+}

@@ -1,0 +1,13 @@
+S1：现有前三层RGB halo同像素地址复用（modify/validate）
+原设计目标、端口、core II、数值、PAXI及共同复位不变。每tile仍失效缓存，最终读写/导出计数不变。
+flag_rgb_reuse仅在RGB、非padding、channel<2、cache有效且tag相等、lane<15时成立。
+ST_HALO_BYTE真实core_load握手后，符合条件则留在同状态且lane+1；否则执行原MAP/ROW/ADDRESS/CACHE。
+通道、halo索引仍由原flag_load_accept推进；反压不推进任何地址、lane、channel或缓存。
+风险：跨16B词边界的lane15必须fallback；padding不能使用旧cache；两处lane赋值状态互斥；G直接后B跨词须重新计算列偏移；不得只force上层ready测试而让子核实际接受。
+Python参考先于RTL，扫描559872个RGB halo地址，350778次快速推进，20672次跨词fallback；DDR读序51357完全相同。
+预期normal=17252079-350778*4=15848967，节约1403112状态周期，不减少DDR读。
+原8 case及新增边界/真实子核长背压/复位检查；完整中间值与地址逐项一致；互斥bins之和等于端点周期。
+先保存原严格门结果，再跑新门；compile、ast、readability、comment、naming、profile、testbench、toolchain分别记录。
+已知原严格门失败仍保留，不能称生产交付通过。本次不修改全局技能或静态规则。
+readable-python-generator与readable-script-generator在技能路径不存在，保留该限制；Python运行/语法和实际ModelSim证据单列，不冒称缺失技能已通过。
+不跑重型TD；只准备完整源闭包、初始化文件及原约束构建命令，交协调排期。不训练、不生产、不位流、不板卡、不Flash、不Git提交推送。

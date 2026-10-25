@@ -1,0 +1,73 @@
+21 fixed head-layer CPU reference, 2026-10-16
+
+Only reference_head is written. reference and reference_extended are frozen
+and hash-checked before/after generation. Utilities, G10 parameter decoder,
+conv_exact and integer arithmetic are reused, as are physical backing-image
+helpers. Head-specific scheduling changes are limited to stride1 DW and raw
+INT16 output tails. No torch import, GPU, training, RTL, TD or board operation.
+
+Execution order: head4 IDs98..104 (H18 W32 stemCin96), head3 IDs90..96 (H36 W64
+stemCin48), head2 IDs82..88 (H72 W128 stemCin24). Each head is a complete CPU
+stem -> cls DW/PW/out and reg DW/PW/out. Stem and intermediate channels are48;
+cls_out has2 channels; reg_out has5. Input is deterministic synthetic fused-PAN
+data from the same formula as reference_extended, seeded by stem graph ID.
+Every input_source.synthetic=true, continuous_prefix=false and standalone_cpu_
+head_prefix=true. This proves controlled arithmetic and scheduling only, never
+actual PAN, fused residual production, a continuous backbone or accuracy.
+
+Three stem inputs concat.07/.09/.11 are graph aliases backed by two physical
+stores. The reference does not invent a contiguous concat base or compute a
+residual over their controlled input. The right branch means an already-fused
+stored value; actual residual/writeback production remains the feature owner.
+Every source byte of every layer is independently checked using graph.py's
+resolve_byte_address and the existing family physical_address mapper.
+input_hwc8.hex is logical HWC. input_physical40.hex, input_lines160.hex and
+input_backing_ranges.json follow reference_extended/FORMAT.txt exactly; unused
+parent channels and allocated padding are explicitly0. 128-bit source reads
+must be aligned and fully contained in a declared allocation.
+
+Five output tiles per layer: four corners plus interior. H18 bottom y16 has
+only two valid rows; H72 needs tile_y7 bits. All source values are signedINT8.
+DWstride1 fully overwrites36B per channel, a6x6 halo. Three adjacent outputs
+have3x5 union15 -> groups8/7 in weight slots0/1; fourth point has3x3 union9 ->
+groups8/1 in slots2/3. Sparse output lane j uses kernel column ux-j. PW fills
+16*Cin once per tile, then reuses those bytes for every output channel group.
+Cin96 uses1536B and12 weight slots, within3072B and24x192bits.
+
+Parameter request22 fields remain low-to-high group5/window3/channel7/layer7.
+DW window5/triple and window3/tail; PWwindow0. quant248 layout is unchanged.
+DW broadcasts identical quant248 to all four slices and all three spatial
+lanes. PWcls Cout2 has mask3; reg Cout5 has channel0 mask7/channel3 mask3.
+Inactive PW output lanes have zero weight, bias, multiplier and shift. For raw
+cls_out/reg_out, no nonexistent post field is read; unused quant248post bits
+are0. Raw output is exactly pre16, with activate=0 and no SiLU/post operation.
+The raw expected SiLU field is an unused0 placeholder, not an activation result.
+
+Task/group/WIF formats follow reference/FORMAT.txt, except:
+- tasks.json task.output_int16 and task_output_int16.hex mark raw output.
+- task_post.hex packs3x16 for raw layers,3x8 otherwise. The post field holds
+  the actual output (raw pre16 or post-requantized INT8).
+- task_output48.hex always packs three16-bit output bus fields. Raw uses full
+  signed16 bits; INT8 uses only low8 with upper8 set0. Inactive lanes are0.
+- output_writes48.hex is address32<<16 | data16, one active output per line;
+  raw addresses advance2bytes per channel, INT8 addresses advance1byte. There
+  is no fake output_workstore write. Compare addresses only on active lanes.
+- task_pre and task_silu remain48bits; task_acc96/address96 and MACgroup99
+  remain unchanged. Quant and actual task mask govern inactive lanes.
+
+head_cells112.hex has exactly12096 cells, all seven signedINT16 components.
+Order is head2/S4 then head3/S8 then head4/S16, each row-major y then x.
+Per-cell components low-to-high16bits: tx,ty,tw,th,objectness,person,vehicle;
+these are reg_out channels0..4 followed by cls_out channels0..1.
+head_cell_addresses224.hex records seven32-bit original tensor addresses in
+the same order. head_cells_index.json gives scale offsets and cell dimensions.
+This CPU golden is a verification file, not additional full prediction RAM.
+
+Scalar conv2d checks every emitted tile/channel; grouped MAC checks every
+signed33 partial/final accumulator; original RNE/SiLU/post supplies intermediate
+goldens. Full CPU head tensors are emitted. All sources, generators, graph,
+G10 package, Python executable and imported NumPy files are hash-bound.
+Failures are preserved as timestamped failure_*.json and never deleted.
+
+Reproduce with existing CPU NumPy:
+python cnn/hw_validation/production/standard_layers_shared_20261016/reference_head/generate_head.py

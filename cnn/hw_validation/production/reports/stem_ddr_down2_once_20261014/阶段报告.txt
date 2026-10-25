@@ -1,0 +1,104 @@
+Stem → DDR → down2 一次性真实计算闭环：阶段报告
+日期：2026-10-14
+
+一、结论与未通过项
+
+本轮已完成独立诊断的参考值、RTL回归、实际综合布局布线、原约束复核和临时SRAM位流生成。新位流尚未上板；不能将前一版DDR扩展测试的三次复位、10分钟绿色结果转算为本版板测通过。
+
+仍未通过或未覆盖：
+1. 新位流板测待用户执行。
+2. 严格交付门未闭合：gate_attempt3中RTL为777 error、20 warning，TB为810 error、0 warning；包含解析/格式/命名/注释项，不能解释为777个数值错误，也不能因为ModelSim/TD通过就清零。compile、ast、readability、comment、naming、profile未通过；实际工具结果独立保存。
+3. 约束检查仍有dummy node(3) HIGH、23个无input delay、49个无output delay；覆盖率98.30%，不是整机或外设时序全部签核。dummy对象包含DSP mul9_mode/mul9_signed、显示LSLICE及PLL复位，保留逐对象核查需求，不称全clean。
+4. 固定TEST_ONLY参数，不是训练模型QAT参数；未覆盖完整67层、摄像头、视频DDR并发、完整模型包、框解码/NMS或正式精度/FPS。
+5. 这是一次性唯一地址的生产者→消费者实验。AW/W接受不等于DDR写提交；未实现通用写完成屏障、槽位重用、局部取消或多客户DMA。reset必须同时覆盖请求器和DDR。
+
+二、承接关系与这次实际新增
+
+用户本次报告前一版HX1P35A_C7_DDR_EXTENDED.bit三次复位恢复绿色、保持10分钟稳定，已登记在cnn/hw_validation/board_test_20261014_ddr_extended/。这是用户观察证据，不是程序读取了开发板，也没有新增照片/视频。
+
+本轮不继续扩大CRC/地址探针，而是把已有真实算子串起来：
+固定RGB/测试参数 → 4个Stem 4×4 tile → 1024字节真实输出
+→ 64个128-bit字写入真实DDR → 64次读回并比较
+→ 9×9×16 down2输入halo → 3×3 stride2 DW16
+→ PW16→24 → 4×4×24共384字节逐项比较 → 绿色TEST。
+
+Stem tile编号为0、1、64、65，来自冻结tile4x4_hwc布局；对应Stem输出左上8×8×16区域。down2为左上4×4 tile：9×9 halo中顶部和左侧17个像素（272字节）补零，其他64个像素（1024字节）来自DDR读回。不得将golden ROM直接送入下层充当实际特征。
+
+每次启动仅写读一次这一批唯一地址，DDR图中字节基址为0x03500000；实际PAXI地址换算沿用已验证规则。写地址接受后下一DDR拍才首次拉高WVALID，AW/W各自以ready接受，背压保持。读响应由单在途mailbox归属和缓存；全量读回比对后才加载下层。核心i_commit_ready是本地算术缓存写回许可，不是DDR提交证明。
+
+新增代码均在本目录：
+- rtl/road_stem_ddr_sequence.v：一次性微指令调度、结果检查、DDR写读与halo装载。
+- rtl/road_paxi_mailbox.v：100MHz计算域与约133.33MHz DDR域的单在途握手。
+- rtl/road_stem_ddr_board_top.v：上述模块、原厂DDR、PLL、HDMI状态显示的独立顶层。
+- reference.py及vectors/：冻结TEST_ONLY参数、逐阶段golden和程序ROM。
+- tests/：独立内存端点、真实算术及跨域联调测试。
+reused/中8个原算子源码逐文件哈希保护；内部数值契约、接口、II未改。未修改生产工程、训练或Flash。
+
+三、功能验证
+
+sequence_verification/receipts/manifest.json：13/13通过，ModelSim编译0 error/0 warning。覆盖基础、随机背压、长停顿、数据错误、返回错误、六个位置复位、缺失读超时以及PASS后故障。成功路径分别比较acc/pre/SiLU/post各1664项；复位后重新加载1024项SiLU表，无旧事务/结果泄漏。
+
+mailbox_regression/receipt.json：最终mailbox源码回归通过，复位期间ready被明确禁止；源数据握手前保持，返回不丢失/重复。
+
+integrated_simulation_attempt4/receipt.json：真实冻结算术、两时钟mailbox、可控PAXI内存联调；正常37837周期，随机停顿38336周期；两组均64W/64R/384PW逐项一致。此处内存是可控端点，不是假称完整DDR器件模型；板上位流接的是实际原厂DDR IP。
+集成仿真有2条ModelSim命令上下文警告，不能称该日志零警告；无数值比较错误。
+
+四、互斥周期分解（100MHz计算域、可控端点仿真）
+
+类别                              正常周期  随机停顿周期
+初始化                            3         3
+表/参数/RGB预装载                 3130      3130
+四个Stem核心运行                  18948     18948
+DDR写请求与返回等待               547       642
+DDR读请求/返回/比较               768       1172
+halo映射及装载                    1458      1458
+down2 DW/PW核心运行               1688      1688
+Stem输出导出及比较                1088      1088
+PW输出导出                        768       768
+取指/解码/其余控制                9439      9439
+端点总周期                        37837     38336
+
+各行按状态互斥归类，总和等于端点总周期，没有把重叠模块busy相加。37837周期约0.37837ms仅为这个测试窗口，不是完整网络FPS；本版没有改MAC吞吐。主要开销是四个Stem计算和测试指令/控制，不应以删除比较或提前故障退出伪装加速。板上实际DDR等待周期由状态条保留，尚未读到实测值。
+
+五、实际物理证据（含整个诊断壳，不是完整CNN）
+
+器件PH1P35MDG324，速度等级3；计算域100MHz，原厂DDR用户域约133.33MHz，HDMI像素75MHz、串行375MHz。physical_attempt2为本版实际综合布局布线；并非借旧壳资源。
+
+Slice 14492 / 21216；ERAM 25 / 108；DSP 30 / 40；PLL 3；顶层物理I/O 51。
+细分物理压力：mslice 6715/8112（82.78%），PLB 2382/2652（89.82%）。比总Slice比例更接近上限，不可据此宣布余量足够装入全网。
+程序ROM10块ERAM，4096×64；其余为算子缓存、参数、比较/映射和DDR等诊断结构，未做不可靠的按模块资源分摊。
+
+完整时序报告共setup 27035、hold 32904、recovery 5354、removal 5354条记录，覆盖slow/fast、max/min适用角点，含DSP/ERAM端点；已报告路径负裕量0。
+最差setup：+0.066ns，slow_m40c；mailbox源冻结数据寄存器→DDR域请求数据寄存器，100→133.33MHz。数据延迟2.840ns，其中布线2.627ns（93%）。
+最差hold：+0.020ns，fast_m40c；同一跨域数据链的不同端点。裕量很薄，不能解释为高裕量生产签核。
+最差recovery：+1.588ns；像素复位释放→HDMI串行移位寄存器。
+最差removal：+0.069ns；CNN复位释放→down2 PW权重装载标志。
+显示冻结载荷197条定向setup路径全覆盖，最小+6.125ns；请求/确认同步器级间各setup/hold一条，均非负。
+
+本轮无新增时序例外。原显示CDC的197个有界payload约束和既有首级控制同步例外沿用、逐对象复核；新mailbox未增加false path。
+
+报告来源被明确分工，并以同一pr.db SHA绑定：
+- physical_reports_attempt3/：完整全端点时序、实际资源、路由网表、程序初始化核查。
+- physical_reports_attempt2/：197条定向payload及两个同步器报告。
+- constraint_recheck/：重新读取同样三份原SDC后的非空check/exception/ignored报告。
+数据库SHA256：28430f23ca5d84eed5e6a1deff1b9759a4d55aa105be2eb311316b49bb05a6d9。
+原SDC与当前源码哈希保存在comparison.json和各receipt.json，最终1767个历史冻结文件未变。
+
+六、这次失败与最小修复
+
+1. down2加载字段映射写错：生成器最初把PW权重与DW偏置的kind编号对调，kind3地址16触发loadfault。修复reference.py的映射，并补kind/地址范围断言；没有改内部算术核。旧程序、失败日志保留在pre_parameter_kind_fix/等目录。最终13项回归和集成均用修正后同一程序。
+2. ModelSim初次漏GSR模型/选错文件：补实际ph1p_phy_gsr.v及GSR顶层；没有用零值模型替代厂商RAM。
+3. E盘不足导致TD报告被截断：保留全部失败目录，压缩大文本报告并只保留一份全量路径视图；同一有效pr.db重新导出报告，不重综合、不改约束。一个旧大报告按字节校验后归档为physical/include_ignored.timing.zip，解压可恢复。
+4. 本设计会话import_db后约束源对象未恢复：全局时序仍在，但check/exception/ignored等报告为空。重读原board、原DDR IP和原resolved_display三份SDC后恢复；不是所有TD工程一律必须重读，也不是新增例外。
+5. 归档脚本按目录时间自动选择，误选到空定向报告：改为三个显式报告角色，以数据库哈希绑定，避免靠放宽records断言绕过缺证据。
+
+七、位流与后续
+
+文件：diagnostic_bitgen/HX1P35A_C7_STEM_DDR_DOWN2.bit
+大小：1789544字节。
+SHA256：9666925f857bf78f53db9cfd02430f57a11ca4d7b99582c43c70128c35179c80。
+位流导出再次核对256条真实PAXI数据线驱动/消费者，读数据驱动来自DDR；导入后四类时序无负值，数据库导出前后哈希不变。
+
+现在需要用户使用PROGRAM_SRAM临时加载本版，按上板操作.txt做三次复位、10分钟观察。绿色只表示本次启动的1KB真实特征DDR交接和384字节下层计算通过；完成后停止DDR请求，不代表10分钟持续DDR压力。
+
+通过后再沿冻结图扩展真实层特征读取/装载和更多tile，优先保留实际层证据。涉及地址/槽位反复复用时，必须先明确写后读可见性与共同复位边界；不以固定等待拍数代替提交语义，不扩CRC探针，不把小块通过称整网通过。

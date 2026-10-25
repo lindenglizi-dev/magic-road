@@ -1,0 +1,138 @@
+{
+  "feature": "road_numeric_rom_reader",
+  "name": "road_numeric_rom_reader",
+  "rtl_path": "rtl/road_numeric_rom_reader.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "input",
+        "width": 1,
+        "role": "clk",
+        "clock_domain": "i_clk",
+        "description": "统一100MHz上升沿时钟"
+      },
+      {
+        "name": "i_rstn",
+        "direction": "input",
+        "width": 1,
+        "role": "rstn",
+        "clock_domain": "i_clk",
+        "description": "共同低有效异步复位，本地两级同步释放"
+      },
+      {
+        "name": "i_request_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "request_valid",
+        "clock_domain": "i_clk",
+        "description": "request_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_request_addr",
+        "direction": "input",
+        "width": 13,
+        "role": "request_addr",
+        "clock_domain": "i_clk",
+        "description": "request_addr：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_response_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "response_ready",
+        "clock_domain": "i_clk",
+        "description": "response_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_request_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "request_ready",
+        "clock_domain": "i_clk",
+        "description": "request_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_response_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "response_valid",
+        "clock_domain": "i_clk",
+        "description": "response_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_response_data",
+        "direction": "output",
+        "width": 160,
+        "role": "response_data",
+        "clock_domain": "i_clk",
+        "description": "response_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_fault",
+        "direction": "output",
+        "width": 1,
+        "role": "fault",
+        "clock_domain": "i_clk",
+        "description": "本组件故障状态，不得发布为成功表"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "Unchanged reader input reset; requester service waits for its own two-stage release"
+  },
+  "parameters": {},
+  "behavior": [
+    "冻结reader源码完全相同；一个未决13位词号，地址0..7167，非法地址粘滞故障。",
+    "接受时锁定地址，原WAIT计数0..7后注册完整160位；响应保持至ready，不缩短等待。",
+    "共同i_rstn清valid/state；取消排空由外部LUT服务处理，不增加reader cancel端口。"
+  ],
+  "constraints": [
+    "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+    "不改变冻结算术核/数值，不复制公共存储"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "11数值向量、protocol、phase_reset，逐项DECODED160对拍"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "协议示意：省略内部变长计算，用空白间隔表示；不是固定总时延。仅valid与ready同拍消费。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p..........."
+          },
+          {
+            "name": "request_valid",
+            "wave": "010........."
+          },
+          {
+            "name": "request_ready",
+            "wave": "01.0........"
+          },
+          {
+            "name": "response_valid",
+            "wave": "0........1.0"
+          },
+          {
+            "name": "response_ready",
+            "wave": "0.........10"
+          }
+        ]
+      }
+    }
+  ]
+}

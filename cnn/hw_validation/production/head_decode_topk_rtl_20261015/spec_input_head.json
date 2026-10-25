@@ -1,0 +1,543 @@
+{
+  "feature": "road_head_decode_topk",
+  "name": "road_head_decode_topk",
+  "rtl_path": "rtl/road_head_decode_topk.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "input",
+        "width": 1,
+        "role": "clk",
+        "clock_domain": "i_clk",
+        "description": "统一100MHz上升沿时钟"
+      },
+      {
+        "name": "i_rstn",
+        "direction": "input",
+        "width": 1,
+        "role": "rstn",
+        "clock_domain": "i_clk",
+        "description": "共同低有效异步复位，本地两级同步释放"
+      },
+      {
+        "name": "i_abort",
+        "direction": "input",
+        "width": 1,
+        "role": "abort",
+        "clock_domain": "i_clk",
+        "description": "共同取消本地候选及LUT事务，不代表DDR排空"
+      },
+      {
+        "name": "i_start_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "start_valid",
+        "clock_domain": "i_clk",
+        "description": "start_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_start_frame_token",
+        "direction": "input",
+        "width": 32,
+        "role": "start_frame_token",
+        "clock_domain": "i_clk",
+        "description": "start_frame_token：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_start_model_id",
+        "direction": "input",
+        "width": 32,
+        "role": "start_model_id",
+        "clock_domain": "i_clk",
+        "description": "start_model_id：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_cell_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "cell_valid",
+        "clock_domain": "i_clk",
+        "description": "cell_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_cell_data",
+        "direction": "input",
+        "width": 112,
+        "role": "cell_data",
+        "clock_domain": "i_clk",
+        "description": "cell_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_cell_id",
+        "direction": "input",
+        "width": 14,
+        "role": "cell_id",
+        "clock_domain": "i_clk",
+        "description": "cell_id：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_cell_frame_token",
+        "direction": "input",
+        "width": 32,
+        "role": "cell_frame_token",
+        "clock_domain": "i_clk",
+        "description": "cell_frame_token：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_lut_req_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_req_ready",
+        "clock_domain": "i_clk",
+        "description": "空闲且无旧ROM在途时允许一次查表传输"
+      },
+      {
+        "name": "i_lut_rsp_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_rsp_valid",
+        "clock_domain": "i_clk",
+        "description": "查表完整响应有效，等ready时身份与数据保持"
+      },
+      {
+        "name": "i_lut_rsp_kind",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_rsp_kind",
+        "clock_domain": "i_clk",
+        "description": "回显已接受请求的表类别"
+      },
+      {
+        "name": "i_lut_rsp_address",
+        "direction": "input",
+        "width": 10,
+        "role": "lut_rsp_address",
+        "clock_domain": "i_clk",
+        "description": "回显已接受请求的原索引"
+      },
+      {
+        "name": "i_lut_rsp_tag",
+        "direction": "input",
+        "width": 16,
+        "role": "lut_rsp_tag",
+        "clock_domain": "i_clk",
+        "description": "回显已接受请求的16位标签"
+      },
+      {
+        "name": "i_lut_rsp_frame_token",
+        "direction": "input",
+        "width": 32,
+        "role": "lut_rsp_frame_token",
+        "clock_domain": "i_clk",
+        "description": "回显源帧标识，禁止旧响应串入新任务"
+      },
+      {
+        "name": "i_lut_rsp_model_id",
+        "direction": "input",
+        "width": 32,
+        "role": "lut_rsp_model_id",
+        "clock_domain": "i_clk",
+        "description": "回显请求模型标识"
+      },
+      {
+        "name": "i_lut_rsp_data",
+        "direction": "input",
+        "width": 16,
+        "role": "lut_rsp_data",
+        "clock_domain": "i_clk",
+        "description": "从冻结小端ROM字节提取的UINT16值"
+      },
+      {
+        "name": "i_lut_rsp_error",
+        "direction": "input",
+        "width": 1,
+        "role": "lut_rsp_error",
+        "clock_domain": "i_clk",
+        "description": "范围/模型/ROM错误，错误数据为零"
+      },
+      {
+        "name": "i_sealed_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "sealed_ready",
+        "clock_domain": "i_clk",
+        "description": "NMS同时接收源token和两类计数并获得只读所有权"
+      },
+      {
+        "name": "i_read_req_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "read_req_valid",
+        "clock_domain": "i_clk",
+        "description": "NMS单条候选读取请求有效"
+      },
+      {
+        "name": "i_read_req_class",
+        "direction": "input",
+        "width": 1,
+        "role": "read_req_class",
+        "clock_domain": "i_clk",
+        "description": "NMS请求的类别地址位"
+      },
+      {
+        "name": "i_read_req_index",
+        "direction": "input",
+        "width": 7,
+        "role": "read_req_index",
+        "clock_domain": "i_clk",
+        "description": "类内排序后的0至127槽号"
+      },
+      {
+        "name": "i_read_rsp_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "read_rsp_ready",
+        "clock_domain": "i_clk",
+        "description": "NMS消费完整候选响应"
+      },
+      {
+        "name": "i_finish_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "finish_valid",
+        "clock_domain": "i_clk",
+        "description": "NMS结束并准备释放候选表"
+      },
+      {
+        "name": "i_finish_frame_token",
+        "direction": "input",
+        "width": 32,
+        "role": "finish_frame_token",
+        "clock_domain": "i_clk",
+        "description": "必须匹配候选表源token的释放标识"
+      },
+      {
+        "name": "o_start_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "start_ready",
+        "clock_domain": "i_clk",
+        "description": "start_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_cell_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "cell_ready",
+        "clock_domain": "i_clk",
+        "description": "cell_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_lut_req_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_req_valid",
+        "clock_domain": "i_clk",
+        "description": "查表请求有效，等待ready时所有请求字段保持"
+      },
+      {
+        "name": "o_lut_req_kind",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_req_kind",
+        "clock_domain": "i_clk",
+        "description": "0为sigmoid，1为exp"
+      },
+      {
+        "name": "o_lut_req_address",
+        "direction": "output",
+        "width": 10,
+        "role": "lut_req_address",
+        "clock_domain": "i_clk",
+        "description": "表内索引；exp只允许0至255"
+      },
+      {
+        "name": "o_lut_req_tag",
+        "direction": "output",
+        "width": 16,
+        "role": "lut_req_tag",
+        "clock_domain": "i_clk",
+        "description": "16位请求标签，响应原样回显"
+      },
+      {
+        "name": "o_lut_req_frame_token",
+        "direction": "output",
+        "width": 32,
+        "role": "lut_req_frame_token",
+        "clock_domain": "i_clk",
+        "description": "请求源帧任务标识，响应回显"
+      },
+      {
+        "name": "o_lut_req_model_id",
+        "direction": "output",
+        "width": 32,
+        "role": "lut_req_model_id",
+        "clock_domain": "i_clk",
+        "description": "绑定完整模型payload的32位模型标识"
+      },
+      {
+        "name": "o_lut_rsp_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_rsp_ready",
+        "clock_domain": "i_clk",
+        "description": "本拍允许消费一次完整查表响应"
+      },
+      {
+        "name": "o_lut_cancel",
+        "direction": "output",
+        "width": 1,
+        "role": "lut_cancel",
+        "clock_domain": "i_clk",
+        "description": "lut_cancel：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_sealed_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "sealed_valid",
+        "clock_domain": "i_clk",
+        "description": "所有排序/解码写回完成后封存有效，反压期间保持"
+      },
+      {
+        "name": "o_sealed_frame_token",
+        "direction": "output",
+        "width": 32,
+        "role": "sealed_frame_token",
+        "clock_domain": "i_clk",
+        "description": "候选表归属的已锁定任务标识"
+      },
+      {
+        "name": "o_count_person",
+        "direction": "output",
+        "width": 8,
+        "role": "count_person",
+        "clock_domain": "i_clk",
+        "description": "封存的person TopK条数，0至128，包含无效几何条目"
+      },
+      {
+        "name": "o_count_vehicle",
+        "direction": "output",
+        "width": 8,
+        "role": "count_vehicle",
+        "clock_domain": "i_clk",
+        "description": "封存的vehicle TopK条数，0至128，包含无效几何条目"
+      },
+      {
+        "name": "o_read_req_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "read_req_ready",
+        "clock_domain": "i_clk",
+        "description": "NMS读取槽空闲时接收请求"
+      },
+      {
+        "name": "o_read_rsp_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "read_rsp_valid",
+        "clock_domain": "i_clk",
+        "description": "完整DECODED160记录有效并保持至消费"
+      },
+      {
+        "name": "o_read_rsp_class",
+        "direction": "output",
+        "width": 1,
+        "role": "read_rsp_class",
+        "clock_domain": "i_clk",
+        "description": "回显读请求类别"
+      },
+      {
+        "name": "o_read_rsp_index",
+        "direction": "output",
+        "width": 7,
+        "role": "read_rsp_index",
+        "clock_domain": "i_clk",
+        "description": "回显读请求槽号"
+      },
+      {
+        "name": "o_read_rsp_data",
+        "direction": "output",
+        "width": 160,
+        "role": "read_rsp_data",
+        "clock_domain": "i_clk",
+        "description": "PIF1固定DECODED160记录"
+      },
+      {
+        "name": "o_read_rsp_error",
+        "direction": "output",
+        "width": 1,
+        "role": "read_rsp_error",
+        "clock_domain": "i_clk",
+        "description": "读越界等错误，不发布部分成功结果"
+      },
+      {
+        "name": "o_finish_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "finish_ready",
+        "clock_domain": "i_clk",
+        "description": "无未决读时允许释放所有权"
+      },
+      {
+        "name": "o_fault",
+        "direction": "output",
+        "width": 1,
+        "role": "fault",
+        "clock_domain": "i_clk",
+        "description": "本组件故障状态，不得发布为成功表"
+      },
+      {
+        "name": "o_error_code",
+        "direction": "output",
+        "width": 4,
+        "role": "error_code",
+        "clock_domain": "i_clk",
+        "description": "error_code：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_phase",
+        "direction": "output",
+        "width": 3,
+        "role": "phase",
+        "clock_domain": "i_clk",
+        "description": "phase：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_scan_cycles",
+        "direction": "output",
+        "width": 32,
+        "role": "scan_cycles",
+        "clock_domain": "i_clk",
+        "description": "scan_cycles：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_sort_cycles",
+        "direction": "output",
+        "width": 32,
+        "role": "sort_cycles",
+        "clock_domain": "i_clk",
+        "description": "sort_cycles：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_decode_cycles",
+        "direction": "output",
+        "width": 32,
+        "role": "decode_cycles",
+        "clock_domain": "i_clk",
+        "description": "decode_cycles：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_input_wait_cycles",
+        "direction": "output",
+        "width": 32,
+        "role": "input_wait_cycles",
+        "clock_domain": "i_clk",
+        "description": "input_wait_cycles：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_lut_wait_cycles",
+        "direction": "output",
+        "width": 32,
+        "role": "lut_wait_cycles",
+        "clock_domain": "i_clk",
+        "description": "lut_wait_cycles：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_ram_wait_cycles",
+        "direction": "output",
+        "width": 32,
+        "role": "ram_wait_cycles",
+        "clock_domain": "i_clk",
+        "description": "ram_wait_cycles：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_ram_read_words",
+        "direction": "output",
+        "width": 32,
+        "role": "ram_read_words",
+        "clock_domain": "i_clk",
+        "description": "ram_read_words：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_ram_write_words",
+        "direction": "output",
+        "width": 32,
+        "role": "ram_write_words",
+        "clock_domain": "i_clk",
+        "description": "ram_write_words：按requirements中对应事务/计数合同使用"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "local_sync_two_flops_or_owner_gating"
+  },
+  "parameters": {},
+  "behavior": [
+    "start锁定token/model；12096个cell严格递增。共享sigmoid、精确RNE分数、每类最小堆Top128。",
+    "SCAN/SORT/DECODE互斥占同一候选RAM，堆排序原地，decode写回可见后才SEALED。",
+    "seal同时交token与两类count；NMS只能单未决读取DECODED160，finish匹配token才释放。",
+    "复位共同取消本地事务；写回完成和读响应消费分别可观察。真实对拍和格式门失败分别记录。"
+  ],
+  "constraints": [
+    "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+    "不改变冻结算术核/数值，不复制公共存储"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "11数值向量、protocol、phase_reset，逐项DECODED160对拍"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "协议示意：省略内部变长计算，用空白间隔表示；不是固定总时延。仅valid与ready同拍消费。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p..........."
+          },
+          {
+            "name": "start_valid",
+            "wave": "010........."
+          },
+          {
+            "name": "start_ready",
+            "wave": "01.0........"
+          },
+          {
+            "name": "sealed_valid",
+            "wave": "0.....1..0.."
+          },
+          {
+            "name": "sealed_ready",
+            "wave": "0.......10.."
+          },
+          {
+            "name": "read_req_valid",
+            "wave": "0........10."
+          },
+          {
+            "name": "read_rsp_valid",
+            "wave": "0.........10"
+          },
+          {
+            "name": "read_rsp_ready",
+            "wave": "0.........10"
+          }
+        ]
+      }
+    }
+  ]
+}

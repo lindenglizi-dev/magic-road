@@ -1,0 +1,3327 @@
+{
+  "status": "DESCRIPTORS_ONLY_NOT_EXECUTED",
+  "layers": [
+    {
+      "family": "DSDown",
+      "name": "down3.dw.conv",
+      "graph_index": 12,
+      "inputs": [
+        "csp2.out.conv"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        2,
+        2
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 24,
+      "dtype": "int8",
+      "macs": 497664,
+      "storage": {
+        "base": 57196544,
+        "raw_bytes": 55296,
+        "allocated_bytes": 57344,
+        "end": 57253888,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 3232,
+          "length": 216,
+          "count": 216,
+          "dtype": "int8",
+          "first_word": 161,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "bias",
+          "byte_offset": 3448,
+          "length": 96,
+          "count": 24,
+          "dtype": "int32_le",
+          "first_word": 172,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 3544,
+          "length": 96,
+          "count": 24,
+          "dtype": "int32_le",
+          "first_word": 177,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 3640,
+          "length": 24,
+          "count": 24,
+          "dtype": "uint8",
+          "first_word": 182,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 3664,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 183,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 3668,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 183,
+          "first_byte_lane": 8
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "DSDown",
+      "name": "down3.pw.conv",
+      "graph_index": 13,
+      "inputs": [
+        "down3.dw.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 2654208,
+      "storage": {
+        "base": 57253888,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 57364480,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 3669,
+          "length": 1152,
+          "count": 1152,
+          "dtype": "int8",
+          "first_word": 183,
+          "first_byte_lane": 9
+        },
+        {
+          "field": "bias",
+          "byte_offset": 4821,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 241,
+          "first_byte_lane": 1
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 5013,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 250,
+          "first_byte_lane": 13
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 5205,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 260,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 5253,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 262,
+          "first_byte_lane": 13
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 5257,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 262,
+          "first_byte_lane": 17
+        }
+      ],
+      "pw_input_groups": 3,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约3组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "DSDown",
+      "name": "down4.dw.conv",
+      "graph_index": 26,
+      "inputs": [
+        "csp3.out.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        2,
+        2
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 48,
+      "dtype": "int8",
+      "macs": 248832,
+      "storage": {
+        "base": 57819136,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 57851904,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 11701,
+          "length": 432,
+          "count": 432,
+          "dtype": "int8",
+          "first_word": 585,
+          "first_byte_lane": 1
+        },
+        {
+          "field": "bias",
+          "byte_offset": 12133,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 606,
+          "first_byte_lane": 13
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 12325,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 616,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 12517,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 625,
+          "first_byte_lane": 17
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 12565,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 628,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 12569,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 628,
+          "first_byte_lane": 9
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "DSDown",
+      "name": "down4.pw.conv",
+      "graph_index": 27,
+      "inputs": [
+        "down4.dw.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 2654208,
+      "storage": {
+        "base": 57851904,
+        "raw_bytes": 61440,
+        "allocated_bytes": 61440,
+        "end": 57913344,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 96,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 12570,
+          "length": 4608,
+          "count": 4608,
+          "dtype": "int8",
+          "first_word": 628,
+          "first_byte_lane": 10
+        },
+        {
+          "field": "bias",
+          "byte_offset": 17178,
+          "length": 384,
+          "count": 96,
+          "dtype": "int32_le",
+          "first_word": 858,
+          "first_byte_lane": 18
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 17562,
+          "length": 384,
+          "count": 96,
+          "dtype": "int32_le",
+          "first_word": 878,
+          "first_byte_lane": 2
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 17946,
+          "length": 96,
+          "count": 96,
+          "dtype": "uint8",
+          "first_word": 897,
+          "first_byte_lane": 6
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 18042,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 902,
+          "first_byte_lane": 2
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 18046,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 902,
+          "first_byte_lane": 6
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 32,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "lateral",
+      "name": "lateral4.conv",
+      "graph_index": 46,
+      "inputs": [
+        "sppf.out.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 2654208,
+      "storage": {
+        "base": 58298368,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 58331136,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 51572,
+          "length": 4608,
+          "count": 4608,
+          "dtype": "int8",
+          "first_word": 2578,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "bias",
+          "byte_offset": 56180,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 2809,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 56372,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 2818,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 56564,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 2828,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 56612,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 2830,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 56616,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 2830,
+          "first_byte_lane": 16
+        }
+      ],
+      "pw_input_groups": 12,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约12组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "lateral",
+      "name": "lateral3.conv",
+      "graph_index": 55,
+      "inputs": [
+        "concat.05"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 2654208,
+      "storage": {
+        "base": 58556416,
+        "raw_bytes": 55296,
+        "allocated_bytes": 57344,
+        "end": 58613760,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 62896,
+          "length": 1152,
+          "count": 1152,
+          "dtype": "int8",
+          "first_word": 3144,
+          "first_byte_lane": 16
+        },
+        {
+          "field": "bias",
+          "byte_offset": 64048,
+          "length": 96,
+          "count": 24,
+          "dtype": "int32_le",
+          "first_word": 3202,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 64144,
+          "length": 96,
+          "count": 24,
+          "dtype": "int32_le",
+          "first_word": 3207,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 64240,
+          "length": 24,
+          "count": 24,
+          "dtype": "uint8",
+          "first_word": 3212,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 64264,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 3213,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 64268,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 3213,
+          "first_byte_lane": 8
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 8,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "DSDown",
+      "name": "down3_bu.dw.conv",
+      "graph_index": 64,
+      "inputs": [
+        "concat.07"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        2,
+        2
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 24,
+      "dtype": "int8",
+      "macs": 497664,
+      "storage": {
+        "base": 59056128,
+        "raw_bytes": 55296,
+        "allocated_bytes": 57344,
+        "end": 59113472,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 66120,
+          "length": 216,
+          "count": 216,
+          "dtype": "int8",
+          "first_word": 3306,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "bias",
+          "byte_offset": 66336,
+          "length": 96,
+          "count": 24,
+          "dtype": "int32_le",
+          "first_word": 3316,
+          "first_byte_lane": 16
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 66432,
+          "length": 96,
+          "count": 24,
+          "dtype": "int32_le",
+          "first_word": 3321,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 66528,
+          "length": 24,
+          "count": 24,
+          "dtype": "uint8",
+          "first_word": 3326,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 66552,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 3327,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 66556,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 3327,
+          "first_byte_lane": 16
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "DSDown",
+      "name": "down3_bu.pw.conv",
+      "graph_index": 65,
+      "inputs": [
+        "down3_bu.dw.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 2654208,
+      "storage": {
+        "base": 59113472,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 59224064,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 66557,
+          "length": 1152,
+          "count": 1152,
+          "dtype": "int8",
+          "first_word": 3327,
+          "first_byte_lane": 17
+        },
+        {
+          "field": "bias",
+          "byte_offset": 67709,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 3385,
+          "first_byte_lane": 9
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 67901,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 3395,
+          "first_byte_lane": 1
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 68093,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 3404,
+          "first_byte_lane": 13
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 68141,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 3407,
+          "first_byte_lane": 1
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 68145,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 3407,
+          "first_byte_lane": 5
+        }
+      ],
+      "pw_input_groups": 3,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约3组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "DSDown",
+      "name": "down4_bu.dw.conv",
+      "graph_index": 73,
+      "inputs": [
+        "concat.09"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        2,
+        2
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 48,
+      "dtype": "int8",
+      "macs": 248832,
+      "storage": {
+        "base": 59449344,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 59482112,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 74425,
+          "length": 432,
+          "count": 432,
+          "dtype": "int8",
+          "first_word": 3721,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "bias",
+          "byte_offset": 74857,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 3742,
+          "first_byte_lane": 17
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 75049,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 3752,
+          "first_byte_lane": 9
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 75241,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 3762,
+          "first_byte_lane": 1
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 75289,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 3764,
+          "first_byte_lane": 9
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 75293,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 3764,
+          "first_byte_lane": 13
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "DSDown",
+      "name": "down4_bu.pw.conv",
+      "graph_index": 74,
+      "inputs": [
+        "down4_bu.dw.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 2654208,
+      "storage": {
+        "base": 59482112,
+        "raw_bytes": 61440,
+        "allocated_bytes": 61440,
+        "end": 59543552,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 96,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 75294,
+          "length": 4608,
+          "count": 4608,
+          "dtype": "int8",
+          "first_word": 3764,
+          "first_byte_lane": 14
+        },
+        {
+          "field": "bias",
+          "byte_offset": 79902,
+          "length": 384,
+          "count": 96,
+          "dtype": "int32_le",
+          "first_word": 3995,
+          "first_byte_lane": 2
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 80286,
+          "length": 384,
+          "count": 96,
+          "dtype": "int32_le",
+          "first_word": 4014,
+          "first_byte_lane": 6
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 80670,
+          "length": 96,
+          "count": 96,
+          "dtype": "uint8",
+          "first_word": 4033,
+          "first_byte_lane": 10
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 80766,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 4038,
+          "first_byte_lane": 6
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 80770,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 4038,
+          "first_byte_lane": 10
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 32,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head2.stem.conv",
+      "graph_index": 82,
+      "inputs": [
+        "concat.07"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 10616832,
+      "storage": {
+        "base": 59670528,
+        "raw_bytes": 442368,
+        "allocated_bytes": 442368,
+        "end": 60112896,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 103682,
+          "length": 1152,
+          "count": 1152,
+          "dtype": "int8",
+          "first_word": 5184,
+          "first_byte_lane": 2
+        },
+        {
+          "field": "bias",
+          "byte_offset": 104834,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5241,
+          "first_byte_lane": 14
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 105026,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5251,
+          "first_byte_lane": 6
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 105218,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 5260,
+          "first_byte_lane": 18
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 105266,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 5263,
+          "first_byte_lane": 6
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 105270,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 5263,
+          "first_byte_lane": 10
+        }
+      ],
+      "pw_input_groups": 3,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约3组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head2.cls_dw.conv",
+      "graph_index": 83,
+      "inputs": [
+        "head2.stem.conv"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 48,
+      "dtype": "int8",
+      "macs": 3981312,
+      "storage": {
+        "base": 60112896,
+        "raw_bytes": 442368,
+        "allocated_bytes": 442368,
+        "end": 60555264,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 105271,
+          "length": 432,
+          "count": 432,
+          "dtype": "int8",
+          "first_word": 5263,
+          "first_byte_lane": 11
+        },
+        {
+          "field": "bias",
+          "byte_offset": 105703,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5285,
+          "first_byte_lane": 3
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 105895,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5294,
+          "first_byte_lane": 15
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 106087,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 5304,
+          "first_byte_lane": 7
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 106135,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 5306,
+          "first_byte_lane": 15
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 106139,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 5306,
+          "first_byte_lane": 19
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head2.cls_pw.conv",
+      "graph_index": 84,
+      "inputs": [
+        "head2.cls_dw.conv"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 21233664,
+      "storage": {
+        "base": 60555264,
+        "raw_bytes": 442368,
+        "allocated_bytes": 442368,
+        "end": 60997632,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 106140,
+          "length": 2304,
+          "count": 2304,
+          "dtype": "int8",
+          "first_word": 5307,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "bias",
+          "byte_offset": 108444,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5422,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 108636,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5431,
+          "first_byte_lane": 16
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 108828,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 5441,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 108876,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 5443,
+          "first_byte_lane": 16
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 108880,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 5444,
+          "first_byte_lane": 0
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head2.cls_out",
+      "graph_index": 85,
+      "inputs": [
+        "head2.cls_pw.conv"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        2
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int16_q7_8",
+      "macs": 884736,
+      "storage": {
+        "base": 60997632,
+        "raw_bytes": 36864,
+        "allocated_bytes": 36864,
+        "end": 61034496,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 2,
+        "bytes_per_element": 2,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 108881,
+          "length": 96,
+          "count": 96,
+          "dtype": "int8",
+          "first_word": 5444,
+          "first_byte_lane": 1
+        },
+        {
+          "field": "bias",
+          "byte_offset": 108977,
+          "length": 8,
+          "count": 2,
+          "dtype": "int32_le",
+          "first_word": 5448,
+          "first_byte_lane": 17
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 108985,
+          "length": 8,
+          "count": 2,
+          "dtype": "int32_le",
+          "first_word": 5449,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 108993,
+          "length": 2,
+          "count": 2,
+          "dtype": "uint8",
+          "first_word": 5449,
+          "first_byte_lane": 13
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 1,
+      "pw_last_output_lane_mask": 3,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "预测头INT16，走pre重定标并旁路SiLU/post，不加载不存在的post字段",
+        "cls_out输出2路：最后输出lane mask=0x3；reg_out输出5路：3+2，末mask=0x3；按现7项head顺序合并"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head2.reg_dw.conv",
+      "graph_index": 86,
+      "inputs": [
+        "head2.stem.conv"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 48,
+      "dtype": "int8",
+      "macs": 3981312,
+      "storage": {
+        "base": 61034496,
+        "raw_bytes": 442368,
+        "allocated_bytes": 442368,
+        "end": 61476864,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 108995,
+          "length": 432,
+          "count": 432,
+          "dtype": "int8",
+          "first_word": 5449,
+          "first_byte_lane": 15
+        },
+        {
+          "field": "bias",
+          "byte_offset": 109427,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5471,
+          "first_byte_lane": 7
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 109619,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5480,
+          "first_byte_lane": 19
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 109811,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 5490,
+          "first_byte_lane": 11
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 109859,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 5492,
+          "first_byte_lane": 19
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 109863,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 5493,
+          "first_byte_lane": 3
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head2.reg_pw.conv",
+      "graph_index": 87,
+      "inputs": [
+        "head2.reg_dw.conv"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 21233664,
+      "storage": {
+        "base": 61476864,
+        "raw_bytes": 442368,
+        "allocated_bytes": 442368,
+        "end": 61919232,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 109864,
+          "length": 2304,
+          "count": 2304,
+          "dtype": "int8",
+          "first_word": 5493,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "bias",
+          "byte_offset": 112168,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5608,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 112360,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5618,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 112552,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 5627,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 112600,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 5630,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 112604,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 5630,
+          "first_byte_lane": 4
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head2.reg_out",
+      "graph_index": 88,
+      "inputs": [
+        "head2.reg_pw.conv"
+      ],
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        5
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int16_q7_8",
+      "macs": 2211840,
+      "storage": {
+        "base": 61919232,
+        "raw_bytes": 92160,
+        "allocated_bytes": 94208,
+        "end": 62013440,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 5,
+        "bytes_per_element": 2,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 112605,
+          "length": 240,
+          "count": 240,
+          "dtype": "int8",
+          "first_word": 5630,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "bias",
+          "byte_offset": 112845,
+          "length": 20,
+          "count": 5,
+          "dtype": "int32_le",
+          "first_word": 5642,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 112865,
+          "length": 20,
+          "count": 5,
+          "dtype": "int32_le",
+          "first_word": 5643,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 112885,
+          "length": 5,
+          "count": 5,
+          "dtype": "uint8",
+          "first_word": 5644,
+          "first_byte_lane": 5
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 2,
+      "pw_last_output_lane_mask": 3,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "预测头INT16，走pre重定标并旁路SiLU/post，不加载不存在的post字段",
+        "cls_out输出2路：最后输出lane mask=0x3；reg_out输出5路：3+2，末mask=0x3；按现7项head顺序合并"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head3.stem.conv",
+      "graph_index": 90,
+      "inputs": [
+        "concat.09"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 5308416,
+      "storage": {
+        "base": 62013440,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 62124032,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 112890,
+          "length": 2304,
+          "count": 2304,
+          "dtype": "int8",
+          "first_word": 5644,
+          "first_byte_lane": 10
+        },
+        {
+          "field": "bias",
+          "byte_offset": 115194,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5759,
+          "first_byte_lane": 14
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 115386,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5769,
+          "first_byte_lane": 6
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 115578,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 5778,
+          "first_byte_lane": 18
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 115626,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 5781,
+          "first_byte_lane": 6
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 115630,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 5781,
+          "first_byte_lane": 10
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head3.cls_dw.conv",
+      "graph_index": 91,
+      "inputs": [
+        "head3.stem.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 48,
+      "dtype": "int8",
+      "macs": 995328,
+      "storage": {
+        "base": 62124032,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 62234624,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 115631,
+          "length": 432,
+          "count": 432,
+          "dtype": "int8",
+          "first_word": 5781,
+          "first_byte_lane": 11
+        },
+        {
+          "field": "bias",
+          "byte_offset": 116063,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5803,
+          "first_byte_lane": 3
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 116255,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5812,
+          "first_byte_lane": 15
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 116447,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 5822,
+          "first_byte_lane": 7
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 116495,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 5824,
+          "first_byte_lane": 15
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 116499,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 5824,
+          "first_byte_lane": 19
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head3.cls_pw.conv",
+      "graph_index": 92,
+      "inputs": [
+        "head3.cls_dw.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 5308416,
+      "storage": {
+        "base": 62234624,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 62345216,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 116500,
+          "length": 2304,
+          "count": 2304,
+          "dtype": "int8",
+          "first_word": 5825,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "bias",
+          "byte_offset": 118804,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5940,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 118996,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5949,
+          "first_byte_lane": 16
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 119188,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 5959,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 119236,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 5961,
+          "first_byte_lane": 16
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 119240,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 5962,
+          "first_byte_lane": 0
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head3.cls_out",
+      "graph_index": 93,
+      "inputs": [
+        "head3.cls_pw.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        2
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int16_q7_8",
+      "macs": 221184,
+      "storage": {
+        "base": 62345216,
+        "raw_bytes": 9216,
+        "allocated_bytes": 12288,
+        "end": 62357504,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 2,
+        "bytes_per_element": 2,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 119241,
+          "length": 96,
+          "count": 96,
+          "dtype": "int8",
+          "first_word": 5962,
+          "first_byte_lane": 1
+        },
+        {
+          "field": "bias",
+          "byte_offset": 119337,
+          "length": 8,
+          "count": 2,
+          "dtype": "int32_le",
+          "first_word": 5966,
+          "first_byte_lane": 17
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 119345,
+          "length": 8,
+          "count": 2,
+          "dtype": "int32_le",
+          "first_word": 5967,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 119353,
+          "length": 2,
+          "count": 2,
+          "dtype": "uint8",
+          "first_word": 5967,
+          "first_byte_lane": 13
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 1,
+      "pw_last_output_lane_mask": 3,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "预测头INT16，走pre重定标并旁路SiLU/post，不加载不存在的post字段",
+        "cls_out输出2路：最后输出lane mask=0x3；reg_out输出5路：3+2，末mask=0x3；按现7项head顺序合并"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head3.reg_dw.conv",
+      "graph_index": 94,
+      "inputs": [
+        "head3.stem.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 48,
+      "dtype": "int8",
+      "macs": 995328,
+      "storage": {
+        "base": 62357504,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 62468096,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 119355,
+          "length": 432,
+          "count": 432,
+          "dtype": "int8",
+          "first_word": 5967,
+          "first_byte_lane": 15
+        },
+        {
+          "field": "bias",
+          "byte_offset": 119787,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5989,
+          "first_byte_lane": 7
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 119979,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 5998,
+          "first_byte_lane": 19
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 120171,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 6008,
+          "first_byte_lane": 11
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 120219,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 6010,
+          "first_byte_lane": 19
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 120223,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 6011,
+          "first_byte_lane": 3
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head3.reg_pw.conv",
+      "graph_index": 95,
+      "inputs": [
+        "head3.reg_dw.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 5308416,
+      "storage": {
+        "base": 62468096,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 62578688,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 120224,
+          "length": 2304,
+          "count": 2304,
+          "dtype": "int8",
+          "first_word": 6011,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "bias",
+          "byte_offset": 122528,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6126,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 122720,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6136,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 122912,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 6145,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 122960,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 6148,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 122964,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 6148,
+          "first_byte_lane": 4
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head3.reg_out",
+      "graph_index": 96,
+      "inputs": [
+        "head3.reg_pw.conv"
+      ],
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        5
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int16_q7_8",
+      "macs": 552960,
+      "storage": {
+        "base": 62578688,
+        "raw_bytes": 23040,
+        "allocated_bytes": 24576,
+        "end": 62603264,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 5,
+        "bytes_per_element": 2,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 122965,
+          "length": 240,
+          "count": 240,
+          "dtype": "int8",
+          "first_word": 6148,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "bias",
+          "byte_offset": 123205,
+          "length": 20,
+          "count": 5,
+          "dtype": "int32_le",
+          "first_word": 6160,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 123225,
+          "length": 20,
+          "count": 5,
+          "dtype": "int32_le",
+          "first_word": 6161,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 123245,
+          "length": 5,
+          "count": 5,
+          "dtype": "uint8",
+          "first_word": 6162,
+          "first_byte_lane": 5
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 2,
+      "pw_last_output_lane_mask": 3,
+      "tail_tile_valid_rows": 4,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "预测头INT16，走pre重定标并旁路SiLU/post，不加载不存在的post字段",
+        "cls_out输出2路：最后输出lane mask=0x3；reg_out输出5路：3+2，末mask=0x3；按现7项head顺序合并"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head4.stem.conv",
+      "graph_index": 98,
+      "inputs": [
+        "concat.11"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 2654208,
+      "storage": {
+        "base": 62603264,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 62636032,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 123250,
+          "length": 4608,
+          "count": 4608,
+          "dtype": "int8",
+          "first_word": 6162,
+          "first_byte_lane": 10
+        },
+        {
+          "field": "bias",
+          "byte_offset": 127858,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6392,
+          "first_byte_lane": 18
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 128050,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6402,
+          "first_byte_lane": 10
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 128242,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 6412,
+          "first_byte_lane": 2
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 128290,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 6414,
+          "first_byte_lane": 10
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 128294,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 6414,
+          "first_byte_lane": 14
+        }
+      ],
+      "pw_input_groups": 12,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约12组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head4.cls_dw.conv",
+      "graph_index": 99,
+      "inputs": [
+        "head4.stem.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 48,
+      "dtype": "int8",
+      "macs": 248832,
+      "storage": {
+        "base": 62636032,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 62668800,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 128295,
+          "length": 432,
+          "count": 432,
+          "dtype": "int8",
+          "first_word": 6414,
+          "first_byte_lane": 15
+        },
+        {
+          "field": "bias",
+          "byte_offset": 128727,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6436,
+          "first_byte_lane": 7
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 128919,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6445,
+          "first_byte_lane": 19
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 129111,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 6455,
+          "first_byte_lane": 11
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 129159,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 6457,
+          "first_byte_lane": 19
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 129163,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 6458,
+          "first_byte_lane": 3
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head4.cls_pw.conv",
+      "graph_index": 100,
+      "inputs": [
+        "head4.cls_dw.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 1327104,
+      "storage": {
+        "base": 62668800,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 62701568,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 129164,
+          "length": 2304,
+          "count": 2304,
+          "dtype": "int8",
+          "first_word": 6458,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "bias",
+          "byte_offset": 131468,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6573,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 131660,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6583,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 131852,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 6592,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 131900,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 6595,
+          "first_byte_lane": 0
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 131904,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 6595,
+          "first_byte_lane": 4
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head4.cls_out",
+      "graph_index": 101,
+      "inputs": [
+        "head4.cls_pw.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        2
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int16_q7_8",
+      "macs": 55296,
+      "storage": {
+        "base": 62701568,
+        "raw_bytes": 2560,
+        "allocated_bytes": 4096,
+        "end": 62705664,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 2,
+        "bytes_per_element": 2,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 131905,
+          "length": 96,
+          "count": 96,
+          "dtype": "int8",
+          "first_word": 6595,
+          "first_byte_lane": 5
+        },
+        {
+          "field": "bias",
+          "byte_offset": 132001,
+          "length": 8,
+          "count": 2,
+          "dtype": "int32_le",
+          "first_word": 6600,
+          "first_byte_lane": 1
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 132009,
+          "length": 8,
+          "count": 2,
+          "dtype": "int32_le",
+          "first_word": 6600,
+          "first_byte_lane": 9
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 132017,
+          "length": 2,
+          "count": 2,
+          "dtype": "uint8",
+          "first_word": 6600,
+          "first_byte_lane": 17
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 1,
+      "pw_last_output_lane_mask": 3,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "预测头INT16，走pre重定标并旁路SiLU/post，不加载不存在的post字段",
+        "cls_out输出2路：最后输出lane mask=0x3；reg_out输出5路：3+2，末mask=0x3；按现7项head顺序合并",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head4.reg_dw.conv",
+      "graph_index": 102,
+      "inputs": [
+        "head4.stem.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "groups": 48,
+      "dtype": "int8",
+      "macs": 248832,
+      "storage": {
+        "base": 62705664,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 62738432,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 132019,
+          "length": 432,
+          "count": 432,
+          "dtype": "int8",
+          "first_word": 6600,
+          "first_byte_lane": 19
+        },
+        {
+          "field": "bias",
+          "byte_offset": 132451,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6622,
+          "first_byte_lane": 11
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 132643,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6632,
+          "first_byte_lane": 3
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 132835,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 6641,
+          "first_byte_lane": 15
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 132883,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 6644,
+          "first_byte_lane": 3
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 132887,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 6644,
+          "first_byte_lane": 7
+        }
+      ],
+      "pw_input_groups": null,
+      "pw_last_input_lane_mask": null,
+      "pw_output_groups": null,
+      "pw_last_output_lane_mask": null,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "DW通道/空间循环适配，不按PW归约Cin",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head4.reg_pw.conv",
+      "graph_index": 103,
+      "inputs": [
+        "head4.reg_dw.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int8",
+      "macs": 1327104,
+      "storage": {
+        "base": 62738432,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 62771200,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 132888,
+          "length": 2304,
+          "count": 2304,
+          "dtype": "int8",
+          "first_word": 6644,
+          "first_byte_lane": 8
+        },
+        {
+          "field": "bias",
+          "byte_offset": 135192,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6759,
+          "first_byte_lane": 12
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 135384,
+          "length": 192,
+          "count": 48,
+          "dtype": "int32_le",
+          "first_word": 6769,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 135576,
+          "length": 48,
+          "count": 48,
+          "dtype": "uint8",
+          "first_word": 6778,
+          "first_byte_lane": 16
+        },
+        {
+          "field": "post_multiplier",
+          "byte_offset": 135624,
+          "length": 4,
+          "count": 1,
+          "dtype": "int32_le",
+          "first_word": 6781,
+          "first_byte_lane": 4
+        },
+        {
+          "field": "post_shift",
+          "byte_offset": 135628,
+          "length": 1,
+          "count": 1,
+          "dtype": "uint8",
+          "first_word": 6781,
+          "first_byte_lane": 8
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 16,
+      "pw_last_output_lane_mask": 7,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "INT8输出沿原动态pre/SiLU/post",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    },
+    {
+      "family": "head",
+      "name": "head4.reg_out",
+      "graph_index": 104,
+      "inputs": [
+        "head4.reg_pw.conv"
+      ],
+      "input_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        5
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "groups": 1,
+      "dtype": "int16_q7_8",
+      "macs": 138240,
+      "storage": {
+        "base": 62771200,
+        "raw_bytes": 6400,
+        "allocated_bytes": 8192,
+        "end": 62779392,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 5,
+        "bytes_per_element": 2,
+        "partial_tile_invalid_fill": 0
+      },
+      "parameters": [
+        {
+          "field": "weights",
+          "byte_offset": 135629,
+          "length": 240,
+          "count": 240,
+          "dtype": "int8",
+          "first_word": 6781,
+          "first_byte_lane": 9
+        },
+        {
+          "field": "bias",
+          "byte_offset": 135869,
+          "length": 20,
+          "count": 5,
+          "dtype": "int32_le",
+          "first_word": 6793,
+          "first_byte_lane": 9
+        },
+        {
+          "field": "pre_multiplier",
+          "byte_offset": 135889,
+          "length": 20,
+          "count": 5,
+          "dtype": "int32_le",
+          "first_word": 6794,
+          "first_byte_lane": 9
+        },
+        {
+          "field": "pre_shift",
+          "byte_offset": 135909,
+          "length": 5,
+          "count": 5,
+          "dtype": "uint8",
+          "first_word": 6795,
+          "first_byte_lane": 9
+        }
+      ],
+      "pw_input_groups": 6,
+      "pw_last_input_lane_mask": 255,
+      "pw_output_groups": 2,
+      "pw_last_output_lane_mask": 3,
+      "tail_tile_valid_rows": 2,
+      "adaptation_notes": [
+        "仅描述，未在本批执行计算/DDR",
+        "原固定down2预取无此层入口，须共享运行时参数描述；不能复制加载/工作RAM",
+        "PW归约6组，尾输入mask按Cin，三输出lane按Cout",
+        "预测头INT16，走pre重定标并旁路SiLU/post，不加载不存在的post字段",
+        "cls_out输出2路：最后输出lane mask=0x3；reg_out输出5路：3+2，末mask=0x3；按现7项head顺序合并",
+        "S16末tile只有两有效行，禁止写y18/19；物理空槽0，卷积越界0"
+      ]
+    }
+  ],
+  "graph_sha256": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738",
+  "manifest_sha256": "93a05a97f78489fabd511909367be0f8b676680c01e5f74a21d571a88f82ff2b"
+}

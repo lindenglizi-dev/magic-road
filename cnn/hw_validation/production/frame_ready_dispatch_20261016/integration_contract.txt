@@ -1,0 +1,37 @@
+C9 第七批接入边界与剩余服务（2026-10-16）
+
+一、当前实际连接
+128位已跨域源身份 → road_frame_ready_dispatch → 原road_capture_slots的claim
+                                               → 225位job → 已过后处理/publisher/三表
+实际最后输入读消费事实 → dispatcher校验slot/epoch/frame → 原slots释放
+本批真实实例化旧slots并检查其CAPTURING/WAIT_VISIBLE/READY/READING/FREE；身份、完整EOF、write_visible、NN完成及最后读服务在TB内受控。
+不是摄像头像素→真实DDR→67层CNN闭环，不将受控head输入算作CNN推理。
+
+二、接线契约
+1. 本模块、旧slots、job接收者共享100MHz和协调复位。i_rstn异步断言即时取消有效许可，调用者负责本域同步释放；不新增同步器或复位协议。
+2. 身份输入i_identity_payload[127:0]={epoch32,source_frame32,capture_ms64}，来自已通过C8冻结身份组件的输出握手。其源capture_ms始终保留；i_slot_timestamps只作诊断，即使不同也不能以新时间替换源时间。
+3. 旧slots的o_free_mask/o_ready_mask/o_reading_mask/o_quarantine_mask和o_slot_epochs/o_slot_frame_ids/o_slot_timestamps接相应i_slot_*。具体原端口名以冻结rtl/road_capture_slots.v为准，不能把多位元数据逐位双触发器同步当安全跨域。
+4. o_claim_valid/slot/epoch/frame接旧slots的i_read_claim_valid/slot/epoch/frame_id，旧o_claim_ready回i_claim_ready。只有原slots真实READY确认后才发job。
+5. o_last_read_consumed/o_release_slot/epoch/frame_id接旧slots相应释放端口；无需另加ACK。copy_ack只给结果source表，绝不连接输入释放。
+6. job225布局：slot[0]、base[32:1]、epoch[64:33]、task[96:65]、source_frame[128:97]、model[160:129]、capture_ms[224:161]。valid与ready独立，载荷保持至握手。i_job_ready必须汇总真实共享计算owner及结果发布容量；TB就绪不是生产owner已接通。
+7. slot0字节基址0x03400000，slot1为0x03480000；每槽512KiB，完整有效输入442368B。沿用候选地址，不证明实板容量、地址单位、非重叠或写可见性。
+8. i_task_done/id必须匹配已接受job且在RUN阶段；最后读事件同样必须晚于job接受。job握手同拍早到done/last只诊断，不计作退休事实。
+9. 输入释放必须由实际服务证明：最后一次输入读返回被下游真正消费；无已接受未消费返回；无后续输入读取；服务允许该物理槽复用。请求发出、固定等待、NNdone、publisher复制ACK均不能替代。
+10. task从1开始，只在job握手后增加；FFFFFFFF只发一次，随后锁住新claim。重新编号需要协调新epoch/外部排空/共同reset，不静默回卷。
+
+三、两个小上下文，不新增图像/框表
+两条128位身份按物理槽索引。身份可先于READY但对应槽必须已经分配且元数据安全可见；READY也可先到。
+最后读先完成时槽可以FREE并重捕获，但旧上下文等旧task完成才清；新帧同槽身份被反压，不增加第三条上下文。
+双槽非FREE、非QUARANTINE且epoch/frame相同，即使未送新身份也禁止选择/claim；已claim未释放输入则进入FAULT，不任意释放其中一个槽。
+有效操作顺序：IDLE锁选择→CLAIM握手→JOB握手→RUN分别记done和last_read→下一边沿退休。正常两个事实不会互相代替。
+
+四、交给总协调的明确缺口（本批不实现新DMA/CDC）
+A. 摄像头域接纳credit：C8 road_source_sof_identity的i_capture_credit必须在真实AWB源SOF前稳定表示可接纳整帧，至少联合真实FREE槽、无当前capture、缩放可接纳以及DMA整帧空间/发布能力。不能把100MHz FREE裸线直接接摄像头域；需要被批准的安全credit握手/所有权方案。
+B. 原始SOF与合格admit不能简单二选一：原road_capture_slots的i_sof既负责新分配也会在capture中异常SOF时隔离旧帧。只接admit会丢异常取消；只接所有raw SOF会分配未获credit的帧。接入方必须明确原始SOF取消与合格新帧分配的适配，若需改冻结接口先申请，不在本批偷改。
+C. 同一epoch/frame的槽元数据必须早于本调度身份握手可见；本调度未找到已分配槽时会消费并诊断该描述符，不能依赖将来再补配对。需要上游安全排序/适配，不增加本模块任意身份队列。
+D. 完整缩放张量DMA：每帧442368B、溢出/半帧隔离、实际写后读可见性服务。AW/W接受不是write_visible；厂商完成语义未证实时不发布READY。
+E. 真实输入读生命周期：将上文第9条事实连接i_last_read_*；同时完成归属、返回信用与复位晚返回排空。共同本地reset不证明DDR在途已消失。
+F. 实际67层/三尺度head仍待共享owner接入；本批联测使用真实ROM后处理但head输入为受控向量。模型包仍是PTQ诊断，不代表QAT精度合格。
+G. 新调度器未综合/布局布线。本批禁止C9启动TD；364位声明的顺序存储只是RTL位数，不能宣称364个物理FF、零Slice或免费控制逻辑。实际资源与100MHz时序待统一实际顶层实现。
+
+下一项最有效工作：按明确credit/元数据排序→真实完整DMA写可见→实际最后输入返回消费的顺序接入；不继续扩CRC探针、不复制publisher、不新增完整框表。

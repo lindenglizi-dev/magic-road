@@ -1,0 +1,2114 @@
+{
+  "schema": "csp_family_layer_reference_v2_residual_bypass_corrected",
+  "status": "TRAINED_PTQ_DIAGNOSTIC_NOT_QAT_NOT_BOARD_QUALIFIED",
+  "scope": "CPU-only corrected CSP3/CSP4 integer reference from existing C2 output; not an RTL-prefix claim",
+  "payload_sha256": "b35d4a66a69e441dc29bc60c7e3f507661f48da5f33b810d7340f6ed17a65145",
+  "rgb_npy_sha256": "cb8a0f3cbdecdf52b480d3dc42d800b5fbcc9758fc1ef1ed8cab7bb7e57104e3",
+  "graph_sha256": "2daf982fc92e0f14d3b568fb1fbf441651e2122a0533edb6275dce230b010738",
+  "layout": {
+    "logical_vectors": "HWC row-major, channel fastest",
+    "weights": "OIHW row-major",
+    "tile4x4_hwc_address": "base + ((((y//4)*tile_cols + x//4)*16 + (y%4)*4 + x%4)*stored_channels + channel_offset + c)",
+    "read_address": "tile4x4_hwc byte address rounded down to a 16-byte line",
+    "hex": "one lowercase zero-padded two's-complement value per line",
+    "bits": {
+      "acc": 32,
+      "pre": 16,
+      "silu": 16,
+      "post": 8,
+      "sum": 16,
+      "output": 8
+    },
+    "parameter_bits": {
+      "weights": 8,
+      "bias": 32,
+      "pre_multiplier": 32,
+      "pre_shift": 8,
+      "post_multiplier": 32,
+      "post_shift": 8
+    }
+  },
+  "scheduler": {
+    "tile": [
+      4,
+      4
+    ],
+    "mac_input_lanes": 8,
+    "mac_output_lanes": 3,
+    "dw_4wide_schedule": [
+      "x+0,x+1,x+2",
+      "x+3 on lane0 only"
+    ],
+    "pw_output_channel_tail": false
+  },
+  "resource_capacity_model_not_synthesis": {
+    "eram_count": 4,
+    "raw_capacity_bytes": 10240,
+    "dw_operand_cache_max_bytes": 1728,
+    "pw_operand_cache_max_bytes": 1536,
+    "resident_weight_bytes": 288,
+    "dynamic_parameter_bytes": 31,
+    "memory_line_bytes": 16,
+    "maximum_live_bytes": 2063,
+    "fits_raw_capacity": true,
+    "synthesis_or_timing_claim": false
+  },
+  "families": {
+    "csp3": {
+      "family": "csp3",
+      "tag": 0,
+      "height": 36,
+      "width": 64,
+      "half_channels": 24,
+      "full_channels": 48,
+      "tile_rows": 9,
+      "tile_cols": 16,
+      "last_tile_valid_rows": 4,
+      "last_tile_valid_cols": 4,
+      "source_tensor": "down3.pw.conv",
+      "source_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "source_producers": [
+        {
+          "dtype": "int8",
+          "groups": 24,
+          "index": 12,
+          "input_shape_hwc": [
+            72,
+            128,
+            24
+          ],
+          "inputs": [
+            "csp2.out.conv"
+          ],
+          "kernel": [
+            3,
+            3
+          ],
+          "macs": 497664,
+          "name": "down3.dw.conv",
+          "op": "conv",
+          "operator_padding_value": 0,
+          "output": "down3.dw.conv",
+          "output_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "padding": [
+            1,
+            1
+          ],
+          "storage": {
+            "allocated_bytes": 57344,
+            "base": 57196544,
+            "bytes_per_element": 1,
+            "channels_stored": 24,
+            "end": 57253888,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 55296
+          },
+          "stride": [
+            2,
+            2
+          ],
+          "weights": 216
+        },
+        {
+          "dtype": "int8",
+          "groups": 1,
+          "index": 13,
+          "input_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "inputs": [
+            "down3.dw.conv"
+          ],
+          "kernel": [
+            1,
+            1
+          ],
+          "macs": 2654208,
+          "name": "down3.pw.conv",
+          "op": "conv",
+          "operator_padding_value": 0,
+          "output": "down3.pw.conv",
+          "output_shape_hwc": [
+            36,
+            64,
+            48
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "storage": {
+            "allocated_bytes": 110592,
+            "base": 57253888,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 57364480,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 110592
+          },
+          "stride": [
+            1,
+            1
+          ],
+          "weights": 1152
+        }
+      ],
+      "split_node": {
+        "allocation": null,
+        "axis": "C",
+        "index": 14,
+        "inputs": [
+          "down3.pw.conv"
+        ],
+        "name": "split.01",
+        "op": "split_view",
+        "outputs": [
+          {
+            "channel_offset": 0,
+            "channels": 24,
+            "output": "split.01.0"
+          },
+          {
+            "channel_offset": 24,
+            "channels": 24,
+            "output": "split.01.1"
+          }
+        ]
+      },
+      "residual_nodes": [
+        {
+          "allocation": null,
+          "dtype": "int8",
+          "index": 17,
+          "inputs": [
+            "split.01.1",
+            "csp3.blocks.0.pw.conv"
+          ],
+          "name": "residual.02",
+          "op": "residual_view",
+          "output": "residual.02",
+          "shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "storage_alias": "csp3.blocks.0.pw.conv"
+        },
+        {
+          "allocation": null,
+          "dtype": "int8",
+          "index": 20,
+          "inputs": [
+            "residual.02",
+            "csp3.blocks.1.pw.conv"
+          ],
+          "name": "residual.03",
+          "op": "residual_view",
+          "output": "residual.03",
+          "shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "storage_alias": "csp3.blocks.1.pw.conv"
+        },
+        {
+          "allocation": null,
+          "dtype": "int8",
+          "index": 23,
+          "inputs": [
+            "residual.03",
+            "csp3.blocks.2.pw.conv"
+          ],
+          "name": "residual.04",
+          "op": "residual_view",
+          "output": "residual.04",
+          "shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "storage_alias": "csp3.blocks.2.pw.conv"
+        }
+      ],
+      "concat_node": {
+        "allocation": null,
+        "dtype": "int8",
+        "index": 24,
+        "inputs": [
+          "split.01.0",
+          "residual.04"
+        ],
+        "name": "concat.01",
+        "op": "concat_view",
+        "output": "concat.01",
+        "shape_hwc": [
+          36,
+          64,
+          48
+        ]
+      },
+      "graph_semantics": {
+        "split": "split.01",
+        "concat": "concat.01",
+        "residuals": [
+          {
+            "stage": 1,
+            "conv": "csp3.blocks.0.pw.conv",
+            "bypass": "split.01.1",
+            "residual_view": "residual.02",
+            "residual_inputs": [
+              "split.01.1",
+              "csp3.blocks.0.pw.conv"
+            ],
+            "storage_alias": "csp3.blocks.0.pw.conv",
+            "requires_aligned_int8_scale": true
+          },
+          {
+            "stage": 3,
+            "conv": "csp3.blocks.1.pw.conv",
+            "bypass": "residual.02",
+            "residual_view": "residual.03",
+            "residual_inputs": [
+              "residual.02",
+              "csp3.blocks.1.pw.conv"
+            ],
+            "storage_alias": "csp3.blocks.1.pw.conv",
+            "requires_aligned_int8_scale": true
+          },
+          {
+            "stage": 5,
+            "conv": "csp3.blocks.2.pw.conv",
+            "bypass": "residual.03",
+            "residual_view": "residual.04",
+            "residual_inputs": [
+              "residual.03",
+              "csp3.blocks.2.pw.conv"
+            ],
+            "storage_alias": "csp3.blocks.2.pw.conv",
+            "requires_aligned_int8_scale": true
+          }
+        ]
+      },
+      "stages": [
+        {
+          "stage": 0,
+          "graph_node_index": 15,
+          "name": "csp3.blocks.0.dw.conv",
+          "kind": "dw",
+          "kernel": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            1,
+            1
+          ],
+          "groups": 24,
+          "input_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "output_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "source_views": [
+            {
+              "tensor": "split.01.1",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57253888,
+              "stored_channels": 48,
+              "physical_channel_offset": 24
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 57344,
+            "base": 57364480,
+            "bytes_per_element": 1,
+            "channels_stored": 24,
+            "end": 57421824,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 55296
+          },
+          "destination_valid_address_min": 57364480,
+          "destination_valid_address_max": 57419775,
+          "residual": false,
+          "bypass_tensor": null,
+          "bypass_views": [],
+          "output_group_count": 8,
+          "input_group_count": 2,
+          "logical_channel_group_count": 3,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 27648,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 2,
+          "expected_parameter_requests": 13824,
+          "expected_parameter_responses": 13824,
+          "dw_parameter_records_per_tile_channel": 4,
+          "expected_read_requests": 9776,
+          "read_line_address_min": 57253904,
+          "read_line_address_max": 57364464,
+          "logical_output_elements": 55296,
+          "tile_rows": 9,
+          "tile_cols": 16,
+          "last_tile_valid_rows": 4,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+          "vector_files": {
+            "acc": "vectors/stage0_acc.hex",
+            "pre": "vectors/stage0_pre.hex",
+            "silu": "vectors/stage0_silu.hex",
+            "post": "vectors/stage0_post.hex",
+            "sum": "vectors/stage0_sum.hex",
+            "output": "vectors/stage0_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage0_weights.hex",
+            "bias": "parameters/stage0_bias.hex",
+            "pre_multiplier": "parameters/stage0_pre_multiplier.hex",
+            "pre_shift": "parameters/stage0_pre_shift.hex",
+            "post_multiplier": "parameters/stage0_post_multiplier.hex",
+            "post_shift": "parameters/stage0_post_shift.hex"
+          }
+        },
+        {
+          "stage": 1,
+          "graph_node_index": 16,
+          "name": "csp3.blocks.0.pw.conv",
+          "kind": "pw",
+          "kernel": [
+            1,
+            1
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "groups": 1,
+          "input_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "output_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "source_views": [
+            {
+              "tensor": "csp3.blocks.0.dw.conv",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57364480,
+              "stored_channels": 24,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 57344,
+            "base": 57421824,
+            "bytes_per_element": 1,
+            "channels_stored": 24,
+            "end": 57479168,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 55296
+          },
+          "destination_valid_address_min": 57421824,
+          "destination_valid_address_max": 57477119,
+          "residual": true,
+          "bypass_tensor": "split.01.1",
+          "bypass_views": [
+            {
+              "tensor": "split.01.1",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57253888,
+              "stored_channels": 48,
+              "physical_channel_offset": 24
+            }
+          ],
+          "output_group_count": 8,
+          "input_group_count": 3,
+          "logical_channel_group_count": 3,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 18432,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 3,
+          "expected_parameter_requests": 3456,
+          "expected_parameter_responses": 3456,
+          "dw_parameter_records_per_tile_channel": null,
+          "expected_read_requests": 8064,
+          "read_line_address_min": 57253904,
+          "read_line_address_max": 57419760,
+          "logical_output_elements": 55296,
+          "tile_rows": 9,
+          "tile_cols": 16,
+          "last_tile_valid_rows": 4,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": null,
+          "vector_files": {
+            "acc": "vectors/stage1_acc.hex",
+            "pre": "vectors/stage1_pre.hex",
+            "silu": "vectors/stage1_silu.hex",
+            "post": "vectors/stage1_post.hex",
+            "sum": "vectors/stage1_sum.hex",
+            "output": "vectors/stage1_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage1_weights.hex",
+            "bias": "parameters/stage1_bias.hex",
+            "pre_multiplier": "parameters/stage1_pre_multiplier.hex",
+            "pre_shift": "parameters/stage1_pre_shift.hex",
+            "post_multiplier": "parameters/stage1_post_multiplier.hex",
+            "post_shift": "parameters/stage1_post_shift.hex"
+          }
+        },
+        {
+          "stage": 2,
+          "graph_node_index": 18,
+          "name": "csp3.blocks.1.dw.conv",
+          "kind": "dw",
+          "kernel": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            1,
+            1
+          ],
+          "groups": 24,
+          "input_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "output_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "source_views": [
+            {
+              "tensor": "residual.02",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57421824,
+              "stored_channels": 24,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 57344,
+            "base": 57479168,
+            "bytes_per_element": 1,
+            "channels_stored": 24,
+            "end": 57536512,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 55296
+          },
+          "destination_valid_address_min": 57479168,
+          "destination_valid_address_max": 57534463,
+          "residual": false,
+          "bypass_tensor": null,
+          "bypass_views": [],
+          "output_group_count": 8,
+          "input_group_count": 2,
+          "logical_channel_group_count": 3,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 27648,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 2,
+          "expected_parameter_requests": 13824,
+          "expected_parameter_responses": 13824,
+          "dw_parameter_records_per_tile_channel": 4,
+          "expected_read_requests": 8112,
+          "read_line_address_min": 57421824,
+          "read_line_address_max": 57477104,
+          "logical_output_elements": 55296,
+          "tile_rows": 9,
+          "tile_cols": 16,
+          "last_tile_valid_rows": 4,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+          "vector_files": {
+            "acc": "vectors/stage2_acc.hex",
+            "pre": "vectors/stage2_pre.hex",
+            "silu": "vectors/stage2_silu.hex",
+            "post": "vectors/stage2_post.hex",
+            "sum": "vectors/stage2_sum.hex",
+            "output": "vectors/stage2_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage2_weights.hex",
+            "bias": "parameters/stage2_bias.hex",
+            "pre_multiplier": "parameters/stage2_pre_multiplier.hex",
+            "pre_shift": "parameters/stage2_pre_shift.hex",
+            "post_multiplier": "parameters/stage2_post_multiplier.hex",
+            "post_shift": "parameters/stage2_post_shift.hex"
+          }
+        },
+        {
+          "stage": 3,
+          "graph_node_index": 19,
+          "name": "csp3.blocks.1.pw.conv",
+          "kind": "pw",
+          "kernel": [
+            1,
+            1
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "groups": 1,
+          "input_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "output_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "source_views": [
+            {
+              "tensor": "csp3.blocks.1.dw.conv",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57479168,
+              "stored_channels": 24,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 57344,
+            "base": 57536512,
+            "bytes_per_element": 1,
+            "channels_stored": 24,
+            "end": 57593856,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 55296
+          },
+          "destination_valid_address_min": 57536512,
+          "destination_valid_address_max": 57591807,
+          "residual": true,
+          "bypass_tensor": "residual.02",
+          "bypass_views": [
+            {
+              "tensor": "residual.02",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57421824,
+              "stored_channels": 24,
+              "physical_channel_offset": 0
+            }
+          ],
+          "output_group_count": 8,
+          "input_group_count": 3,
+          "logical_channel_group_count": 3,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 18432,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 3,
+          "expected_parameter_requests": 3456,
+          "expected_parameter_responses": 3456,
+          "dw_parameter_records_per_tile_channel": null,
+          "expected_read_requests": 6912,
+          "read_line_address_min": 57421824,
+          "read_line_address_max": 57534448,
+          "logical_output_elements": 55296,
+          "tile_rows": 9,
+          "tile_cols": 16,
+          "last_tile_valid_rows": 4,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": null,
+          "vector_files": {
+            "acc": "vectors/stage3_acc.hex",
+            "pre": "vectors/stage3_pre.hex",
+            "silu": "vectors/stage3_silu.hex",
+            "post": "vectors/stage3_post.hex",
+            "sum": "vectors/stage3_sum.hex",
+            "output": "vectors/stage3_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage3_weights.hex",
+            "bias": "parameters/stage3_bias.hex",
+            "pre_multiplier": "parameters/stage3_pre_multiplier.hex",
+            "pre_shift": "parameters/stage3_pre_shift.hex",
+            "post_multiplier": "parameters/stage3_post_multiplier.hex",
+            "post_shift": "parameters/stage3_post_shift.hex"
+          }
+        },
+        {
+          "stage": 4,
+          "graph_node_index": 21,
+          "name": "csp3.blocks.2.dw.conv",
+          "kind": "dw",
+          "kernel": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            1,
+            1
+          ],
+          "groups": 24,
+          "input_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "output_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "source_views": [
+            {
+              "tensor": "residual.03",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57536512,
+              "stored_channels": 24,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 57344,
+            "base": 57593856,
+            "bytes_per_element": 1,
+            "channels_stored": 24,
+            "end": 57651200,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 55296
+          },
+          "destination_valid_address_min": 57593856,
+          "destination_valid_address_max": 57649151,
+          "residual": false,
+          "bypass_tensor": null,
+          "bypass_views": [],
+          "output_group_count": 8,
+          "input_group_count": 2,
+          "logical_channel_group_count": 3,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 27648,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 2,
+          "expected_parameter_requests": 13824,
+          "expected_parameter_responses": 13824,
+          "dw_parameter_records_per_tile_channel": 4,
+          "expected_read_requests": 8112,
+          "read_line_address_min": 57536512,
+          "read_line_address_max": 57591792,
+          "logical_output_elements": 55296,
+          "tile_rows": 9,
+          "tile_cols": 16,
+          "last_tile_valid_rows": 4,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+          "vector_files": {
+            "acc": "vectors/stage4_acc.hex",
+            "pre": "vectors/stage4_pre.hex",
+            "silu": "vectors/stage4_silu.hex",
+            "post": "vectors/stage4_post.hex",
+            "sum": "vectors/stage4_sum.hex",
+            "output": "vectors/stage4_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage4_weights.hex",
+            "bias": "parameters/stage4_bias.hex",
+            "pre_multiplier": "parameters/stage4_pre_multiplier.hex",
+            "pre_shift": "parameters/stage4_pre_shift.hex",
+            "post_multiplier": "parameters/stage4_post_multiplier.hex",
+            "post_shift": "parameters/stage4_post_shift.hex"
+          }
+        },
+        {
+          "stage": 5,
+          "graph_node_index": 22,
+          "name": "csp3.blocks.2.pw.conv",
+          "kind": "pw",
+          "kernel": [
+            1,
+            1
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "groups": 1,
+          "input_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "output_shape_hwc": [
+            36,
+            64,
+            24
+          ],
+          "source_views": [
+            {
+              "tensor": "csp3.blocks.2.dw.conv",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57593856,
+              "stored_channels": 24,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 57344,
+            "base": 57651200,
+            "bytes_per_element": 1,
+            "channels_stored": 24,
+            "end": 57708544,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 55296
+          },
+          "destination_valid_address_min": 57651200,
+          "destination_valid_address_max": 57706495,
+          "residual": true,
+          "bypass_tensor": "residual.03",
+          "bypass_views": [
+            {
+              "tensor": "residual.03",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57536512,
+              "stored_channels": 24,
+              "physical_channel_offset": 0
+            }
+          ],
+          "output_group_count": 8,
+          "input_group_count": 3,
+          "logical_channel_group_count": 3,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 18432,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 3,
+          "expected_parameter_requests": 3456,
+          "expected_parameter_responses": 3456,
+          "dw_parameter_records_per_tile_channel": null,
+          "expected_read_requests": 6912,
+          "read_line_address_min": 57536512,
+          "read_line_address_max": 57649136,
+          "logical_output_elements": 55296,
+          "tile_rows": 9,
+          "tile_cols": 16,
+          "last_tile_valid_rows": 4,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": null,
+          "vector_files": {
+            "acc": "vectors/stage5_acc.hex",
+            "pre": "vectors/stage5_pre.hex",
+            "silu": "vectors/stage5_silu.hex",
+            "post": "vectors/stage5_post.hex",
+            "sum": "vectors/stage5_sum.hex",
+            "output": "vectors/stage5_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage5_weights.hex",
+            "bias": "parameters/stage5_bias.hex",
+            "pre_multiplier": "parameters/stage5_pre_multiplier.hex",
+            "pre_shift": "parameters/stage5_pre_shift.hex",
+            "post_multiplier": "parameters/stage5_post_multiplier.hex",
+            "post_shift": "parameters/stage5_post_shift.hex"
+          }
+        },
+        {
+          "stage": 6,
+          "graph_node_index": 25,
+          "name": "csp3.out.conv",
+          "kind": "fuse",
+          "kernel": [
+            1,
+            1
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "groups": 1,
+          "input_shape_hwc": [
+            36,
+            64,
+            48
+          ],
+          "output_shape_hwc": [
+            36,
+            64,
+            48
+          ],
+          "source_views": [
+            {
+              "tensor": "split.01.0",
+              "logical_channel_offset": 0,
+              "channels": 24,
+              "base": 57253888,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            },
+            {
+              "tensor": "residual.04",
+              "logical_channel_offset": 24,
+              "channels": 24,
+              "base": 57651200,
+              "stored_channels": 24,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 110592,
+            "base": 57708544,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 57819136,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 110592
+          },
+          "destination_valid_address_min": 57708544,
+          "destination_valid_address_max": 57819135,
+          "residual": false,
+          "bypass_tensor": null,
+          "bypass_views": [],
+          "output_group_count": 16,
+          "input_group_count": 6,
+          "logical_channel_group_count": 6,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 36864,
+          "accepted_core_groups": 221184,
+          "accepted_core_groups_per_task": 6,
+          "expected_parameter_requests": 13824,
+          "expected_parameter_responses": 13824,
+          "dw_parameter_records_per_tile_channel": null,
+          "expected_read_requests": 9216,
+          "read_line_address_min": 57253888,
+          "read_line_address_max": 57706480,
+          "logical_output_elements": 110592,
+          "tile_rows": 9,
+          "tile_cols": 16,
+          "last_tile_valid_rows": 4,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": null,
+          "vector_files": {
+            "acc": "vectors/stage6_acc.hex",
+            "pre": "vectors/stage6_pre.hex",
+            "silu": "vectors/stage6_silu.hex",
+            "post": "vectors/stage6_post.hex",
+            "sum": "vectors/stage6_sum.hex",
+            "output": "vectors/stage6_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage6_weights.hex",
+            "bias": "parameters/stage6_bias.hex",
+            "pre_multiplier": "parameters/stage6_pre_multiplier.hex",
+            "pre_shift": "parameters/stage6_pre_shift.hex",
+            "post_multiplier": "parameters/stage6_post_multiplier.hex",
+            "post_shift": "parameters/stage6_post_shift.hex"
+          }
+        }
+      ],
+      "totals": {
+        "stages": 7,
+        "logical_output_elements": 442368,
+        "all_acc_pre_silu_post_sum_output_values": 2654208,
+        "task_count": 175104,
+        "accepted_core_groups": 552960,
+        "expected_parameter_requests": 65664,
+        "expected_read_requests": 57104
+      },
+      "tail_rule": "only y < height is written; physical 4x4 tail padding rows are not expected writes"
+    },
+    "csp4": {
+      "family": "csp4",
+      "tag": 1,
+      "height": 18,
+      "width": 32,
+      "half_channels": 48,
+      "full_channels": 96,
+      "tile_rows": 5,
+      "tile_cols": 8,
+      "last_tile_valid_rows": 2,
+      "last_tile_valid_cols": 4,
+      "source_tensor": "down4.pw.conv",
+      "source_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "source_producers": [
+        {
+          "dtype": "int8",
+          "groups": 48,
+          "index": 26,
+          "input_shape_hwc": [
+            36,
+            64,
+            48
+          ],
+          "inputs": [
+            "csp3.out.conv"
+          ],
+          "kernel": [
+            3,
+            3
+          ],
+          "macs": 248832,
+          "name": "down4.dw.conv",
+          "op": "conv",
+          "operator_padding_value": 0,
+          "output": "down4.dw.conv",
+          "output_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "padding": [
+            1,
+            1
+          ],
+          "storage": {
+            "allocated_bytes": 32768,
+            "base": 57819136,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 57851904,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 30720
+          },
+          "stride": [
+            2,
+            2
+          ],
+          "weights": 432
+        },
+        {
+          "dtype": "int8",
+          "groups": 1,
+          "index": 27,
+          "input_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "inputs": [
+            "down4.dw.conv"
+          ],
+          "kernel": [
+            1,
+            1
+          ],
+          "macs": 2654208,
+          "name": "down4.pw.conv",
+          "op": "conv",
+          "operator_padding_value": 0,
+          "output": "down4.pw.conv",
+          "output_shape_hwc": [
+            18,
+            32,
+            96
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "storage": {
+            "allocated_bytes": 61440,
+            "base": 57851904,
+            "bytes_per_element": 1,
+            "channels_stored": 96,
+            "end": 57913344,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 61440
+          },
+          "stride": [
+            1,
+            1
+          ],
+          "weights": 4608
+        }
+      ],
+      "split_node": {
+        "allocation": null,
+        "axis": "C",
+        "index": 28,
+        "inputs": [
+          "down4.pw.conv"
+        ],
+        "name": "split.02",
+        "op": "split_view",
+        "outputs": [
+          {
+            "channel_offset": 0,
+            "channels": 48,
+            "output": "split.02.0"
+          },
+          {
+            "channel_offset": 48,
+            "channels": 48,
+            "output": "split.02.1"
+          }
+        ]
+      },
+      "residual_nodes": [
+        {
+          "allocation": null,
+          "dtype": "int8",
+          "index": 31,
+          "inputs": [
+            "split.02.1",
+            "csp4.blocks.0.pw.conv"
+          ],
+          "name": "residual.05",
+          "op": "residual_view",
+          "output": "residual.05",
+          "shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "storage_alias": "csp4.blocks.0.pw.conv"
+        },
+        {
+          "allocation": null,
+          "dtype": "int8",
+          "index": 34,
+          "inputs": [
+            "residual.05",
+            "csp4.blocks.1.pw.conv"
+          ],
+          "name": "residual.06",
+          "op": "residual_view",
+          "output": "residual.06",
+          "shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "storage_alias": "csp4.blocks.1.pw.conv"
+        },
+        {
+          "allocation": null,
+          "dtype": "int8",
+          "index": 37,
+          "inputs": [
+            "residual.06",
+            "csp4.blocks.2.pw.conv"
+          ],
+          "name": "residual.07",
+          "op": "residual_view",
+          "output": "residual.07",
+          "shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "storage_alias": "csp4.blocks.2.pw.conv"
+        }
+      ],
+      "concat_node": {
+        "allocation": null,
+        "dtype": "int8",
+        "index": 38,
+        "inputs": [
+          "split.02.0",
+          "residual.07"
+        ],
+        "name": "concat.02",
+        "op": "concat_view",
+        "output": "concat.02",
+        "shape_hwc": [
+          18,
+          32,
+          96
+        ]
+      },
+      "graph_semantics": {
+        "split": "split.02",
+        "concat": "concat.02",
+        "residuals": [
+          {
+            "stage": 1,
+            "conv": "csp4.blocks.0.pw.conv",
+            "bypass": "split.02.1",
+            "residual_view": "residual.05",
+            "residual_inputs": [
+              "split.02.1",
+              "csp4.blocks.0.pw.conv"
+            ],
+            "storage_alias": "csp4.blocks.0.pw.conv",
+            "requires_aligned_int8_scale": true
+          },
+          {
+            "stage": 3,
+            "conv": "csp4.blocks.1.pw.conv",
+            "bypass": "residual.05",
+            "residual_view": "residual.06",
+            "residual_inputs": [
+              "residual.05",
+              "csp4.blocks.1.pw.conv"
+            ],
+            "storage_alias": "csp4.blocks.1.pw.conv",
+            "requires_aligned_int8_scale": true
+          },
+          {
+            "stage": 5,
+            "conv": "csp4.blocks.2.pw.conv",
+            "bypass": "residual.06",
+            "residual_view": "residual.07",
+            "residual_inputs": [
+              "residual.06",
+              "csp4.blocks.2.pw.conv"
+            ],
+            "storage_alias": "csp4.blocks.2.pw.conv",
+            "requires_aligned_int8_scale": true
+          }
+        ]
+      },
+      "stages": [
+        {
+          "stage": 0,
+          "graph_node_index": 29,
+          "name": "csp4.blocks.0.dw.conv",
+          "kind": "dw",
+          "kernel": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            1,
+            1
+          ],
+          "groups": 48,
+          "input_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "output_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "source_views": [
+            {
+              "tensor": "split.02.1",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 57851904,
+              "stored_channels": 96,
+              "physical_channel_offset": 48
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 32768,
+            "base": 57913344,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 57946112,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 30720
+          },
+          "destination_valid_address_min": 57913344,
+          "destination_valid_address_max": 57943679,
+          "residual": false,
+          "bypass_tensor": null,
+          "bypass_views": [],
+          "output_group_count": 16,
+          "input_group_count": 2,
+          "logical_channel_group_count": 6,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 13824,
+          "accepted_core_groups": 27648,
+          "accepted_core_groups_per_task": 2,
+          "expected_parameter_requests": 7680,
+          "expected_parameter_responses": 7680,
+          "dw_parameter_records_per_tile_channel": 4,
+          "expected_read_requests": 3588,
+          "read_line_address_min": 57851952,
+          "read_line_address_max": 57912560,
+          "logical_output_elements": 27648,
+          "tile_rows": 5,
+          "tile_cols": 8,
+          "last_tile_valid_rows": 2,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+          "vector_files": {
+            "acc": "vectors/stage0_acc.hex",
+            "pre": "vectors/stage0_pre.hex",
+            "silu": "vectors/stage0_silu.hex",
+            "post": "vectors/stage0_post.hex",
+            "sum": "vectors/stage0_sum.hex",
+            "output": "vectors/stage0_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage0_weights.hex",
+            "bias": "parameters/stage0_bias.hex",
+            "pre_multiplier": "parameters/stage0_pre_multiplier.hex",
+            "pre_shift": "parameters/stage0_pre_shift.hex",
+            "post_multiplier": "parameters/stage0_post_multiplier.hex",
+            "post_shift": "parameters/stage0_post_shift.hex"
+          }
+        },
+        {
+          "stage": 1,
+          "graph_node_index": 30,
+          "name": "csp4.blocks.0.pw.conv",
+          "kind": "pw",
+          "kernel": [
+            1,
+            1
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "groups": 1,
+          "input_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "output_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "source_views": [
+            {
+              "tensor": "csp4.blocks.0.dw.conv",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 57913344,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 32768,
+            "base": 57946112,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 57978880,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 30720
+          },
+          "destination_valid_address_min": 57946112,
+          "destination_valid_address_max": 57976447,
+          "residual": true,
+          "bypass_tensor": "split.02.1",
+          "bypass_views": [
+            {
+              "tensor": "split.02.1",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 57851904,
+              "stored_channels": 96,
+              "physical_channel_offset": 48
+            }
+          ],
+          "output_group_count": 16,
+          "input_group_count": 6,
+          "logical_channel_group_count": 6,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 9216,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 6,
+          "expected_parameter_requests": 3840,
+          "expected_parameter_responses": 3840,
+          "dw_parameter_records_per_tile_channel": null,
+          "expected_read_requests": 3456,
+          "read_line_address_min": 57851952,
+          "read_line_address_max": 57943664,
+          "logical_output_elements": 27648,
+          "tile_rows": 5,
+          "tile_cols": 8,
+          "last_tile_valid_rows": 2,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": null,
+          "vector_files": {
+            "acc": "vectors/stage1_acc.hex",
+            "pre": "vectors/stage1_pre.hex",
+            "silu": "vectors/stage1_silu.hex",
+            "post": "vectors/stage1_post.hex",
+            "sum": "vectors/stage1_sum.hex",
+            "output": "vectors/stage1_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage1_weights.hex",
+            "bias": "parameters/stage1_bias.hex",
+            "pre_multiplier": "parameters/stage1_pre_multiplier.hex",
+            "pre_shift": "parameters/stage1_pre_shift.hex",
+            "post_multiplier": "parameters/stage1_post_multiplier.hex",
+            "post_shift": "parameters/stage1_post_shift.hex"
+          }
+        },
+        {
+          "stage": 2,
+          "graph_node_index": 32,
+          "name": "csp4.blocks.1.dw.conv",
+          "kind": "dw",
+          "kernel": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            1,
+            1
+          ],
+          "groups": 48,
+          "input_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "output_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "source_views": [
+            {
+              "tensor": "residual.05",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 57946112,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 32768,
+            "base": 57978880,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 58011648,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 30720
+          },
+          "destination_valid_address_min": 57978880,
+          "destination_valid_address_max": 58009215,
+          "residual": false,
+          "bypass_tensor": null,
+          "bypass_views": [],
+          "output_group_count": 16,
+          "input_group_count": 2,
+          "logical_channel_group_count": 6,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 13824,
+          "accepted_core_groups": 27648,
+          "accepted_core_groups_per_task": 2,
+          "expected_parameter_requests": 7680,
+          "expected_parameter_responses": 7680,
+          "dw_parameter_records_per_tile_channel": 4,
+          "expected_read_requests": 3588,
+          "read_line_address_min": 57946112,
+          "read_line_address_max": 57976432,
+          "logical_output_elements": 27648,
+          "tile_rows": 5,
+          "tile_cols": 8,
+          "last_tile_valid_rows": 2,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+          "vector_files": {
+            "acc": "vectors/stage2_acc.hex",
+            "pre": "vectors/stage2_pre.hex",
+            "silu": "vectors/stage2_silu.hex",
+            "post": "vectors/stage2_post.hex",
+            "sum": "vectors/stage2_sum.hex",
+            "output": "vectors/stage2_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage2_weights.hex",
+            "bias": "parameters/stage2_bias.hex",
+            "pre_multiplier": "parameters/stage2_pre_multiplier.hex",
+            "pre_shift": "parameters/stage2_pre_shift.hex",
+            "post_multiplier": "parameters/stage2_post_multiplier.hex",
+            "post_shift": "parameters/stage2_post_shift.hex"
+          }
+        },
+        {
+          "stage": 3,
+          "graph_node_index": 33,
+          "name": "csp4.blocks.1.pw.conv",
+          "kind": "pw",
+          "kernel": [
+            1,
+            1
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "groups": 1,
+          "input_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "output_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "source_views": [
+            {
+              "tensor": "csp4.blocks.1.dw.conv",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 57978880,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 32768,
+            "base": 58011648,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 58044416,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 30720
+          },
+          "destination_valid_address_min": 58011648,
+          "destination_valid_address_max": 58041983,
+          "residual": true,
+          "bypass_tensor": "residual.05",
+          "bypass_views": [
+            {
+              "tensor": "residual.05",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 57946112,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            }
+          ],
+          "output_group_count": 16,
+          "input_group_count": 6,
+          "logical_channel_group_count": 6,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 9216,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 6,
+          "expected_parameter_requests": 3840,
+          "expected_parameter_responses": 3840,
+          "dw_parameter_records_per_tile_channel": null,
+          "expected_read_requests": 3456,
+          "read_line_address_min": 57946112,
+          "read_line_address_max": 58009200,
+          "logical_output_elements": 27648,
+          "tile_rows": 5,
+          "tile_cols": 8,
+          "last_tile_valid_rows": 2,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": null,
+          "vector_files": {
+            "acc": "vectors/stage3_acc.hex",
+            "pre": "vectors/stage3_pre.hex",
+            "silu": "vectors/stage3_silu.hex",
+            "post": "vectors/stage3_post.hex",
+            "sum": "vectors/stage3_sum.hex",
+            "output": "vectors/stage3_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage3_weights.hex",
+            "bias": "parameters/stage3_bias.hex",
+            "pre_multiplier": "parameters/stage3_pre_multiplier.hex",
+            "pre_shift": "parameters/stage3_pre_shift.hex",
+            "post_multiplier": "parameters/stage3_post_multiplier.hex",
+            "post_shift": "parameters/stage3_post_shift.hex"
+          }
+        },
+        {
+          "stage": 4,
+          "graph_node_index": 35,
+          "name": "csp4.blocks.2.dw.conv",
+          "kind": "dw",
+          "kernel": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            1,
+            1
+          ],
+          "groups": 48,
+          "input_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "output_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "source_views": [
+            {
+              "tensor": "residual.06",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 58011648,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 32768,
+            "base": 58044416,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 58077184,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 30720
+          },
+          "destination_valid_address_min": 58044416,
+          "destination_valid_address_max": 58074751,
+          "residual": false,
+          "bypass_tensor": null,
+          "bypass_views": [],
+          "output_group_count": 16,
+          "input_group_count": 2,
+          "logical_channel_group_count": 6,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 13824,
+          "accepted_core_groups": 27648,
+          "accepted_core_groups_per_task": 2,
+          "expected_parameter_requests": 7680,
+          "expected_parameter_responses": 7680,
+          "dw_parameter_records_per_tile_channel": 4,
+          "expected_read_requests": 3588,
+          "read_line_address_min": 58011648,
+          "read_line_address_max": 58041968,
+          "logical_output_elements": 27648,
+          "tile_rows": 5,
+          "tile_cols": 8,
+          "last_tile_valid_rows": 2,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": "3-lane x+0..2 then lane0-only x+3",
+          "vector_files": {
+            "acc": "vectors/stage4_acc.hex",
+            "pre": "vectors/stage4_pre.hex",
+            "silu": "vectors/stage4_silu.hex",
+            "post": "vectors/stage4_post.hex",
+            "sum": "vectors/stage4_sum.hex",
+            "output": "vectors/stage4_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage4_weights.hex",
+            "bias": "parameters/stage4_bias.hex",
+            "pre_multiplier": "parameters/stage4_pre_multiplier.hex",
+            "pre_shift": "parameters/stage4_pre_shift.hex",
+            "post_multiplier": "parameters/stage4_post_multiplier.hex",
+            "post_shift": "parameters/stage4_post_shift.hex"
+          }
+        },
+        {
+          "stage": 5,
+          "graph_node_index": 36,
+          "name": "csp4.blocks.2.pw.conv",
+          "kind": "pw",
+          "kernel": [
+            1,
+            1
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "groups": 1,
+          "input_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "output_shape_hwc": [
+            18,
+            32,
+            48
+          ],
+          "source_views": [
+            {
+              "tensor": "csp4.blocks.2.dw.conv",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 58044416,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 32768,
+            "base": 58077184,
+            "bytes_per_element": 1,
+            "channels_stored": 48,
+            "end": 58109952,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 30720
+          },
+          "destination_valid_address_min": 58077184,
+          "destination_valid_address_max": 58107519,
+          "residual": true,
+          "bypass_tensor": "residual.06",
+          "bypass_views": [
+            {
+              "tensor": "residual.06",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 58011648,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            }
+          ],
+          "output_group_count": 16,
+          "input_group_count": 6,
+          "logical_channel_group_count": 6,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 9216,
+          "accepted_core_groups": 55296,
+          "accepted_core_groups_per_task": 6,
+          "expected_parameter_requests": 3840,
+          "expected_parameter_responses": 3840,
+          "dw_parameter_records_per_tile_channel": null,
+          "expected_read_requests": 3456,
+          "read_line_address_min": 58011648,
+          "read_line_address_max": 58074736,
+          "logical_output_elements": 27648,
+          "tile_rows": 5,
+          "tile_cols": 8,
+          "last_tile_valid_rows": 2,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": null,
+          "vector_files": {
+            "acc": "vectors/stage5_acc.hex",
+            "pre": "vectors/stage5_pre.hex",
+            "silu": "vectors/stage5_silu.hex",
+            "post": "vectors/stage5_post.hex",
+            "sum": "vectors/stage5_sum.hex",
+            "output": "vectors/stage5_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage5_weights.hex",
+            "bias": "parameters/stage5_bias.hex",
+            "pre_multiplier": "parameters/stage5_pre_multiplier.hex",
+            "pre_shift": "parameters/stage5_pre_shift.hex",
+            "post_multiplier": "parameters/stage5_post_multiplier.hex",
+            "post_shift": "parameters/stage5_post_shift.hex"
+          }
+        },
+        {
+          "stage": 6,
+          "graph_node_index": 39,
+          "name": "csp4.out.conv",
+          "kind": "fuse",
+          "kernel": [
+            1,
+            1
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "groups": 1,
+          "input_shape_hwc": [
+            18,
+            32,
+            96
+          ],
+          "output_shape_hwc": [
+            18,
+            32,
+            96
+          ],
+          "source_views": [
+            {
+              "tensor": "split.02.0",
+              "logical_channel_offset": 0,
+              "channels": 48,
+              "base": 57851904,
+              "stored_channels": 96,
+              "physical_channel_offset": 0
+            },
+            {
+              "tensor": "residual.07",
+              "logical_channel_offset": 48,
+              "channels": 48,
+              "base": 58077184,
+              "stored_channels": 48,
+              "physical_channel_offset": 0
+            }
+          ],
+          "destination": {
+            "allocated_bytes": 61440,
+            "base": 58109952,
+            "bytes_per_element": 1,
+            "channels_stored": 96,
+            "end": 58171392,
+            "layout": "tile4x4_hwc",
+            "partial_tile_invalid_fill": 0,
+            "raw_bytes": 61440
+          },
+          "destination_valid_address_min": 58109952,
+          "destination_valid_address_max": 58170623,
+          "residual": false,
+          "bypass_tensor": null,
+          "bypass_views": [],
+          "output_group_count": 32,
+          "input_group_count": 12,
+          "logical_channel_group_count": 12,
+          "input_group_count_semantics": "accepted packed core groups per task; DW is two spatial kernel groups, not logical input channels divided by eight",
+          "task_count": 18432,
+          "accepted_core_groups": 221184,
+          "accepted_core_groups_per_task": 12,
+          "expected_parameter_requests": 15360,
+          "expected_parameter_responses": 15360,
+          "dw_parameter_records_per_tile_channel": null,
+          "expected_read_requests": 3456,
+          "read_line_address_min": 57851904,
+          "read_line_address_max": 58107504,
+          "logical_output_elements": 55296,
+          "tile_rows": 5,
+          "tile_cols": 8,
+          "last_tile_valid_rows": 2,
+          "last_tile_valid_cols": 4,
+          "dw_spatial_tasks_per_4wide_row": null,
+          "vector_files": {
+            "acc": "vectors/stage6_acc.hex",
+            "pre": "vectors/stage6_pre.hex",
+            "silu": "vectors/stage6_silu.hex",
+            "post": "vectors/stage6_post.hex",
+            "sum": "vectors/stage6_sum.hex",
+            "output": "vectors/stage6_output.hex"
+          },
+          "parameter_files": {
+            "weights": "parameters/stage6_weights.hex",
+            "bias": "parameters/stage6_bias.hex",
+            "pre_multiplier": "parameters/stage6_pre_multiplier.hex",
+            "pre_shift": "parameters/stage6_pre_shift.hex",
+            "post_multiplier": "parameters/stage6_post_multiplier.hex",
+            "post_shift": "parameters/stage6_post_shift.hex"
+          }
+        }
+      ],
+      "totals": {
+        "stages": 7,
+        "logical_output_elements": 221184,
+        "all_acc_pre_silu_post_sum_output_values": 1327104,
+        "task_count": 87552,
+        "accepted_core_groups": 470016,
+        "expected_parameter_requests": 49920,
+        "expected_read_requests": 24588
+      },
+      "tail_rule": "only y < height is written; physical 4x4 tail padding rows are not expected writes"
+    }
+  },
+  "pan_dependency_handoff_read_only": {
+    "exact_producers": [
+      {
+        "dtype": "int8",
+        "groups": 1,
+        "index": 67,
+        "input_shape_hwc": [
+          36,
+          64,
+          96
+        ],
+        "inputs": [
+          "concat.08"
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "macs": 10616832,
+        "name": "fuse3_bu.reduce.conv",
+        "op": "conv",
+        "operator_padding_value": 0,
+        "output": "fuse3_bu.reduce.conv",
+        "output_shape_hwc": [
+          36,
+          64,
+          48
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "storage": {
+          "allocated_bytes": 110592,
+          "base": 59224064,
+          "bytes_per_element": 1,
+          "channels_stored": 48,
+          "end": 59334656,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 110592
+        },
+        "stride": [
+          1,
+          1
+        ],
+        "weights": 4608
+      },
+      {
+        "allocation": null,
+        "axis": "C",
+        "index": 68,
+        "inputs": [
+          "fuse3_bu.reduce.conv"
+        ],
+        "name": "split.05",
+        "op": "split_view",
+        "outputs": [
+          {
+            "channel_offset": 0,
+            "channels": 24,
+            "output": "split.05.0"
+          },
+          {
+            "channel_offset": 24,
+            "channels": 24,
+            "output": "split.05.1"
+          }
+        ]
+      },
+      {
+        "dtype": "int8",
+        "groups": 24,
+        "index": 69,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "inputs": [
+          "split.05.1"
+        ],
+        "kernel": [
+          3,
+          3
+        ],
+        "macs": 497664,
+        "name": "fuse3_bu.block.dw.conv",
+        "op": "conv",
+        "operator_padding_value": 0,
+        "output": "fuse3_bu.block.dw.conv",
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "storage": {
+          "allocated_bytes": 57344,
+          "base": 59334656,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 59392000,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "stride": [
+          1,
+          1
+        ],
+        "weights": 216
+      },
+      {
+        "dtype": "int8",
+        "groups": 1,
+        "index": 70,
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "inputs": [
+          "fuse3_bu.block.dw.conv"
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "macs": 1327104,
+        "name": "fuse3_bu.block.pw.conv",
+        "op": "conv",
+        "operator_padding_value": 0,
+        "output": "fuse3_bu.block.pw.conv",
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "storage": {
+          "allocated_bytes": 57344,
+          "base": 59392000,
+          "bytes_per_element": 1,
+          "channels_stored": 24,
+          "end": 59449344,
+          "layout": "tile4x4_hwc",
+          "partial_tile_invalid_fill": 0,
+          "raw_bytes": 55296
+        },
+        "stride": [
+          1,
+          1
+        ],
+        "weights": 576,
+        "write_transform": {
+          "bypass": "split.05.1",
+          "op": "post_silu_output_requant_add_sat8",
+          "requires_aligned_int8_scale": true
+        }
+      },
+      {
+        "allocation": null,
+        "dtype": "int8",
+        "index": 71,
+        "inputs": [
+          "split.05.1",
+          "fuse3_bu.block.pw.conv"
+        ],
+        "name": "residual.10",
+        "op": "residual_view",
+        "output": "residual.10",
+        "shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "storage_alias": "fuse3_bu.block.pw.conv"
+      },
+      {
+        "allocation": null,
+        "dtype": "int8",
+        "index": 72,
+        "inputs": [
+          "split.05.0",
+          "residual.10"
+        ],
+        "name": "concat.09",
+        "op": "concat_view",
+        "output": "concat.09",
+        "shape_hwc": [
+          36,
+          64,
+          48
+        ]
+      }
+    ],
+    "final_tensor": "concat.09",
+    "extra_out_conv": false,
+    "note": "FusionCSP is reduce PW, split, DW, PW residual, concat; do not invent an out.conv"
+  },
+  "not_run": [
+    "training",
+    "GPU",
+    "RTL",
+    "simulation",
+    "TD",
+    "synthesis",
+    "bitstream",
+    "board"
+  ],
+  "acceptance_eligible": false
+}

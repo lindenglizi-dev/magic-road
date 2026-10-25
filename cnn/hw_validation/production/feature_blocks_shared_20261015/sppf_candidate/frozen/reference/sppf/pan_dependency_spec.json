@@ -1,0 +1,2156 @@
+{
+  "status": "SPEC_ONLY_NO_PAN_GOLDEN_NO_RTL",
+  "nodes": [
+    {
+      "name": "lateral4.conv",
+      "op": "conv",
+      "inputs": [
+        "sppf.out.conv"
+      ],
+      "output": "lateral4.conv",
+      "input_shape_hwc": [
+        18,
+        32,
+        96
+      ],
+      "output_shape_hwc": [
+        18,
+        32,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 4608,
+      "macs": 2654208,
+      "dtype": "int8",
+      "storage": {
+        "base": 58298368,
+        "raw_bytes": 30720,
+        "allocated_bytes": 32768,
+        "end": 58331136,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 46
+    },
+    {
+      "name": "upsample.00",
+      "op": "nearest_view",
+      "inputs": [
+        "lateral4.conv"
+      ],
+      "output": "upsample.00",
+      "shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "source_index": {
+        "y": "y//2",
+        "x": "x//2"
+      },
+      "scale": [
+        2,
+        2
+      ],
+      "dtype": "int8",
+      "allocation": null,
+      "index": 47
+    },
+    {
+      "name": "concat.04",
+      "op": "concat_view",
+      "inputs": [
+        "upsample.00",
+        "csp3.out.conv"
+      ],
+      "output": "concat.04",
+      "shape_hwc": [
+        36,
+        64,
+        96
+      ],
+      "dtype": "int8",
+      "allocation": null,
+      "index": 48
+    },
+    {
+      "name": "fuse3_td.reduce.conv",
+      "op": "conv",
+      "inputs": [
+        "concat.04"
+      ],
+      "output": "fuse3_td.reduce.conv",
+      "input_shape_hwc": [
+        36,
+        64,
+        96
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 4608,
+      "macs": 10616832,
+      "dtype": "int8",
+      "storage": {
+        "base": 58331136,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 58441728,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 48,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 49
+    },
+    {
+      "name": "split.03",
+      "op": "split_view",
+      "inputs": [
+        "fuse3_td.reduce.conv"
+      ],
+      "outputs": [
+        {
+          "output": "split.03.0",
+          "channel_offset": 0,
+          "channels": 24
+        },
+        {
+          "output": "split.03.1",
+          "channel_offset": 24,
+          "channels": 24
+        }
+      ],
+      "axis": "C",
+      "allocation": null,
+      "index": 50
+    },
+    {
+      "name": "fuse3_td.block.dw.conv",
+      "op": "conv",
+      "inputs": [
+        "split.03.1"
+      ],
+      "output": "fuse3_td.block.dw.conv",
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "operator_padding_value": 0,
+      "groups": 24,
+      "weights": 216,
+      "macs": 497664,
+      "dtype": "int8",
+      "storage": {
+        "base": 58441728,
+        "raw_bytes": 55296,
+        "allocated_bytes": 57344,
+        "end": 58499072,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 51
+    },
+    {
+      "name": "fuse3_td.block.pw.conv",
+      "op": "conv",
+      "inputs": [
+        "fuse3_td.block.dw.conv"
+      ],
+      "output": "fuse3_td.block.pw.conv",
+      "input_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 576,
+      "macs": 1327104,
+      "dtype": "int8",
+      "storage": {
+        "base": 58499072,
+        "raw_bytes": 55296,
+        "allocated_bytes": 57344,
+        "end": 58556416,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 52,
+      "write_transform": {
+        "op": "post_silu_output_requant_add_sat8",
+        "bypass": "split.03.1",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "name": "residual.08",
+      "op": "residual_view",
+      "inputs": [
+        "split.03.1",
+        "fuse3_td.block.pw.conv"
+      ],
+      "output": "residual.08",
+      "shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "dtype": "int8",
+      "storage_alias": "fuse3_td.block.pw.conv",
+      "allocation": null,
+      "index": 53
+    },
+    {
+      "name": "concat.05",
+      "op": "concat_view",
+      "inputs": [
+        "split.03.0",
+        "residual.08"
+      ],
+      "output": "concat.05",
+      "shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "dtype": "int8",
+      "allocation": null,
+      "index": 54
+    },
+    {
+      "name": "lateral3.conv",
+      "op": "conv",
+      "inputs": [
+        "concat.05"
+      ],
+      "output": "lateral3.conv",
+      "input_shape_hwc": [
+        36,
+        64,
+        48
+      ],
+      "output_shape_hwc": [
+        36,
+        64,
+        24
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 1152,
+      "macs": 2654208,
+      "dtype": "int8",
+      "storage": {
+        "base": 58556416,
+        "raw_bytes": 55296,
+        "allocated_bytes": 57344,
+        "end": 58613760,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 55
+    },
+    {
+      "name": "upsample.01",
+      "op": "nearest_view",
+      "inputs": [
+        "lateral3.conv"
+      ],
+      "output": "upsample.01",
+      "shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "source_index": {
+        "y": "y//2",
+        "x": "x//2"
+      },
+      "scale": [
+        2,
+        2
+      ],
+      "dtype": "int8",
+      "allocation": null,
+      "index": 56
+    },
+    {
+      "name": "concat.06",
+      "op": "concat_view",
+      "inputs": [
+        "upsample.01",
+        "csp2.out.conv"
+      ],
+      "output": "concat.06",
+      "shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "dtype": "int8",
+      "allocation": null,
+      "index": 57
+    },
+    {
+      "name": "fuse2_td.reduce.conv",
+      "op": "conv",
+      "inputs": [
+        "concat.06"
+      ],
+      "output": "fuse2_td.reduce.conv",
+      "input_shape_hwc": [
+        72,
+        128,
+        48
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 1152,
+      "macs": 10616832,
+      "dtype": "int8",
+      "storage": {
+        "base": 58613760,
+        "raw_bytes": 221184,
+        "allocated_bytes": 221184,
+        "end": 58834944,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 24,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 58
+    },
+    {
+      "name": "split.04",
+      "op": "split_view",
+      "inputs": [
+        "fuse2_td.reduce.conv"
+      ],
+      "outputs": [
+        {
+          "output": "split.04.0",
+          "channel_offset": 0,
+          "channels": 12
+        },
+        {
+          "output": "split.04.1",
+          "channel_offset": 12,
+          "channels": 12
+        }
+      ],
+      "axis": "C",
+      "allocation": null,
+      "index": 59
+    },
+    {
+      "name": "fuse2_td.block.dw.conv",
+      "op": "conv",
+      "inputs": [
+        "split.04.1"
+      ],
+      "output": "fuse2_td.block.dw.conv",
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "kernel": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "operator_padding_value": 0,
+      "groups": 12,
+      "weights": 108,
+      "macs": 995328,
+      "dtype": "int8",
+      "storage": {
+        "base": 58834944,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 58945536,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 12,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 60
+    },
+    {
+      "name": "fuse2_td.block.pw.conv",
+      "op": "conv",
+      "inputs": [
+        "fuse2_td.block.dw.conv"
+      ],
+      "output": "fuse2_td.block.pw.conv",
+      "input_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "output_shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "kernel": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "operator_padding_value": 0,
+      "groups": 1,
+      "weights": 144,
+      "macs": 1327104,
+      "dtype": "int8",
+      "storage": {
+        "base": 58945536,
+        "raw_bytes": 110592,
+        "allocated_bytes": 110592,
+        "end": 59056128,
+        "layout": "tile4x4_hwc",
+        "channels_stored": 12,
+        "bytes_per_element": 1,
+        "partial_tile_invalid_fill": 0
+      },
+      "index": 61,
+      "write_transform": {
+        "op": "post_silu_output_requant_add_sat8",
+        "bypass": "split.04.1",
+        "requires_aligned_int8_scale": true
+      }
+    },
+    {
+      "name": "residual.09",
+      "op": "residual_view",
+      "inputs": [
+        "split.04.1",
+        "fuse2_td.block.pw.conv"
+      ],
+      "output": "residual.09",
+      "shape_hwc": [
+        72,
+        128,
+        12
+      ],
+      "dtype": "int8",
+      "storage_alias": "fuse2_td.block.pw.conv",
+      "allocation": null,
+      "index": 62
+    },
+    {
+      "name": "concat.07",
+      "op": "concat_view",
+      "inputs": [
+        "split.04.0",
+        "residual.09"
+      ],
+      "output": "concat.07",
+      "shape_hwc": [
+        72,
+        128,
+        24
+      ],
+      "dtype": "int8",
+      "allocation": null,
+      "index": 63
+    }
+  ],
+  "convolutions": [
+    {
+      "graph_node": {
+        "name": "lateral4.conv",
+        "op": "conv",
+        "inputs": [
+          "sppf.out.conv"
+        ],
+        "output": "lateral4.conv",
+        "input_shape_hwc": [
+          18,
+          32,
+          96
+        ],
+        "output_shape_hwc": [
+          18,
+          32,
+          48
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "operator_padding_value": 0,
+        "groups": 1,
+        "weights": 4608,
+        "macs": 2654208,
+        "dtype": "int8",
+        "storage": {
+          "base": 58298368,
+          "raw_bytes": 30720,
+          "allocated_bytes": 32768,
+          "end": 58331136,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 48,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        },
+        "index": 46
+      },
+      "input_view": {
+        "tensor": "sppf.out.conv",
+        "op": "storage",
+        "shape_hwc": [
+          18,
+          32,
+          96
+        ],
+        "storage": {
+          "base": 58236928,
+          "raw_bytes": 61440,
+          "allocated_bytes": 61440,
+          "end": 58298368,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 96,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        }
+      },
+      "parameters": [
+        {
+          "name": "lateral4.conv.weights",
+          "offset": 51572,
+          "length": 4608,
+          "dtype": "int8",
+          "shape": [
+            48,
+            96,
+            1,
+            1
+          ],
+          "count": 4608,
+          "role": "weights_int8",
+          "sha256": "343f399f448946d46ee11024cb8012dd6f053f1288fad323de73db69658c5081"
+        },
+        {
+          "name": "lateral4.conv.bias",
+          "offset": 56180,
+          "length": 192,
+          "dtype": "int32_le",
+          "shape": [
+            48
+          ],
+          "count": 48,
+          "role": "folded_bias_int32",
+          "sha256": "a1d0ef9bcfc8aeb59ae1f55c3a5f940210e615296f110d615d003e7cc225f66b"
+        },
+        {
+          "name": "lateral4.conv.pre_multiplier",
+          "offset": 56372,
+          "length": 192,
+          "dtype": "int32_le",
+          "shape": [
+            48
+          ],
+          "count": 48,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "6f56d8f147dae613ae82c7145d8a51c8bbcf8a7b16bb8a9a6eb6fadc3b9ad67e"
+        },
+        {
+          "name": "lateral4.conv.pre_shift",
+          "offset": 56564,
+          "length": 48,
+          "dtype": "uint8",
+          "shape": [
+            48
+          ],
+          "count": 48,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "ce6f81a6560f7876e1c85f825640561f349cad529b27e749ec727d161935d751"
+        },
+        {
+          "name": "lateral4.conv.post_multiplier",
+          "offset": 56612,
+          "length": 4,
+          "dtype": "int32_le",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "98ff06c4633cfba80e1f3eb122ab08ce6b34c836770c4ba4dfeb10a7396b30ed"
+        },
+        {
+          "name": "lateral4.conv.post_shift",
+          "offset": 56616,
+          "length": 1,
+          "dtype": "uint8",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "334359b90efed75da5f0ada1d5e6b256f4a6bd0aee7eb39c0f90182a021ffc8b"
+        }
+      ],
+      "write_bypass_view": null
+    },
+    {
+      "graph_node": {
+        "name": "fuse3_td.reduce.conv",
+        "op": "conv",
+        "inputs": [
+          "concat.04"
+        ],
+        "output": "fuse3_td.reduce.conv",
+        "input_shape_hwc": [
+          36,
+          64,
+          96
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          48
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "operator_padding_value": 0,
+        "groups": 1,
+        "weights": 4608,
+        "macs": 10616832,
+        "dtype": "int8",
+        "storage": {
+          "base": 58331136,
+          "raw_bytes": 110592,
+          "allocated_bytes": 110592,
+          "end": 58441728,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 48,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        },
+        "index": 49
+      },
+      "input_view": {
+        "tensor": "concat.04",
+        "op": "concat_view",
+        "branches": [
+          {
+            "channel_begin": 0,
+            "channel_end_exclusive": 48,
+            "source": {
+              "tensor": "upsample.00",
+              "op": "nearest_view",
+              "source_index": {
+                "y": "y//2",
+                "x": "x//2"
+              },
+              "scale": [
+                2,
+                2
+              ],
+              "source": {
+                "tensor": "lateral4.conv",
+                "op": "storage",
+                "shape_hwc": [
+                  18,
+                  32,
+                  48
+                ],
+                "storage": {
+                  "base": 58298368,
+                  "raw_bytes": 30720,
+                  "allocated_bytes": 32768,
+                  "end": 58331136,
+                  "layout": "tile4x4_hwc",
+                  "channels_stored": 48,
+                  "bytes_per_element": 1,
+                  "partial_tile_invalid_fill": 0
+                }
+              }
+            }
+          },
+          {
+            "channel_begin": 48,
+            "channel_end_exclusive": 96,
+            "source": {
+              "tensor": "csp3.out.conv",
+              "op": "storage",
+              "shape_hwc": [
+                36,
+                64,
+                48
+              ],
+              "storage": {
+                "base": 57708544,
+                "raw_bytes": 110592,
+                "allocated_bytes": 110592,
+                "end": 57819136,
+                "layout": "tile4x4_hwc",
+                "channels_stored": 48,
+                "bytes_per_element": 1,
+                "partial_tile_invalid_fill": 0
+              }
+            }
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "fuse3_td.reduce.conv.weights",
+          "offset": 56617,
+          "length": 4608,
+          "dtype": "int8",
+          "shape": [
+            48,
+            96,
+            1,
+            1
+          ],
+          "count": 4608,
+          "role": "weights_int8",
+          "sha256": "b45f7e4b75ee54baf0e64c02f0c61c1b7da078435be02b1db18c0c2a5a359648"
+        },
+        {
+          "name": "fuse3_td.reduce.conv.bias",
+          "offset": 61225,
+          "length": 192,
+          "dtype": "int32_le",
+          "shape": [
+            48
+          ],
+          "count": 48,
+          "role": "folded_bias_int32",
+          "sha256": "809847e7d6b68c2c76bdbe93f99bd7aa7ecbebf20eb15540d71a0d1678d8d62c"
+        },
+        {
+          "name": "fuse3_td.reduce.conv.pre_multiplier",
+          "offset": 61417,
+          "length": 192,
+          "dtype": "int32_le",
+          "shape": [
+            48
+          ],
+          "count": 48,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "8a49b5ec15907735b40c6bb11cfe3b1be868164dad06e259d5464dc69e9e48da"
+        },
+        {
+          "name": "fuse3_td.reduce.conv.pre_shift",
+          "offset": 61609,
+          "length": 48,
+          "dtype": "uint8",
+          "shape": [
+            48
+          ],
+          "count": 48,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "ec652106326e4d6b83df45c5ca79f342bd405c547b13a26d20fa320b25f8299d"
+        },
+        {
+          "name": "fuse3_td.reduce.conv.post_multiplier",
+          "offset": 61657,
+          "length": 4,
+          "dtype": "int32_le",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "4598e902ac49aaaa92bb7563062a5b3f3eb62b91c995573f14aac49968c13697"
+        },
+        {
+          "name": "fuse3_td.reduce.conv.post_shift",
+          "offset": 61661,
+          "length": 1,
+          "dtype": "uint8",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "bbf3f11cb5b43e700273a78d12de55e4a7eab741ed2abf13787a4d2dc832b8ec"
+        }
+      ],
+      "write_bypass_view": null
+    },
+    {
+      "graph_node": {
+        "name": "fuse3_td.block.dw.conv",
+        "op": "conv",
+        "inputs": [
+          "split.03.1"
+        ],
+        "output": "fuse3_td.block.dw.conv",
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "kernel": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "operator_padding_value": 0,
+        "groups": 24,
+        "weights": 216,
+        "macs": 497664,
+        "dtype": "int8",
+        "storage": {
+          "base": 58441728,
+          "raw_bytes": 55296,
+          "allocated_bytes": 57344,
+          "end": 58499072,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 24,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        },
+        "index": 51
+      },
+      "input_view": {
+        "tensor": "split.03.1",
+        "op": "split_view",
+        "channel_offset": 24,
+        "channels": 24,
+        "source": {
+          "tensor": "fuse3_td.reduce.conv",
+          "op": "storage",
+          "shape_hwc": [
+            36,
+            64,
+            48
+          ],
+          "storage": {
+            "base": 58331136,
+            "raw_bytes": 110592,
+            "allocated_bytes": 110592,
+            "end": 58441728,
+            "layout": "tile4x4_hwc",
+            "channels_stored": 48,
+            "bytes_per_element": 1,
+            "partial_tile_invalid_fill": 0
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "fuse3_td.block.dw.conv.weights",
+          "offset": 61662,
+          "length": 216,
+          "dtype": "int8",
+          "shape": [
+            24,
+            1,
+            3,
+            3
+          ],
+          "count": 216,
+          "role": "weights_int8",
+          "sha256": "cb23909ab30d7bb0e23d17863ee925490199de64af3995d74d14594281b6f76f"
+        },
+        {
+          "name": "fuse3_td.block.dw.conv.bias",
+          "offset": 61878,
+          "length": 96,
+          "dtype": "int32_le",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "folded_bias_int32",
+          "sha256": "7f8399128e3fb5672c70ecf99f72937670ef6ad38aba6e19b494681f88a91c77"
+        },
+        {
+          "name": "fuse3_td.block.dw.conv.pre_multiplier",
+          "offset": 61974,
+          "length": 96,
+          "dtype": "int32_le",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "3f8b576039fce55d5002d253eb259e3b4a32c8441bebf06ac15394e558891e8a"
+        },
+        {
+          "name": "fuse3_td.block.dw.conv.pre_shift",
+          "offset": 62070,
+          "length": 24,
+          "dtype": "uint8",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "0e0bdd488f185248eaed6278aebdb0f831da103031a5be0ab2f7e5fd13f2c523"
+        },
+        {
+          "name": "fuse3_td.block.dw.conv.post_multiplier",
+          "offset": 62094,
+          "length": 4,
+          "dtype": "int32_le",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "45ae045f7748e0618c477030646d7111d934792ae00b6e995b6341643bcb693e"
+        },
+        {
+          "name": "fuse3_td.block.dw.conv.post_shift",
+          "offset": 62098,
+          "length": 1,
+          "dtype": "uint8",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "09fc96082d34c2dfc1295d92073b5ea1dc8ef8da95f14dfded011ffb96d3e54b"
+        }
+      ],
+      "write_bypass_view": null
+    },
+    {
+      "graph_node": {
+        "name": "fuse3_td.block.pw.conv",
+        "op": "conv",
+        "inputs": [
+          "fuse3_td.block.dw.conv"
+        ],
+        "output": "fuse3_td.block.pw.conv",
+        "input_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "operator_padding_value": 0,
+        "groups": 1,
+        "weights": 576,
+        "macs": 1327104,
+        "dtype": "int8",
+        "storage": {
+          "base": 58499072,
+          "raw_bytes": 55296,
+          "allocated_bytes": 57344,
+          "end": 58556416,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 24,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        },
+        "index": 52,
+        "write_transform": {
+          "op": "post_silu_output_requant_add_sat8",
+          "bypass": "split.03.1",
+          "requires_aligned_int8_scale": true
+        }
+      },
+      "input_view": {
+        "tensor": "fuse3_td.block.dw.conv",
+        "op": "storage",
+        "shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "storage": {
+          "base": 58441728,
+          "raw_bytes": 55296,
+          "allocated_bytes": 57344,
+          "end": 58499072,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 24,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        }
+      },
+      "parameters": [
+        {
+          "name": "fuse3_td.block.pw.conv.weights",
+          "offset": 62099,
+          "length": 576,
+          "dtype": "int8",
+          "shape": [
+            24,
+            24,
+            1,
+            1
+          ],
+          "count": 576,
+          "role": "weights_int8",
+          "sha256": "3c223c23355dc9b0f05a4171df55bd66190c0855acc1d92258d3e36dc7d16ac1"
+        },
+        {
+          "name": "fuse3_td.block.pw.conv.bias",
+          "offset": 62675,
+          "length": 96,
+          "dtype": "int32_le",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "folded_bias_int32",
+          "sha256": "6e36e7578180e070e93dd18fc12214f2856b2f60f8597e7fd6cb55ea6aef8166"
+        },
+        {
+          "name": "fuse3_td.block.pw.conv.pre_multiplier",
+          "offset": 62771,
+          "length": 96,
+          "dtype": "int32_le",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "b9818f5a91cf97c5551c8a782cffa9443dbced283ae9457dfac1f1d22b11ebd3"
+        },
+        {
+          "name": "fuse3_td.block.pw.conv.pre_shift",
+          "offset": 62867,
+          "length": 24,
+          "dtype": "uint8",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "78c8ed370f235d67a26307963344a25f810832472f1507f7ce82b521d232b464"
+        },
+        {
+          "name": "fuse3_td.block.pw.conv.post_multiplier",
+          "offset": 62891,
+          "length": 4,
+          "dtype": "int32_le",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "4598e902ac49aaaa92bb7563062a5b3f3eb62b91c995573f14aac49968c13697"
+        },
+        {
+          "name": "fuse3_td.block.pw.conv.post_shift",
+          "offset": 62895,
+          "length": 1,
+          "dtype": "uint8",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "bbf3f11cb5b43e700273a78d12de55e4a7eab741ed2abf13787a4d2dc832b8ec"
+        }
+      ],
+      "write_bypass_view": {
+        "tensor": "split.03.1",
+        "op": "split_view",
+        "channel_offset": 24,
+        "channels": 24,
+        "source": {
+          "tensor": "fuse3_td.reduce.conv",
+          "op": "storage",
+          "shape_hwc": [
+            36,
+            64,
+            48
+          ],
+          "storage": {
+            "base": 58331136,
+            "raw_bytes": 110592,
+            "allocated_bytes": 110592,
+            "end": 58441728,
+            "layout": "tile4x4_hwc",
+            "channels_stored": 48,
+            "bytes_per_element": 1,
+            "partial_tile_invalid_fill": 0
+          }
+        }
+      }
+    },
+    {
+      "graph_node": {
+        "name": "lateral3.conv",
+        "op": "conv",
+        "inputs": [
+          "concat.05"
+        ],
+        "output": "lateral3.conv",
+        "input_shape_hwc": [
+          36,
+          64,
+          48
+        ],
+        "output_shape_hwc": [
+          36,
+          64,
+          24
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "operator_padding_value": 0,
+        "groups": 1,
+        "weights": 1152,
+        "macs": 2654208,
+        "dtype": "int8",
+        "storage": {
+          "base": 58556416,
+          "raw_bytes": 55296,
+          "allocated_bytes": 57344,
+          "end": 58613760,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 24,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        },
+        "index": 55
+      },
+      "input_view": {
+        "tensor": "concat.05",
+        "op": "concat_view",
+        "branches": [
+          {
+            "channel_begin": 0,
+            "channel_end_exclusive": 24,
+            "source": {
+              "tensor": "split.03.0",
+              "op": "split_view",
+              "channel_offset": 0,
+              "channels": 24,
+              "source": {
+                "tensor": "fuse3_td.reduce.conv",
+                "op": "storage",
+                "shape_hwc": [
+                  36,
+                  64,
+                  48
+                ],
+                "storage": {
+                  "base": 58331136,
+                  "raw_bytes": 110592,
+                  "allocated_bytes": 110592,
+                  "end": 58441728,
+                  "layout": "tile4x4_hwc",
+                  "channels_stored": 48,
+                  "bytes_per_element": 1,
+                  "partial_tile_invalid_fill": 0
+                }
+              }
+            }
+          },
+          {
+            "channel_begin": 24,
+            "channel_end_exclusive": 48,
+            "source": {
+              "tensor": "residual.08",
+              "op": "storage_alias",
+              "target": "fuse3_td.block.pw.conv",
+              "backing": {
+                "tensor": "fuse3_td.block.pw.conv",
+                "op": "storage",
+                "shape_hwc": [
+                  36,
+                  64,
+                  24
+                ],
+                "storage": {
+                  "base": 58499072,
+                  "raw_bytes": 55296,
+                  "allocated_bytes": 57344,
+                  "end": 58556416,
+                  "layout": "tile4x4_hwc",
+                  "channels_stored": 24,
+                  "bytes_per_element": 1,
+                  "partial_tile_invalid_fill": 0
+                }
+              },
+              "residual_inputs": [
+                "split.03.1",
+                "fuse3_td.block.pw.conv"
+              ],
+              "write": "signed9 graph bypass + PW post, sat8; alias contains the sum"
+            }
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "lateral3.conv.weights",
+          "offset": 62896,
+          "length": 1152,
+          "dtype": "int8",
+          "shape": [
+            24,
+            48,
+            1,
+            1
+          ],
+          "count": 1152,
+          "role": "weights_int8",
+          "sha256": "6a3ecbefc44c8d7c432b8a9a4599480677ddf1d3b335e90e3a657537cbf9ec95"
+        },
+        {
+          "name": "lateral3.conv.bias",
+          "offset": 64048,
+          "length": 96,
+          "dtype": "int32_le",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "folded_bias_int32",
+          "sha256": "2df3ad547bd771ee8fd7750f3cf083bc72a5e1732bc02a8732793e802342abb4"
+        },
+        {
+          "name": "lateral3.conv.pre_multiplier",
+          "offset": 64144,
+          "length": 96,
+          "dtype": "int32_le",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "15db6b6e320ebbb6aa4c937fc9dc65af310df73d4c60889bc821003769b3917b"
+        },
+        {
+          "name": "lateral3.conv.pre_shift",
+          "offset": 64240,
+          "length": 24,
+          "dtype": "uint8",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "89810c55ac5f21201f74e47ca523693a0995d8232d342c2eeddf58a7374ad888"
+        },
+        {
+          "name": "lateral3.conv.post_multiplier",
+          "offset": 64264,
+          "length": 4,
+          "dtype": "int32_le",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "a2be982bc5d09cc649d7bb4cd2b7c519dd46e4db4991c9fa85112501067bc15d"
+        },
+        {
+          "name": "lateral3.conv.post_shift",
+          "offset": 64268,
+          "length": 1,
+          "dtype": "uint8",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "09fc96082d34c2dfc1295d92073b5ea1dc8ef8da95f14dfded011ffb96d3e54b"
+        }
+      ],
+      "write_bypass_view": null
+    },
+    {
+      "graph_node": {
+        "name": "fuse2_td.reduce.conv",
+        "op": "conv",
+        "inputs": [
+          "concat.06"
+        ],
+        "output": "fuse2_td.reduce.conv",
+        "input_shape_hwc": [
+          72,
+          128,
+          48
+        ],
+        "output_shape_hwc": [
+          72,
+          128,
+          24
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "operator_padding_value": 0,
+        "groups": 1,
+        "weights": 1152,
+        "macs": 10616832,
+        "dtype": "int8",
+        "storage": {
+          "base": 58613760,
+          "raw_bytes": 221184,
+          "allocated_bytes": 221184,
+          "end": 58834944,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 24,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        },
+        "index": 58
+      },
+      "input_view": {
+        "tensor": "concat.06",
+        "op": "concat_view",
+        "branches": [
+          {
+            "channel_begin": 0,
+            "channel_end_exclusive": 24,
+            "source": {
+              "tensor": "upsample.01",
+              "op": "nearest_view",
+              "source_index": {
+                "y": "y//2",
+                "x": "x//2"
+              },
+              "scale": [
+                2,
+                2
+              ],
+              "source": {
+                "tensor": "lateral3.conv",
+                "op": "storage",
+                "shape_hwc": [
+                  36,
+                  64,
+                  24
+                ],
+                "storage": {
+                  "base": 58556416,
+                  "raw_bytes": 55296,
+                  "allocated_bytes": 57344,
+                  "end": 58613760,
+                  "layout": "tile4x4_hwc",
+                  "channels_stored": 24,
+                  "bytes_per_element": 1,
+                  "partial_tile_invalid_fill": 0
+                }
+              }
+            }
+          },
+          {
+            "channel_begin": 24,
+            "channel_end_exclusive": 48,
+            "source": {
+              "tensor": "csp2.out.conv",
+              "op": "storage",
+              "shape_hwc": [
+                72,
+                128,
+                24
+              ],
+              "storage": {
+                "base": 56975360,
+                "raw_bytes": 221184,
+                "allocated_bytes": 221184,
+                "end": 57196544,
+                "layout": "tile4x4_hwc",
+                "channels_stored": 24,
+                "bytes_per_element": 1,
+                "partial_tile_invalid_fill": 0
+              }
+            }
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "fuse2_td.reduce.conv.weights",
+          "offset": 64269,
+          "length": 1152,
+          "dtype": "int8",
+          "shape": [
+            24,
+            48,
+            1,
+            1
+          ],
+          "count": 1152,
+          "role": "weights_int8",
+          "sha256": "78b1e9861297fda69b693ea40165a7e37ecc3042a6e638c716786dd8acdcdc2e"
+        },
+        {
+          "name": "fuse2_td.reduce.conv.bias",
+          "offset": 65421,
+          "length": 96,
+          "dtype": "int32_le",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "folded_bias_int32",
+          "sha256": "fa522c74cbbf1bd863c5d74d7c84bff3a510c3b01d6735ad1b098c73e07abff5"
+        },
+        {
+          "name": "fuse2_td.reduce.conv.pre_multiplier",
+          "offset": 65517,
+          "length": 96,
+          "dtype": "int32_le",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "08c79223bcfc65825d0562b13fa2eb4dde723cb288699bc77853cf734aea6925"
+        },
+        {
+          "name": "fuse2_td.reduce.conv.pre_shift",
+          "offset": 65613,
+          "length": 24,
+          "dtype": "uint8",
+          "shape": [
+            24
+          ],
+          "count": 24,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "c22fa38f41be572f67fa57704789d70946e84b7ba781df750068f9031debaa68"
+        },
+        {
+          "name": "fuse2_td.reduce.conv.post_multiplier",
+          "offset": 65637,
+          "length": 4,
+          "dtype": "int32_le",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "cff3134c07f93a85aebd5d5101f61516c430af4b3da290e1a17539a4d3730bc2"
+        },
+        {
+          "name": "fuse2_td.reduce.conv.post_shift",
+          "offset": 65641,
+          "length": 1,
+          "dtype": "uint8",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "09fc96082d34c2dfc1295d92073b5ea1dc8ef8da95f14dfded011ffb96d3e54b"
+        }
+      ],
+      "write_bypass_view": null
+    },
+    {
+      "graph_node": {
+        "name": "fuse2_td.block.dw.conv",
+        "op": "conv",
+        "inputs": [
+          "split.04.1"
+        ],
+        "output": "fuse2_td.block.dw.conv",
+        "input_shape_hwc": [
+          72,
+          128,
+          12
+        ],
+        "output_shape_hwc": [
+          72,
+          128,
+          12
+        ],
+        "kernel": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "operator_padding_value": 0,
+        "groups": 12,
+        "weights": 108,
+        "macs": 995328,
+        "dtype": "int8",
+        "storage": {
+          "base": 58834944,
+          "raw_bytes": 110592,
+          "allocated_bytes": 110592,
+          "end": 58945536,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 12,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        },
+        "index": 60
+      },
+      "input_view": {
+        "tensor": "split.04.1",
+        "op": "split_view",
+        "channel_offset": 12,
+        "channels": 12,
+        "source": {
+          "tensor": "fuse2_td.reduce.conv",
+          "op": "storage",
+          "shape_hwc": [
+            72,
+            128,
+            24
+          ],
+          "storage": {
+            "base": 58613760,
+            "raw_bytes": 221184,
+            "allocated_bytes": 221184,
+            "end": 58834944,
+            "layout": "tile4x4_hwc",
+            "channels_stored": 24,
+            "bytes_per_element": 1,
+            "partial_tile_invalid_fill": 0
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "fuse2_td.block.dw.conv.weights",
+          "offset": 65642,
+          "length": 108,
+          "dtype": "int8",
+          "shape": [
+            12,
+            1,
+            3,
+            3
+          ],
+          "count": 108,
+          "role": "weights_int8",
+          "sha256": "685c08d04f0bafc5b5ace2931ca1a2ac924593d6c30d164f4f5fef4942f76976"
+        },
+        {
+          "name": "fuse2_td.block.dw.conv.bias",
+          "offset": 65750,
+          "length": 48,
+          "dtype": "int32_le",
+          "shape": [
+            12
+          ],
+          "count": 12,
+          "role": "folded_bias_int32",
+          "sha256": "71ce63cf15db03b414bac583cd5879a5434bde1d73fdb0d836c872aab3eb95cd"
+        },
+        {
+          "name": "fuse2_td.block.dw.conv.pre_multiplier",
+          "offset": 65798,
+          "length": 48,
+          "dtype": "int32_le",
+          "shape": [
+            12
+          ],
+          "count": 12,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "4e0ec83b735d3ded7a289a8a2438b80eafc126ddaf64df443af65312bf0cd46f"
+        },
+        {
+          "name": "fuse2_td.block.dw.conv.pre_shift",
+          "offset": 65846,
+          "length": 12,
+          "dtype": "uint8",
+          "shape": [
+            12
+          ],
+          "count": 12,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "b7ba48e019b0abd0db39f0e992acf0540b9c62dd546d39b5cbdca3fbf16c6a50"
+        },
+        {
+          "name": "fuse2_td.block.dw.conv.post_multiplier",
+          "offset": 65858,
+          "length": 4,
+          "dtype": "int32_le",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "8ce786cbbb6b97fd2dc4a31ea7c57e2d66ce8fa04833ce6a150b8aae6ff8853e"
+        },
+        {
+          "name": "fuse2_td.block.dw.conv.post_shift",
+          "offset": 65862,
+          "length": 1,
+          "dtype": "uint8",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "09fc96082d34c2dfc1295d92073b5ea1dc8ef8da95f14dfded011ffb96d3e54b"
+        }
+      ],
+      "write_bypass_view": null
+    },
+    {
+      "graph_node": {
+        "name": "fuse2_td.block.pw.conv",
+        "op": "conv",
+        "inputs": [
+          "fuse2_td.block.dw.conv"
+        ],
+        "output": "fuse2_td.block.pw.conv",
+        "input_shape_hwc": [
+          72,
+          128,
+          12
+        ],
+        "output_shape_hwc": [
+          72,
+          128,
+          12
+        ],
+        "kernel": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "operator_padding_value": 0,
+        "groups": 1,
+        "weights": 144,
+        "macs": 1327104,
+        "dtype": "int8",
+        "storage": {
+          "base": 58945536,
+          "raw_bytes": 110592,
+          "allocated_bytes": 110592,
+          "end": 59056128,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 12,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        },
+        "index": 61,
+        "write_transform": {
+          "op": "post_silu_output_requant_add_sat8",
+          "bypass": "split.04.1",
+          "requires_aligned_int8_scale": true
+        }
+      },
+      "input_view": {
+        "tensor": "fuse2_td.block.dw.conv",
+        "op": "storage",
+        "shape_hwc": [
+          72,
+          128,
+          12
+        ],
+        "storage": {
+          "base": 58834944,
+          "raw_bytes": 110592,
+          "allocated_bytes": 110592,
+          "end": 58945536,
+          "layout": "tile4x4_hwc",
+          "channels_stored": 12,
+          "bytes_per_element": 1,
+          "partial_tile_invalid_fill": 0
+        }
+      },
+      "parameters": [
+        {
+          "name": "fuse2_td.block.pw.conv.weights",
+          "offset": 65863,
+          "length": 144,
+          "dtype": "int8",
+          "shape": [
+            12,
+            12,
+            1,
+            1
+          ],
+          "count": 144,
+          "role": "weights_int8",
+          "sha256": "07734ad05cf4cd1556cd24fdcb831081aff1bccef142af3add9f0e72fc60b43c"
+        },
+        {
+          "name": "fuse2_td.block.pw.conv.bias",
+          "offset": 66007,
+          "length": 48,
+          "dtype": "int32_le",
+          "shape": [
+            12
+          ],
+          "count": 12,
+          "role": "folded_bias_int32",
+          "sha256": "832111cce503b59b299b96cea5911d0cff6f09115c4eb25e42e15e4fb3f3dddb"
+        },
+        {
+          "name": "fuse2_td.block.pw.conv.pre_multiplier",
+          "offset": 66055,
+          "length": 48,
+          "dtype": "int32_le",
+          "shape": [
+            12
+          ],
+          "count": 12,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "4283d5b7c36ca40456255e9682563c2cda6c7cbf23e0ccd433d0be8593930075"
+        },
+        {
+          "name": "fuse2_td.block.pw.conv.pre_shift",
+          "offset": 66103,
+          "length": 12,
+          "dtype": "uint8",
+          "shape": [
+            12
+          ],
+          "count": 12,
+          "role": "accumulator_to_q7_8_per_channel",
+          "sha256": "d8130136803e120a0addfb2264fe2b434ad45d733ef27a194e1f834c28230fd8"
+        },
+        {
+          "name": "fuse2_td.block.pw.conv.post_multiplier",
+          "offset": 66115,
+          "length": 4,
+          "dtype": "int32_le",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "cff3134c07f93a85aebd5d5101f61516c430af4b3da290e1a17539a4d3730bc2"
+        },
+        {
+          "name": "fuse2_td.block.pw.conv.post_shift",
+          "offset": 66119,
+          "length": 1,
+          "dtype": "uint8",
+          "shape": [
+            1
+          ],
+          "count": 1,
+          "role": "silu_to_int8_per_tensor",
+          "sha256": "09fc96082d34c2dfc1295d92073b5ea1dc8ef8da95f14dfded011ffb96d3e54b"
+        }
+      ],
+      "write_bypass_view": {
+        "tensor": "split.04.1",
+        "op": "split_view",
+        "channel_offset": 12,
+        "channels": 12,
+        "source": {
+          "tensor": "fuse2_td.reduce.conv",
+          "op": "storage",
+          "shape_hwc": [
+            72,
+            128,
+            24
+          ],
+          "storage": {
+            "base": 58613760,
+            "raw_bytes": 221184,
+            "allocated_bytes": 221184,
+            "end": 58834944,
+            "layout": "tile4x4_hwc",
+            "channels_stored": 24,
+            "bytes_per_element": 1,
+            "partial_tile_invalid_fill": 0
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "fuse3_td": {
+      "tensor": "concat.05",
+      "op": "concat_view",
+      "branches": [
+        {
+          "channel_begin": 0,
+          "channel_end_exclusive": 24,
+          "source": {
+            "tensor": "split.03.0",
+            "op": "split_view",
+            "channel_offset": 0,
+            "channels": 24,
+            "source": {
+              "tensor": "fuse3_td.reduce.conv",
+              "op": "storage",
+              "shape_hwc": [
+                36,
+                64,
+                48
+              ],
+              "storage": {
+                "base": 58331136,
+                "raw_bytes": 110592,
+                "allocated_bytes": 110592,
+                "end": 58441728,
+                "layout": "tile4x4_hwc",
+                "channels_stored": 48,
+                "bytes_per_element": 1,
+                "partial_tile_invalid_fill": 0
+              }
+            }
+          }
+        },
+        {
+          "channel_begin": 24,
+          "channel_end_exclusive": 48,
+          "source": {
+            "tensor": "residual.08",
+            "op": "storage_alias",
+            "target": "fuse3_td.block.pw.conv",
+            "backing": {
+              "tensor": "fuse3_td.block.pw.conv",
+              "op": "storage",
+              "shape_hwc": [
+                36,
+                64,
+                24
+              ],
+              "storage": {
+                "base": 58499072,
+                "raw_bytes": 55296,
+                "allocated_bytes": 57344,
+                "end": 58556416,
+                "layout": "tile4x4_hwc",
+                "channels_stored": 24,
+                "bytes_per_element": 1,
+                "partial_tile_invalid_fill": 0
+              }
+            },
+            "residual_inputs": [
+              "split.03.1",
+              "fuse3_td.block.pw.conv"
+            ],
+            "write": "signed9 graph bypass + PW post, sat8; alias contains the sum"
+          }
+        }
+      ]
+    },
+    "fuse2_td": {
+      "tensor": "concat.07",
+      "op": "concat_view",
+      "branches": [
+        {
+          "channel_begin": 0,
+          "channel_end_exclusive": 12,
+          "source": {
+            "tensor": "split.04.0",
+            "op": "split_view",
+            "channel_offset": 0,
+            "channels": 12,
+            "source": {
+              "tensor": "fuse2_td.reduce.conv",
+              "op": "storage",
+              "shape_hwc": [
+                72,
+                128,
+                24
+              ],
+              "storage": {
+                "base": 58613760,
+                "raw_bytes": 221184,
+                "allocated_bytes": 221184,
+                "end": 58834944,
+                "layout": "tile4x4_hwc",
+                "channels_stored": 24,
+                "bytes_per_element": 1,
+                "partial_tile_invalid_fill": 0
+              }
+            }
+          }
+        },
+        {
+          "channel_begin": 12,
+          "channel_end_exclusive": 24,
+          "source": {
+            "tensor": "residual.09",
+            "op": "storage_alias",
+            "target": "fuse2_td.block.pw.conv",
+            "backing": {
+              "tensor": "fuse2_td.block.pw.conv",
+              "op": "storage",
+              "shape_hwc": [
+                72,
+                128,
+                12
+              ],
+              "storage": {
+                "base": 58945536,
+                "raw_bytes": 110592,
+                "allocated_bytes": 110592,
+                "end": 59056128,
+                "layout": "tile4x4_hwc",
+                "channels_stored": 12,
+                "bytes_per_element": 1,
+                "partial_tile_invalid_fill": 0
+              }
+            },
+            "residual_inputs": [
+              "split.04.1",
+              "fuse2_td.block.pw.conv"
+            ],
+            "write": "signed9 graph bypass + PW post, sat8; alias contains the sum"
+          }
+        }
+      ]
+    }
+  },
+  "storage_lifetimes": {
+    "csp2.out.conv": {
+      "consumers": [
+        "down3.dw.conv",
+        "fuse2_td.reduce.conv"
+      ],
+      "release": "after last actual read response consumed by fuse2_td.reduce.conv"
+    },
+    "csp3.out.conv": {
+      "consumers": [
+        "down4.dw.conv",
+        "fuse3_td.reduce.conv"
+      ],
+      "release": "after last actual read response consumed by fuse3_td.reduce.conv"
+    },
+    "sppf.out.conv": {
+      "consumers": [
+        "lateral4.conv",
+        "fuse4_bu.reduce.conv"
+      ],
+      "release": "after last actual read response consumed by fuse4_bu.reduce.conv"
+    },
+    "lateral4.conv": {
+      "consumers": [
+        "fuse3_td.reduce.conv"
+      ],
+      "release": "after last actual read response consumed by fuse3_td.reduce.conv"
+    },
+    "fuse3_td.reduce.conv": {
+      "consumers": [
+        "fuse3_td.block.dw.conv",
+        "fuse3_td.block.pw.conv:residual_write",
+        "lateral3.conv",
+        "fuse3_bu.reduce.conv"
+      ],
+      "release": "after last actual read response consumed by fuse3_bu.reduce.conv"
+    },
+    "fuse3_td.block.pw.conv": {
+      "consumers": [
+        "lateral3.conv",
+        "fuse3_bu.reduce.conv"
+      ],
+      "release": "after last actual read response consumed by fuse3_bu.reduce.conv"
+    },
+    "fuse2_td.reduce.conv": {
+      "consumers": [
+        "fuse2_td.block.dw.conv",
+        "fuse2_td.block.pw.conv:residual_write",
+        "down3_bu.dw.conv",
+        "head2.stem.conv"
+      ],
+      "release": "after last actual read response consumed by head2.stem.conv"
+    }
+  },
+  "address_formula": "base + (((y//4)*ceil(W/4)+x//4)*16+(y%4)*4+x%4)*storedC+c",
+  "numeric": "signed33 MAC, INT32 final; RNE/sat16 pre, shared SiLU, RNE/sat8 post; aligned signed9 residual sat8",
+  "missing_real_producers": [
+    "down3_bu.dw.conv",
+    "down3_bu.pw.conv",
+    "down4_bu.dw.conv",
+    "down4_bu.pw.conv"
+  ],
+  "shared_storage_budget": {
+    "work_bytes": 3072,
+    "weight_banks": 24,
+    "parameter_group_bits": 5
+  },
+  "boundary": "Views describe addresses without materializing nearest/concat; actual final-read retirement still requires RTL evidence."
+}

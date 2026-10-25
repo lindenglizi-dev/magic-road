@@ -1,0 +1,480 @@
+# Verilog Review
+
+- delivery_ready: False
+- repair_required: True
+- rerun_required_after_repair: True
+
+## Findings
+- `VG007` [error] Standard bilingual header with English/Chinese sections is required.
+- `VG068` [error] Header Description/Simulations fields must use the fixed bilingual path contract (`description/testbench` in English and `Description/TestBench` in Chinese).
+- `VG007` [error] Header history must contain at least one dated record with a Vx.y version.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 20.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 21.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 20.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 28.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 30.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 24.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 29.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 35.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 30.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 35.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 29.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 23.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 26.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 26.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 22.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 32.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 25.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 29.
+- `VG060` [error] Inline comment must start at display column 50, aligned from region anchor column 50; got 31.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 20.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 20.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 25.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 20.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 19.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 19.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 31.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 23.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 19.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 19.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 25.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 26.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 28.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 28.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 26.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 25.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 28.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 29.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 32.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 32.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 34.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 29.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 31.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 24.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 23.
+- `VG060` [error] Inline comment must start at display column 52, aligned from region anchor column 52; got 37.
+- `VG060` [error] Inline comment must start at display column 54, aligned from region anchor column 54; got 39.
+- `VG060` [error] Inline comment must start at display column 54, aligned from region anchor column 54; got 37.
+- `VG060` [error] Inline comment must start at display column 54, aligned from region anchor column 54; got 45.
+- `VG060` [error] Inline comment must start at display column 54, aligned from region anchor column 54; got 37.
+- `VG060` [error] Inline comment must start at display column 58, aligned from region anchor column 58; got 47.
+- `VG060` [error] Inline comment must start at display column 58, aligned from region anchor column 58; got 47.
+- `VG060` [error] Inline comment must start at display column 54, aligned from region anchor column 54; got 49.
+- `VG060` [error] Inline comment must start at display column 54, aligned from region anchor column 54; got 51.
+- `VG060` [error] Inline comment must start at display column 56, aligned from region anchor column 56; got 34.
+- `VG060` [error] Inline comment must start at display column 56, aligned from region anchor column 56; got 38.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG025` [error] Control statements must use explicit begin/end blocks.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG025` [error] Control statements must use explicit begin/end blocks.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG025` [error] Control statements must use explicit begin/end blocks.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG025` [error] Control statements must use explicit begin/end blocks.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG025` [error] Control statements must use explicit begin/end blocks.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG004` [error] RTL indentation must use Tab characters, not space indentation.
+- `VG009` [error] Module `road_csp_first_probe` port list should use Chinese group comments such as 全局信号, 用户接口, or protocol 接口 groups.
+- `VG015` [error] Internal non-array reg declaration `flag_owned` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `flag_closed` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `flag_fault` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_remaining` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_output_mask` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_tags` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_addresses` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_pre_multipliers` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_pre_shifts` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_post_multiplier` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_post_shift` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `flag_residual` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_bypass` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `flag_input_fault` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `flag_valid_o` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_data_o` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_tag_o` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_address_o` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG015` [error] Internal non-array reg declaration `reg_sum_o` must be explicitly initialized inside the module; when backfilling a missing initializer, use exact ` = 0;`.
+- `VG013` [error] Flag-like signal `mac_ready` should use `flag_` prefix unless it is an output bridge.
+- `VG013` [error] Flag-like signal `mac_valid` should use `flag_` prefix unless it is an output bridge.
+- `VG013` [error] Flag-like signal `pp_ready` should use `flag_` prefix unless it is an output bridge.
+- `VG013` [error] Flag-like signal `pp_valid` should use `flag_` prefix unless it is an output bridge.
+- `VG013` [error] Flag-like signal `pp_table_ready` should use `flag_` prefix unless it is an output bridge.
+- `VG013` [error] Flag-like signal `pp_output_ready` should use `flag_` prefix unless it is an output bridge.
+- `VG014` [warning] Output port `o_table_loaded` has no explicit assign bridge detected; confirm direct output assignment is intentional.
+- `VG020` [error] Always block `always@(posedge i_clk or negedge i_rstn)` assigns multiple targets ['flag_closed', 'flag_fault', 'flag_input_fault', 'flag_owned', 'flag_residual', 'reg_addresses', 'reg_bypass', 'reg_output_mask', 'reg_post_multiplier', 'reg_post_shift', 'reg_pre_multipliers', 'reg_pre_shifts', 'reg_remaining', 'reg_tags']; split to one target per always.
+- `VG020` [error] Always block `always@(posedge i_clk or negedge i_rstn)` assigns multiple targets ['flag_valid_o', 'reg_address_o', 'reg_data_o', 'reg_sum_o', 'reg_tag_o']; split to one target per always.
+- `VG024` [warning] Instance `u_mac` should follow `<module>_Inst_<role>` naming when practical.
+- `VG024` [warning] Instance `u_pp` should follow `<module>_Inst_<role>` naming when practical.
+- `VG031` [error] Non-trivial RTL must use fixed Erie region banners.
+- `VG040` [error] Always block `always@(posedge i_clk or negedge i_rstn)` should have a nearby leading comment explaining behavior.
+- `VG040` [error] Always block `always@(posedge i_clk or negedge i_rstn)` should have a nearby leading comment explaining behavior.
+- `VG040` [error] Instance `u_mac` should have a leading function/connection comment.
+- `VG040` [error] Instance `u_pp` should have a leading function/connection comment.
+- `VG062` [error] process assignment `flag_owned` should have a same-line semantic comment.
+- `VG062` [error] process assignment `reg_remaining` should have a same-line semantic comment.
+- `VG062` [error] process assignment `reg_pre_multipliers` should have a same-line semantic comment.
+- `VG062` [error] process assignment `reg_post_shift` should have a same-line semantic comment.
+- `VG062` [error] process assignment `flag_owned` should have a same-line semantic comment.
+- `VG062` [error] process assignment `reg_tags` should have a same-line semantic comment.
+- `VG062` [error] process assignment `reg_pre_shifts` should have a same-line semantic comment.
+- `VG062` [error] process assignment `flag_residual` should have a same-line semantic comment.
+- `VG062` [error] process assignment `flag_valid_o` should have a same-line semantic comment.
+- `VG062` [error] process assignment `reg_address_o` should have a same-line semantic comment.
+- `VG062` [error] process assignment `reg_data_o` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_clk` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_first` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_activation_data` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_result_ready` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.o_input_ready` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_clk` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_table_valid` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.o_table_ready` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_input_valid` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_pre_multipliers` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_post_multiplier` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_lane_mask` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.i_output_ready` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.o_output_int16` should have a same-line semantic comment.
+- `VG064` [error] instance mapping `.o_pre_busy` should have a same-line semantic comment.
+- `VG085` [BLOCKER] 表达式两侧位宽不一致。
+- `VG085` [BLOCKER] 表达式两侧位宽不一致。
+- `VG085` [BLOCKER] 表达式两侧位宽不一致。
+- `VG085` [BLOCKER] 表达式两侧位宽不一致。
+- `VG085` [BLOCKER] 表达式两侧位宽不一致。
+- `VG085` [BLOCKER] 表达式两侧位宽不一致。
+- `VG093` [BLOCKER] 异步复位信号被连接到普通数据赋值右值。
+- `VG093` [BLOCKER] 异步复位信号被连接到普通数据赋值右值。
+- `VG093` [BLOCKER] 异步复位信号被连接到普通数据赋值右值。
+- `VG097` [BLOCKER] 缺少外部模块接口定义，无法静态比较端口位宽。
+- `VG097` [BLOCKER] 缺少外部模块接口定义，无法静态比较端口位宽。
+- `VG110` [BLOCKER] 同一时序块中存在未统一复位的触发器目标。
+- `VG110` [BLOCKER] 同一时序块中存在未统一复位的触发器目标。
+- `VG113` [BLOCKER] 同一时序块中存在未统一复位的触发器目标。
+- `VG113` [BLOCKER] 同一时序块中存在未统一复位的触发器目标。
+- `VG125` [BLOCKER] 字面量声明为 9 位，但实际值只需要 7 位。
+- `VG125` [BLOCKER] 字面量声明为 9 位，但实际值只需要 8 位。
+- `VG125` [BLOCKER] 字面量声明为 8 位，但实际值只需要 7 位。
+- `VG132` [BLOCKER] 未登记原语或外部模块的时钟角色无法静态确定。
+- `VG132` [BLOCKER] 未登记原语或外部模块的时钟角色无法静态确定。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG145` [BLOCKER] 组合逻辑完整依赖锥最多允许三个源信号，超限逻辑必须由时序 reg 隔断。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG146` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 组合逻辑操作锥超过强预算；优先加入流水寄存器、注册标志或预译码，并将复杂 FSM 条件拆为多周期时序步骤。这些修改可能改变可见延迟；若协议延迟不可变化，必须阻断并进行人工架构审查。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG147` [BLOCKER] 当前目标的组合操作锥包含 formatter 无法确定的结构，禁止按低计数放行。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 信号被读取但没有可确认的驱动源。
+- `VG153` [BLOCKER] 输出端口没有可确认的驱动源。
+- `VG156` [BLOCKER] 变量声明名称包含未授权的数字 token。
+- `COMMENT_COMMENT_PLACEMENT` [error] Verilog code line must use a same-line or adjacent explanatory comment in the requested language.
+- `COMMENT_COMMENT_PLACEMENT` [error] Verilog code line must use a same-line or adjacent explanatory comment in the requested language.
+- `COMMENT_COMMENT_PLACEMENT` [error] Verilog code line must use a same-line or adjacent explanatory comment in the requested language.
+- `COMMENT_COMMENT_PLACEMENT` [error] Verilog code line must use a same-line or adjacent explanatory comment in the requested language.

@@ -1,0 +1,9 @@
+第七批固定31层替换候选；只写本client目录，原base/extended保留只读。
+Python地址/空间并集/掩码参考→canonical接口规格周期图→新应用RTL→真五核owner仿真。
+扩展只有固定shape/stride/raw16选择与应用接口，冻结五核和WIF1不变，不并排例化两客户端/两仓。
+原INT8 owner无法输出raw16，因此使用../owner/新应用封装；该封装直接复用原dynamic_postprocess已有activate0分支，不是修改核数值。
+六预测层输出每元素2字节，小端INT16，不走SiLU/post。cls2 mask011、reg5最后mask011；禁止int8截断和无效通道写。
+headstem三concat按graph.resolve_byte_address固定视图路由，不将逻辑拼接伪造连续内存。
+这里只做原子1/2byte逻辑写端，真实DDR适配/可见性仍由C7/C8协调，不改任何真实外设协议。
+head组装的12096x112bit顺序由独立CPU黄金提供；本client只写既定INT16预测张量，不新增完整head片上RAM。实际cell读取流另接，未写不当已完成。
+严格八门与真实仿真/物理状态分列；失败不删除，不TD/训练/生产/板卡/提交推送。

@@ -1,0 +1,244 @@
+{
+  "modules": [
+    {
+      "name": "tb_feature_workstore",
+      "rtl_path": "tb_feature_workstore.v",
+      "description": "真实四ERAM工作仓握手与存储自检",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "completion",
+            "description": "全部本case实际比较和账本通过后置一；fatal不能完成。",
+            "clock_domain": "clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "clk",
+        "period_ns": 10,
+        "domain": "单100MHz测试时钟"
+      },
+      "reset": {
+        "name": "rstn",
+        "active_level": 0,
+        "semantics": "共同异步低有效取消客户端/仓/算术owner及服务旧响应；RAM不清内容，使用前重写。"
+      },
+      "behavior": [
+        "只在valid&&ready登记请求及退休响应；黄金数组在TB且读取前检查written。",
+        "合法byte一次native访问；weight连续三word，每word80bit，第三word高48清零；完成响应不得早于提交。",
+        "等待响应时payload必须保持；同时独立两通道请求及响应退休同拍新req。"
+      ],
+      "constraints": [
+        "仅自检testbench，不可综合，不替代真实厂商RAM模型。",
+        "ModelSim与TD由root统一执行；watchdog只是功能超时，不证明1FPS。"
+      ],
+      "corner_cases": [
+        "CASE=1响应长反压、请求阻塞和同拍退休接新请求。",
+        "共同reset取消旧响应，重新覆盖全部使用范围，内容初值无效。",
+        "负例必须实际数据比较失败并fatal，不能仅打印负例标志。"
+      ],
+      "verification_cases": [
+        "CASE0普通边界及非法sticky；CASE1复位反压；wrapper99用CASE0+NEGATIVE_WORKSTORE=1。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "handshake",
+          "title": "请求完成与反压",
+          "scenario": "held-response",
+          "description": "示意合法请求、native完成后响应保持至消费；不声明固定native延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "req_valid",
+                "wave": "010...."
+              },
+              {
+                "name": "req_ready",
+                "wave": "1.0..1."
+              },
+              {
+                "name": "native_complete",
+                "wave": "0..10.."
+              },
+              {
+                "name": "rsp_valid",
+                "wave": "0...1.0"
+              },
+              {
+                "name": "rsp_ready",
+                "wave": "0....10"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tb_feature_blocks_client",
+      "rtl_path": "tb_feature_blocks_client.v",
+      "description": "原冻结数值与内存可见性测试机械迁移到同一物理WIF1工作仓",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "completion",
+            "description": "全部本case实际比较和账本通过后置一；fatal不能完成。",
+            "clock_domain": "clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "clk",
+        "period_ns": 10,
+        "domain": "单100MHz测试时钟"
+      },
+      "reset": {
+        "name": "rstn",
+        "active_level": 0,
+        "semantics": "共同异步低有效取消客户端/仓/算术owner及服务旧响应；RAM不清内容，使用前重写。"
+      },
+      "behavior": [
+        "保留原冻结向量和每项acc/pre/SiLU/post/池化/concat对拍、每阶段读写与屏障次数。",
+        "同一个road_feature_blocks_client、road_feature_workstore与冻结算术owner实例顺序运行。",
+        "28状态互斥穷尽账本；接受start至进入DONE及reset前缀计时端点不变。"
+      ],
+      "constraints": [
+        "仅自检testbench，不可综合，不替代真实厂商RAM模型。",
+        "ModelSim与TD由root统一执行；watchdog只是功能超时，不证明1FPS。"
+      ],
+      "corner_cases": [
+        "CASE=1响应长反压、请求阻塞和同拍退休接新请求。",
+        "共同reset取消旧响应，重新覆盖全部使用范围，内容初值无效。",
+        "负例必须实际数据比较失败并fatal，不能仅打印负例标志。"
+      ],
+      "verification_cases": [
+        "沿旧CASE0..5及NEGATIVE_ACC真负例，事务计数见../tb_contract.json。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "handshake",
+          "title": "请求完成与反压",
+          "scenario": "held-response",
+          "description": "示意合法请求、native完成后响应保持至消费；不声明固定native延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "req_valid",
+                "wave": "010...."
+              },
+              {
+                "name": "req_ready",
+                "wave": "1.0..1."
+              },
+              {
+                "name": "native_complete",
+                "wave": "0..10.."
+              },
+              {
+                "name": "rsp_valid",
+                "wave": "0...1.0"
+              },
+              {
+                "name": "rsp_ready",
+                "wave": "0....10"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tb_feature_sppf_client",
+      "rtl_path": "tb_feature_sppf_client.v",
+      "description": "原冻结数值与内存可见性测试机械迁移到同一物理WIF1工作仓",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "o_test_complete",
+            "direction": "output",
+            "width": 1,
+            "role": "completion",
+            "description": "全部本case实际比较和账本通过后置一；fatal不能完成。",
+            "clock_domain": "clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "clk",
+        "period_ns": 10,
+        "domain": "单100MHz测试时钟"
+      },
+      "reset": {
+        "name": "rstn",
+        "active_level": 0,
+        "semantics": "共同异步低有效取消客户端/仓/算术owner及服务旧响应；RAM不清内容，使用前重写。"
+      },
+      "behavior": [
+        "保留原冻结向量和每项acc/pre/SiLU/post/池化/concat对拍、每阶段读写与屏障次数。",
+        "同一个road_feature_blocks_client、road_feature_workstore与冻结算术owner实例顺序运行。",
+        "28状态互斥穷尽账本；接受start至进入DONE及reset前缀计时端点不变。"
+      ],
+      "constraints": [
+        "仅自检testbench，不可综合，不替代真实厂商RAM模型。",
+        "ModelSim与TD由root统一执行；watchdog只是功能超时，不证明1FPS。"
+      ],
+      "corner_cases": [
+        "CASE=1响应长反压、请求阻塞和同拍退休接新请求。",
+        "共同reset取消旧响应，重新覆盖全部使用范围，内容初值无效。",
+        "负例必须实际数据比较失败并fatal，不能仅打印负例标志。"
+      ],
+      "verification_cases": [
+        "沿旧CASE0..3及NEGATIVE_POOL真负例，事务计数见../tb_contract.json。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "handshake",
+          "title": "请求完成与反压",
+          "scenario": "held-response",
+          "description": "示意合法请求、native完成后响应保持至消费；不声明固定native延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......"
+              },
+              {
+                "name": "req_valid",
+                "wave": "010...."
+              },
+              {
+                "name": "req_ready",
+                "wave": "1.0..1."
+              },
+              {
+                "name": "native_complete",
+                "wave": "0..10.."
+              },
+              {
+                "name": "rsp_valid",
+                "wave": "0...1.0"
+              },
+              {
+                "name": "rsp_ready",
+                "wave": "0....10"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

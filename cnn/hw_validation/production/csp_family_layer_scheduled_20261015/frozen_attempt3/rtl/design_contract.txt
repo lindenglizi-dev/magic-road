@@ -1,0 +1,143 @@
+RoadYOLO fixed CSP3/CSP4 family layer client contract
+Date: 2026-10-15
+
+Scope
+-----
+road_csp_family_client is one compile-time-selected client for C_FAMILY=3 or
+C_FAMILY=4 only. It is not an arbitrary layer engine. It preserves the sealed
+CSP2 arithmetic-owner ports, numeric fields, reset polarity, one-request
+memory protocol, result retirement rule and layer visibility barrier. The only
+public width changes are parameter channel 5->7 bits and parameter group 2->4
+bits. The arithmetic core remains 64-bit activation, 192-bit weight, 96-bit
+bias/result metadata, three output lanes and the existing ready/valid protocol.
+
+Fixed shapes and graph allocations
+----------------------------------
+Family 3: H=36, W=64, half=24, full=48, tile grid=9x16.
+Family 4: H=18, W=32, half=48, full=96, tile grid=5x8. Its last tile row has
+only y=16,17. No task or write address is generated for y=18,19.
+
+CSP3 source down3.pw.conv: [0x0369A000,0x036B5000), stored C=48.
+stage 0 DW0 destination:   [0x036B5000,0x036C3000), stored C=24.
+stage 1 PW0/residual.02:   [0x036C3000,0x036D1000), stored C=24.
+stage 2 DW1 destination:   [0x036D1000,0x036DF000), stored C=24.
+stage 3 PW1/residual.03:   [0x036DF000,0x036ED000), stored C=24.
+stage 4 DW2 destination:   [0x036ED000,0x036FB000), stored C=24.
+stage 5 PW2/residual.04:   [0x036FB000,0x03709000), stored C=24.
+stage 6 csp3.out.conv:     [0x03709000,0x03724000), stored C=48.
+
+CSP4 source down4.pw.conv: [0x0372C000,0x0373B000), stored C=96.
+stage 0 DW0 destination:   [0x0373B000,0x03743000), stored C=48.
+stage 1 PW0/residual.05:   [0x03743000,0x0374B000), stored C=48.
+stage 2 DW1 destination:   [0x0374B000,0x03753000), stored C=48.
+stage 3 PW1/residual.06:   [0x03753000,0x0375B000), stored C=48.
+stage 4 DW2 destination:   [0x0375B000,0x03763000), stored C=48.
+stage 5 PW2/residual.07:   [0x03763000,0x0376B000), stored C=48.
+stage 6 csp4.out.conv:     [0x0376B000,0x0377A000), stored C=96.
+
+All intervals above are graph allocations, including physical tail padding.
+The client writes logical rows only. Addressing is byte-addressed tile4x4_hwc:
+
+  address = base + ((((y/4)*tile_columns + x/4)*16
+            + (y%4)*4 + x%4)*stored_channels + channel)
+
+Stage graph and address lifetimes
+---------------------------------
+stage 0 reads the source high half and writes DW0.
+stage 1 reads DW0, reads the source high half as bypass, and writes residual0.
+stage 2 reads residual0 through the stage-1 physical destination and writes DW1.
+stage 3 reads DW1, reads residual0 as bypass, and writes residual1.
+stage 4 reads residual1 through the stage-3 physical destination and writes DW2.
+stage 5 reads DW2, reads residual1 as bypass, and writes residual2.
+stage 6 reads the source low half followed by residual2 and writes the full fuse.
+
+split, residual and concat nodes are views. Residual results alias their PW
+destination, never the bypass source. Final concat is not materialized. The
+original source allocation must remain live through the stage-6 barrier;
+stage-1 and stage-3 destinations remain live through the following residual
+PW barrier; stage-5 remains live through the final fuse barrier. Every listed
+physical interval is disjoint, so these live ranges have no write alias
+conflict. A stage advances only after every logical write was accepted and the
+matching o_barrier_valid/i_barrier_ready layer identity was acknowledged.
+
+Task order and parameter metadata
+---------------------------------
+Stages 0,2,4 are DW. For each channel and valid tile row, one three-spatial
+task covers x+0..2 and one lane-0-only tail task covers x+3. Each task has two
+groups. The current output group loads four records: window5 group0/group1,
+then window3 group0/group1. DW halo positions outside the full HxW tensor are
+zero; unused physical rows are not treated as image rows.
+
+Stages 1,3,5 are residual PW. Pixels are row-major over valid tile rows.
+Output channels advance by three. Family 3 uses three eight-input groups;
+family 4 uses six. Stage 6 is fuse PW and uses six groups for family 3 or
+twelve for family 4. All PW output counts are multiples of three, so there is
+no PW output-channel tail mask.
+
+The parameter service receives local stage 0..6, output channel start, group
+0..11 and window 0/3/5. It must return one 192-bit weight record plus the
+unchanged 248-bit bias/quantization record. Quantization metadata must be
+identical across all weight groups for one output group.
+
+Cache live ports and reset
+--------------------------
+reg_tile_cache is 1728 bytes, sufficient for 6x6x48 DW input. Residual PW and
+fuse use at most 1536 bytes. It has one live access per cycle:
+
+  ST_PREFETCH         write one byte after padding or a matching line hit
+  ST_CACHE_ACTIVATION read one activation byte
+  ST_CACHE_BYPASS     read one bypass byte
+
+These states are mutually exclusive. No cache byte is reset. Every byte that
+can be read by a task is overwritten during that tile's prefetch. The
+12-entry, 192-bit reg_weight_bank is also not reset; parameter collection
+fully overwrites the four DW records, three/six residual-PW records, or
+six/twelve fuse records before use. Only the current group is read by the
+core path.
+
+Memory and completion protocol
+------------------------------
+There is at most one accepted 128-bit read request without its response.
+o_read_valid and address remain stable until accepted. A response is consumed
+only in ST_READ_WAIT and must echo the aligned address. The cached line is a
+single 16-byte tag/data entry; activation-cache read and prefetch write never
+share a cycle. Core input remains stable in ST_SEND until accepted. Each core
+result is forwarded to the external writer only when tag, address and unique
+lane match the frozen task. Core retirement and external write acceptance are
+atomic. done is one cycle after the stage-6 visibility barrier.
+
+Deterministic accepted request ledger
+-------------------------------------
+The per-stage entries below are ordered 0 through 6.
+
+CSP3 task counts:
+  27648, 18432, 27648, 18432, 27648, 18432, 36864
+CSP3 accepted core groups:
+  55296, 55296, 55296, 55296, 55296, 55296, 221184
+CSP3 logical writes:
+  55296, 55296, 55296, 55296, 55296, 55296, 110592
+CSP3 stage 0..6 read requests:
+  9776, 8064, 8112, 6912, 8112, 6912, 9216
+CSP3 stage 0..6 parameter requests:
+  13824, 3456, 13824, 3456, 13824, 3456, 13824
+CSP4 task counts:
+  13824, 9216, 13824, 9216, 13824, 9216, 18432
+CSP4 accepted core groups:
+  27648, 55296, 27648, 55296, 27648, 55296, 221184
+CSP4 logical writes:
+  27648, 27648, 27648, 27648, 27648, 27648, 55296
+CSP4 stage 0..6 read requests:
+  3588, 3456, 3588, 3456, 3588, 3456, 3456
+CSP4 stage 0..6 parameter requests:
+  7680, 3840, 7680, 3840, 7680, 3840, 15360
+
+The counts are independent of stalls because every request is held until its
+handshake and only one response is accepted for each outstanding request.
+
+Fault and reset boundary
+------------------------
+Low reset returns control and scalar metadata to idle but intentionally does
+not clear either large array. cancel, core fault, bad response identity,
+memory error, invalid result or barrier mismatch enters sticky fault. Fault
+is released only by common reset. This client does not alter the arithmetic
+II, numeric format, shared SiLU ownership, ROM contents or DDR protocol.

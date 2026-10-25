@@ -1,0 +1,115 @@
+{
+  "feature": "road_yolo_numeric_rom_group",
+  "name": "road_yolo_numeric_rom_group",
+  "rtl_path": "rtl/road_yolo_numeric_rom_group.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "input",
+        "width": 1,
+        "role": "clk",
+        "clock_domain": "i_clk",
+        "description": "统一100MHz上升沿时钟"
+      },
+      {
+        "name": "i_rstn",
+        "direction": "input",
+        "width": 1,
+        "role": "rstn",
+        "clock_domain": "i_clk",
+        "description": "共同低有效异步复位，本地两级同步释放"
+      },
+      {
+        "name": "i_word_addr",
+        "direction": "input",
+        "width": 9,
+        "role": "word_addr",
+        "clock_domain": "i_clk",
+        "description": "word_addr：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_word_data",
+        "direction": "output",
+        "width": 160,
+        "role": "word_data",
+        "clock_domain": "i_clk",
+        "description": "word_data：按requirements中对应事务/计数合同使用"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "Existing asynchronous pair-register reset; vendor ERAM contents are initialization data, not array-reset"
+  },
+  "parameters": {
+    "C_LANE_ALPHA_FILE": "NONE",
+    "C_LANE_BETA_FILE": "NONE",
+    "C_LANE_GAMMA_FILE": "NONE",
+    "C_LANE_DELTA_FILE": "NONE"
+  },
+  "behavior": [
+    "原R1四个PH1P_LOGIC_ERAM输出40位lane；低/高各80位寄存拼接后直接连160位输出。",
+    "不恢复已删除的第二级160位寄存器，不推进R2；初始化参数由reader固定14组路径选择。",
+    "实测由真实PH1P厂商模型执行；文档不证明实际Slice、ERAM映射或时序。"
+  ],
+  "constraints": [
+    "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+    "不改变冻结算术核/数值，不复制公共存储"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "11数值向量、protocol、phase_reset，逐项DECODED160对拍"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "协议示意：省略内部变长计算，用空白间隔表示；不是固定总时延。仅valid与ready同拍消费。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p......"
+          },
+          {
+            "name": "word_addr",
+            "wave": "=......",
+            "data": [
+              "held A"
+            ]
+          },
+          {
+            "name": "eram_lane",
+            "wave": "x.=....",
+            "data": [
+              "ROM[A]"
+            ]
+          },
+          {
+            "name": "registered_pairs",
+            "wave": "x..=...",
+            "data": [
+              "lower/upper"
+            ]
+          },
+          {
+            "name": "word_data",
+            "wave": "x..=...",
+            "data": [
+              "concatenated pairs"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

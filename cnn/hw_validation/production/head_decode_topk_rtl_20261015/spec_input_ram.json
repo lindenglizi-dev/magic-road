@@ -1,0 +1,219 @@
+{
+  "feature": "road_candidate_ram",
+  "name": "road_candidate_ram",
+  "rtl_path": "rtl/road_candidate_ram.v",
+  "interfaces": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "input",
+        "width": 1,
+        "role": "clk",
+        "clock_domain": "i_clk",
+        "description": "统一100MHz上升沿时钟"
+      },
+      {
+        "name": "i_rstn",
+        "direction": "input",
+        "width": 1,
+        "role": "rstn",
+        "clock_domain": "i_clk",
+        "description": "共同低有效异步复位，本地两级同步释放"
+      },
+      {
+        "name": "i_cancel",
+        "direction": "input",
+        "width": 1,
+        "role": "cancel",
+        "clock_domain": "i_clk",
+        "description": "取消当前查表，已接受的ROM读必须排空后再接新任务"
+      },
+      {
+        "name": "i_clear_counters",
+        "direction": "input",
+        "width": 1,
+        "role": "clear_counters",
+        "clock_domain": "i_clk",
+        "description": "clear_counters：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_req_valid",
+        "direction": "input",
+        "width": 1,
+        "role": "req_valid",
+        "clock_domain": "i_clk",
+        "description": "req_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_req_write",
+        "direction": "input",
+        "width": 1,
+        "role": "req_write",
+        "clock_domain": "i_clk",
+        "description": "req_write：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_req_class",
+        "direction": "input",
+        "width": 1,
+        "role": "req_class",
+        "clock_domain": "i_clk",
+        "description": "req_class：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_req_index",
+        "direction": "input",
+        "width": 7,
+        "role": "req_index",
+        "clock_domain": "i_clk",
+        "description": "req_index：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_req_data",
+        "direction": "input",
+        "width": 160,
+        "role": "req_data",
+        "clock_domain": "i_clk",
+        "description": "req_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "i_rsp_ready",
+        "direction": "input",
+        "width": 1,
+        "role": "rsp_ready",
+        "clock_domain": "i_clk",
+        "description": "rsp_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_req_ready",
+        "direction": "output",
+        "width": 1,
+        "role": "req_ready",
+        "clock_domain": "i_clk",
+        "description": "req_ready：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_rsp_valid",
+        "direction": "output",
+        "width": 1,
+        "role": "rsp_valid",
+        "clock_domain": "i_clk",
+        "description": "rsp_valid：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_rsp_class",
+        "direction": "output",
+        "width": 1,
+        "role": "rsp_class",
+        "clock_domain": "i_clk",
+        "description": "rsp_class：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_rsp_index",
+        "direction": "output",
+        "width": 7,
+        "role": "rsp_index",
+        "clock_domain": "i_clk",
+        "description": "rsp_index：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_rsp_data",
+        "direction": "output",
+        "width": 160,
+        "role": "rsp_data",
+        "clock_domain": "i_clk",
+        "description": "rsp_data：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_rsp_error",
+        "direction": "output",
+        "width": 1,
+        "role": "rsp_error",
+        "clock_domain": "i_clk",
+        "description": "rsp_error：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_read_words",
+        "direction": "output",
+        "width": 32,
+        "role": "read_words",
+        "clock_domain": "i_clk",
+        "description": "read_words：按requirements中对应事务/计数合同使用"
+      },
+      {
+        "name": "o_write_words",
+        "direction": "output",
+        "width": 32,
+        "role": "write_words",
+        "clock_domain": "i_clk",
+        "description": "write_words：按requirements中对应事务/计数合同使用"
+      }
+    ]
+  },
+  "clock": {
+    "name": "i_clk",
+    "frequency_hz": 100000000
+  },
+  "reset": {
+    "name": "i_rstn",
+    "assert": "async_low",
+    "release": "local_sync_two_flops_or_owner_gating"
+  },
+  "parameters": {},
+  "behavior": [
+    "1024×40bit唯一数组；地址class/index/word，不清数组；单次160bit记录写四拍、同步读八拍。",
+    "整条响应回显类别和index，反压保持；消费后才接受下一请求；取消仅控制事务不声称DDR排空。"
+  ],
+  "constraints": [
+    "Verilog-2001；一个未决事务；ready/valid握手；无TD/物理时序签核",
+    "不改变冻结算术核/数值，不复制公共存储"
+  ],
+  "corner_cases": [
+    "复位、取消、背压、非法身份和边界地址；取消不能当成无标签外设已排空"
+  ],
+  "verification_cases": [
+    "11数值向量、protocol、phase_reset，逐项DECODED160对拍"
+  ],
+  "timing_diagrams": [
+    {
+      "id": "ownership",
+      "title": "请求所有权与停顿",
+      "scenario": "request-hold-response",
+      "description": "协议示意：省略内部变长计算，用空白间隔表示；不是固定总时延。仅valid与ready同拍消费。",
+      "wavejson": {
+        "signal": [
+          {
+            "name": "i_clk",
+            "wave": "p.........."
+          },
+          {
+            "name": "req_valid",
+            "wave": "010........"
+          },
+          {
+            "name": "req_ready",
+            "wave": "01.0......."
+          },
+          {
+            "name": "write_word",
+            "wave": "x.====x....",
+            "data": [
+              "0",
+              "1",
+              "2",
+              "3"
+            ]
+          },
+          {
+            "name": "rsp_valid",
+            "wave": "0.....1..0."
+          },
+          {
+            "name": "rsp_ready",
+            "wave": "0.......10."
+          }
+        ]
+      }
+    }
+  ]
+}

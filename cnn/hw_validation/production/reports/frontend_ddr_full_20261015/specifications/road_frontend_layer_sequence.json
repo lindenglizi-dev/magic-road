@@ -1,0 +1,120 @@
+{
+  "modules": [
+    {
+      "name": "road_frontend_layer_sequence",
+      "feature": "frontend_ddr_tensor",
+      "rtl_path": "road_frontend_layer_sequence.v",
+      "description": "固定完整前三层宏调度与真实DDR读写，TEST_ONLY参数。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "100MHz计算时钟",
+            "description": "100MHz计算时钟"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "低有效异步复位",
+            "description": "低有效异步复位"
+          },
+          {
+            "name": "i_fetch",
+            "direction": "input",
+            "width": 1,
+            "role": "锁存当前命令",
+            "description": "锁存当前命令"
+          },
+          {
+            "name": "i_advance",
+            "direction": "input",
+            "width": 1,
+            "role": "已完成命令推进",
+            "description": "已完成命令推进"
+          },
+          {
+            "name": "o_command",
+            "direction": "output",
+            "width": 64,
+            "role": "稳定命令返回",
+            "description": "稳定命令返回"
+          }
+        ]
+      },
+      "clock": {
+        "domains": "CNN100MHz"
+      },
+      "reset": {
+        "assertion": "异步低有效复位清零阶段、计数和命令输出",
+        "release": "上游同步释放；重新从1024项装表开始"
+      },
+      "behavior": [
+        "FETCH沿返回稳定64位宏命令，ADVANCE沿才推进；停顿期间保持。",
+        "1024表项、482首层参数、2304次HALO/START/EXPORT、选择、652下采样参数、576次HALO/START/EXPORT及END，共10800条。",
+        "RGB宏命令opcode8，由外层执行完整halo读取；本模块只保存参数和SiLU表。",
+        "复位清零阶段与局部计数，下一轮重新从表项零开始。"
+      ],
+      "constraints": [
+        "Read-only ROM initialization is checked separately from board readback.",
+        "No new timing exceptions for mailbox; existing bounded display CDC retained.",
+        "TEST_ONLY coefficients, no deployed-model precision or full CNN FPS claim."
+      ],
+      "corner_cases": [
+        "顶左padding、右下末tile、行列进位、cache跨字节边界、请求背压、读延迟、复位与故障"
+      ],
+      "verification_cases": [
+        "全帧逐项数值与地址、真实中间值、正常及随机背压、共同复位、实际TD资源时序"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "full_traversal",
+          "title": "完整张量交接",
+          "scenario": "tensor_handoff",
+          "description": "阶段顺序图；每个真实DDR请求均等待接受和响应，不规定返回固定拍数。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "clk",
+                "wave": "p......."
+              },
+              {
+                "name": "stage",
+                "wave": "========",
+                "data": [
+                  "INPUT_WRITE",
+                  "TABLE_PARAM",
+                  "RGB_READ",
+                  "STEM",
+                  "STEM_WRITE",
+                  "HALO_READ",
+                  "DW_PW",
+                  "PW_WRITE"
+                ]
+              },
+              {
+                "name": "source",
+                "wave": "=.=..=..",
+                "data": [
+                  "pattern ROM",
+                  "DDR RGB",
+                  "DDR Stem"
+                ]
+              },
+              {
+                "name": "result",
+                "wave": "x...=..=",
+                "data": [
+                  "589824B Stem",
+                  "221184B PW"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

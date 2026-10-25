@@ -1,0 +1,126 @@
+RoadYOLO — 真实 PH1P DDR2 接口离线验证
+日期：2026-10-13
+工程分支：work/roadyolo；本轮不提交、不推送。
+
+一、当前结论
+
+状态：真实控制器的有限请求/命令观察完成；存储读回和写提交保证仍未通过。
+最终依据为 simulation_attempt2/receipt.json、analysis.json 和 status.json。
+本轮仅新增测试平台、执行脚本及报告。不是新 DDR 控制器，不包含 CNN 计算，
+未修改旧桥、厂商 IP、生产工程或旧位流；未训练、上板、生成位流或写 Flash。
+
+二、为什么做这一步
+
+上一轮的条件内存端点已经验证地址、mask、owner、取消和背压，
+但完成事件由测试端提供，不能证明真实控制器会提供相同保证。
+本轮直接实例化工程里的 ddr2 顶层，保留其实际参数和全部启动流程，
+只观察真实 AW/W/AR/R、内部 B、DHI 命令和 DDR 引脚。
+未接 DDR2 器件模型；未 force、未注入假读数据、未缩短校准/初始化。
+64 拍只是观察窗口；2048 拍只是读返回观察上限，均不是写提交屏障。
+
+三、已核对的厂商合同
+
+依据：E:/Anlogic/TD_6.2.1_Engineer_6.2.168.116/doc/IPUG/IPUG034_PH1P_MIS_IP_Guide.pdf
+SHA256：340f0705979e2c8467171efbf586497be60adf71236dc99dc2c1fee7271a18ca
+对应 PH1P 的手册，不用 PH1A 的 IPUG035 替代具体接口保证。
+
+1. 印刷页 19 / PDF 第 23 页图 2-14 至 2-16：AW/W 可同拍，W 可延后最多两拍。
+   原桥 AW 接受后下一拍送 W 的选择有资料依据；不推广为任意间隔或 W 先于 AW。
+2. 表 2-9：WSTRB 为高有效屏蔽，0000 表示不屏蔽；存在 WLAST、RREADY；
+   没有对外 B 通道或明确写提交事件。顶层内部 BVALID 未引出，BREADY 接 1。
+3. 实际 ddr2.v 设置 MC_REORDER=NORMAL，而非上层默认 STRICT。
+   本轮不改这个参数，不用名称猜测同址读写、排空或跨请求排序保证。
+4. 当前 ROW_COL_BANK：row=native[24:12]，bank=native[4:3]，
+   col={native[11:5],native[2:0]}；byte=native*2，128 位一拍 native 加 8。
+   本轮 native 0/8/16 应落在 bank 0/1/2、row 0、col 0。
+   该配置是逻辑映射，不代表已实测 64 MiB 容量或视频并发隔离。
+
+四、实测结果
+
+原厂启动：PHY ready = 622.471406 us；仿真终点 = 639.860156 us。
+最终 ModelSim 运行用时 191.354 秒，正常退出；不是硬件吞吐或 FPS。
+本次启动后的 DHI 周期约 7.5 ns；不是把参考时钟 100 MHz 当作 DHI 时钟。
+
+case  native地址  W相对AW接受  B相对W接受  DHI写所在周期  B早于DDR写命令
+ 0        0          同拍         1拍          67113          69.407 ns
+ 1        8          1拍          1拍          67179          61.907 ns
+ 2       16          2拍          1拍          67246          54.407 ns
+
+结果：3 次 AW、3 次 W、3 次内部 B、3 次 DHI WRITE、3 次 DDR 引脚 WRITE。
+命令脚 bank 依次为 0/1/2、列地址 0，与本轮地址映射一致。
+不是连续满载、拥塞或容量边界测试，也没有实际校验 DRAM 内容。
+
+读：AR 在 DHI 周期 67308 接受，DHI READ 在 67312，DDR 引脚 READ 比 AR 晚
+61.907 ns。2048 拍窗口内无 RVALID 返回，结束时 owner=1，未释放或复用。
+这与未接存储器模型的环境相符，不能据此判控制器故障；也不能把它叫读测试通过。
+RLAST、RDATA、最早返回和读背压规则仍没有本次有效样本。
+
+明确排除了一条错误接法：这三次 B 都早于对应写命令发到 DDR 引脚，
+所以 B 不能表示该次数据已经物理落存/退役。未排除控制器可能有内部排序保护，
+但本轮没有其保证，不能进一步假定 B 后同址读可见或允许槽复用。
+这是比“内部存在一个叫 BVALID 的信号”更具体的结果，不是完整提交协议结论。
+
+五、本轮发现并修正的测试问题
+
+1. send_write 任务参数的调用次序与声明不一致。已改成 case、gap、地址、数据，
+   并对 gap 限定为 0/1/2。原稿保存为 tests/tb_ddr_real_handshake_pre_review.v.txt。
+2. 原观察器在有效沿后延迟 1 ps 才看 READY，可能看到更新后而非握手沿的值。
+   已改为有效沿直接采样、负沿驱动；各计数只有一个过程写入。
+3. 首次实跑 DHI 统计错误地使用了 cmd_execution.v 中未引用的 WR=7/RD=8 枚举。
+   实际接线直达 cmd_decode.v，线上译码为 WR=C/RD=D；已修正并重跑。
+   首次 simulation/ 完整保留，其 DHI 零计数不代表控制器没有发命令。
+4. 内部事件的 window_case 只是当前观察窗口，不是事务 ID；不能强行归属迟到事件。
+5. dhi_wdata_en 是 PHY 请求数据，不是同拍数据有效证明；本轮不对该同沿值验收。
+
+六、验证与失败记录
+
+原厂 RTL 加新 TB 的实际 vlog 编译：0 error、0 warning；仿真正常退出，
+无 REAL_ERROR、无 Fatal。analysis.py 的三例 gap、B 延迟、命令数量、bank/列
+一致性断言全部通过。run.py、render_spec.py、analyze.py 的 Python AST 检查通过。
+
+原语库编译仍有 578 条 warning。展开/运行日志保留 vopt-2241=3、
+vopt-2685=70、vopt-2718=315、vsim-12126=1、vsim-3015=3；另有宏用法提示。
+其中 3 条 vsim-3015 分别是厂商层次中 dhi_wdata_en、两个 dx_rfifo_en 的位宽连接。
+未修改厂商源或消音，不能把这些警告写成已全部闭合。
+
+readable-verilog-generator 严格门禁：529 条诊断，未通过。
+compile/ast：格式解析器报 only single module sources are currently supported；
+与实际 ModelSim 成功编译分开记录，不将一个结果替代另一个。
+readability=453、comment=75、naming=116、profile=1 为重叠检查视角，不能相加。
+testbench 静态检查通过；toolchain 在该门禁入口为 not_requested，
+实际工具执行另有本轮 ModelSim 记录，不伪造八项全部通过。
+本轮先修正参数、采样、计数分类等直接影响结果的问题；没有扩大为格式重写。
+
+1343 个旧文件运行前后哈希一致；最终运行自身的输入源码哈希无变化。
+旧生产、CNN 核、桥、约束、数据库和位流未被覆盖。原运行、修正后运行及日志均保留。
+规格周期图：specification_attempt3/gap0.svg、gap1.svg、gap2.svg；为协议示意，非测量波形。
+规范生成器仍拒绝无端口 TB（ports must be non-empty），不增加假端口绕过。
+第一次规格尝试被 Windows 路径权限阻断；第二次的工具工作目录过深，
+导致测试源被判在工作目录外。已固定到本轮验证根目录，旧失败日志全部保留。
+
+七、下一步与禁止推论
+
+本轮不把内部 B、写地址/数据接受、DDR 命令发出或固定等待接到 i_commit_confirmed。
+即使以后同址读回相同数据，也不能单凭它证明所有旧写已退役：
+原值可能已等于期望值；未证明排序时，仍不能排除旧写在槽复用后才执行。
+因此不能据此驱动 READY、释放 owner 或把取消当排空。
+
+需要补齐的具体证据：
+A. 数据/返回：匹配本配置的 DDR2 器件行为模型，或独占板测的真实写读回；
+   核对数据、mask、RLAST、RREADY 下保持行为及实际容量/边界。
+B. 写可见性/排空：厂商针对当前 NORMAL PAXI 的同址 RAW、跨请求顺序、
+   内部 BVALID 含义及协调复位的保证，或受支持的完成/屏障接口。
+   不能要求用户提供芯片内部电路图，也不能假称板测一次成功就证明全部排序。
+C. 只有这些边界闭合后，才在独立候选接现有 Stem → DDR → down2 DW/PW。
+   本轮 TB 没有实例化原桥，不能宣称原桥或完整 CNN DDR 集成通过。
+
+用户现在不方便上板，不需要立即操作；已交付的独占 DDR 诊断保留不变。
+未取得存储器模型时，暂缓真实读返回分支，不重复扩大 CRC 或命令探针。
+其他与 DDR 完成事件无关的冻结 CNN 层验证可以独立继续。
+
+复现入口（在本目录）：
+  D:/Python313/python.exe -B -X utf8 run.py gate
+  D:/Python313/python.exe -B -X utf8 run.py simulate
+  D:/Python313/python.exe -B -X utf8 analyze.py
+  D:/Python313/python.exe -B -X utf8 run.py finish
+禁止再次运行 prepare 覆盖冻结清单；每次执行自动使用新 attempt 目录。
