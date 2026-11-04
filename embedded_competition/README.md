@@ -46,3 +46,7 @@ python embedded_competition/final/scripts/verify_package.py
 可再生成的仿真采集帧、预期帧、运行缓存、数据库、原始视频、全部训练检查点和重复日期快照未收录。UART 的 sim/make_vectors.py、交通灯的 sim/make_osd_vectors.py、四球的 sim/test_multi.py 负责生成对应测试输入。六套工程源码和主要依赖保留；完整物理重建、GUI离线回归和上板状态以发布核验记录为准。
 
 第三方声明、许可证、原厂加密代码与保护指令保留：[最终成品第三方说明](final/THIRD_PARTY_NOTICES.md)、[人脸资源说明](legacy/ball/ball_face_standalone/docs/第三方资源.md)。本次不为第三方代码另设统一许可证。
+
+## 大文件恢复
+
+[公开资源获取与自有权重备份](recovery/README.md)记录数据/工具来源、原下载校验值、环境版本和训练检查点恢复入口。未核实可恢复的人工标签、旧版工具及原工程依赖继续保留；链接清单不等于已完成数据恢复测试。
