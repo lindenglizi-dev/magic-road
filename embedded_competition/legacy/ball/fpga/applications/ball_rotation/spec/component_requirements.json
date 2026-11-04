@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-19",
+  "target": "PH1P35MDG324/-3, design_top_wrapper",
+  "scope": "Replace union-column extraction with bounded 4x4 same-color four-connected regions; expose largest-region rejection diagnostics.",
+  "preserve": ["Camera/DDR/HDMI ports, pins, clocks and constraints", "Two-cycle RGB frontend, overlay/OSD pixel latency, independent early", "Exposure/gain/white-balance control", "Existing tracker and gate-counter rules", "Raw gate occupancy semantics"],
+  "capture": "Accept four labeled pixels per valid cycle with bubbles. Accumulate three 5-bit counts per 4x4 cell in synchronous row RAM. Keep winning color when >=4 pixels and >=75% of colored pixels. Store color and winning count in two cropped ROI frame RAMs.",
+  "regions": "Four-neighbor flood fill using synchronous RAM and a finite 4096-entry queue. Clear a cell when enqueued. Area is the sum of retained winning-color pixel counts. Bounds cover occupied cells and clamp to ROI. Keep existing area/dimension/aspect/fill filters and <=8 candidates.",
+  "geometry_tradeoff": "Cell bounds quantize by at most 3 pixels relative to retained pixels; cells below support and minority colors can be removed. Not a pixel-exact CCL. Touching same-color objects remain one region.",
+  "timing": "Detector starts only after the complete ROI has been written. Processing overlaps the next capture in the other bank. Prove the 720P/60fps processing budget at 103.520MHz, including pathological full-grid cases; busy collision must fault rather than consume partial memory. Result may miss the next display boundary on dense frames; RGB/early paths remain unchanged.",
+  "overflow": "Queue/candidate overflow invalidates the entire result at done and prevents new counts. Capture/processing collisions fault and retain sticky protocol error. No silent queue truncation.",
+  "diagnostics": "Freeze with existing epoch/job snapshot: CCL4, accepted N, largest region W/H/A, integer fill percentage, hexadecimal rejection bits (1 area,2 dimensions,4 aspect,8 fill). ERR retains existing meanings.",
+  "verification": ["Independent Python components vs OpenCV", "RTL vs model for clean/dim/holed balls plus disconnected same-X colored noise", "Different and same colors at same X but separate Y", "Partial ROI cells, first/last cell and valid bubbles", "Two frame banks, stale epochs and immutable display", "Queue/candidate overflow and no count on bad frames", "Worst-case processing cycles and continuous frame capture", "Existing tracker/count/key/video tests", "Native Anlogic synthesis/place/route/bitgen and exact source hashes"]
+}

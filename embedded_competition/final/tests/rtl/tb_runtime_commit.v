@@ -1,0 +1,91 @@
+`timescale 1ns/1ps
+module tb_runtime_commit;
+reg [3:0] I_application_mode=0;
+reg  I_clk=0;
+reg  I_rst_n=0;
+reg [3:0] I_keys_n=0;
+reg [47:0] I_camera_status=0;
+reg [191:0] I_settings=0;
+reg  I_panel_clear=0;
+wire [31:0] a_O_good,b_O_good;
+wire [31:0] a_O_bad,b_O_bad;
+reg [95:0] I_rgb=0;
+reg [95:0] I_raw_rgb=0;
+reg  I_view_target=0;
+reg  I_application_commit=0;
+reg  I_application_mode_change=0;
+wire  a_O_view_actual,b_O_view_actual;
+wire  a_O_view_commit,b_O_view_commit;
+wire [13:0] a_O_view_revision,b_O_view_revision;
+reg  I_valid=0;
+reg  I_user=0;
+reg  I_last=0;
+wire [127:0] a_O_data,b_O_data;
+wire  a_O_valid,b_O_valid;
+wire  a_O_last,b_O_last;
+wire  a_O_done,b_O_done;
+wire  a_O_early,b_O_early;
+wire  a_O_error,b_O_error;
+wire [31:0] a_O_red,b_O_red;
+wire [31:0] a_O_green,b_O_green;
+wire [31:0] a_O_yellow,b_O_yellow;
+wire [33:0] a_O_total,b_O_total;
+wire  a_O_count_mode,b_O_count_mode;
+wire [2:0] a_O_gate_state,b_O_gate_state;
+wire [1:0] a_O_track_status,b_O_track_status;
+wire [7:0] a_O_seg_select_n,b_O_seg_select_n;
+wire [7:0] a_O_seg_segments_n,b_O_seg_segments_n;
+wire [1535:0] a_O_status_snapshot,b_O_status_snapshot;
+wire  a_O_status_valid,b_O_status_valid;
+wire [1:0] a_O_camera_step,b_O_camera_step;
+always #5 I_clk=~I_clk;
+ball_runtime #(.C_FACE_GATE(0),.C_PANEL_CONFIG(1),.C_COMBINED(1),.C_VIEW_SWITCH(1),.C_PREDECODE_MODE_CHANGE(1)) dut(.I_application_mode(I_application_mode),.I_clk(I_clk),.I_rst_n(I_rst_n),.I_keys_n(I_keys_n),.I_camera_status(I_camera_status),.I_settings(I_settings),.I_panel_clear(I_panel_clear),.O_good(a_O_good),.O_bad(a_O_bad),.I_rgb(I_rgb),.I_raw_rgb(I_raw_rgb),.I_view_target(I_view_target),.I_application_commit(I_application_commit),.I_application_mode_change(I_application_mode_change),.O_view_actual(a_O_view_actual),.O_view_commit(a_O_view_commit),.O_view_revision(a_O_view_revision),.I_valid(I_valid),.I_user(I_user),.I_last(I_last),.O_data(a_O_data),.O_valid(a_O_valid),.O_last(a_O_last),.O_done(a_O_done),.O_early(a_O_early),.O_error(a_O_error),.O_red(a_O_red),.O_green(a_O_green),.O_yellow(a_O_yellow),.O_total(a_O_total),.O_count_mode(a_O_count_mode),.O_gate_state(a_O_gate_state),.O_track_status(a_O_track_status),.O_seg_select_n(a_O_seg_select_n),.O_seg_segments_n(a_O_seg_segments_n),.O_status_snapshot(a_O_status_snapshot),.O_status_valid(a_O_status_valid),.O_camera_step(a_O_camera_step));
+reference_ball_runtime #(.C_FACE_GATE(0),.C_PANEL_CONFIG(1),.C_COMBINED(1),.C_VIEW_SWITCH(1),.C_PREDECODE_MODE_CHANGE(1)) refdut(.I_application_mode(I_application_mode),.I_clk(I_clk),.I_rst_n(I_rst_n),.I_keys_n(I_keys_n),.I_camera_status(I_camera_status),.I_settings(I_settings),.I_panel_clear(I_panel_clear),.O_good(b_O_good),.O_bad(b_O_bad),.I_rgb(I_rgb),.I_raw_rgb(I_raw_rgb),.I_view_target(I_view_target),.I_application_commit(I_application_commit),.I_application_mode_change(I_application_mode_change),.O_view_actual(b_O_view_actual),.O_view_commit(b_O_view_commit),.O_view_revision(b_O_view_revision),.I_valid(I_valid),.I_user(I_user),.I_last(I_last),.O_data(b_O_data),.O_valid(b_O_valid),.O_last(b_O_last),.O_done(b_O_done),.O_early(b_O_early),.O_error(b_O_error),.O_red(b_O_red),.O_green(b_O_green),.O_yellow(b_O_yellow),.O_total(b_O_total),.O_count_mode(b_O_count_mode),.O_gate_state(b_O_gate_state),.O_track_status(b_O_track_status),.O_seg_select_n(b_O_seg_select_n),.O_seg_segments_n(b_O_seg_segments_n),.O_status_snapshot(b_O_status_snapshot),.O_status_valid(b_O_status_valid),.O_camera_step(b_O_camera_step));
+reg pulse_result=0,pulse_format=0;
+integer k,ready_checks=0,clears=0;
+initial begin
+force dut.multi_done=pulse_result;force refdut.multi_done=pulse_result;
+force dut.format_done=pulse_format;force refdut.format_done=pulse_format;
+I_keys_n=15;I_settings[0]=1;I_application_mode=10;
+repeat(4)@(negedge I_clk);I_rst_n=1;
+dut.keys_Inst.cnt_epoch=16'hfffe;refdut.keys_Inst.cnt_epoch=16'hfffe;
+for(k=0;k<20000;k=k+1)begin
+@(negedge I_clk);
+I_user=(k%53==0);I_panel_clear=I_user && k%7==0;I_application_mode_change=I_user && k%11==0;
+pulse_result=(k%71==0);pulse_format=(k%13==0);
+I_settings[0]=(k%1200<1150);
+@(posedge I_clk);
+if(dut.flag_pending_ready && !dut.stats_clear)begin
+ if(dut.reg_pending_epoch!==dut.active_epoch)$fatal(1,"redundant guard invariant failed");
+ ready_checks=ready_checks+1;
+end
+if(dut.stats_clear)clears=clears+1;
+#1;
+if(a_O_good!==b_O_good)$fatal(1,"runtime output differs O_good cycle=%0d",k);
+if(a_O_bad!==b_O_bad)$fatal(1,"runtime output differs O_bad cycle=%0d",k);
+if(a_O_view_actual!==b_O_view_actual)$fatal(1,"runtime output differs O_view_actual cycle=%0d",k);
+if(a_O_view_commit!==b_O_view_commit)$fatal(1,"runtime output differs O_view_commit cycle=%0d",k);
+if(a_O_view_revision!==b_O_view_revision)$fatal(1,"runtime output differs O_view_revision cycle=%0d",k);
+if(a_O_data!==b_O_data)$fatal(1,"runtime output differs O_data cycle=%0d",k);
+if(a_O_valid!==b_O_valid)$fatal(1,"runtime output differs O_valid cycle=%0d",k);
+if(a_O_last!==b_O_last)$fatal(1,"runtime output differs O_last cycle=%0d",k);
+if(a_O_done!==b_O_done)$fatal(1,"runtime output differs O_done cycle=%0d",k);
+if(a_O_early!==b_O_early)$fatal(1,"runtime output differs O_early cycle=%0d",k);
+if(a_O_error!==b_O_error)$fatal(1,"runtime output differs O_error cycle=%0d",k);
+if(a_O_red!==b_O_red)$fatal(1,"runtime output differs O_red cycle=%0d",k);
+if(a_O_green!==b_O_green)$fatal(1,"runtime output differs O_green cycle=%0d",k);
+if(a_O_yellow!==b_O_yellow)$fatal(1,"runtime output differs O_yellow cycle=%0d",k);
+if(a_O_total!==b_O_total)$fatal(1,"runtime output differs O_total cycle=%0d",k);
+if(a_O_count_mode!==b_O_count_mode)$fatal(1,"runtime output differs O_count_mode cycle=%0d",k);
+if(a_O_gate_state!==b_O_gate_state)$fatal(1,"runtime output differs O_gate_state cycle=%0d",k);
+if(a_O_track_status!==b_O_track_status)$fatal(1,"runtime output differs O_track_status cycle=%0d",k);
+if(a_O_seg_select_n!==b_O_seg_select_n)$fatal(1,"runtime output differs O_seg_select_n cycle=%0d",k);
+if(a_O_seg_segments_n!==b_O_seg_segments_n)$fatal(1,"runtime output differs O_seg_segments_n cycle=%0d",k);
+if(a_O_status_snapshot!==b_O_status_snapshot)$fatal(1,"runtime output differs O_status_snapshot cycle=%0d",k);
+if(a_O_status_valid!==b_O_status_valid)$fatal(1,"runtime output differs O_status_valid cycle=%0d",k);
+if(a_O_camera_step!==b_O_camera_step)$fatal(1,"runtime output differs O_camera_step cycle=%0d",k);
+end
+if(ready_checks<10 || clears<10)$fatal(1,"insufficient commit/clear exercise");
+$display("PASS_RUNTIME_COMMIT cycles=%0d ready=%0d clear=%0d epoch=%h",k,ready_checks,clears,dut.active_epoch);$finish;
+end
+endmodule

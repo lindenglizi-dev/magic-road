@@ -1,0 +1,246 @@
+--- before/rtl/ball_runtime.v
++++ rtl/ball_runtime.v
+@@ -144,6 +144,9 @@
+     wire [2:0] rotation_status;
+     wire [3:0] rotation_reason;
+     reg flag_rotation_load,flag_rotation_pending,flag_rotation_format_valid;
++    // 先冻结绝对累计相位，次拍缩位换算；新结果撤销旧的待转换事务。
++    reg flag_rotation_scale,flag_rotation_input_saturated;
++    reg [47:0] reg_rotation_abs_net;
+     reg [15:0] reg_rotation_epoch;
+     reg [23:0] reg_rotation_number_rpm;
+     reg [11:0] reg_rotation_number_angle;
+@@ -156,7 +159,11 @@
+     wire rotation_format_done;
+     wire [31:0] rotation_angle_scaled={16'd0,rotation_phase}*32'd3600;
+     wire [47:0] rotation_abs_net=rotation_net[47] ? -rotation_net : rotation_net;
+-    wire [63:0] rotation_net_scaled=({16'd0,rotation_abs_net}*64'd100) >> 16;
++    // floor(abs*100/65536)>99999 当且仅当 abs>=65536000；非饱和值只需26位。
++    wire flag_rotation_net_limit=|reg_rotation_abs_net[47:26] || reg_rotation_abs_net[25:0] >= 26'd65536000;
++    // 三个操作数均先扩为33位，避免Verilog左移按窄操作数位宽截断。
++    wire [32:0] rotation_net_scaled={1'b0,reg_rotation_abs_net[25:0],6'd0}+
++        {2'b0,reg_rotation_abs_net[25:0],5'd0}+{5'b0,reg_rotation_abs_net[25:0],2'd0};
+     reg [31:0] reg_rotation_pending_rpm_bcd,reg_rotation_display_rpm_bcd;
+     reg [15:0] reg_rotation_pending_angle_bcd,reg_rotation_display_angle_bcd;
+     reg [19:0] reg_rotation_pending_net_bcd,reg_rotation_display_net_bcd;
+@@ -295,6 +302,7 @@
+     always @(posedge I_clk or negedge I_rst_n)begin
+         if(!I_rst_n)begin
+             flag_rotation_load<=0;flag_rotation_pending<=0;flag_rotation_format_valid<=0;reg_rotation_epoch<=0;
++            flag_rotation_scale<=0;flag_rotation_input_saturated<=0;reg_rotation_abs_net<=0;
+             reg_rotation_number_rpm<=0;reg_rotation_number_angle<=0;reg_rotation_number_net<=0;reg_rotation_number_cw<=0;reg_rotation_number_ccw<=0;
+             reg_rotation_pending_rpm_bcd<=0;reg_rotation_display_rpm_bcd<=0;reg_rotation_pending_angle_bcd<=0;reg_rotation_display_angle_bcd<=0;
+             reg_rotation_pending_net_bcd<=0;reg_rotation_display_net_bcd<=0;
+@@ -303,24 +311,33 @@
+             flag_rotation_pending_angle<=0;flag_rotation_pending_rpm<=0;flag_rotation_pending_partial<=0;flag_rotation_pending_negative<=0;
+             flag_rotation_display_angle<=0;flag_rotation_display_rpm<=0;flag_rotation_display_partial<=0;flag_rotation_display_negative<=0;
+         end else if(clear_history || !ball_enabled || mode)begin
+-            flag_rotation_load<=0;flag_rotation_pending<=0;flag_rotation_format_valid<=0;
++            flag_rotation_load<=0;flag_rotation_pending<=0;flag_rotation_format_valid<=0;flag_rotation_scale<=0;
+             reg_rotation_display_rpm_bcd<=0;reg_rotation_display_angle_bcd<=0;reg_rotation_display_net_bcd<=0;
+             reg_rotation_display_cw_bcd<=0;reg_rotation_display_ccw_bcd<=0;reg_rotation_display_status<=0;reg_rotation_display_reason<=0;
+             flag_rotation_display_angle<=0;flag_rotation_display_rpm<=0;flag_rotation_display_partial<=0;flag_rotation_display_negative<=0;
+         end else begin
+             flag_rotation_load<=0;
+             if(rotation_done && rotation_epoch == active_epoch)begin
+-                flag_rotation_load<=1;flag_rotation_pending<=0;flag_rotation_format_valid<=1;reg_rotation_epoch<=rotation_epoch;
++                flag_rotation_scale<=1;flag_rotation_pending<=0;flag_rotation_format_valid<=0;reg_rotation_epoch<=rotation_epoch;
++                reg_rotation_abs_net<=rotation_abs_net;flag_rotation_input_saturated<=rotation_saturated;
+                 reg_rotation_number_rpm<=rotation_rpm[23] ? -rotation_rpm : rotation_rpm;
+                 reg_rotation_number_angle<=rotation_angle_scaled[27:16];
+-                reg_rotation_number_net<=rotation_net_scaled > 99999 ? 17'd99999 : rotation_net_scaled[16:0];
+                 reg_rotation_number_cw<=rotation_cw;reg_rotation_number_ccw<=rotation_ccw;
+                 reg_rotation_pending_status<=rotation_status;
+-                reg_rotation_pending_reason<=rotation_saturated ? 4'd15 : (rotation_net_scaled > 99999 ? 4'd14 : rotation_reason);
++                reg_rotation_pending_reason<=rotation_saturated ? 4'd15 : rotation_reason;
+                 flag_rotation_pending_angle<=rotation_angle_valid;flag_rotation_pending_rpm<=rotation_rpm_valid;
+                 flag_rotation_pending_partial<=rotation_partial || rotation_saturated;flag_rotation_pending_negative<=rotation_net[47];
+-            end
+-            if(rotation_format_done && flag_rotation_format_valid && reg_rotation_epoch == active_epoch && !rotation_done)begin
++            end else if(flag_rotation_scale)begin
++                flag_rotation_scale<=0;
++                if(reg_rotation_epoch == active_epoch)begin
++                    flag_rotation_load<=1;flag_rotation_format_valid<=1;
++                    reg_rotation_number_net<=flag_rotation_net_limit ? 17'd99999 : rotation_net_scaled[32:16];
++                    if(flag_rotation_net_limit && !flag_rotation_input_saturated)reg_rotation_pending_reason<=14;
++                end
++            end
++            // 拒绝捕获、缩位和加载三处边界上的旧BCD完成脉冲。
++            if(rotation_format_done && flag_rotation_format_valid && reg_rotation_epoch == active_epoch &&
++               !rotation_done && !flag_rotation_scale && !flag_rotation_load)begin
+                 flag_rotation_pending<=1;
+                 reg_rotation_pending_rpm_bcd<=rotation_rpm_bcd;reg_rotation_pending_angle_bcd<=rotation_angle_bcd;
+                 reg_rotation_pending_net_bcd<=rotation_net_bcd;reg_rotation_pending_cw_bcd<=rotation_cw_bcd;reg_rotation_pending_ccw_bcd<=rotation_ccw_bcd;
+--- before/user_source/hdl_source/design_top_wrapper.v
++++ user_source/hdl_source/design_top_wrapper.v
+@@ -191,6 +191,8 @@
+     reg [1:0]   S_dbg_ddr_req_seen_sync;
+     reg [1:0]   S_dbg_ddr_ready_seen_sync;
+     reg         S_dbg_video_nonzero_seen;
++    // HDMI frame level enters the DDR debug domain through two flip-flops.
++    reg [1:0]   S_dbg_frame_vsync_sync;
+     reg         S_dbg_rd_req_seen;
+     reg         S_dbg_rd_valid_seen;
+     reg         S_dbg_rd_nonzero_seen;
+@@ -315,8 +317,15 @@
+ 
+     always @(posedge S_ddr_clk or negedge S_video_out_rst_n) begin
+         if(!S_video_out_rst_n)
++            S_dbg_frame_vsync_sync <= 2'b00;
++        else
++            S_dbg_frame_vsync_sync <= {S_dbg_frame_vsync_sync[0], S_video_out_vsync};
++    end
++
++    always @(posedge S_ddr_clk or negedge S_video_out_rst_n) begin
++        if(!S_video_out_rst_n)
+             S_dbg_rd_req_seen <= 1'b0;
+-        else if(S_video_out_vsync)
++        else if(S_dbg_frame_vsync_sync[1])
+             S_dbg_rd_req_seen <= 1'b0;
+         else if(S_vo_ddr_rd_en)
+             S_dbg_rd_req_seen <= 1'b1;
+@@ -325,7 +334,7 @@
+     always @(posedge S_ddr_clk or negedge S_video_out_rst_n) begin
+         if(!S_video_out_rst_n)
+             S_dbg_rd_valid_seen <= 1'b0;
+-        else if(S_video_out_vsync)
++        else if(S_dbg_frame_vsync_sync[1])
+             S_dbg_rd_valid_seen <= 1'b0;
+         else if(S_ddr_user_rd_valid)
+             S_dbg_rd_valid_seen <= 1'b1;
+--- before/user_source/hdl_source/ph1p35_ddr/ddr2/ddr2.v
++++ user_source/hdl_source/ph1p35_ddr/ddr2/ddr2.v
+@@ -80,16 +80,16 @@
+       .CAL_EN(0),
+       .CWL(6),
+       .CL(7),
+-      .PLL0_REFCLK_FREQ(100.0),
++      .PLL0_REFCLK_FREQ(50.0),
+       .PLL0_REFCLK_DIV(3),
+-      .PLL0_FBKCLK_DIV(32),
++      .PLL0_FBKCLK_DIV(64),
+       .PLL0_FRAC("DISABLE"),
+       .PLL0_FRAC_SDM(0),
+-      .PLL0_CLK2_DIV(2),
+-      .PLL0_CLK3_DIV(21),
+-      .PLL1_REFCLK_FREQ(133.3),
++      .PLL0_CLK2_DIV(4),
++      .PLL0_CLK3_DIV(42),
++      .PLL1_REFCLK_FREQ(66.666666667),
+       .PLL1_REFCLK_DIV(4),
+-      .PLL1_CLK0_DIV(12),
++      .PLL1_CLK0_DIV(16),
+       .MC_ECC("OFF"),
+       .MC_ADDR_MAP("ROW_COL_BANK"),
+       .MC_REORDER("NORMAL"),
+--- before/td_project/camera_to_dsi_display.sdc
++++ td_project/camera_to_dsi_display.sdc
+@@ -1,5 +1,5 @@
+-create_clock -name {sys_clk_50m} -period 20.000 -waveform {0.000 10.000} [get_ports {I_sys_clk}]
+-create_clock -name {mipi_rx_ck_pad} -period 2.415 -waveform {0.000 1.208} [get_nets {IO_rx_clk_pad_p}]
++create_clock -name {sys_clk_50m} -period 20.000 -waveform {0.000 10.000} [get_ports {I_sys_clk}]
++create_clock -name {mipi_rx_ck_pad} -period 2.415 -waveform {0.000 1.208} [get_nets {IO_rx_clk_pad_p}]
+ 
+ derive_clocks
+ 
+@@ -11,7 +11,22 @@
+ rename_clock -name {MIPI_RX_BYTE_CLK} [get_clocks {u_mipi_dphy_rx_ph1p_mipiio_wrapper/u_ph1p_mipiio_rx_wrapper/u_PH1P_LOGIC_DPHY_MIPI_RX.o_fabric_div4_8_clk}]
+ 
+ 
+-set_clock_groups -asynchronous \
+-    -group [get_clocks {mipi_rx_ck_pad MIPI_RX_BYTE_CLK}] \
+-    -group [get_clocks {sys_clk_50m pll_clk_100m pll_clk_24m HDMI_PIXEL_CLK HDMI_SERIAL_CLK}] \
+-    -group [get_clocks {u_ph1p35_324_ddr_wrapper/u_ddr2/ddr_clk u_ph1p35_324_ddr_wrapper/u_ddr2/usr_clk}]
++# Camera I2C uses pll_clk_24m clock enables; no divided register clock.
++set_clock_groups -asynchronous \
++    -group [get_clocks {mipi_rx_ck_pad MIPI_RX_BYTE_CLK}] \
++    -group [get_clocks {sys_clk_50m pll_clk_100m pll_clk_24m HDMI_PIXEL_CLK HDMI_SERIAL_CLK}]
++
++# Only the two verified FIFO clock pairs: constrain data flight to min(Tsrc,Tdst)-0.3 ns.
++# Keep DDR outside the groups above so IP Gray-pointer max-delay constraints remain active.
++set_max_delay -datapath_only 9.360 \
++    -from [get_clocks {MIPI_RX_BYTE_CLK}] \
++    -to [get_clocks {u_ph1p35_324_ddr_wrapper/u_ddr2/usr_clk}]
++set_max_delay -datapath_only 9.360 \
++    -from [get_clocks {u_ph1p35_324_ddr_wrapper/u_ddr2/usr_clk}] \
++    -to [get_clocks {MIPI_RX_BYTE_CLK}]
++set_max_delay -datapath_only 13.033 \
++    -from [get_clocks {HDMI_PIXEL_CLK}] \
++    -to [get_clocks {u_ph1p35_324_ddr_wrapper/u_ddr2/usr_clk}]
++set_max_delay -datapath_only 13.033 \
++    -from [get_clocks {u_ph1p35_324_ddr_wrapper/u_ddr2/usr_clk}] \
++    -to [get_clocks {HDMI_PIXEL_CLK}]
+--- before/user_source/hdl_source/uics500_cfg/uii2c.v
++++ user_source/hdl_source/uics500_cfg/uii2c.v
+@@ -88,6 +88,10 @@
+ wire sda_i;                  //sda ����
+ wire scl_offset;             //scl ʱ��ƫ�ƿ���
+ 
++// Use clock enables; scl_clk is a divider state, never a register clock.
++wire scl_rise_ce = (clkdiv == SCL_DIV) && !scl_clk;
++wire scl_fall_ce = (clkdiv == SCL_DIV) &&  scl_clk;
++
+ assign  sda_i   = IO_iic_sda ;  //������ 
+ assign  IO_iic_sda = (sda_o == 1'b0) ?  1'b0 : 1'bz;    //д���ߣ�1'bz�������裬I2C�ⲿͨ���������裬ʵ�����ߵĸߵ�ƽ
+ 
+@@ -139,7 +143,7 @@
+     else  sda_o <= 1'b1; //��������״̬��Ϊ1����(IIC_S == R_ACK && (rcnt == I_rd_cnt) ����һ��NACK 
+ 
+ //I2C���ݷ���ģ�飬���е�д���ݶ�ͨ����ģ�鷢��
+-always @(posedge scl_clk) 
++always @(posedge I_clk) if(scl_rise_ce) 
+     if(IIC_S == W_ACK || IIC_S == START)begin//IIC_S=START��W_ACK������Ҫ���͵����ݣ��Ĵ浽sda_r
+         sda_r <= I_wr_data[(wcnt*8) +: 8];//�Ĵ���Ҫ�����͵����ݵ�sda_r
+         if( rd_req ) sda_r <= {I_wr_data[7:1],1'b1};//���ڶ�������rd_req���ڲ������������д���һ������(������ַ)����ͨ���ж�I_rd_cnt��ȷ���Ƿ�������Ҫ��
+@@ -151,7 +155,7 @@
+ 
+ //sda data bus read and hold data to O_rd_data register when IIC_S=R_ACK
+ //I2C���ݽ���ģ�飬I2C���ڼ䣬������ͨ����λ����������O_rd_data
+-always @(negedge scl_clk)begin
++always @(posedge I_clk) if(scl_fall_ce)begin
+     if(IIC_S == R_WAIT ) //��IIC_S == R_WAIT ||IIC_S == W_ACK(�������������1��BIT��W_ACK���״̬��)������λ����
+         sda_i_r <= {sda_i_r[6:0],sda_i};
+     else if(IIC_S == R_ACK)//��IIC_S == R_ACK,���һ��BYTE���������ݱ��浽O_rd_data
+@@ -161,10 +165,10 @@
+ end
+ 
+ //����æ״̬
+-always @(posedge scl_clk or negedge I_rstn )begin
++always @(posedge I_clk or negedge I_rstn )begin
+ 	if(I_rstn == 1'b0)
+     	O_iic_busy <= 1'b0; 
+-	else begin
++	else if(scl_rise_ce)begin
+     	if((I_iic_req == 1'b1 || rd_req == 1'b1 || O_iic_bus_error))//I_iic_req == 1'b1 || rd_req == 1'b1���߽���æ״̬
+     	    O_iic_busy <= 1'b1; 
+         else if(IIC_S == IDLE)
+@@ -173,10 +177,10 @@
+ end
+ 
+ //����æ״̬
+-always @(negedge scl_clk or negedge I_rstn )begin
++always @(posedge I_clk or negedge I_rstn )begin
+ 	if(I_rstn == 1'b0)
+     	O_iic_bus_error <= 1'b0;  	
+-	else begin
++	else if(scl_fall_ce)begin
+     	if(IIC_S  == W_ACK && sda_i == 1'b1)//I_iic_req == 1'b1 || rd_req == 1'b1���߽���æ״̬
+     	    O_iic_bus_error <= 1'b1; 
+         else if(I_iic_req == 0)
+@@ -185,14 +189,14 @@
+ end
+ 
+ //I2C Master������״̬��
+-always @(posedge scl_clk or negedge I_rstn )begin
++always @(posedge I_clk or negedge I_rstn )begin
+ 		if(I_rstn == 1'b0)begin //�첽��λ����λ��ؼĴ���
+            wcnt 	<= 8'd0;
+            rcnt 	<= 8'd0;
+            rd_req 	<= 1'b0;   
+            IIC_S    <= IDLE;
+         end
+-        else begin
++        else if(scl_rise_ce)begin
+         case(IIC_S) //sda = 1 scl =1
+         IDLE:begin//�ڿ���״̬��sda=1 scl=1 
+            if(I_iic_req == 1'b1 || rd_req == 1'b1) //��I_iic_req == 1'b1������������ �� rd_req == 1'b1 ������������Ҫ����repeated start �ظ�����  

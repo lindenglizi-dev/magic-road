@@ -1,0 +1,4455 @@
+{
+  "name": "ball_detection",
+  "modules": [
+    {
+      "name": "ball_column_store",
+      "rtl_path": "rtl/ball_column_store.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_enable",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "perform one synchronous column-memory read",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_address",
+            "direction": "input",
+            "width": "(C_ADDR_BITS-1)-(0)+1",
+            "role": "native",
+            "description": "column group address selected within one lane/frame bank",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_enable",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "perform one synchronous column-memory write",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_address",
+            "direction": "input",
+            "width": "(C_ADDR_BITS-1)-(0)+1",
+            "role": "native",
+            "description": "address delayed from the accepted capture read",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_data",
+            "direction": "input",
+            "width": "(49)-(0)+1",
+            "role": "native",
+            "description": "packed R,Y,G counts and ymin/ymax, each ten bits",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_read_data",
+            "direction": "output",
+            "width": "(49)-(0)+1",
+            "role": "native",
+            "description": "registered packed column result",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "no memory reset",
+        "active": "none",
+        "synchronous": false
+      },
+      "behavior": [
+        "One enabled read is synchronous with one-cycle latency; a separate enabled write updates a 50-bit column word.",
+        "No memory-array reset is used. Every complete capture frame initializes all columns on its first row."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_core.v:147-plus frames with split/hold100/dropout2/last column/BCD and byte ordering.",
+        "sim/tb_ball_runtime.v:28 frames with boundary commits and late-result rejection.",
+        "sim/tb_ball_hdmi.v:four complete720P frames and actual DDR capture."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "ball_column_store interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Logical event order only. Internal multi-cycle/frame intervals are compressed; exact latency is specified in behavior, not inferred from this sketch.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_read_enable",
+                "wave": "0.10...."
+              },
+              {
+                "name": "o_read_data",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ball_decimal_format",
+      "rtl_path": "rtl/ball_decimal_format.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_load",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "start/restart decimal conversion",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_binary",
+            "direction": "input",
+            "width": "(C_BITS-1)-(0)+1",
+            "role": "native",
+            "description": "unsigned input captured when load is high",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_bcd",
+            "direction": "output",
+            "width": "(C_DIGITS*4-1)-(0)+1",
+            "role": "native",
+            "description": "stable packed BCD; least-significant digit is bits 3:0",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "complete word/frame event",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "module is processing a captured request",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "On load capture the binary value and clear working BCD; each following clock performs add-three and shifts one bit.",
+        "After C_BITS clocks publish a complete stable BCD word and pulse done; a new load restarts conversion without partial publication."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_core.v:147-plus frames with split/hold100/dropout2/last column/BCD and byte ordering.",
+        "sim/tb_ball_runtime.v:28 frames with boundary commits and late-result rejection.",
+        "sim/tb_ball_hdmi.v:four complete720P frames and actual DDR capture."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "ball_decimal_format interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Logical event order only. Internal multi-cycle/frame intervals are compressed; exact latency is specified in behavior, not inferred from this sketch.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "01......"
+              },
+              {
+                "name": "i_load",
+                "wave": "0.10...."
+              },
+              {
+                "name": "o_bcd",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ball_gate_counter",
+      "rtl_path": "rtl/ball_gate_counter.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "discard track/gate history; old frame work must not change new state",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear_counts",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "clear color totals only when clear is also asserted",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "dropped or overlapping statistics event; must not count as empty gate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "start collecting metadata for a completed capture frame scan",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_candidate_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "one candidate on this clock; frame_done follows all candidates",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_color",
+            "direction": "input",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x_min",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive left edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x_max",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive right edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y_min",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive top edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y_max",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive bottom edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame_done",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "complete statistics pulse, including frames with no candidates",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_overflow",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "more than eight accepted segments in this frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_gate_pixels",
+            "direction": "input",
+            "width": "(19)-(0)+1",
+            "role": "native",
+            "description": "Effective gate color pixel count: runtime passes original raw count only if a connected region >= C_MIN_AREA overlaps gate, else zero. Other direct callers may still supply raw occupancy. Valid only with complete frame_done.",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_red",
+            "direction": "output",
+            "width": "(31)-(0)+1",
+            "role": "native",
+            "description": "saturating red-ball pass count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_yellow",
+            "direction": "output",
+            "width": "(31)-(0)+1",
+            "role": "native",
+            "description": "saturating yellow-ball pass count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_green",
+            "direction": "output",
+            "width": "(31)-(0)+1",
+            "role": "native",
+            "description": "saturating green-ball pass count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_total",
+            "direction": "output",
+            "width": "(33)-(0)+1",
+            "role": "native",
+            "description": "34-bit zero-extended sum of three color counts",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_state",
+            "direction": "output",
+            "width": "(2)-(0)+1",
+            "role": "native",
+            "description": "gate FSM:0 wait-clear,1 ready,2 armed,3 hold,4 blocked",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_empty",
+            "direction": "output",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "consecutive completed empty gate frames, saturated at three",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_event",
+            "direction": "output",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "one-clock color of a newly accepted pass, zero if no event",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_reason",
+            "direction": "output",
+            "width": "(2)-(0)+1",
+            "role": "native",
+            "description": "0 normal,1 overflow,2 multi-ball,3 no upstream,4 short gap/reverse,5 frame fault,6 saturated,7 video error",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_center_x",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "floor((xmin+xmax)/2), not pixel-weighted centroid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_center_y",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "floor((ymin+ymax)/2), not pixel-weighted centroid",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Require three empty completed frames, then two consistent upstream observations before arming. A confirmed center reaching downstream emits exactly one count.",
+        "HOLD never expires by elapsed time. One/two missing frames preserve identity; three empty gate frames rearm. Multi-ball, overflow, reverse or downstream-first observations block.",
+        "Three color counters saturate at 32 bits. Total is a zero-extended 34-bit sum. Clear has priority over simultaneous old frame completion.",
+        "Runtime qualifies i_gate_pixels with detector connected-region occupancy; no substantial region means effective count zero even if raw sparse pixels>=8. Any accepted gate candidate still prevents empty. Fault/overflow/multiple candidates retain blocking priority. Three complete empty frames still required for release.",
+        "In ARMED/HOLD, one candidate centered inside gate with color != locked color blocks with reason4; never increment on that frame. Status/ports/reset/counter saturation semantics unchanged. Fast balls still require two upstream observations inside the existing gate."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames."
+      ],
+      "verification_cases": [
+        "sim/test_gate_recovery.py + tb_ball_gate_recovery.v:45frames; old frame6 staysGATE4/ERR2, new releases after3sparse128pxframes; rejected192pxregion holds, dropout/dedup/samecolor nextball, wrongcolor/overflow block.",
+        "Existing 16component masks, partialROI/queue/collision, 6frameoverflow,206framemotion,28frameruntime and720P60 budget rerun.",
+        "tb_ball_count_hdmi.v + check_count_hdmi.py:7full720Pframes, persistent sparse noise, yellow upstream/downstream counts1; actual capture and COUNT2 glyph."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "ball_gate_counter interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Compressed logical frame events only, not measured clock timing. Multicandidate frame blocks; three subsequent sparse-only complete frames release; two upstream matches then downstream count once. Rejected substantial regions hold occupied.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "01......"
+              },
+              {
+                "name": "i_frame_start",
+                "wave": "0.10...."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ],
+      "purpose": "原单向迟滞计数门，保留空门三帧与异常保护，补充已锁定颜色一致性检查。",
+      "parameters": [
+        {
+          "name": "C_GATE_MIN",
+          "default": 544,
+          "description": "计数门左边界，包含；运行层传给占用检测"
+        },
+        {
+          "name": "C_GATE_END",
+          "default": 736,
+          "description": "计数门右边界，不包含；运行层传给占用检测"
+        },
+        {
+          "name": "C_GATE_TOP",
+          "default": 160,
+          "description": "计数门上边界，包含"
+        },
+        {
+          "name": "C_GATE_BOTTOM",
+          "default": 640,
+          "description": "计数门下边界，不包含"
+        },
+        {
+          "name": "C_LINE",
+          "default": 640,
+          "description": "从左向右的计数中心线X"
+        },
+        {
+          "name": "C_HYST",
+          "default": 16,
+          "description": "中心线两侧确认迟滞像素数"
+        },
+        {
+          "name": "C_MIN_GATE_PIXELS",
+          "default": 8,
+          "description": "经区域确认的门内有效像素阈值，低于此值才可能空门"
+        }
+      ]
+    },
+    {
+      "name": "ball_key_control",
+      "rtl_path": "rtl/ball_key_control.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_keys_n",
+            "direction": "input",
+            "width": "(3)-(0)+1",
+            "role": "native",
+            "description": "four original active-low board keys",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_early",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "early frame notification independent of pixel valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_count_mode",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "zero single-track, one conveyor-count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_strict",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "strict: brightness150 and channel gap50; normal: gamma-domain brightness64, gap12 and 5:4 relative channel dominance",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_mask",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "display segmented mask without feeding graphics into detection",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_epoch",
+            "direction": "output",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "configuration generation captured with frame statistics",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_clear",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "discard track/gate history; old frame work must not change new state",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_clear_counts",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "clear color totals only when clear is also asserted",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_camera_step",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "One retained toggle per long press:bit0=D5 exposure,bit1=A9 gain; receiver uses two synchronizers and edge detection.",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Two flip-flop synchronization and bidirectional C_DEBOUNCE. D5/A9 short request fires on debounced release; a stable hold of C_LONG_PRESS=103520000 cycles toggles camera bit once and suppresses short release. B9/C7 retain press-edge behavior.",
+        "Commit mode/mask/threshold requests at early only. Mode/threshold/clear increment the configuration epoch; mask-only changes preserve tracking/count history."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count.",
+        "C_LONG_PRESS>=1; C_HOLD_BITS must represent C_LONG_PRESS-1; nominal103.520MHz gives about1second after debounced press. Source video clock must be running.",
+        "Release bounce shorter than debounce does not rearm the long event; both camera bits reset0 with the receiving domain."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_core.v:147-plus frames with split/hold100/dropout2/last column/BCD and byte ordering.",
+        "sim/tb_ball_runtime.v:28 frames with boundary commits and late-result rejection.",
+        "sim/tb_ball_hdmi.v:four complete720P frames and actual DDR capture.",
+        "tb_ball_board_keys: press/release bounce, release-only short, long across early boundaries, all profiles, asynchronous receiver, busy queue, simultaneous hold, reset."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "key_actions",
+          "title": "Short release and long toggle",
+          "scenario": "compressed_key_sequence",
+          "description": "Logical order; debounce and hold intervals compressed. Video/early latency unchanged.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "i_keys_n[0]",
+                "wave": "10.10...1."
+              },
+              {
+                "name": "reg_pressed[0]",
+                "wave": "0..10....."
+              },
+              {
+                "name": "o_camera_step[0]",
+                "wave": "0......1.."
+              }
+            ],
+            "head": {
+              "text": "Short fires on release; long toggle suppresses short"
+            }
+          }
+        }
+      ],
+      "purpose": "板载四键消抖、互斥短长按及帧边界应用配置。",
+      "parameters": [
+        {
+          "name": "C_DEBOUNCE",
+          "default": 2100000,
+          "description": "双向消抖时钟数，名义约20ms。"
+        },
+        {
+          "name": "C_COUNT_BITS",
+          "default": "$clog2(C_DEBOUNCE+1)",
+          "description": "消抖计数位宽。"
+        },
+        {
+          "name": "C_LONG_PRESS",
+          "default": 103520000,
+          "description": "消抖后的有效持续按下门限，名义约1秒。"
+        },
+        {
+          "name": "C_HOLD_BITS",
+          "default": "$clog2(C_LONG_PRESS+1)",
+          "description": "长按计数位宽。"
+        }
+      ],
+      "description": "板载四键消抖、互斥短长按及帧边界应用配置。"
+    },
+    {
+      "name": "ball_overlay",
+      "rtl_path": "rtl/ball_overlay.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "four RGB888 pixels, leftmost pixel in bits 95:72",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "first valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eol",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a line",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_x; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_y; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_labels",
+            "direction": "input",
+            "width": "(7)-(0)+1",
+            "role": "native",
+            "description": "four exclusive two-bit labels, lane zero in bits 1:0; 0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_mask",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "display segmented mask without feeding graphics into detection",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_count_mode",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "zero single-track, one conveyor-count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_box_valid",
+            "direction": "input",
+            "width": "(7)-(0)+1",
+            "role": "native",
+            "description": "Eight packed box descriptors, slot zero in the least-significant slice: box_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_box_color",
+            "direction": "input",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "Eight packed box descriptors, slot zero in the least-significant slice: box_color",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_box_left",
+            "direction": "input",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "Eight packed box descriptors, slot zero in the least-significant slice: box_left",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_box_right",
+            "direction": "input",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "Eight packed box descriptors, slot zero in the least-significant slice: box_right",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_box_top",
+            "direction": "input",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "Eight packed box descriptors, slot zero in the least-significant slice: box_top",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_box_bottom",
+            "direction": "input",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "Eight packed box descriptors, slot zero in the least-significant slice: box_bottom",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rgb",
+            "direction": "output",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "four RGB888 pixels, leftmost pixel in bits 95:72",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_sof",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "first valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_eol",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a line",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_eof",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field o_x; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field o_y; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Register each of four pixel lanes against all eight frozen boxes, ROI and gate lines, then compose colors in a second registered stage.",
+        "RGB, coordinates and all valid/SOF/EOL/EOF markers have exactly two cycles latency. Labels are observed before any graphics are applied."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_core.v:147-plus frames with split/hold100/dropout2/last column/BCD and byte ordering.",
+        "sim/tb_ball_runtime.v:28 frames with boundary commits and late-result rejection.",
+        "sim/tb_ball_hdmi.v:four complete720P frames and actual DDR capture."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "ball_overlay interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Logical event order only. Internal multi-cycle/frame intervals are compressed; exact latency is specified in behavior, not inferred from this sketch.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "01......"
+              },
+              {
+                "name": "i_valid",
+                "wave": "0.10...."
+              },
+              {
+                "name": "o_valid",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ball_projection",
+      "rtl_path": "rtl/ball_projection.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "first valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_x; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_y; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_labels",
+            "direction": "input",
+            "width": "(7)-(0)+1",
+            "role": "native",
+            "description": "four exclusive two-bit labels, lane zero in bits 1:0; 0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_gate_hits",
+            "direction": "input",
+            "width": "(2)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_gate_hits; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_epoch",
+            "direction": "input",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "configuration generation captured with frame statistics",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frame_start",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "start collecting metadata for a completed capture frame scan",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_candidate_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "one candidate on this clock; frame_done follows all candidates",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_color",
+            "direction": "output",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_area",
+            "direction": "output",
+            "width": "(19)-(0)+1",
+            "role": "native",
+            "description": "number of classified pixels in the candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_min",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive left edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_max",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive right edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_min",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive top edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_max",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive bottom edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frame_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "complete statistics pulse, including frames with no candidates",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_gate_pixels",
+            "direction": "output",
+            "width": "(19)-(0)+1",
+            "role": "native",
+            "description": "classified raw pixel count in the full rectangular counting gate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_epoch",
+            "direction": "output",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "configuration generation captured with frame statistics",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_overflow",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "more than eight accepted segments in this frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "dropped or overlapping statistics event; must not count as empty gate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "sticky video/statistics protocol diagnostic",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Four pixel lanes update separate column RAMs with a one-cycle read/modify/write path. Two frame banks separate capture and scan.",
+        "After the final RAM write, scan columns in READ/LOAD/ACC/ADVANCE phases. Merge at most two internal empty columns, then filter each segment.",
+        "Emit at most eight candidates followed by frame_done. Flush the final column segment. Overflow blocks counting; incomplete/dropped frames never provide empty-gate evidence."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count.",
+        "C_MAX_SIZE defaults to384; both accepted bounding-box dimensions must lie inclusively between C_MIN_SIZE=12 and C_MAX_SIZE. The previous160-pixel maximum is no longer the default."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_core.v:147-plus frames with split/hold100/dropout2/last column/BCD and byte ordering.",
+        "sim/tb_ball_runtime.v:28 frames with boundary commits and late-result rejection.",
+        "sim/tb_ball_hdmi.v:four complete720P frames and actual DDR capture.",
+        "sim/tb_ball_lowlight.v: default projection admitsradius85-pixel (171-pixel bounding extent) shaded R/Y/G balls and rejects cyan background; exact object-derived labels and boxes are checked."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "ball_projection interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Logical event order only. Internal multi-cycle/frame intervals are compressed; exact latency is specified in behavior, not inferred from this sketch.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "01......"
+              },
+              {
+                "name": "i_valid",
+                "wave": "0.10...."
+              },
+              {
+                "name": "o_candidate_valid",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ball_runtime",
+      "rtl_path": "rtl/ball_runtime.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rst_n",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Native application interface field I_rst_n; see module behavior and source connections",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_keys_n",
+            "direction": "input",
+            "width": "(3)-(0)+1",
+            "role": "native",
+            "description": "four original active-low board keys",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rgb",
+            "direction": "input",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "four gamma-corrected RGB888 pixels, leftmost pixel in bits95:72",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_user",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "early frame notification from the registered gamma path; independent of pixel-aligned SOF",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_last",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field I_last; see module behavior and source connections",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_data",
+            "direction": "output",
+            "width": "(127)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field O_data; see module behavior and source connections",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_last",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field O_last; see module behavior and source connections",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "complete word/frame event",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_early",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "early frame notification independent of pixel valid",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_error",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "sticky video/statistics protocol diagnostic",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_red",
+            "direction": "output",
+            "width": "(31)-(0)+1",
+            "role": "native",
+            "description": "saturating red-ball pass count",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_green",
+            "direction": "output",
+            "width": "(31)-(0)+1",
+            "role": "native",
+            "description": "saturating green-ball pass count",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_yellow",
+            "direction": "output",
+            "width": "(31)-(0)+1",
+            "role": "native",
+            "description": "saturating yellow-ball pass count",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_total",
+            "direction": "output",
+            "width": "(33)-(0)+1",
+            "role": "native",
+            "description": "34-bit zero-extended sum of three color counts",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_count_mode",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "zero single-track, one conveyor-count",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_gate_state",
+            "direction": "output",
+            "width": "(2)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field O_gate_state; see module behavior and source connections",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_track_status",
+            "direction": "output",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field O_track_status; see module behavior and source connections",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_camera_status",
+            "direction": "input",
+            "width": 48,
+            "role": "native",
+            "description": "Coherent camera diagnostics: FPS BCD[11:0], exposure BCD[27:12], gain BCD[35:28], readback state[37:36], cfg[38], WB-ready[39]",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_camera_step",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "One retained toggle per long press:bit0=D5 exposure,bit1=A9 gain; receiver uses two synchronizers and edge detection.",
+            "clock_domain": "I_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "I_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "I_rst_n",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Consume the gamma-corrected four-pixel RGB96 stream from isp_top; connect color front, bounded2Dcomponents, track/count, graphics, BCD, OSD and the unchanged RGB128 packer.",
+        "Forward early by one clock independently of pixel SOF. The runtime pixel path remains seven registered cycles: two front, two overlay, two OSD and one packer. The upstream gamma adds one cycle outside this module.",
+        "Reject old-epoch results. Tag decimal work by both epoch and job sequence; only a fully formatted snapshot can commit at a later early boundary.",
+        "Camera status is coherent across domains; runtime freezes it at advance frame boundary before OSD. A fourth text row shows FPS/EXP/G/RB/WB/CAL without any extra video register stage.",
+        "Expose board-key long-press toggles without adding any video/early register stage. D5/A9 short requests commit on early after debounced release.",
+        "Color-support repair adds1pixel register in front only; runtime now7pixel stages and1independent advance-early stage.",
+        "Replace the retired column detector with ball_components; tracker/counter implementations and raw gate semantics unchanged. At done, capture diagnostics before decimal conversion; commit all diagnostic BCD and N/R atomically with existing epoch/job snapshot.",
+        "TRACK bbox and X/Y are one-frame forecasts from ball_target_tracker, clipped to configured ROI. COUNT metadata uses the original measured gate path. Tracker ports are unchanged; only ROI parameters are propagated.",
+        "Pass C_GATE_MIN/END to detector. Gate counter receives scan_gate only when scan_gate_occupied, else zero. Raw detector gate count and display candidates preserved; fault/overflow and epoch guards unchanged. TRACK prediction path unchanged."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16, coordinates are12bit; configured ROI cell count<=65536 and pixel area<2^20. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count.",
+        "Default candidate width and height limits are inclusive12..384 pixels, minimum classified area128. Normal classification operates on gamma-corrected RGB; strict thresholds remain150/50."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Disconnected same-X regions can be extracted; count mode still requires at most one ball per gate and three clear raw-gate frames."
+      ],
+      "verification_cases": [
+        "sim/test_gate_recovery.py + tb_ball_gate_recovery.v:45frames; old frame6 staysGATE4/ERR2, new releases after3sparse128pxframes; rejected192pxregion holds, dropout/dedup/samecolor nextball, wrongcolor/overflow block.",
+        "Existing 16component masks, partialROI/queue/collision, 6frameoverflow,206framemotion,28frameruntime and720P60 budget rerun.",
+        "tb_ball_count_hdmi.v + check_count_hdmi.py:7full720Pframes, persistent sparse noise, yellow upstream/downstream counts1; actual capture and COUNT2 glyph."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "ball_runtime interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Compressed logical frame events only, not measured clock timing. Multicandidate frame blocks; three subsequent sparse-only complete frames release; two upstream matches then downstream count once. Rejected substantial regions hold occupied.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "I_rst_n",
+                "wave": "01......"
+              },
+              {
+                "name": "I_valid",
+                "wave": "0.10...."
+              },
+              {
+                "name": "O_valid",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ],
+      "purpose": "既有视频检测与叠加流水线；将两位长按事件传出供相机调参。",
+      "parameters": [
+        {
+          "name": "C_WIDTH",
+          "default": 1280,
+          "description": "每行像素数，必须为16的倍数"
+        },
+        {
+          "name": "C_HEIGHT",
+          "default": 720,
+          "description": "帧有效像素行数"
+        },
+        {
+          "name": "C_X_MIN",
+          "default": 64,
+          "description": "ROI左边界，包含"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 160,
+          "description": "ROI上边界，包含"
+        },
+        {
+          "name": "C_X_END",
+          "default": 1216,
+          "description": "ROI右边界，不包含"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 640,
+          "description": "ROI下边界，不包含"
+        },
+        {
+          "name": "C_GATE_MIN",
+          "default": 544,
+          "description": "计数门左边界，包含；运行层传给占用检测"
+        },
+        {
+          "name": "C_GATE_END",
+          "default": 736,
+          "description": "计数门右边界，不包含；运行层传给占用检测"
+        },
+        {
+          "name": "C_LINE",
+          "default": 640,
+          "description": "从左向右的计数中心线X"
+        },
+        {
+          "name": "C_HYST",
+          "default": 16,
+          "description": "中心线两侧确认迟滞像素数"
+        },
+        {
+          "name": "C_MIN_AREA",
+          "default": 128,
+          "description": "连通区域有效同色像素最小面积，也用于疑似门占用"
+        },
+        {
+          "name": "C_MIN_SIZE",
+          "default": 12,
+          "description": "候选框宽高最小像素数"
+        },
+        {
+          "name": "C_MAX_SIZE",
+          "default": 384,
+          "description": "候选框宽高最大像素数"
+        },
+        {
+          "name": "C_MAX_MOVE",
+          "default": 64,
+          "description": "原预测跟踪的单轴关联残差窗，计数修复不改此值"
+        },
+        {
+          "name": "C_DEBOUNCE",
+          "default": 2100000,
+          "description": "板载键消抖稳定时钟数"
+        },
+        {
+          "name": "C_LONG_PRESS",
+          "default": 103520000,
+          "description": "板载键长按判定时钟数"
+        }
+      ],
+      "description": "既有视频检测与叠加流水线；将两位长按事件传出供相机调参。"
+    },
+    {
+      "name": "ball_status_osd",
+      "rtl_path": "rtl/ball_status_osd.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "four RGB888 pixels, leftmost pixel in bits 95:72",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "first valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eol",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a line",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_x; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_y; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_count_mode",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "zero single-track, one conveyor-count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_strict",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "strict: brightness150 and channel gap50; normal: gamma-domain brightness64, gap12 and 5:4 relative channel dominance",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_red_bcd",
+            "direction": "input",
+            "width": "(39)-(0)+1",
+            "role": "native",
+            "description": "Frame-frozen packed BCD display field: red_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_green_bcd",
+            "direction": "input",
+            "width": "(39)-(0)+1",
+            "role": "native",
+            "description": "Frame-frozen packed BCD display field: green_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_yellow_bcd",
+            "direction": "input",
+            "width": "(39)-(0)+1",
+            "role": "native",
+            "description": "Frame-frozen packed BCD display field: yellow_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_total_bcd",
+            "direction": "input",
+            "width": "(43)-(0)+1",
+            "role": "native",
+            "description": "Frame-frozen packed BCD display field: total_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x_bcd",
+            "direction": "input",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "Frame-frozen packed BCD display field: x_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y_bcd",
+            "direction": "input",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "Frame-frozen packed BCD display field: y_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_gate_state",
+            "direction": "input",
+            "width": "(2)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_gate_state; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_track_status",
+            "direction": "input",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_track_status; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_reason",
+            "direction": "input",
+            "width": "(2)-(0)+1",
+            "role": "native",
+            "description": "0 normal,1 overflow,2 multi-ball,3 no upstream,4 short gap/reverse,5 frame fault,6 saturated,7 video error",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rgb",
+            "direction": "output",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "four RGB888 pixels, leftmost pixel in bits 95:72",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_sof",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "first valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_eol",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a line",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_eof",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_camera_status",
+            "direction": "input",
+            "width": 48,
+            "role": "native",
+            "description": "Coherent camera diagnostics: FPS BCD[11:0], exposure BCD[27:12], gain BCD[35:28], readback state[37:36], cfg[38], WB-ready[39]",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_count",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "Accepted candidate count, <=8",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_reject",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "Rejection bitmask:1 area,2 dimensions,4 aspect,8 fill",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_width_bcd",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "Four frozen decimal width digits",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_height_bcd",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "Four frozen decimal height digits",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_area_bcd",
+            "direction": "input",
+            "width": 28,
+            "role": "native",
+            "description": "Seven frozen decimal area digits",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_fill_bcd",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "Three frozen decimal fill digits",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "One character/glyph lookup is shared by four aligned pixels; lookup and composition take two registered cycles.",
+        "Use complete BCD snapshots for coordinates and counts. Five-by-seven glyphs are doubled; a dark panel occupies y<144 without changing stream length.",
+        "The first title row includes the GAMMA marker in character columns24..28 retained from prior low-light builds; the fifth-row CCL4 marker identifies this milestone; marker text does not alter pixel/line/frame length.",
+        "Camera status is coherent across domains; runtime freezes it at advance frame boundary before OSD. A fourth text row shows FPS/EXP/G/RB/WB/CAL without any extra video register stage.",
+        "Add row128..141 with CCL4 N/W/H/A/F/R; panel extends to y143. Original lookup/composition remains two registered clocks. Rejection is hexadecimal bitmask; ERR meanings remain unchanged.",
+        "TRACK mode top row columns32..35 display PRED. COUNT mode leaves these columns blank. Existing diagnostics CCL4 N/W/H/A/F/R unchanged.",
+        "COUNT top row now shows COUNT2 at columns16..21; TRACK and PRED remain unchanged. This identifies gate recovery bit; all other glyph timing unchanged."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16, coordinates are12bit; configured ROI cell count<=65536 and pixel area<2^20. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Disconnected same-X regions can be extracted; count mode still requires at most one ball per gate and three clear raw-gate frames."
+      ],
+      "verification_cases": [
+        "sim/test_gate_recovery.py + tb_ball_gate_recovery.v:45frames; old frame6 staysGATE4/ERR2, new releases after3sparse128pxframes; rejected192pxregion holds, dropout/dedup/samecolor nextball, wrongcolor/overflow block.",
+        "Existing 16component masks, partialROI/queue/collision, 6frameoverflow,206framemotion,28frameruntime and720P60 budget rerun.",
+        "tb_ball_count_hdmi.v + check_count_hdmi.py:7full720Pframes, persistent sparse noise, yellow upstream/downstream counts1; actual capture and COUNT2 glyph."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "ball_status_osd interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Compressed logical frame events only, not measured clock timing. Multicandidate frame blocks; three subsequent sparse-only complete frames release; two upstream matches then downstream count once. Rejected substantial regions hold occupied.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_rstn",
+                "wave": "01......"
+              },
+              {
+                "name": "i_valid",
+                "wave": "0.10...."
+              },
+              {
+                "name": "o_valid",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ],
+      "purpose": "显示冻结的计数、跟踪与相机状态；TRACK顶部PRED标记预测坐标版本。"
+    },
+    {
+      "name": "ball_stream_front",
+      "rtl_path": "rtl/ball_stream_front.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "four gamma-corrected RGB888 pixels; leftmost pixel in bits95:72",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_early",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "early frame notification independent of pixel valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_strict",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "strict: brightness150 and channel gap50; normal: gamma-domain brightness64, gap12 and 5:4 relative channel dominance",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_epoch",
+            "direction": "input",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "configuration generation captured with frame statistics",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rgb",
+            "direction": "output",
+            "width": "(95)-(0)+1",
+            "role": "native",
+            "description": "four gamma-corrected RGB888 pixels; leftmost pixel in bits95:72",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_sof",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "first valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_eol",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a line",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_eof",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field o_x; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field o_y; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_labels",
+            "direction": "output",
+            "width": "(7)-(0)+1",
+            "role": "native",
+            "description": "four exclusive two-bit labels, lane zero in bits 1:0; 0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_gate_hits",
+            "direction": "output",
+            "width": "(2)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field o_gate_hits; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_epoch",
+            "direction": "output",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "configuration generation captured with frame statistics",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "sticky video/statistics protocol diagnostic",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "At first edge capture original RGB, coordinates, strong and weak labels, strict flag and epoch. Strong normal classification remains floor64,difference12,5:4dominance. Weak candidates use floor32,difference6,9:8dominance; yellow red/green balance remains5:4.",
+        "At second edge, in normal mode preserve a strong-color pixel only if at least2of4lanes share that strong color; otherwise preserve a weak-color pixel if at least3of4lanes share that weak color. Strong label takes priority. Strict mode bypasses support and retains old strict classifier.",
+        "RGB,valid,SOF,EOL,EOF,coordinates,epoch and recomputed gate occupancy share the same2registered cycles. Input early still resets input position; actual SOF remains pixel-aligned. No clock or external port changes."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count.",
+        "Horizontal support is limited to original four-pixel aligned groups; it does not provide vertical connected components or separate dense same-X background.",
+        "Filtered circle tips or a lone group-edge pixel can be removed; tested geometry center shift at most1pixel on legacy reference scenes. Very thin fragments may disappear."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames.",
+        "Isolated strong foreground pixel in a neutral group must not contaminate bounds; three dark same-color lanes may pass; strict bypass supports isolated strict pixels."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_core.v:147-plus frames with split/hold100/dropout2/last column/BCD and byte ordering.",
+        "sim/tb_ball_runtime.v:28 frames with boundary commits and late-result rejection.",
+        "sim/tb_ball_hdmi.v:four complete720P frames and actual DDR capture.",
+        "sim/tb_ball_lowlight.v: object-geometry ground truth verifies low-light labels including shaded ball interiors, highlight exclusion and textured cyan rejection.",
+        "tb_ball_color_support compares2048independent Python group vectors and2clock metadata latency.",
+        "tb_ball_dark_noise sends9RGB frames covering3bright balls and3colors x2dark/noise cases into actual front+projection.",
+        "Updated28frame runtime,9frame shaded-color regression,4frame720P capture."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "supported_pixels",
+          "title": "Color classification and support pipeline",
+          "scenario": "two_stage_front",
+          "description": "Cycle markers and RGB are delayed with labels. Runtime advance early remains independent and unchanged.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_valid",
+                "wave": "01.0...."
+              },
+              {
+                "name": "reg_valid_o",
+                "wave": "0.1.0..."
+              },
+              {
+                "name": "o_valid",
+                "wave": "0..1.0.."
+              },
+              {
+                "name": "i_rgb",
+                "wave": "x2.3x...",
+                "data": [
+                  "groupA",
+                  "groupB"
+                ]
+              },
+              {
+                "name": "o_rgb",
+                "wave": "x..2.3x.",
+                "data": [
+                  "groupA",
+                  "groupB"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "description": "两拍RGB前端：强弱颜色判定及水平四像素支持；只在valid推进坐标。",
+      "parameters": [
+        {
+          "name": "C_WIDTH",
+          "default": 1280,
+          "description": "原图像尺寸及ROI/计数门范围；端点使用原有半开区间语义。"
+        },
+        {
+          "name": "C_HEIGHT",
+          "default": 720,
+          "description": "原图像尺寸及ROI/计数门范围；端点使用原有半开区间语义。"
+        },
+        {
+          "name": "C_X_MIN",
+          "default": 64,
+          "description": "原图像尺寸及ROI/计数门范围；端点使用原有半开区间语义。"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 160,
+          "description": "原图像尺寸及ROI/计数门范围；端点使用原有半开区间语义。"
+        },
+        {
+          "name": "C_X_END",
+          "default": 1216,
+          "description": "原图像尺寸及ROI/计数门范围；端点使用原有半开区间语义。"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 640,
+          "description": "原图像尺寸及ROI/计数门范围；端点使用原有半开区间语义。"
+        },
+        {
+          "name": "C_GATE_MIN",
+          "default": 544,
+          "description": "原图像尺寸及ROI/计数门范围；端点使用原有半开区间语义。"
+        },
+        {
+          "name": "C_GATE_END",
+          "default": 736,
+          "description": "原图像尺寸及ROI/计数门范围；端点使用原有半开区间语义。"
+        }
+      ]
+    },
+    {
+      "name": "ball_target_tracker",
+      "rtl_path": "rtl/ball_target_tracker.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "discard track/gate history; old frame work must not change new state",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "start collecting metadata for a completed capture frame scan",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_candidate_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "one candidate on this clock; frame_done follows all candidates",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_color",
+            "direction": "input",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_area",
+            "direction": "input",
+            "width": "(19)-(0)+1",
+            "role": "native",
+            "description": "number of classified pixels in the candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x_min",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive left edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x_max",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive right edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y_min",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive top edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y_max",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive bottom edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame_done",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "complete statistics pulse, including frames with no candidates",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_overflow",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "more than eight accepted segments in this frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "tracker:0 search,1 confirm,2 track,3 temporarily lost",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_color",
+            "direction": "output",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_min",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "One-frame forecast coordinate on accepted measurement; clamped to ROI as a whole; held on misses. Not a raw measured coordinate.",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_max",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "One-frame forecast coordinate on accepted measurement; clamped to ROI as a whole; held on misses. Not a raw measured coordinate.",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_min",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "One-frame forecast coordinate on accepted measurement; clamped to ROI as a whole; held on misses. Not a raw measured coordinate.",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_max",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "One-frame forecast coordinate on accepted measurement; clamped to ROI as a whole; held on misses. Not a raw measured coordinate.",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_center_x",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "One-frame forecast coordinate on accepted measurement; clamped to ROI as a whole; held on misses. Not a raw measured coordinate.",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_center_y",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "One-frame forecast coordinate on accepted measurement; clamped to ROI as a whole; held on misses. Not a raw measured coordinate.",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Search: choose the largest valid nonzero-color region. First match has zero velocity and status1.",
+        "Associate only identical color and width/height each within [previous/2, previous*2]. Rank candidates in the predicted-position window before candidates in the observed-position fallback window; then minimum Manhattan prediction residual. Equal scores retain input order.",
+        "Prediction reference is the last observed center plus velocity*(misses+1); status1 bootstrap window is 2*C_MAX_MOVE, otherwise residual window C_MAX_MOVE*(misses+1). Actual observed positions are stored separately from forecast output.",
+        "Consecutive measurements update per-axis velocity to the observed delta, with <=4pixel deadband and +/-2*C_MAX_MOVE clamp. First recovery after missing frames retains previous velocity; next consecutive observation updates it.",
+        "Commit at frame_done only. Output the measured bbox translated by one velocity step, clamped as a whole within the ROI; center is translated identically. Missing1/2 hold the last output with status3; missing3 clears valid. Two observations confirm status2.",
+        "Clear/reset/overflow discard lock and velocity. Candidate stream can be consecutive; frame_start and frame_done must be separate from candidates. Frame_done follows last candidate by at least one clock. Video pipeline/early latency and counting remain unchanged."
+      ],
+      "constraints": [
+        "Verilog-2001, asynchronous active-low reset, S_csi_rx_clk domain; no CDC added.",
+        "1<=C_MAX_MOVE<=1024; 0<=ROI min<end<=4096. Candidate bbox inclusive, within ROI, nonzero color, valid dimensions. Runtime enforces epoch/mode.",
+        "One forecast frame compensates nominal display lag only. Dense-region statistics can add an extra frame; sudden acceleration, same-color same-size interference, connected regions and optical blur remain limitations."
+      ],
+      "corner_cases": [
+        "Sudden stop uses observed-position fallback. Predicted-window target wins over stationary background even if background has greater area.",
+        "Forecast clipping preserves bbox size and cannot recreate the portion of a ball already outside the ROI.",
+        "No new moving box is fabricated during misses; displayed coordinate is an estimate, not raw measured centroid."
+      ],
+      "verification_cases": [
+        "sim/test_motion.py and tb_ball_motion.v:206 frames/990 cycle snapshots,80px/frame vs original64,wrong color,size,dropout,stop,ROI,signed velocity,clear/overflow.",
+        "tb_ball_runtime.v:28frames including count,epoch,clear,OSD/packing; tb_ball_dark_noise.v:9frames3colors with explicit clear between independent color cases.",
+        "tb_ball_hdmi_lowlight.v and check_motion_hdmi.py: actual4frame720P capture; expected forecast center331,399 versus current synthetic ball332,400."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "ball_target_tracker interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Compressed frame event order, not measured clock timing. Matching frame centers200,280,360 gives display centers199,359,439; empty frame freezes439 with LOST.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "frame_done",
+                "wave": "0101010101"
+              },
+              {
+                "name": "observed_x",
+                "wave": "x.2.2.2.x.",
+                "data": [
+                  "199",
+                  "279",
+                  "359"
+                ]
+              },
+              {
+                "name": "display_x",
+                "wave": "x.2.2.2..2",
+                "data": [
+                  "199",
+                  "359",
+                  "439",
+                  "439"
+                ]
+              },
+              {
+                "name": "status",
+                "wave": "0.2.2....2",
+                "data": [
+                  "CONFIRM",
+                  "TRACK",
+                  "LOST"
+                ]
+              }
+            ],
+            "head": {
+              "text": "Frame events compressed; one-frame velocity forecast, missing observation holds output"
+            }
+          }
+        }
+      ],
+      "purpose": "同色与尺寸门控的单球匀速关联；输出一帧预测框与中心，计数保持独立实测。",
+      "parameters": [
+        {
+          "name": "C_MAX_MOVE",
+          "default": 64,
+          "description": "预测残差窗；1..1024，速度限幅为两倍此值"
+        },
+        {
+          "name": "C_X_MIN / C_Y_MIN / C_X_END / C_Y_END",
+          "default": "0 / 0 / 4096 / 4096",
+          "description": "显示平移裁剪边界；runtime传入实际ROI"
+        }
+      ]
+    },
+    {
+      "name": "rgb96_pack128_valid",
+      "rtl_path": "rtl/rgb96_pack128_valid.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB group clock",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rst_n",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Asynchronous active-low reset",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rgb",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "Four RGB888 pixels in left-to-right MSB order",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Accepted four-pixel group",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_user",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Pixel-aligned SOF, not the independent early pulse",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_last",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Valid line-end group",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_done",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Valid frame-end group",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_data",
+            "direction": "output",
+            "width": 128,
+            "role": "native",
+            "description": "Ordered sixteen-byte DDR word",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Valid packed word",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_last",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Last packed word of line",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Last packed word of frame",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_error",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Sticky packing alignment error",
+            "clock_domain": "I_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "I_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "no memory reset",
+        "active": "none",
+        "synchronous": false
+      },
+      "behavior": [
+        "Reuse the original Anlogic application packer without semantic changes. Four valid 12-byte groups produce three ordered 16-byte words.",
+        "Invalid cycles retain byte remainder and packing phase. EOL/EOF must coincide with phase three."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_core.v:147-plus frames with split/hold100/dropout2/last column/BCD and byte ordering.",
+        "sim/tb_ball_runtime.v:28 frames with boundary commits and late-result rejection.",
+        "sim/tb_ball_hdmi.v:four complete720P frames and actual DDR capture."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "rgb96_pack128_valid interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Logical event order only. Internal multi-cycle/frame intervals are compressed; exact latency is specified in behavior, not inferred from this sketch.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "I_valid",
+                "wave": "0.10...."
+              },
+              {
+                "name": "O_valid",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "isp_top",
+      "rtl_path": "user_source/hdl_source/isp/isp_top.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_keys_n",
+            "direction": "input",
+            "width": "(3)-(0)+1",
+            "role": "native",
+            "description": "four original active-low board keys",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "axi4s_video_aclk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "Native application interface field axi4s_video_aclk; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "I_rst_n",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Native application interface field I_rst_n; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "I_tlast",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field I_tlast; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "I_tuser",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field I_tuser; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "I_tdata",
+            "direction": "input",
+            "width": "(39)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field I_tdata; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "I_tvalid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field I_tvalid; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "I_tdest",
+            "direction": "input",
+            "width": "(9)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field I_tdest; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "O_tready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field O_tready; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "O_tdata",
+            "direction": "output",
+            "width": "(127)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field O_tdata; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "O_tlast",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field O_tlast; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "O_tuser",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field O_tuser; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "O_tvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field O_tvalid; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "I_tready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Native application interface field I_tready; see module behavior and source connections",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "I_camera_status",
+            "direction": "input",
+            "width": 48,
+            "role": "native",
+            "description": "Coherent camera diagnostics: FPS BCD[11:0], exposure BCD[27:12], gain BCD[35:28], readback state[37:36], cfg[38], WB-ready[39]",
+            "clock_domain": "axi4s_video_aclk"
+          },
+          {
+            "name": "O_camera_step",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "One retained toggle per long press:bit0=D5 exposure,bit1=A9 gain; receiver uses two synchronizers and edge detection.",
+            "clock_domain": "axi4s_video_aclk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "axi4s_video_aclk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "I_rst_n",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Keep the original RAW10 demosaic and AWB path; instantiate axis_gamma_rgb96 between the actual AWB RGB96 output and ball_runtime.",
+        "Gamma applies the same one-clock registered delay to all RGB channels, valid, early and last. Its early remains an advance FIFO notification; the pixel-aligned SOF generated by ball_runtime stays private to the packer.",
+        "From the AWB boundary the gamma-plus-runtime pixel path has eight registered cycles and the independent early path has two. These values describe RTL stages, not measured board timing.",
+        "Camera status is coherent across domains; runtime freezes it at advance frame boundary before OSD. A fourth text row shows FPS/EXP/G/RB/WB/CAL without any extra video register stage.",
+        "Expose board-key long-press toggles without adding any video/early register stage. D5/A9 short requests commit on early after debounced release.",
+        "Gamma1plus runtime7gives8pixel stages after AWB; early still2stages. Original camera/DDR/HDMI ports and clocks preserved."
+      ],
+      "constraints": [
+        "Synthesizable Verilog-2001; Anlogic PH1P35MDG324/-3.",
+        "W is a multiple of16; projection Y coordinates are10bit, so H<=1023. Default1280x720.",
+        "No video ready/backpressure or frame-dropping substitution; detector faults do not alter video byte count.",
+        "Do not replace the advance I_tuser semantics with pixel-aligned SOF; video_in resets its asynchronous FIFO from the early notification. Camera register and ready wiring remain the baseline contract."
+      ],
+      "corner_cases": [
+        "Reset or configuration change has priority over old results.",
+        "Video invalid cycles must not advance pixel coordinates or packer phase.",
+        "Conveyor V1 requires disjoint X projections, one ball per gate and three clear gate frames."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_core.v:147-plus frames with split/hold100/dropout2/last column/BCD and byte ordering.",
+        "sim/tb_ball_runtime.v:28 frames with boundary commits and late-result rejection.",
+        "sim/tb_ball_hdmi.v:four complete720P frames and actual DDR capture.",
+        "sim/tb_ball_lowlight.v: instantiate the actual axis_gamma_rgb96 definition from this source and verify gamma, valid, early and last together.",
+        "sim/tb_ball_hdmi_lowlight.v: gamma plus runtime preserves four complete720P packed video frames. Native full-project synthesis/implementation is separate evidence.",
+        "sim/tb_ball_runtime.v checks status frame freeze; sim/tb_ball_hdmi_lowlight.v carries explicit FPS060 EXP0480 G16 RB1 WB1 through actual720P DDR capture."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "isp_top interface event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Logical event order only. Internal multi-cycle/frame intervals are compressed; exact latency is specified in behavior, not inferred from this sketch.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "axi4s_video_aclk",
+                "wave": "p......."
+              },
+              {
+                "name": "I_rst_n",
+                "wave": "01......"
+              },
+              {
+                "name": "I_tuser",
+                "wave": "0.10...."
+              },
+              {
+                "name": "O_tvalid",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ],
+      "purpose": "保持摄像头ISP及Gamma视频路径，转接相机状态与长按事件。",
+      "description": "保持摄像头ISP及Gamma视频路径，转接相机状态与长按事件。"
+    },
+    {
+      "name": "ball_white_balance",
+      "rtl_path": "rtl/ball_white_balance.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "CSI pixel-group clock",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "Four uncorrected demosaic RGB888 pixels",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Accepted four-pixel group",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_early",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Independent early frame boundary",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_gain_red",
+            "direction": "output",
+            "width": 20,
+            "role": "native",
+            "description": "Frame-frozen unsigned Q16 red gain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_gain_blue",
+            "direction": "output",
+            "width": 20,
+            "role": "native",
+            "description": "Frame-frozen unsigned Q16 blue gain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "At least one valid neutral estimate has been committed",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Statistics-only pipeline: capture RGB/flags, register per-lane neutral masks, register balanced four-lane sums. Accumulate and process the frame boundary3 clocks after input early. Existing AWB pixel output has its original50-cycle delay, so active gains settle before pixels. No RGB/valid/early video latency added.",
+        "All4 lanes contribute only if minRGB>=16, maxRGB<=224 and2*max<=3*min. At least64 neutral pixels are required.",
+        "Frame boundary snapshots previous-frame sums and starts a shared48-bit restoring division:48 cycles red, then48 cycles blue. Division truncates toward zero; clamp Q16 to32768..131072.",
+        "Completed red/blue estimates are committed together only at a subsequent three-cycle-delayed statistics early. Each gain advances by floor(abs(target-current)/4); no neutral samples holds previous gain. First frames use unity65536.",
+        "A busy divider does not restart at another early; stats for that frame still restart. early+valid includes its4 pixels in the new frame."
+      ],
+      "constraints": [
+        "Same CSI clock; no video data/marker latency changes.",
+        "32-bit sums support full1280x720 at8-bit channels;22-bit sample count."
+      ],
+      "corner_cases": [
+        "Reset clears pending work and diagnostics; no fabricated readback success.",
+        "No new video backpressure or external pins; count/tracking rules unchanged in this milestone."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_calibration.v:15 exact Python integer vectors, all4 lanes, frame freeze, neutral rejection,64-sample threshold and valid gaps."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "calibration_events",
+          "title": "ball_white_balance calibration event order",
+          "scenario": "compressed_event_order",
+          "description": "Logical sequence only; frame intervals and96 division cycles are compressed. Not a measured timing waveform.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_early",
+                "wave": "0.10...."
+              },
+              {
+                "name": "o_ready",
+                "wave": "x...3...",
+                "data": [
+                  "updated"
+                ]
+              }
+            ],
+            "head": {
+              "text": "Compressed logical order; see cycle contract"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ball_camera_monitor",
+      "rtl_path": "rtl/ball_camera_monitor.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_ref_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "23.809524MHz nominal reference",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "i_video_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "CSI byte clock",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Common asynchronous reset",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "i_frame",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "One CSI/raw frame-start pulse per actual input frame",
+            "clock_domain": "i_video_clk"
+          },
+          {
+            "name": "i_cfg_done",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Sensor initialization complete",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "i_read_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Completed six-register readback batch",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "i_read_match",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Readback matched accepted AE/AG snapshot",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "i_bus_error",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Sticky I2C bus error",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "i_read_exposure",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "Read exposure half-line count",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "i_read_gain",
+            "direction": "input",
+            "width": 24,
+            "role": "native",
+            "description": "Read3e09/3e06/3e07 register bytes",
+            "clock_domain": "i_ref_clk"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": 48,
+            "role": "native",
+            "description": "Coherent video-domain status snapshot",
+            "clock_domain": "i_video_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_ref_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "A video-domain toggle crosses2 reference synchronizers. Count real frame events over C_REF_CYCLES=23809524 reference cycles; report3-digit BCD fps, including an event on the window boundary.",
+        "Convert read exposure to4-digit BCD using existing16-cycle decimal formatter. Do not report RB1/2 until its conversion completes. Gain display recognizes exact4x/8x/16x/32x known register presets.",
+        "RB0=pending,1=read match,2=read mismatch,3=bus error. FPS is an input measurement against nominal reference, not HDMI refresh or exposure measurement.",
+        "Hold a48-bit source bus stable until a request/ack toggle round trip. Destination waits2 synchronizers plus1 settle cycle before sampling and acknowledging; source cannot overwrite unacknowledged data.",
+        "Status bits11:0 FPS,27:12 EXP,35:28 gain,37:36 RB,38 cfg. ISP supplies WB-ready at39. Runtime freezes the coherent bus at frame boundary."
+      ],
+      "constraints": [
+        "Source/destination share reset; source data is a held bundled-data handshake, not independent bit synchronizers.",
+        "Input frame-event spacing must exceed the reference synchronizer sampling interval."
+      ],
+      "corner_cases": [
+        "Reset clears pending work and diagnostics; no fabricated readback success.",
+        "No new video backpressure or external pins; count/tracking rules unchanged in this milestone."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_camera_monitor.v:unrelated clocks,7/0 frame events,read formatting,CDC and mismatch/error states."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "calibration_events",
+          "title": "ball_camera_monitor calibration event order",
+          "scenario": "compressed_event_order",
+          "description": "Logical sequence only; frame intervals and96 division cycles are compressed. Not a measured timing waveform.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_ref_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_read_valid",
+                "wave": "0.10...."
+              },
+              {
+                "name": "o_status",
+                "wave": "x...3...",
+                "data": [
+                  "updated"
+                ]
+              }
+            ],
+            "head": {
+              "text": "Compressed logical order; see cycle contract"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ae_set",
+      "rtl_path": "user_source/hdl_source/uiisp_beta/ae_set.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "23.809524MHz reference",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rst",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Asynchronous high reset",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_step",
+            "direction": "input",
+            "width": 2,
+            "role": "native",
+            "description": "Asynchronous retained long-press toggles from board key controller;bit0 exposure,bit1 gain.",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_ae_cfg_done",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Previous AE write/read batch complete",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_cam_cfg_done",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Camera initialization complete",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_ae_req",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "One-clock request; fields then held until complete",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_ae",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "Requested exposure half-lines",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_ag",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "Gain control for original SC520 table",
+            "clock_domain": "I_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "I_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "I_rst",
+        "active": "high",
+        "synchronous": false
+      },
+      "behavior": [
+        "Synchronize retained I_step through two I_clk registers, compare to consumed value, and step each profile once per changed bit. No physical N2/J14 button dependency.",
+        "Exposure cycles1991,480,240,120; nominal60fps/VTS1000 correspond16.59,4,2,1ms. Display actual register ticks instead of claiming measured milliseconds.",
+        "Gain control cycles144,176,80,112 corresponding16x,32x,4x,8x. Default remains1991/144. Reset output1990/17 intentionally triggers initial default application.",
+        "Queue latest profiles while sensor is busy. Update AE/AG outputs and issue1-clock request only when initialization and prior transaction done; fields stay stable throughout transaction."
+      ],
+      "constraints": [
+        "Only existing two camera pins are remapped; four application keys unchanged.",
+        "Use calibration while conveyor is stopped; clear app history after changing camera settings.",
+        "Same asynchronous reset asserted in source and receiver. Source toggles spaced about1second apart, far longer than synchronizer latency. I_step is an event toggle, not an active-low level."
+      ],
+      "corner_cases": [
+        "Reset clears pending work and diagnostics; no fabricated readback success.",
+        "No new video backpressure or external pins; count/tracking rules unchanged in this milestone."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_calibration.v:initial request,queued changes,long press,all exposure/gain wrap cases.",
+        "tb_ball_board_keys with unrelated10ns video/14ns reference clocks; long release does not change app state."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "toggle_cdc",
+          "title": "Long event into camera clock",
+          "scenario": "toggle_cdc",
+          "description": "Two synchronizers then consumed-event comparison; request follows decoded profile when camera idle.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "I_step[0]",
+                "wave": "0.1......."
+              },
+              {
+                "name": "reg_sync_first[0]",
+                "wave": "0..1......"
+              },
+              {
+                "name": "reg_sync_second[0]",
+                "wave": "0...1....."
+              },
+              {
+                "name": "reg_seen[0]",
+                "wave": "0....1...."
+              },
+              {
+                "name": "O_ae_req",
+                "wave": "0.....10.."
+              }
+            ]
+          }
+        }
+      ],
+      "purpose": "接收长按事件并在I2C空闲时提交最新曝光和增益档位。",
+      "description": "接收长按事件并在I2C空闲时提交最新曝光和增益档位。"
+    },
+    {
+      "name": "uicfgcs520",
+      "rtl_path": "user_source/hdl_source/uics520_cfg/uicfgcs520.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "Reference clock",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rst_n",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Delayed camera power-up reset",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_ae_req",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Accept AE request only in idle",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_ae",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "Requested exposure snapshot",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_ag",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "Gain-table control snapshot",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_cam_scl",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Original I2C clock",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "IO_cam_sda",
+            "direction": "inout",
+            "width": 1,
+            "role": "native",
+            "description": "Original open-drain SDA",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_cfg_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Factory initialization complete",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_ae_cfg_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "AE write and readback complete",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_sensor_id",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "Read3107/3108 ID",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_sensor_id_ok",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Acceptedee4b/9e4b ID",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_iic_error",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Sticky bus ACK error",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_read_exposure",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "Assembled3e00/01/02 exposure",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_read_gain",
+            "direction": "output",
+            "width": 24,
+            "role": "native",
+            "description": "Assembled3e09/06/07 gain",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_read_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Readback batch completed",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_read_match",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Read values match snapshot without transaction fault",
+            "clock_domain": "I_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "I_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "I_rst_n",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Original sensor ID,initialization table,5ms reset delay,group-hold write table and actual uii2c master are retained.",
+        "At accepted AE request snapshot exposure and converted gain bytes; use snapshots for the full grouped write transaction.",
+        "After group release wait READ_WAIT_CYCLES=952381 reference clocks, nominal40ms, before six-register readback. Test delays sensor read visibility and proves omitting wait falsely mismatches. This is a conservative settling interval for the fixed720p60 mode, not a claim about undocumented sensor internals.",
+        "After8 AE table writes, read3e00,3e01,3e02,3e09,3e06,3e07 via actual repeated-start I2C reads. Assembled exposure uses only documented programmed bit fields.",
+        "O_ae_cfg_done stays low until all6 reads complete. Compare the final newly received gain byte together with prior bytes; mismatch must not report match.",
+        "A bus error is sticky and prevents this batch from matching; RB telemetry also reports bus error. No new sensor register addresses are written.",
+        "uii2c的5个原派生时钟过程改为I_clk正沿加scl_rise_ce/scl_fall_ce；分频器和SCL输出OFFSET不变，scl_clk只作数据状态，不驱动寄存器时钟。所有触发器使用42ns的I_clk参考时钟。",
+        "实际实例CLK_DIV=237：SCL_DIV=118，每119个I_clk周期翻转一次，完整采样周期238拍；23.809524MHz/238约为100.040kHz，保持原采样与输出相位。既有异步低有效复位分支优先于时钟使能。",
+        "若请求恰好由同一参考时钟上升沿产生，非阻塞赋值使主机可在下一次rise使能才接单，相比旧派生时钟实现最多晚一个I²C周期，约9.996微秒；调用方应保持请求直到busy响应。写字节、ACK/NACK、读回及repeated-start协议保持原约定。"
+      ],
+      "constraints": [
+        "I_ae_req is a1-cycle pulse while done; no requests accepted while busy.",
+        "RB match proves register read/write agreement, not actual optical exposure/brightness.",
+        "READ_WAIT_CYCLES must be1..1048576 for its20-bit counter."
+      ],
+      "corner_cases": [
+        "Reset clears pending work and diagnostics; no fabricated readback success.",
+        "No new video backpressure or external pins; count/tracking rules unchanged in this milestone."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_camera_i2c.v:actual uii2c and open-drain byte BFM,ID/table,5 exposure/gain requests,read mismatch,recovery and injected address NACK.",
+        "No-settle negative control compiles0 and sim exits1 at default readback check; positive wait passes."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "calibration_events",
+          "title": "uicfgcs520 calibration event order",
+          "scenario": "compressed_event_order",
+          "description": "Logical sequence only; frame intervals and96 division cycles are compressed. Not a measured timing waveform.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "I_ae_req",
+                "wave": "0.10...."
+              },
+              {
+                "name": "O_read_match",
+                "wave": "x...3...",
+                "data": [
+                  "updated"
+                ]
+              }
+            ],
+            "head": {
+              "text": "Compressed logical order; see cycle contract"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "awb",
+      "rtl_path": "user_source/hdl_source/awb.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "CSI clock",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rst_n",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Active-low reset",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_tlast",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Legacy input end-of-line",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_tuser",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Advance frame notification",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_tdata",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "Four RGB888 pixels",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_tvalid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Input group valid",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_tready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained ready forwarding",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_tlast",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Original regenerated output line tail",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_tuser",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Direct original early notification",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_tdata",
+            "direction": "output",
+            "width": 96,
+            "role": "native",
+            "description": "Original Q16 saturated per-lane gain output",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_tvalid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Original delayed group valid",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_tready",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "Retained ready input",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_wb_ready",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Neutral WB estimate has been committed",
+            "clock_domain": "I_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "I_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "I_rst_n",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Original input-register block,signal_delay instance with50-cycle setting,post-register/multiply/output section are retained as exact LF-normalized text; see reports/awb_preserved_sections.json.",
+        "Replace prefix-gray-world streaming divider gains with ball_white_balance. Preserve all video byte ordering,original saturation,valid generation,line tail and direct early forwarding.",
+        "All gains are constant between early boundaries. First neutral estimate takes up to two subsequent frame boundaries; no neutral samples preserves existing gains."
+      ],
+      "constraints": [
+        "Fullboard width1280,height720. Retain original signal_delay width/line blanking requirements.",
+        "Do not replace early with pixel-aligned SOF."
+      ],
+      "corner_cases": [
+        "Reset clears pending work and diagnostics; no fabricated readback success.",
+        "No new video backpressure or external pins; count/tracking rules unchanged in this milestone."
+      ],
+      "verification_cases": [
+        "sim/tb_ball_calibration.v verifies actual gain controller.",
+        "sim/tb_ball_awb.v is provided for a vendor-compatible simulator; local Icarus cannot read encrypted PH1P_LOGIC_ERAM model. This test is NOT reported as passed.",
+        "Native full-project Anlogic elaboration/synthesis verifies actual retained RAM binding."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "calibration_events",
+          "title": "awb calibration event order",
+          "scenario": "compressed_event_order",
+          "description": "Logical sequence only; frame intervals and96 division cycles are compressed. Not a measured timing waveform.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "I_tuser",
+                "wave": "0.10...."
+              },
+              {
+                "name": "O_wb_ready",
+                "wave": "x...3...",
+                "data": [
+                  "updated"
+                ]
+              }
+            ],
+            "head": {
+              "text": "Compressed logical order; see cycle contract"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "design_top_wrapper",
+      "rtl_path": "user_source/hdl_source/design_top_wrapper.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_keys_n",
+            "direction": "input",
+            "width": 4,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "I_sys_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "I_rst_n",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "O_cam_scl",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "IO_cam_sda",
+            "direction": "inout",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "O_cam_24m",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "O_cam_rst",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "I_button",
+            "direction": "inout",
+            "width": 2,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "O_screen_pwm",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "O_tmds_ch0_p",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "O_tmds_ch1_p",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "O_tmds_ch2_p",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "O_tmds_clk_p",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "IO_rx_clk_pad_n",
+            "direction": "inout",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "IO_rx_clk_pad_p",
+            "direction": "inout",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "IO_rx_data_pad_n",
+            "direction": "inout",
+            "width": 4,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "IO_rx_data_pad_p",
+            "direction": "inout",
+            "width": 4,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_addr",
+            "direction": "output",
+            "width": 13,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_ba",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_cke",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_odt",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_cs_n",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_ras_n",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_cas_n",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_we_n",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_ck_p",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_ck_n",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_dm",
+            "direction": "inout",
+            "width": 2,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_dq",
+            "direction": "inout",
+            "width": 16,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_dqs_p",
+            "direction": "inout",
+            "width": 2,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          },
+          {
+            "name": "ddr_dqs_n",
+            "direction": "inout",
+            "width": 2,
+            "role": "native",
+            "description": "Retained board port; pin assignment unchanged",
+            "clock_domain": "I_sys_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "I_sys_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "I_rst_n",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "All physical ports,pins,PLLs,DDR/MIPI/HDMI protocols unchanged.",
+        "Connect six-register camera readback to reference-domain monitor and coherent video-domain status to ISP.",
+        "Raw10 frame-start event,not HDMI vsync,feeds actual input-fps counting. Route board-key long event from runtime through ISP to ae_set camera-reference synchronizers. N2/J14 expansion GPIO remain unused; physical ports and constraints preserved.",
+        "HDMI像素时钟域的S_video_out_vsync先经S_ddr_clk域两级寄存器S_dbg_frame_vsync_sync同步，再由第2级清理DDR读请求与读有效的调试粘滞标志；不再直接用异步HDMI电平控制DDR域调试寄存器。两级寄存器保持原S_video_out_rst_n异步低有效复位；只改变调试观测，视频/DDR传输接口不变。"
+      ],
+      "constraints": [
+        "Nominal23.809524MHz clock is the FPS time reference; actual oscillator tolerance is outside simulation.",
+        "原有ADC引脚约束保留。相机I²C主机改用pll_clk_24m正沿及rise/fall时钟使能，内部scl_clk仅为分频状态；SDC已删除cam_i2c_scl生成时钟，相关寄存器按42ns参考时钟检查。仅对两个已核实的FIFO时钟域对设置四条datapath-only最大延时预算，保留DDR IP灰码指针约束；实际约束覆盖与时序结论以本轮报告为准。"
+      ],
+      "corner_cases": [
+        "Reset clears pending work and diagnostics; no fabricated readback success.",
+        "No new video backpressure or external pins; count/tracking rules unchanged in this milestone."
+      ],
+      "verification_cases": [
+        "Anlogic full-project synthesis/place-route and source/pin manifest.",
+        "Component I2C,CDC,WB and complete720P application testbenches cover internal changes; no physical board programming performed by agent."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "calibration_events",
+          "title": "design_top_wrapper calibration event order",
+          "scenario": "compressed_event_order",
+          "description": "Logical sequence only; frame intervals and96 division cycles are compressed. Not a measured timing waveform.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_sys_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "I_keys_n",
+                "wave": "0.10...."
+              },
+              {
+                "name": "ddr_ck_n",
+                "wave": "x...3...",
+                "data": [
+                  "updated"
+                ]
+              }
+            ],
+            "head": {
+              "text": "Compressed logical order; see cycle contract"
+            }
+          }
+        }
+      ],
+      "purpose": "保留实体接口和时钟，连接视频域按键事件与参考时钟域相机配置。",
+      "description": "保留实体接口和时钟，连接视频域按键事件与参考时钟域相机配置。"
+    },
+    {
+      "name": "ball_component_store",
+      "rtl_path": "rtl/ball_component_store.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_enable",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "perform one synchronous column-memory read",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_address",
+            "direction": "input",
+            "width": "(C_ADDR_BITS-1)-(0)+1",
+            "role": "native",
+            "description": "column group address selected within one lane/frame bank",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_enable",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "perform one synchronous column-memory write",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_address",
+            "direction": "input",
+            "width": "(C_ADDR_BITS-1)-(0)+1",
+            "role": "native",
+            "description": "address delayed from the accepted capture read",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_write_data",
+            "direction": "input",
+            "width": "C_DATA_BITS",
+            "role": "native",
+            "description": "Parameterized stored word",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_read_data",
+            "direction": "output",
+            "width": "C_DATA_BITS",
+            "role": "native",
+            "description": "Parameterized stored word",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "no memory reset",
+        "active": "none",
+        "synchronous": false
+      },
+      "behavior": [
+        "One enabled synchronous read and independent enabled write; read output is registered. No memory-array reset.",
+        "Caller establishes initialized entries by capture overwrite or queue push before read. Same-address read/write is not used as write-through evidence."
+      ],
+      "constraints": [
+        "C_DEPTH>=1, C_DATA_BITS>=1, C_DEPTH<=2^C_ADDR_BITS. Native Anlogic inference must be checked in actual synthesis reports."
+      ],
+      "corner_cases": [
+        "Disabled read holds prior output. Contents/read output are unspecified until initialized; callers must not consume them early."
+      ],
+      "verification_cases": [
+        "Actual detector tests exercise all RAM roles, valid bubbles, frame reuse and queue wrap/overflow."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "event_order",
+          "title": "Synchronous memory event order",
+          "scenario": "compressed_event_sequence",
+          "description": "Logical event order only. Internal multi-cycle/frame intervals are compressed; exact latency is specified in behavior, not inferred from this sketch.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p......."
+              },
+              {
+                "name": "i_read_enable",
+                "wave": "0.10...."
+              },
+              {
+                "name": "o_read_data",
+                "wave": "0...10.."
+              }
+            ],
+            "head": {
+              "text": "Compressed functional event order; not measured timing"
+            }
+          }
+        }
+      ],
+      "purpose": "按使能同步读写的参数化ERAM推断存储，复用于单元、行统计和队列。",
+      "description": "按使能同步读写的参数化ERAM推断存储，复用于单元、行统计和队列。"
+    },
+    {
+      "name": "ball_components",
+      "rtl_path": "rtl/ball_components.v",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "AWB pixel-group clock, same S_csi_rx_clk domain",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "asynchronous active-low reset",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "valid pixel group or candidate pulse; no video backpressure",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "first valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "last valid group of a frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_x; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y",
+            "direction": "input",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_y; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_labels",
+            "direction": "input",
+            "width": "(7)-(0)+1",
+            "role": "native",
+            "description": "four exclusive two-bit labels, lane zero in bits 1:0; 0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_gate_hits",
+            "direction": "input",
+            "width": "(2)-(0)+1",
+            "role": "native",
+            "description": "Native application interface field i_gate_hits; see module behavior and source connections",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_epoch",
+            "direction": "input",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "configuration generation captured with frame statistics",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frame_start",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "start collecting metadata for a completed capture frame scan",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_candidate_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "one candidate on this clock; frame_done follows all candidates",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_color",
+            "direction": "output",
+            "width": "(1)-(0)+1",
+            "role": "native",
+            "description": "0 unknown,1 red,2 yellow,3 green",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_area",
+            "direction": "output",
+            "width": "(19)-(0)+1",
+            "role": "native",
+            "description": "number of classified pixels in the candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_min",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive left edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_max",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive right edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_min",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive top edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_max",
+            "direction": "output",
+            "width": "(11)-(0)+1",
+            "role": "native",
+            "description": "inclusive bottom edge of candidate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frame_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "complete statistics pulse, including frames with no candidates",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_gate_pixels",
+            "direction": "output",
+            "width": "(19)-(0)+1",
+            "role": "native",
+            "description": "classified raw pixel count in the full rectangular counting gate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_epoch",
+            "direction": "output",
+            "width": "(15)-(0)+1",
+            "role": "native",
+            "description": "configuration generation captured with frame statistics",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_overflow",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "more than eight accepted segments in this frame",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "dropped or overlapping statistics event; must not count as empty gate",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "sticky video/statistics protocol diagnostic",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_count",
+            "direction": "output",
+            "width": 4,
+            "role": "native",
+            "description": "Accepted candidate count, <=8",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_width",
+            "direction": "output",
+            "width": 12,
+            "role": "native",
+            "description": "Width of the largest completed same-color region",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_height",
+            "direction": "output",
+            "width": 12,
+            "role": "native",
+            "description": "Height of the largest completed same-color region",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_area",
+            "direction": "output",
+            "width": 20,
+            "role": "native",
+            "description": "Retained winning-color pixel area of the largest region",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_fill",
+            "direction": "output",
+            "width": 7,
+            "role": "native",
+            "description": "Floor of 100*area/bbox_area, 0..100",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_reject",
+            "direction": "output",
+            "width": 4,
+            "role": "native",
+            "description": "Rejection bitmask:1 area,2 dimensions,4 aspect,8 fill",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_gate_occupied",
+            "direction": "output",
+            "width": 1,
+            "clock_domain": "i_clk",
+            "role": "native",
+            "description": "Completed-frame gate footprint: at least one same-color connected region with classified area >= C_MIN_AREA and bbox overlapping [C_GATE_MIN,C_GATE_END), including shape/size-rejected regions. Read only with frame_done/epoch; overflow/fault has priority."
+          }
+        ]
+      },
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "behavior": [
+        "Four labels per valid clock are accumulated into cropped 4x4 ROI cells. Retain the winning color only with >=4 pixels and >=75% of colored support. Store 2-bit color plus 5-bit winning count.",
+        "Synchronous row histogram RAM and two frame RAMs have no array reset. Each full capture overwrites every ROI cell; coordinates advance only with input valid.",
+        "Begin analysis after the last ROI cell write, not necessarily global EOF. Four-neighbor BFS clears each cell when queued, processes each retained cell once, and scans seeds in row-major order.",
+        "The 4096-entry queue is finite; queue overflow or >8 accepted regions sets frame overflow. All partial candidates become invalid at frame_done. Busy bank/request collision emits fault and sticky error.",
+        "Bounds cover occupied cells and clamp to ROI. Area sums winning-color pixels. Keep existing minimum area, size, 2:1 aspect and >=25% fill filters. Same-color touching objects remain merged.",
+        "All region statistics and largest-region diagnostics belong to one captured epoch. Fill is integer percentage from bounded repeated subtraction at the end of analysis.",
+        "Raw o_gate_pixels is unchanged. New o_gate_occupied resets on scan start, latches during ST_REGION_FILTER for a region area>=C_MIN_AREA and bbox gate overlap, irrespective of shape/size rejection. Isolated sub-threshold regions never add together to assert it. Gate Y equals ROI Y; runtime propagates gate X parameters."
+      ],
+      "constraints": [
+        "Anlogic PH1P35MDG324/-3, synthesizable Verilog-2001; no video backpressure or pixel-path latency change.",
+        "W>=16 and divisible by16; valid ROI within 12-bit image bounds. ROI cell count <=65536 and ROI pixel area <2^20. Default ROI64,160..1216,640 has34560 cells.",
+        "C_QUEUE_BITS>=1, default12; C_MAX_CANDIDATES in1..8. Four-connected cells quantize occupied-cell edges by up to3 pixels; support filtering may remove small tips.",
+        "Worst-case processing bound <=40*ROI_cells+128 clocks. At103.520MHz and720P60, default budget is1725333 clocks; measured stress traces are separate evidence. Dense frames may miss the immediately following display boundary.",
+        "C_GATE_MIN/C_GATE_END define gate X; gate Y is the whole ROI. Occupancy uses bounding-box intersection conservatively, not exact in-gate area. No new RAM/scan cycles/video pipeline stages."
+      ],
+      "corner_cases": [
+        "Partial first/last ROI cells and final incomplete image row must be written once.",
+        "Invalid bubbles do not duplicate gate counts or cell input. Raw gate occupancy remains unchanged.",
+        "A bad/overflow frame cannot provide new counting events or empty-gate evidence.",
+        "A cleared processing bank may only be reused after its job ends; dropped capture frames cannot overwrite it."
+      ],
+      "verification_cases": [
+        "sim/test_gate_recovery.py + tb_ball_gate_recovery.v:45frames; old frame6 staysGATE4/ERR2, new releases after3sparse128pxframes; rejected192pxregion holds, dropout/dedup/samecolor nextball, wrongcolor/overflow block.",
+        "Existing 16component masks, partialROI/queue/collision, 6frameoverflow,206framemotion,28frameruntime and720P60 budget rerun.",
+        "tb_ball_count_hdmi.v + check_count_hdmi.py:7full720Pframes, persistent sparse noise, yellow upstream/downstream counts1; actual capture and COUNT2 glyph."
+      ],
+      "timing_diagrams": [
+        {
+          "id": "roi_job",
+          "title": "ROI capture and region-result ordering",
+          "scenario": "compressed_event_order",
+          "description": "Compressed logical frame events only, not measured clock timing. Multicandidate frame blocks; three subsequent sparse-only complete frames release; two upstream matches then downstream count once. Rejected substantial regions hold occupied.",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "i_valid",
+                "wave": "01.01.0..."
+              },
+              {
+                "name": "o_frame_start",
+                "wave": "0....10..."
+              },
+              {
+                "name": "o_candidate_valid",
+                "wave": "0......10."
+              },
+              {
+                "name": "o_frame_done",
+                "wave": "0........1"
+              }
+            ],
+            "head": {
+              "text": "ROI completion -> bounded region processing -> complete result"
+            }
+          }
+        }
+      ],
+      "purpose": "二维同色区域与拒绝诊断；额外区分背景碎片和足够面积的疑似门占用。",
+      "description": "四像素采集与双帧4x4同色区域分离，输出有界候选及拒绝诊断。",
+      "parameters": [
+        {
+          "name": "C_WIDTH",
+          "default": 1280,
+          "description": "每行像素数，必须为16的倍数"
+        },
+        {
+          "name": "C_HEIGHT",
+          "default": 720,
+          "description": "帧有效像素行数"
+        },
+        {
+          "name": "C_X_MIN",
+          "default": 64,
+          "description": "ROI左边界，包含"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 160,
+          "description": "ROI上边界，包含"
+        },
+        {
+          "name": "C_X_END",
+          "default": 1216,
+          "description": "ROI右边界，不包含"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 640,
+          "description": "ROI下边界，不包含"
+        },
+        {
+          "name": "C_GATE_MIN",
+          "default": 544,
+          "description": "计数门左边界，包含；运行层传给占用检测"
+        },
+        {
+          "name": "C_GATE_END",
+          "default": 736,
+          "description": "计数门右边界，不包含；运行层传给占用检测"
+        },
+        {
+          "name": "C_MIN_AREA",
+          "default": 128,
+          "description": "连通区域有效同色像素最小面积，也用于疑似门占用"
+        },
+        {
+          "name": "C_MIN_SIZE",
+          "default": 12,
+          "description": "候选框宽高最小像素数"
+        },
+        {
+          "name": "C_MAX_SIZE",
+          "default": 384,
+          "description": "候选框宽高最大像素数"
+        },
+        {
+          "name": "C_MAX_CANDIDATES",
+          "default": 8,
+          "description": "每帧可接受候选上限，超限整帧无效"
+        },
+        {
+          "name": "C_QUEUE_BITS",
+          "default": 12,
+          "description": "四邻域队列地址位宽，深度为2的此值次方"
+        }
+      ]
+    }
+  ]
+}

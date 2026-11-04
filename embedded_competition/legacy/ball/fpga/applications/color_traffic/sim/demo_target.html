@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>SC520 灯色测试靶</title>
+<style>
+body{margin:0;background:#101010;color:white;font:18px sans-serif;text-align:center}
+nav{padding:20px}button{font:inherit;margin:4px;padding:8px 18px;cursor:pointer}
+#lamp{width:240px;height:240px;border-radius:50%;background:#f00;margin:10vh auto;box-shadow:0 0 0 25px #000}
+p{color:#bbb} 
+</style>
+<nav><button data-color="#ff0000">1 红</button><button data-color="#ffff00">2 黄</button><button data-color="#00ff00">3 绿</button><button data-color="#0000ff">4 蓝</button><button data-color="#000000">5 熄灭</button><button data-color="#ffffff">6 白色干扰</button></nav>
+<div id="lamp"></div><p>摄像头对白框内的单个圆灯取景；按 1～6 换色。屏幕测试仅用于初步验证。</p>
+<script>
+const buttons=[...document.querySelectorAll('button')];
+buttons.forEach(b=>b.onclick=()=>document.getElementById('lamp').style.background=b.dataset.color);
+document.onkeydown=e=>{const n=Number(e.key);if(n>=1&&n<=6)buttons[n-1].click()};
+</script></html>

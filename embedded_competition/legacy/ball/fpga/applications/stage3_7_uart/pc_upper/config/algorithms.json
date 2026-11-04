@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "profile": "image_algorithms_v2",
+  "protocol_version": 2,
+  "baudrates": [
+    115200
+  ],
+  "modes": [
+    {
+      "id": "original",
+      "name": "0. 原图",
+      "english": "ORIGINAL",
+      "command": 0,
+      "description": "官方 ISP 原图（已包含 AWB 校正）；保留安路 logo 和模式说明",
+      "role": "source",
+      "description_pc": "上传图片RGB565展开/FPGA适配输出；保留安路logo和模式说明"
+    },
+    {
+      "id": "white_balance",
+      "name": "1. 白平衡",
+      "english": "WHITE BAL",
+      "command": 1,
+      "description": "已有自动白平衡 AWB；官方原图同样包含此校正，当前两者颜色一致",
+      "role": "algorithm",
+      "description_pc": "PC Image使用上传RGB565展开值，与原图相同；传感器AWB仅用于Camera"
+    },
+    {
+      "id": "binary",
+      "name": "2. 灰度二值化",
+      "english": "BINARY",
+      "command": 2,
+      "description": "灰度 Y=(77R+150G+29B)/256；Y≥128 输出白色，否则黑色",
+      "role": "algorithm"
+    },
+    {
+      "id": "median",
+      "name": "3. 中值滤波",
+      "english": "MEDIAN",
+      "command": 3,
+      "description": "3×3 灰度中值；精确取九个邻域像素的中间值",
+      "role": "algorithm"
+    },
+    {
+      "id": "edge",
+      "name": "4. 边缘检测",
+      "english": "SOBEL",
+      "command": 4,
+      "description": "Sobel 边缘；|Gx|+|Gy|≥128 输出白色",
+      "role": "algorithm"
+    },
+    {
+      "id": "sharpen",
+      "name": "5. 锐化",
+      "english": "SHARPEN",
+      "command": 5,
+      "description": "灰度锐化：5×中心−上−下−左−右，饱和到0～255",
+      "role": "algorithm"
+    },
+    {
+      "id": "gamma",
+      "name": "6. 伽马矫正",
+      "english": "GAMMA",
+      "command": 6,
+      "description": "RGB Gamma=0.7，256项查表，提升暗部",
+      "role": "algorithm"
+    },
+    {
+      "id": "contrast",
+      "name": "7. 对比度调节",
+      "english": "CONTRAST",
+      "command": 7,
+      "description": "RGB 对比度1.25倍，以128为中心，饱和到0～255",
+      "role": "algorithm"
+    },
+    {
+      "id": "brightness",
+      "name": "8. 亮度调节",
+      "english": "BRIGHTNESS",
+      "command": 8,
+      "description": "RGB 亮度加32，饱和到0～255",
+      "role": "algorithm"
+    },
+    {
+      "id": "saturation",
+      "name": "9. 饱和度调节",
+      "english": "SATURATION",
+      "command": 9,
+      "description": "饱和度1.5倍：Y+1.5×(RGB−Y)，饱和到0～255",
+      "role": "algorithm"
+    },
+    {
+      "id": "erode_dilate",
+      "name": "10. 腐蚀-膨胀",
+      "english": "ERODE-DILATE",
+      "command": 10,
+      "description": "灰度二值图，3×3全1结构元素，先腐蚀后膨胀",
+      "role": "algorithm"
+    },
+    {
+      "id": "dilate_erode",
+      "name": "11. 膨胀-腐蚀",
+      "english": "DILATE-ERODE",
+      "command": 11,
+      "description": "灰度二值图，3×3全1结构元素，先膨胀后腐蚀",
+      "role": "algorithm"
+    }
+  ]
+}

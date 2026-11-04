@@ -225,3 +225,7 @@ RTL 首版只接收一个作业的初态及 K 条动作序列，复用共享乘�
 有板卡后分别测计算核与包含传输、编码、游戏交互的端到端延迟。只有实测电源数据才报告实测能耗。ASIC 评估须先确定工艺库、角点、存储映射和真实约束；不会从 FPGA 工作量直接推断 ASIC 面积或功耗。
 
 推进顺序为 **M0 → M1 → M2 → M3 → M4 → M5 → M6**。每个小阶段验证后在当前分支提交并尝试正常推送，保留数据、权重和报告的版本关系；推送失败时明确区分本地提交与 GitHub 状态。
+
+## 嵌赛项目归档
+
+[embedded_competition](embedded_competition/README.md) 保存安路 FPGA 多算法视觉与彩球分检成品、独立计数/人脸/旋转/UART/交通灯工程、参考模型、报告及逐文件校验清单。原有世界模型内容保留；道路视觉 CNN 研究继续见 [work/roadyolo](https://github.com/lindenglizi-dev/magic-road/tree/work/roadyolo) 分支。归档中的仿真和物理实现证据不代表实板验收。

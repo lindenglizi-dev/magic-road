@@ -1,0 +1,647 @@
+{
+  "status": "external_reference_diagnostic_train_val_only_not_acceptance_not_rtl",
+  "scope": {
+    "dataset": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\road_roi_dataset_virat",
+    "splits_read": [
+      "train",
+      "val"
+    ],
+    "roi_source": "annotated",
+    "labels": [
+      "ped",
+      "vehicle"
+    ],
+    "test_blind_holdout": "rejected_by_fail_closed_path_and_manifest_guards",
+    "hyperparameter_tuning": false,
+    "test_evaluation": false
+  },
+  "sample_counts": {
+    "train": {
+      "total": 360,
+      "by_label": {
+        "ped": 160,
+        "vehicle": 200
+      },
+      "by_scene": {
+        "virat-ground-000201": 105,
+        "virat-ground-000206": 255
+      }
+    },
+    "val": {
+      "total": 69,
+      "by_label": {
+        "ped": 45,
+        "vehicle": 24
+      },
+      "by_scene": {
+        "virat-ground-000200": 33,
+        "virat-ground-000203": 36
+      }
+    }
+  },
+  "scene_split_contract": {
+    "train": [
+      "virat-ground-000201",
+      "virat-ground-000206"
+    ],
+    "val": [
+      "virat-ground-000200",
+      "virat-ground-000203"
+    ]
+  },
+  "preprocessing": {
+    "input": "stored 32x32 uint8 grayscale roi_path from road_roi_dataset_virat",
+    "additional_resize_or_color_conversion": "none beyond PIL conversion of stored L image to L",
+    "classifier_preprocessing": "StandardScaler fit on train only; folded coefficients exported for analysis"
+  },
+  "opencv_hog_explicit_parameters": {
+    "opencv_hog144": {
+      "win_size": [
+        32,
+        32
+      ],
+      "block_size": [
+        16,
+        16
+      ],
+      "block_stride": [
+        8,
+        8
+      ],
+      "cell_size": [
+        8,
+        8
+      ],
+      "deriv_aperture": 1,
+      "win_sigma": 4.0,
+      "histogram_norm_type": "L2Hys",
+      "l2_hys_threshold": 0.2,
+      "gamma_correction": false,
+      "nlevels": 64,
+      "signed_gradient": false,
+      "compute_win_stride": [
+        0,
+        0
+      ],
+      "compute_padding": [
+        0,
+        0
+      ],
+      "nbins": 4,
+      "descriptor_size": 144
+    },
+    "opencv_hog324": {
+      "win_size": [
+        32,
+        32
+      ],
+      "block_size": [
+        16,
+        16
+      ],
+      "block_stride": [
+        8,
+        8
+      ],
+      "cell_size": [
+        8,
+        8
+      ],
+      "deriv_aperture": 1,
+      "win_sigma": 4.0,
+      "histogram_norm_type": "L2Hys",
+      "l2_hys_threshold": 0.2,
+      "gamma_correction": false,
+      "nlevels": 64,
+      "signed_gradient": false,
+      "compute_win_stride": [
+        0,
+        0
+      ],
+      "compute_padding": [
+        0,
+        0
+      ],
+      "nbins": 9,
+      "descriptor_size": 324
+    }
+  },
+  "current_rtl64_contract": {
+    "implementation": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\tools\\hog_reference.py",
+    "implementation_sha256": "5774704ec4034e1a246e769de0a30debd4afb54ef0aecd8b943ec10754e07927",
+    "feature_dimension": 64,
+    "note": "Calls the existing bit-exact Sobel/bin/cell accumulation function; classifier remains a diagnostic float fit."
+  },
+  "models": {
+    "current_rtl64": {
+      "feature_dimension": 64,
+      "descriptor_stats": {
+        "train": {
+          "global_min": 0.0,
+          "global_max": 22482.0,
+          "global_mean": 1988.21953125,
+          "global_std": 2361.838834710427,
+          "zero_fraction": 0.11449652777777777
+        },
+        "val": {
+          "global_min": 0.0,
+          "global_max": 20812.0,
+          "global_mean": 1745.1979166666667,
+          "global_std": 2136.107735138574,
+          "zero_fraction": 0.1621376811594203
+        }
+      },
+      "metrics": {
+        "train": {
+          "accuracy": 0.9972222222222222,
+          "balanced_accuracy": 0.9975,
+          "confusion_matrix_truth_rows_pred_columns_labels_ped_vehicle": [
+            [
+              160,
+              0
+            ],
+            [
+              1,
+              199
+            ]
+          ],
+          "per_class": {
+            "ped": {
+              "precision": 0.9937888198757764,
+              "recall": 1.0,
+              "f1": 0.9968847352024922,
+              "support": 160
+            },
+            "vehicle": {
+              "precision": 1.0,
+              "recall": 0.995,
+              "f1": 0.9974937343358395,
+              "support": 200
+            }
+          },
+          "decision_score_by_true_class": {
+            "ped": {
+              "count": 160,
+              "min": -11.916593373746995,
+              "max": -0.5948834512383211,
+              "mean": -3.1200690710592207,
+              "median": -2.493594298224881
+            },
+            "vehicle": {
+              "count": 200,
+              "min": -0.39363713999312655,
+              "max": 11.823639830592167,
+              "mean": 4.040430763591952,
+              "median": 3.8934309190687264
+            }
+          },
+          "decision_score_semantics": "negative=ped, positive=vehicle; not a probability"
+        },
+        "val": {
+          "accuracy": 0.7391304347826086,
+          "balanced_accuracy": 0.8,
+          "confusion_matrix_truth_rows_pred_columns_labels_ped_vehicle": [
+            [
+              27,
+              18
+            ],
+            [
+              0,
+              24
+            ]
+          ],
+          "per_class": {
+            "ped": {
+              "precision": 1.0,
+              "recall": 0.6,
+              "f1": 0.75,
+              "support": 45
+            },
+            "vehicle": {
+              "precision": 0.5714285714285714,
+              "recall": 1.0,
+              "f1": 0.7272727272727273,
+              "support": 24
+            }
+          },
+          "decision_score_by_true_class": {
+            "ped": {
+              "count": 45,
+              "min": -8.3828159592355,
+              "max": 2.8717136178953773,
+              "mean": -0.7094608935364799,
+              "median": -0.22077889040514453
+            },
+            "vehicle": {
+              "count": 24,
+              "min": 1.3691145929410093,
+              "max": 9.45939379263761,
+              "mean": 5.883482569881738,
+              "median": 4.540215900967498
+            }
+          },
+          "decision_score_semantics": "negative=ped, positive=vehicle; not a probability"
+        }
+      },
+      "linear_svc": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "loss": "squared_hinge",
+        "penalty": "l2",
+        "dual": "auto",
+        "fit_intercept": true,
+        "random_state": 20260927,
+        "max_iter": 30000,
+        "n_iter": 20
+      }
+    },
+    "opencv_hog144": {
+      "feature_dimension": 144,
+      "descriptor_stats": {
+        "train": {
+          "global_min": 0.0,
+          "global_max": 0.4871925413608551,
+          "global_mean": 0.23753319672172057,
+          "global_std": 0.07677274923124994,
+          "zero_fraction": 0.0005787037037037037
+        },
+        "val": {
+          "global_min": 0.0,
+          "global_max": 0.4861908555030823,
+          "global_mean": 0.23983820525776736,
+          "global_std": 0.06925808192428559,
+          "zero_fraction": 0.0024154589371980675
+        }
+      },
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "confusion_matrix_truth_rows_pred_columns_labels_ped_vehicle": [
+            [
+              160,
+              0
+            ],
+            [
+              0,
+              200
+            ]
+          ],
+          "per_class": {
+            "ped": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "support": 160
+            },
+            "vehicle": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "support": 200
+            }
+          },
+          "decision_score_by_true_class": {
+            "ped": {
+              "count": 160,
+              "min": -6.688167987091879,
+              "max": -0.7545055322803947,
+              "mean": -2.5545552952936603,
+              "median": -2.2860883374447525
+            },
+            "vehicle": {
+              "count": 200,
+              "min": 0.5194141768691604,
+              "max": 6.305513022092582,
+              "mean": 2.3699210844903895,
+              "median": 2.027318624217712
+            }
+          },
+          "decision_score_semantics": "negative=ped, positive=vehicle; not a probability"
+        },
+        "val": {
+          "accuracy": 0.4782608695652174,
+          "balanced_accuracy": 0.5125,
+          "confusion_matrix_truth_rows_pred_columns_labels_ped_vehicle": [
+            [
+              18,
+              27
+            ],
+            [
+              9,
+              15
+            ]
+          ],
+          "per_class": {
+            "ped": {
+              "precision": 0.6666666666666666,
+              "recall": 0.4,
+              "f1": 0.5,
+              "support": 45
+            },
+            "vehicle": {
+              "precision": 0.35714285714285715,
+              "recall": 0.625,
+              "f1": 0.45454545454545453,
+              "support": 24
+            }
+          },
+          "decision_score_by_true_class": {
+            "ped": {
+              "count": 45,
+              "min": -4.673660923575646,
+              "max": 3.708023939200606,
+              "mean": 0.20243075580339306,
+              "median": 0.4508791747186456
+            },
+            "vehicle": {
+              "count": 24,
+              "min": -1.408683360354088,
+              "max": 5.455088753214647,
+              "mean": 1.3238113499376156,
+              "median": 1.248244048199187
+            }
+          },
+          "decision_score_semantics": "negative=ped, positive=vehicle; not a probability"
+        }
+      },
+      "linear_svc": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "loss": "squared_hinge",
+        "penalty": "l2",
+        "dual": "auto",
+        "fit_intercept": true,
+        "random_state": 20260927,
+        "max_iter": 30000,
+        "n_iter": 44
+      },
+      "fixed_point_feasibility": {
+        "status": "diagnostic_fixed_point_candidate_not_rtl_equivalence",
+        "runtime_scaler": "none; StandardScaler is algebraically folded into weights and bias",
+        "feature_format": {
+          "unsigned_storage_bits": 13,
+          "fraction_bits": 12,
+          "scale": 4096,
+          "rounding": "round-to-nearest-even via numpy.rint",
+          "saturation": "none needed for observed [0,1] descriptor contract"
+        },
+        "weight_format": {
+          "signed_bits": 16,
+          "scale": 3119.320964694778,
+          "rounding": "round-to-nearest-even via numpy.rint",
+          "max_abs_integer_weight": 32767
+        },
+        "quantized_bias": -89850715,
+        "worst_case_accumulator_abs_bound": 11888339126,
+        "worst_case_required_signed_accumulator_bits": 35,
+        "observed_max_abs_accumulator": 85505780,
+        "observed_required_signed_accumulator_bits": 28,
+        "splits": {
+          "train": {
+            "sample_count": 360,
+            "classification_mismatch_vs_float": 0,
+            "max_abs_score_error": 0.011048032589558665,
+            "mean_abs_score_error": 0.002615444889230611,
+            "integer_score_min": -85505780,
+            "integer_score_max": 80617109
+          },
+          "val": {
+            "sample_count": 69,
+            "classification_mismatch_vs_float": 0,
+            "max_abs_score_error": 0.008473295787519763,
+            "mean_abs_score_error": 0.0026783177677656227,
+            "integer_score_min": -59657767,
+            "integer_score_max": 69766435
+          }
+        },
+        "limitations": [
+          "The descriptor itself is still OpenCV floating-point HOG; only its output and linear model are quantized here.",
+          "No integer gradient, orientation interpolation, L2-Hys, reciprocal-square-root, rounding, or saturation implementation is defined.",
+          "The worst-case accumulator bound is conservative and assumes every feature reaches the storage maximum simultaneously.",
+          "These formats are feasibility evidence only and must not be presented as Python/RTL equivalence."
+        ]
+      }
+    },
+    "opencv_hog324": {
+      "feature_dimension": 324,
+      "descriptor_stats": {
+        "train": {
+          "global_min": 0.0,
+          "global_max": 0.6559028029441833,
+          "global_mean": 0.12868903277113847,
+          "global_std": 0.10548532007258232,
+          "zero_fraction": 0.020276063100137173
+        },
+        "val": {
+          "global_min": 0.0,
+          "global_max": 0.6225147247314453,
+          "global_mean": 0.12753181105127678,
+          "global_std": 0.10689519735262352,
+          "zero_fraction": 0.04043657183753802
+        }
+      },
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "confusion_matrix_truth_rows_pred_columns_labels_ped_vehicle": [
+            [
+              160,
+              0
+            ],
+            [
+              0,
+              200
+            ]
+          ],
+          "per_class": {
+            "ped": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "support": 160
+            },
+            "vehicle": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "support": 200
+            }
+          },
+          "decision_score_by_true_class": {
+            "ped": {
+              "count": 160,
+              "min": -3.4073231316672863,
+              "max": -0.9933225657750223,
+              "mean": -1.6972556581878677,
+              "median": -1.6273812978429993
+            },
+            "vehicle": {
+              "count": 200,
+              "min": 0.9696506330717056,
+              "max": 3.2521178903419146,
+              "mean": 1.6936155511536697,
+              "median": 1.5597081109667648
+            }
+          },
+          "decision_score_semantics": "negative=ped, positive=vehicle; not a probability"
+        },
+        "val": {
+          "accuracy": 0.927536231884058,
+          "balanced_accuracy": 0.9444444444444444,
+          "confusion_matrix_truth_rows_pred_columns_labels_ped_vehicle": [
+            [
+              40,
+              5
+            ],
+            [
+              0,
+              24
+            ]
+          ],
+          "per_class": {
+            "ped": {
+              "precision": 1.0,
+              "recall": 0.8888888888888888,
+              "f1": 0.9411764705882353,
+              "support": 45
+            },
+            "vehicle": {
+              "precision": 0.8275862068965517,
+              "recall": 1.0,
+              "f1": 0.9056603773584906,
+              "support": 24
+            }
+          },
+          "decision_score_by_true_class": {
+            "ped": {
+              "count": 45,
+              "min": -2.6062258929260325,
+              "max": 1.4344224075235017,
+              "mean": -0.9876963357603107,
+              "median": -1.0393143735683028
+            },
+            "vehicle": {
+              "count": 24,
+              "min": 1.3183237650769415,
+              "max": 2.7924674167185928,
+              "mean": 2.0636244150884937,
+              "median": 2.062906637951497
+            }
+          },
+          "decision_score_semantics": "negative=ped, positive=vehicle; not a probability"
+        }
+      },
+      "linear_svc": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "loss": "squared_hinge",
+        "penalty": "l2",
+        "dual": "auto",
+        "fit_intercept": true,
+        "random_state": 20260927,
+        "max_iter": 30000,
+        "n_iter": 15
+      },
+      "fixed_point_feasibility": {
+        "status": "diagnostic_fixed_point_candidate_not_rtl_equivalence",
+        "runtime_scaler": "none; StandardScaler is algebraically folded into weights and bias",
+        "feature_format": {
+          "unsigned_storage_bits": 13,
+          "fraction_bits": 12,
+          "scale": 4096,
+          "rounding": "round-to-nearest-even via numpy.rint",
+          "saturation": "none needed for observed [0,1] descriptor contract"
+        },
+        "weight_format": {
+          "signed_bits": 16,
+          "scale": 17998.609547359407,
+          "rounding": "round-to-nearest-even via numpy.rint",
+          "max_abs_integer_weight": 32767
+        },
+        "quantized_bias": -198291575,
+        "worst_case_accumulator_abs_bound": 17092089828,
+        "worst_case_required_signed_accumulator_bits": 35,
+        "observed_max_abs_accumulator": 251126986,
+        "observed_required_signed_accumulator_bits": 29,
+        "splits": {
+          "train": {
+            "sample_count": 360,
+            "classification_mismatch_vs_float": 0,
+            "max_abs_score_error": 0.0021643460708840045,
+            "mean_abs_score_error": 0.00045372332552552413,
+            "integer_score_min": -251126986,
+            "integer_score_max": 239681184
+          },
+          "val": {
+            "sample_count": 69,
+            "classification_mismatch_vs_float": 0,
+            "max_abs_score_error": 0.0015417963991156691,
+            "mean_abs_score_error": 0.000526412855649354,
+            "integer_score_min": -192151072,
+            "integer_score_max": 205814349
+          }
+        },
+        "limitations": [
+          "The descriptor itself is still OpenCV floating-point HOG; only its output and linear model are quantized here.",
+          "No integer gradient, orientation interpolation, L2-Hys, reciprocal-square-root, rounding, or saturation implementation is defined.",
+          "The worst-case accumulator bound is conservative and assumes every feature reaches the storage maximum simultaneously.",
+          "These formats are feasibility evidence only and must not be presented as Python/RTL equivalence."
+        ]
+      }
+    }
+  },
+  "inputs": {
+    "manifest": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\road_roi_dataset_virat\\manifest.csv",
+    "manifest_sha256": "ef4bd105844a11720ea07d504a6137132cce81ad62a77aba06f9d47b19ff666d",
+    "selected_roi_count": 429,
+    "selected_roi_receipt_sha256": "38753923892a6f49a27b35046a1c8d195e016c80566af806cf342dd7b461b59c",
+    "manifest_roi_hash_contract": "SHA256 of canonical 32x32 uint8 grayscale pixel payload",
+    "all_manifest_roi_pixel_payload_hashes_verified": true
+  },
+  "implementation": {
+    "script": "E:\\project\\qiansai\\anlogic_topic2_work\\lab1_sc500_road_vision\\external_reference_exploration\\opencv_hog_diagnostic.py",
+    "script_sha256": "0baf138faf66aea78dcc979d1a262b9c743684ba262b62b8619db988ba4ff658",
+    "python": "3.13.12",
+    "opencv": "4.13.0",
+    "scikit_learn": "1.9.0",
+    "numpy": "2.4.6",
+    "pillow": "12.3.0"
+  },
+  "licenses": {
+    "OpenCV": {
+      "license": "Apache-2.0 for OpenCV 4.x",
+      "url": "https://github.com/opencv/opencv/blob/4.x/LICENSE"
+    },
+    "scikit-learn": {
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/scikit-learn/scikit-learn/blob/main/COPYING"
+    },
+    "NumPy": {
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/numpy/numpy/blob/main/LICENSE.txt"
+    },
+    "Pillow": {
+      "license": "HPND",
+      "url": "https://github.com/python-pillow/Pillow/blob/main/LICENSE"
+    }
+  },
+  "artifacts": {
+    "predictions": "predictions.csv",
+    "failures": "failures.csv",
+    "stratified_metrics": "stratified_metrics.csv",
+    "feature_ranges": "feature_ranges.csv",
+    "model_parameters": "model_parameters.json"
+  },
+  "limitations": [
+    "This run uses only 429 sparsely sampled annotated VIRAT ROIs from four scenes and is not a formal model acceptance result.",
+    "The validation scenes are independent of the train scenes, but both belong to one dataset family and one camera-domain family.",
+    "OpenCV HOG is a floating-point external reference; its orientation interpolation and L2-Hys path are not bit-exact models of current RTL.",
+    "The current_rtl64 descriptor is bit-exact, but the fitted StandardScaler/LinearSVC in this experiment is not the production quantized SVM.",
+    "Very small distant pedestrians contain only a few analysis pixels; a richer descriptor cannot reconstruct missing spatial detail.",
+    "No invalid-candidate rejection, CCL candidate boxes, threshold tuning, test split, blind reserve, or holdout is evaluated.",
+    "Decision scores are margins and are not probabilities.",
+    "No RTL, ROM, HDL parameters, or claim of Python/RTL classification equivalence is produced."
+  ]
+}

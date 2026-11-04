@@ -1,0 +1,27 @@
+{
+  "name": "tiny_face_classifier_v1",
+  "purpose": "template for face or identity classification after FPGA ROI extraction",
+  "input": {
+    "shape": [1, 32, 32],
+    "layout": "CHW",
+    "dtype": "uint8",
+    "zero_point": 128
+  },
+  "weight_layout": "OIHW",
+  "layers": [
+    {"name": "conv1", "op": "conv2d", "in_channels": 1, "out_channels": 8, "kernel": 3, "stride": 1, "padding": 1},
+    {"name": "relu1", "op": "relu"},
+    {"name": "pool1", "op": "maxpool2d", "kernel": 2, "stride": 2},
+    {"name": "conv2", "op": "conv2d", "in_channels": 8, "out_channels": 16, "kernel": 3, "stride": 1, "padding": 1},
+    {"name": "relu2", "op": "relu"},
+    {"name": "pool2", "op": "maxpool2d", "kernel": 2, "stride": 2},
+    {"name": "conv3", "op": "conv2d", "in_channels": 16, "out_channels": 16, "kernel": 3, "stride": 1, "padding": 1},
+    {"name": "relu3", "op": "relu"},
+    {"name": "gap", "op": "global_average_pool"},
+    {"name": "fc", "op": "linear", "in_features": 16, "out_features": 5}
+  ],
+  "result": {
+    "class_zero": "unknown_or_non_face",
+    "registered_person_ids": [1, 2, 3, 4]
+  }
+}

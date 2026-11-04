@@ -1,0 +1,3289 @@
+{
+  "name": "ball_rotation",
+  "modules": [
+    {
+      "name": "ball_rotation_arithmetic",
+      "rtl_path": "rtl/ball_rotation_arithmetic.v",
+      "description": "Unsigned serial multiply and rounded restoring divide",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "统计运算时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "异步低有效复位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "撤销正在执行的运算",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "空闲时提交运算",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_divide",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "为高执行除法，为低执行截断乘法",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_round",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "除法按最近整数舍入",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_left",
+            "direction": "input",
+            "width": "C_BITS",
+            "role": "native",
+            "description": "被除数或第一乘数",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_right",
+            "direction": "input",
+            "width": "C_BITS",
+            "role": "native",
+            "description": "除数或第二乘数",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "正在占用串行运算器",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "结果完成脉冲",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "本次除数为零",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_result",
+            "direction": "output",
+            "width": "C_BITS",
+            "role": "native",
+            "description": "无符号结果或低位乘积",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock_reset": {
+        "clock": "i_clk",
+        "reset": "i_rstn",
+        "reset_polarity": "active_low",
+        "reset_type": "asynchronous",
+        "soft_clear": "i_clear"
+      },
+      "behavior": "Unsigned serial multiply and rounded restoring divide",
+      "latency": "native start/done; no pixel backpressure",
+      "constraints": [
+        "Verilog-2001",
+        "single pixel-group clock domain",
+        "no array reset"
+      ],
+      "corner_cases": [
+        "clear aborts work",
+        "missing sample invalidates RPM",
+        "overflow fails closed"
+      ],
+      "verification_cases": [
+        "Python integer vectors",
+        "source-frame matching",
+        "reset and invalid input"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_start",
+                "wave": "010..."
+              },
+              {
+                "name": "o_busy",
+                "wave": "01..0."
+              },
+              {
+                "name": "o_done",
+                "wave": "0...10"
+              }
+            ]
+          }
+        }
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "soft_clear": "i_clear"
+      },
+      "parameters": [
+        {
+          "name": "C_BITS",
+          "default": 96,
+          "description": "无符号运算宽度；质心实例为32"
+        }
+      ]
+    },
+    {
+      "name": "ball_rotation_angle",
+      "rtl_path": "rtl/ball_rotation_angle.v",
+      "description": "Sixteen-iteration image-coordinate CORDIC phase",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "向量计算时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "异步低有效复位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "撤销尚未完成的角度",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "空闲时提交相对向量",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_dx",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "有符号Q4水平位移",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_dy",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "有符号Q4垂直位移",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "CORDIC正在迭代",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "本次向量处理结束",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "非零向量角度有效",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_phase",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "65536表示一圈的相位",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock_reset": {
+        "clock": "i_clk",
+        "reset": "i_rstn",
+        "reset_polarity": "active_low",
+        "reset_type": "asynchronous",
+        "soft_clear": "i_clear"
+      },
+      "behavior": "Sixteen-iteration image-coordinate CORDIC phase",
+      "latency": "native start/done; no pixel backpressure",
+      "constraints": [
+        "Verilog-2001",
+        "single pixel-group clock domain",
+        "no array reset"
+      ],
+      "corner_cases": [
+        "clear aborts work",
+        "missing sample invalidates RPM",
+        "overflow fails closed"
+      ],
+      "verification_cases": [
+        "Python integer vectors",
+        "source-frame matching",
+        "reset and invalid input"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_start",
+                "wave": "010..."
+              },
+              {
+                "name": "o_busy",
+                "wave": "01..0."
+              },
+              {
+                "name": "o_done",
+                "wave": "0...10"
+              }
+            ]
+          }
+        }
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "soft_clear": "i_clear"
+      },
+      "parameters": []
+    },
+    {
+      "name": "ball_rotation_capture",
+      "rtl_path": "rtl/ball_rotation_capture.v",
+      "description": "Four-pixel grayscale capture with frame-tagged dual banks",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "像素组时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "异步低有效复位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "撤销采集并释放bank",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_enable",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "允许本次采集",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "四个连续RGB像素",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "当前像素组有效",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "源帧首个有效像素组",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "左侧像素横坐标",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "当前行号",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame",
+            "direction": "input",
+            "width": 32,
+            "role": "native",
+            "description": "采集源帧编号",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tick",
+            "direction": "input",
+            "width": 64,
+            "role": "native",
+            "description": "该源帧SOF时间",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_epoch",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "该源帧配置代次",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_window_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "窗口来自已完成追踪结果",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_window_x",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "四像素对齐的采集左边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_window_y",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "两行对齐的采集上边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_release",
+            "direction": "input",
+            "width": 2,
+            "role": "native",
+            "description": "每一位释放对应bank",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "处理支路请求同步读",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_bank",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "处理bank选择",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_address",
+            "direction": "input",
+            "width": 13,
+            "role": "native",
+            "description": "两个灰度单元组成一字的地址",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_read_data",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "请求后一个时钟返回两个灰度",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "bank从采集到释放一直占用",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_ready",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "完整采集的bank",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frames",
+            "direction": "output",
+            "width": 64,
+            "role": "native",
+            "description": "两个bank的源帧编号",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_ticks",
+            "direction": "output",
+            "width": 128,
+            "role": "native",
+            "description": "两个bank的采集时刻",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_epochs",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "两个bank的代次",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_origins_x",
+            "direction": "output",
+            "width": 24,
+            "role": "native",
+            "description": "两个bank的窗口左边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_origins_y",
+            "direction": "output",
+            "width": 24,
+            "role": "native",
+            "description": "两个bank的窗口上边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_overrun",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "SOF请求的bank仍被占用",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock_reset": {
+        "clock": "i_clk",
+        "reset": "i_rstn",
+        "reset_polarity": "active_low",
+        "reset_type": "asynchronous",
+        "soft_clear": "i_clear"
+      },
+      "behavior": "Four-pixel grayscale capture with frame-tagged dual banks",
+      "latency": "native start/done; no pixel backpressure",
+      "constraints": [
+        "Verilog-2001",
+        "single pixel-group clock domain",
+        "no array reset"
+      ],
+      "corner_cases": [
+        "clear aborts work",
+        "missing sample invalidates RPM",
+        "overflow fails closed"
+      ],
+      "verification_cases": [
+        "Python integer vectors",
+        "source-frame matching",
+        "reset and invalid input"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_valid",
+                "wave": "01..0."
+              },
+              {
+                "name": "i_sof",
+                "wave": "010..."
+              },
+              {
+                "name": "o_busy",
+                "wave": "01...0"
+              },
+              {
+                "name": "o_ready",
+                "wave": "0..1.0"
+              },
+              {
+                "name": "i_release",
+                "wave": "0...10"
+              }
+            ]
+          }
+        }
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "soft_clear": "i_clear"
+      },
+      "parameters": []
+    },
+    {
+      "name": "ball_rotation_meter",
+      "rtl_path": "rtl/ball_rotation_meter.v",
+      "description": "Frame-timestamped integer least-squares RPM and directional turns",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "串行统计时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "异步低有效复位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "清除旋转参考及圈数",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "失效闭锁并冻结已有圈数",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "空闲时提交一帧观测",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "本帧相位有效",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_new_target",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "该事务建立新的目标参考",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_phase",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "图像内顺时针圈相位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tick",
+            "direction": "input",
+            "width": 64,
+            "role": "native",
+            "description": "源帧SOF时间戳",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "统计事务尚未完成",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "整包统计结果完成",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_angle_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "本帧角度有效",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_phase",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "本帧冻结相位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rpm_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "历史窗口足以测量转速",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rpm",
+            "direction": "output",
+            "width": 24,
+            "role": "native",
+            "description": "有符号转速，单位零点一RPM",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": 3,
+            "role": "native",
+            "description": "等待采集预热顺转逆转停止丢失故障",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_net",
+            "direction": "output",
+            "width": 48,
+            "role": "native",
+            "description": "有符号累计相位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_cw",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "连续顺转段完成整圈数",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_ccw",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "连续逆转段完成整圈数",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_partial",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "观测曾经不连续",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_saturated",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "整圈计数达到上限",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "时间或数值合同失效",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock_reset": {
+        "clock": "i_clk",
+        "reset": "i_rstn",
+        "reset_polarity": "active_low",
+        "reset_type": "asynchronous",
+        "soft_clear": "i_clear"
+      },
+      "behavior": "Frame-timestamped integer least-squares RPM and directional turns",
+      "latency": "native start/done; no pixel backpressure",
+      "constraints": [
+        "Verilog-2001",
+        "single pixel-group clock domain",
+        "no array reset"
+      ],
+      "corner_cases": [
+        "clear aborts work",
+        "missing sample invalidates RPM",
+        "overflow fails closed"
+      ],
+      "verification_cases": [
+        "Python integer vectors",
+        "source-frame matching",
+        "reset and invalid input"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_start",
+                "wave": "010..."
+              },
+              {
+                "name": "o_busy",
+                "wave": "01..0."
+              },
+              {
+                "name": "o_done",
+                "wave": "0...10"
+              }
+            ]
+          }
+        }
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "soft_clear": "i_clear"
+      },
+      "parameters": [
+        {
+          "name": "C_CLOCK_HZ",
+          "default": 103520000,
+          "description": "源帧时间戳时钟，支持实际时钟标定"
+        },
+        {
+          "name": "C_MAX_RPM",
+          "default": 120,
+          "description": "先验最大转速，防止跨帧角度混叠"
+        }
+      ]
+    },
+    {
+      "name": "ball_marker_extract",
+      "rtl_path": "rtl/ball_marker_extract.v",
+      "description": "Same-frame median threshold and bounded four-connected dark marker extraction",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "灰度统计时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "异步低有效复位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "撤销当前黑点提取",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_start",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "空闲时提交已冻结bank",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_origin_x",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "采集窗左边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_origin_y",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "采集窗上边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_left",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "同帧实测球框左边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_right",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "同帧实测球框右边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_top",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "同帧实测球框上边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_bottom",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "同帧实测球框下边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_read_data",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "同步灰度读返回值",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_read",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "同步灰度读请求",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_read_address",
+            "direction": "output",
+            "width": 13,
+            "role": "native",
+            "description": "灰度双单元字地址",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_busy",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "正在处理冻结bank",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "黑点提取结束",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "恰好识别出一个合格黑点",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_reason",
+            "direction": "output",
+            "width": 4,
+            "role": "native",
+            "description": "裁切几何窗口队列或标记错误",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_center_x",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "Q4实测球心横坐标",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_center_y",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "Q4实测球心纵坐标",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_marker_x",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "Q4黑点横坐标",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_marker_y",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "Q4黑点纵坐标",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_median",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "本帧内圆低中位灰度",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_threshold",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "本帧黑点阈值",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock_reset": {
+        "clock": "i_clk",
+        "reset": "i_rstn",
+        "reset_polarity": "active_low",
+        "reset_type": "asynchronous",
+        "soft_clear": "i_clear"
+      },
+      "behavior": "Same-frame median threshold and bounded four-connected dark marker extraction",
+      "latency": "native start/done; no pixel backpressure",
+      "constraints": [
+        "Verilog-2001",
+        "single pixel-group clock domain",
+        "no array reset"
+      ],
+      "corner_cases": [
+        "clear aborts work",
+        "missing sample invalidates RPM",
+        "overflow fails closed"
+      ],
+      "verification_cases": [
+        "Python integer vectors",
+        "source-frame matching",
+        "reset and invalid input"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_start",
+                "wave": "010..."
+              },
+              {
+                "name": "o_busy",
+                "wave": "01..0."
+              },
+              {
+                "name": "o_done",
+                "wave": "0...10"
+              }
+            ]
+          }
+        }
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "soft_clear": "i_clear"
+      },
+      "parameters": [
+        {
+          "name": "C_X_MIN",
+          "default": 64,
+          "description": "原图ROI左界"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 160,
+          "description": "原图ROI上界"
+        },
+        {
+          "name": "C_X_END",
+          "default": 1216,
+          "description": "原图ROI右开区间"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 640,
+          "description": "原图ROI下开区间"
+        },
+        {
+          "name": "C_QUEUE_BITS",
+          "default": 9,
+          "description": "默认512个待访问结点"
+        }
+      ]
+    },
+    {
+      "name": "ball_rotation",
+      "rtl_path": "rtl/ball_rotation.v",
+      "description": "Frame-ordered dual-bank marker and rotation transaction controller",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "像素组与统计共用时钟",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "异步低有效复位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "清除旋转会话",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "颜色支路故障闭锁",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_enable",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "追踪模式且门禁已解锁",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": 96,
+            "role": "native",
+            "description": "原始四像素RGB旁路",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "有效像素组",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "首个有效像素组",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "当前横坐标",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "当前纵坐标",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame",
+            "direction": "input",
+            "width": 32,
+            "role": "native",
+            "description": "源帧编号",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_tick",
+            "direction": "input",
+            "width": 64,
+            "role": "native",
+            "description": "该源帧采集时刻",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_epoch",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "当前配置代次",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_observation_done",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "当前组件帧已完成目标选择",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_observation_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "本帧有实测球而非漏检保留",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_observation_new",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "新目标首帧",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_observation_frame",
+            "direction": "input",
+            "width": 32,
+            "role": "native",
+            "description": "实测球所属源帧",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_observation_tick",
+            "direction": "input",
+            "width": 64,
+            "role": "native",
+            "description": "实测源帧采集时间",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_observation_epoch",
+            "direction": "input",
+            "width": 16,
+            "role": "native",
+            "description": "实测帧配置代次",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_left",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "实测左边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_right",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "实测右边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_top",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "实测上边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_bottom",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "实测下边界",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_predict_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "native",
+            "description": "预测框仍有效",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_predict_x",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "用于未来采集窗的预测中心",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_predict_y",
+            "direction": "input",
+            "width": 12,
+            "role": "native",
+            "description": "用于未来采集窗的预测纵坐标",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_done",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "带源帧号的结果完成脉冲",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frame",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "统计结果源帧号",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_epoch",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "统计结果配置代次",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_angle_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "相位有效",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_phase",
+            "direction": "output",
+            "width": 16,
+            "role": "native",
+            "description": "65536一圈的冻结相位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rpm_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "转速窗口有效",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rpm",
+            "direction": "output",
+            "width": 24,
+            "role": "native",
+            "description": "有符号零点一RPM",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": 3,
+            "role": "native",
+            "description": "旋转统计状态",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_net",
+            "direction": "output",
+            "width": 48,
+            "role": "native",
+            "description": "有符号累计圈相位",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_cw",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "顺转整圈累计",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_ccw",
+            "direction": "output",
+            "width": 32,
+            "role": "native",
+            "description": "逆转整圈累计",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_partial",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "存在未能观测的时段",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_saturated",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "整圈计数已饱和",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_reason",
+            "direction": "output",
+            "width": 4,
+            "role": "native",
+            "description": "本次测量拒绝原因",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "native",
+            "description": "旋转支路失效闭锁",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_bank_busy",
+            "direction": "output",
+            "width": 2,
+            "role": "native",
+            "description": "缓存所有权诊断",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_median",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "当前实测球内中位亮度",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_threshold",
+            "direction": "output",
+            "width": 8,
+            "role": "native",
+            "description": "当前黑点阈值",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "clock_reset": {
+        "clock": "i_clk",
+        "reset": "i_rstn",
+        "reset_polarity": "active_low",
+        "reset_type": "asynchronous",
+        "soft_clear": "i_clear"
+      },
+      "behavior": "Frame-ordered dual-bank marker and rotation transaction controller",
+      "latency": "native start/done; no pixel backpressure",
+      "constraints": [
+        "Verilog-2001",
+        "single pixel-group clock domain",
+        "no array reset"
+      ],
+      "corner_cases": [
+        "clear aborts work",
+        "missing sample invalidates RPM",
+        "overflow fails closed"
+      ],
+      "verification_cases": [
+        "Python integer vectors",
+        "source-frame matching",
+        "reset and invalid input"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_observation_done",
+                "wave": "010..."
+              },
+              {
+                "name": "o_angle_valid",
+                "wave": "0...1."
+              },
+              {
+                "name": "o_done",
+                "wave": "0...10"
+              }
+            ]
+          }
+        }
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false,
+        "soft_clear": "i_clear"
+      },
+      "parameters": [
+        {
+          "name": "C_WIDTH",
+          "default": 1280,
+          "description": "源图宽度"
+        },
+        {
+          "name": "C_HEIGHT",
+          "default": 720,
+          "description": "源图高度"
+        },
+        {
+          "name": "C_X_MIN",
+          "default": 64,
+          "description": "ROI左界"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 160,
+          "description": "ROI上界"
+        },
+        {
+          "name": "C_X_END",
+          "default": 1216,
+          "description": "ROI右开界"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 640,
+          "description": "ROI下开界"
+        },
+        {
+          "name": "C_CLOCK_HZ",
+          "default": 103520000,
+          "description": "实际源时钟标定"
+        },
+        {
+          "name": "C_MAX_RPM",
+          "default": 120,
+          "description": "已知转速上界"
+        }
+      ]
+    },
+    {
+      "name": "ball_components",
+      "rtl_path": "rtl/ball_components.v",
+      "description": "为颜色组件扫描冻结源帧号与SOF时间；不改变颜色连通区域计算。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_session_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_session_clear",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "status",
+            "description": "i_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_sof",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eof",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_eof",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_x",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_y",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_labels",
+            "direction": "input",
+            "width": 8,
+            "role": "signal",
+            "description": "i_labels",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_gate_hits",
+            "direction": "input",
+            "width": 3,
+            "role": "signal",
+            "description": "i_gate_hits",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_epoch",
+            "direction": "input",
+            "width": 16,
+            "role": "signal",
+            "description": "i_epoch",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frame_start",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "o_frame_start",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_candidate_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "status",
+            "description": "o_candidate_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_color",
+            "direction": "output",
+            "width": 2,
+            "role": "signal",
+            "description": "o_color",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_area",
+            "direction": "output",
+            "width": 20,
+            "role": "signal",
+            "description": "o_area",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_min",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_x_min",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_max",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_x_max",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_min",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_y_min",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_max",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_y_max",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frame_done",
+            "direction": "output",
+            "width": 1,
+            "role": "status",
+            "description": "o_frame_done",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_gate_pixels",
+            "direction": "output",
+            "width": 20,
+            "role": "signal",
+            "description": "o_gate_pixels",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_gate_occupied",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "o_gate_occupied",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_epoch",
+            "direction": "output",
+            "width": 16,
+            "role": "signal",
+            "description": "o_epoch",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_overflow",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "o_overflow",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_fault",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "o_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_error",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "o_error",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_count",
+            "direction": "output",
+            "width": 4,
+            "role": "signal",
+            "description": "o_diag_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_width",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_diag_width",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_height",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_diag_height",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_area",
+            "direction": "output",
+            "width": 20,
+            "role": "signal",
+            "description": "o_diag_area",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_fill",
+            "direction": "output",
+            "width": 7,
+            "role": "signal",
+            "description": "o_diag_fill",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_diag_reject",
+            "direction": "output",
+            "width": 4,
+            "role": "signal",
+            "description": "o_diag_reject",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame_id",
+            "direction": "input",
+            "width": 32,
+            "description": "i_frame_id",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_stamp",
+            "direction": "input",
+            "width": 64,
+            "description": "i_stamp",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_frame_id",
+            "direction": "output",
+            "width": 32,
+            "description": "o_frame_id",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_stamp",
+            "direction": "output",
+            "width": 64,
+            "description": "o_stamp",
+            "role": "native",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "为颜色组件扫描冻结源帧号与SOF时间；不改变颜色连通区域计算。"
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "constraints": [
+        "保持原有像素延迟和视频端口",
+        "C_ROTATION_ENABLE参数控制旋转综合",
+        "RAM不做逐单元复位"
+      ],
+      "corner_cases": [
+        "清零撤销旧代次",
+        "漏检不使用预测框计算角度",
+        "错误时冻结累计圈数"
+      ],
+      "verification_cases": [
+        "RGB整链路与Python对比",
+        "原计数、会话清零及代次回归"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_valid",
+                "wave": "01..0."
+              },
+              {
+                "name": "i_sof",
+                "wave": "010..."
+              },
+              {
+                "name": "o_done",
+                "wave": "0...10"
+              }
+            ]
+          }
+        }
+      ],
+      "parameters": [
+        {
+          "name": "C_WIDTH",
+          "default": 1280,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_HEIGHT",
+          "default": 720,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_X_MIN",
+          "default": 64,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 160,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_X_END",
+          "default": 1216,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 640,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_GATE_MIN",
+          "default": 544,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_GATE_END",
+          "default": 736,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_MIN_AREA",
+          "default": 128,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_MIN_SIZE",
+          "default": 12,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_MAX_SIZE",
+          "default": 384,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_MAX_CANDIDATES",
+          "default": 8,
+          "description": "保持原有尺寸或筛选参数"
+        },
+        {
+          "name": "C_QUEUE_BITS",
+          "default": 12,
+          "description": "保持原有尺寸或筛选参数"
+        }
+      ]
+    },
+    {
+      "name": "ball_target_tracker",
+      "rtl_path": "rtl/ball_target_tracker.v",
+      "description": "保留预测输出；新增当前选中实测框及其完成、有效、新目标脉冲。漏检保留不产生实测角度。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_clear",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_clear",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame_start",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_frame_start",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_candidate_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "status",
+            "description": "i_candidate_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_color",
+            "direction": "input",
+            "width": 2,
+            "role": "signal",
+            "description": "i_color",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_area",
+            "direction": "input",
+            "width": 20,
+            "role": "signal",
+            "description": "i_area",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x_min",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_x_min",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x_max",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_x_max",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y_min",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_y_min",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y_max",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_y_max",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_frame_done",
+            "direction": "input",
+            "width": 1,
+            "role": "status",
+            "description": "i_frame_done",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_overflow",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_overflow",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "status",
+            "description": "o_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_status",
+            "direction": "output",
+            "width": 2,
+            "role": "status",
+            "description": "o_status",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_color",
+            "direction": "output",
+            "width": 2,
+            "role": "signal",
+            "description": "o_color",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_min",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_x_min",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_x_max",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_x_max",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_min",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_y_min",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_y_max",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_y_max",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_center_x",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_center_x",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_center_y",
+            "direction": "output",
+            "width": 12,
+            "role": "signal",
+            "description": "o_center_y",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_observation_done",
+            "direction": "output",
+            "width": 1,
+            "description": "o_observation_done",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_observed_valid",
+            "direction": "output",
+            "width": 1,
+            "description": "o_observed_valid",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_observed_new",
+            "direction": "output",
+            "width": 1,
+            "description": "o_observed_new",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_observed_left",
+            "direction": "output",
+            "width": 12,
+            "description": "o_observed_left",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_observed_right",
+            "direction": "output",
+            "width": 12,
+            "description": "o_observed_right",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_observed_top",
+            "direction": "output",
+            "width": 12,
+            "description": "o_observed_top",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_observed_bottom",
+            "direction": "output",
+            "width": 12,
+            "description": "o_observed_bottom",
+            "role": "native",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "保留预测输出；新增当前选中实测框及其完成、有效、新目标脉冲。漏检保留不产生实测角度。"
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "constraints": [
+        "保持原有像素延迟和视频端口",
+        "C_ROTATION_ENABLE参数控制旋转综合",
+        "RAM不做逐单元复位"
+      ],
+      "corner_cases": [
+        "清零撤销旧代次",
+        "漏检不使用预测框计算角度",
+        "错误时冻结累计圈数"
+      ],
+      "verification_cases": [
+        "RGB整链路与Python对比",
+        "原计数、会话清零及代次回归"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_frame_done",
+                "wave": "010..."
+              },
+              {
+                "name": "o_observation_done",
+                "wave": "0.10.."
+              },
+              {
+                "name": "o_observed_valid",
+                "wave": "0.10.."
+              }
+            ]
+          }
+        }
+      ],
+      "parameters": [
+        {
+          "name": "C_MAX_MOVE",
+          "default": 64,
+          "description": "原有目标关联距离"
+        },
+        {
+          "name": "C_X_MIN",
+          "default": 0,
+          "description": "ROI左界"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 0,
+          "description": "ROI上界"
+        },
+        {
+          "name": "C_X_END",
+          "default": 4096,
+          "description": "ROI右开界"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 4096,
+          "description": "ROI下开界"
+        }
+      ]
+    },
+    {
+      "name": "ball_runtime",
+      "rtl_path": "rtl/ball_runtime.v",
+      "description": "将源帧实测框送入旋转支路；累计相位的绝对值、缩位和BCD转换分拍执行，最终显示在CSI帧边界整包提交，像素通路延迟不变。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "I_clk",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rst_n",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "I_rst_n",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_keys_n",
+            "direction": "input",
+            "width": 4,
+            "role": "signal",
+            "description": "I_keys_n",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_camera_status",
+            "direction": "input",
+            "width": 48,
+            "role": "status",
+            "description": "I_camera_status",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rgb",
+            "direction": "input",
+            "width": 96,
+            "role": "signal",
+            "description": "I_rgb",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "status",
+            "description": "I_valid",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_user",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "I_user",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_last",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "I_last",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_data",
+            "direction": "output",
+            "width": 128,
+            "role": "data",
+            "description": "O_data",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "status",
+            "description": "O_valid",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_last",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "O_last",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_done",
+            "direction": "output",
+            "width": 1,
+            "role": "status",
+            "description": "O_done",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_early",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "O_early",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_error",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "O_error",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_red",
+            "direction": "output",
+            "width": 32,
+            "role": "signal",
+            "description": "O_red",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_green",
+            "direction": "output",
+            "width": 32,
+            "role": "signal",
+            "description": "O_green",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_yellow",
+            "direction": "output",
+            "width": 32,
+            "role": "signal",
+            "description": "O_yellow",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_total",
+            "direction": "output",
+            "width": 34,
+            "role": "signal",
+            "description": "O_total",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_count_mode",
+            "direction": "output",
+            "width": 1,
+            "role": "control",
+            "description": "O_count_mode",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_gate_state",
+            "direction": "output",
+            "width": 3,
+            "role": "signal",
+            "description": "O_gate_state",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_track_status",
+            "direction": "output",
+            "width": 2,
+            "role": "status",
+            "description": "O_track_status",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_camera_step",
+            "direction": "output",
+            "width": 2,
+            "role": "signal",
+            "description": "O_camera_step",
+            "clock_domain": "I_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "默认C_FACE_GATE=0、C_ROTATION_ENABLE=1；旋转仅在追踪模式、解锁且图像宽高均不小于256时启用，计数模式维持原计数通路。",
+        "源帧号、epoch及SOF时间戳贯穿像素缓存、CCL与实测框；漏检后的预测框不作为角度观测。",
+        "在上升沿n接受rotation_done且rotation_epoch等于active_epoch：冻结48位累计相位绝对值、RPM幅值、角度换算值、方向圈数及状态，并撤销旧的待发布结果。",
+        "上升沿n+1对冻结绝对值执行缩位：floor(abs_net*100/65536)。abs_net大于等于65536000时输出99999，否则仅对低26位按64+32+4计算33位乘积，并取[32:16]；无需48位乘100链。",
+        "n+1设置flag_rotation_load；十进制转换器在n+2采样装载，32位CW转换器在n+34输出完成脉冲，runtime在n+35锁存全部已完成的BCD值。较短的角度、RPM和净圈数转换提前完成并保持。",
+        "若无抢占且epoch持续有效，最早在n+36且I_user为高的上升沿发布整包BCD；实际等待取决于后续CSI帧边界。I_user不会立即发布同拍刚完成的BCD。",
+        "新的rotation_done优先于旧的scale阶段；完成脉冲只有format_valid且epoch匹配，并且当前没有rotation_done、flag_rotation_scale或flag_rotation_load时才接收，避免旧BCD混入新元数据。",
+        "输入饱和保留reason=15；仅显示净圈数超99999且输入未饱和时使用reason=14。符号独立保留，缩位仅改变显示数值，不改旋转累计量。",
+        "clear_history、门禁锁定或进入计数模式会清理scale/load/format_valid/pending及显示有效状态；rotation_fault在I_user边界发布fault状态并撤销角度和RPM有效标志。",
+        "视频仍按原front、overlay、OSD与128位打包路径运行；显示数值增加内部准备阶段，不增加像素数据的寄存器级数。"
+      ],
+      "clock": {
+        "name": "I_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "I_rst_n",
+        "active": "low",
+        "synchronous": false
+      },
+      "constraints": [
+        "I_clk为MIPI_RX_BYTE_CLK，默认时间戳标定103520000Hz；I_rst_n为异步低有效复位。",
+        "保持外部96位RGB输入、128位视频输出、全部视频有效与帧行标记接口，以及原像素延迟。",
+        "C_ROTATION_ENABLE控制旋转综合；图像宽高不足256时旋转支路关闭。",
+        "缩位乘法的三个移位项先显式扩展为33位，避免Verilog移位操作数过窄导致截断。",
+        "不得通过放宽时钟、虚假多周期或删除接口约束取得时序通过；实际物理时序以同一源码与SDC的route报告为准。",
+        "RAM不做逐单元复位；清零通过有效位与epoch撤销事务。"
+      ],
+      "corner_cases": [
+        "48位有符号净相位最小值-2^47的无符号绝对值应保持2^47，并进入显示饱和。",
+        "abs_net=65535999精确截位结果为99999且不置显示超限；abs_net=65536000及更大值显示99999并置显示超限。",
+        "新结果分别与旧BCD完成、scale、load同拍时，旧完成脉冲不得提交；新的结果重新启动转换。",
+        "清零、epoch改变、计数模式切换及故障期间不得发布旧旋转结果。",
+        "输入saturated与显示上限同时命中时，reason=15优先于reason=14。",
+        "静止、反转、漏检及标记不可见时，遵守旋转支路有效标志，不把预测坐标当作实测角度。"
+      ],
+      "verification_cases": [
+        "sim/tb_ball_rotation_format.v及格式边界向量：正负累计值、最小负数、65536000阈值、输入饱和优先级及新旧转换抢占。",
+        "sim/run_rotation_checks.py --full：8帧RGB整链路及Python定点结果核对。",
+        "原计数、会话清零、epoch及视频延迟回归。",
+        "严格generated_deliverable_gate检查修改后的runtime；门禁状态与历史格式问题按报告原样保留，不作为物理时序证据。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "display_pipeline",
+          "title": "旋转显示数值的捕获、缩位与帧边界发布",
+          "scenario": "display_pipeline",
+          "description": "列表示每个I_clk上升沿之后的寄存器状态；第1列空闲，第2列为捕获沿n。图中32位BCD循环完整展开；未发生抢占且下一次I_user位于n+36。该图为RTL契约示意，不是实测波形。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p......................................"
+              },
+              {
+                "name": "rotation_done (sample)",
+                "wave": "010...................................."
+              },
+              {
+                "name": "flag_rotation_scale",
+                "wave": "010...................................."
+              },
+              {
+                "name": "flag_rotation_load",
+                "wave": "0.10..................................."
+              },
+              {
+                "name": "flag_rotation_format_valid",
+                "wave": "0.1...................................."
+              },
+              {
+                "name": "CW decimal busy",
+                "wave": "0..1...............................0..."
+              },
+              {
+                "name": "rotation_format_done",
+                "wave": "0..................................10.."
+              },
+              {
+                "name": "flag_rotation_pending",
+                "wave": "0...................................1.."
+              },
+              {
+                "name": "I_user (sample)",
+                "wave": "0....................................10"
+              },
+              {
+                "name": "display BCD",
+                "wave": "=....................................=.",
+                "data": [
+                  "old",
+                  "new"
+                ]
+              }
+            ],
+            "config": {
+              "hscale": 1
+            }
+          }
+        },
+        {
+          "id": "preemption",
+          "title": "新结果抢占旧BCD完成与清零撤销",
+          "scenario": "preemption",
+          "description": "逻辑事件示意：旧转换完成与新rotation_done同拍时拒绝旧完成，下一拍缩位再下一拍装载；随后清零撤销待转换和待显示状态。长BCD转换过程省略，不表示固定帧间隔。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "rotation_done",
+                "wave": "010......."
+              },
+              {
+                "name": "old rotation_format_done",
+                "wave": "010......."
+              },
+              {
+                "name": "flag_rotation_scale",
+                "wave": "010......."
+              },
+              {
+                "name": "flag_rotation_load",
+                "wave": "0.10......"
+              },
+              {
+                "name": "flag_rotation_format_valid",
+                "wave": "0.1...0..."
+              },
+              {
+                "name": "clear_history",
+                "wave": "0.....10.."
+              },
+              {
+                "name": "flag_rotation_pending",
+                "wave": "0........."
+              },
+              {
+                "name": "display BCD",
+                "wave": "=.....=...",
+                "data": [
+                  "old",
+                  "cleared"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "parameters": [
+        {
+          "name": "C_WIDTH",
+          "default": 1280,
+          "description": "宽度"
+        },
+        {
+          "name": "C_HEIGHT",
+          "default": 720,
+          "description": "高度"
+        },
+        {
+          "name": "C_X_MIN",
+          "default": 64,
+          "description": "ROI左界"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 160,
+          "description": "ROI上界"
+        },
+        {
+          "name": "C_X_END",
+          "default": 1216,
+          "description": "ROI右界"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 640,
+          "description": "ROI下界"
+        },
+        {
+          "name": "C_GATE_MIN",
+          "default": 544,
+          "description": "门区左界"
+        },
+        {
+          "name": "C_GATE_END",
+          "default": 736,
+          "description": "门区右界"
+        },
+        {
+          "name": "C_LINE",
+          "default": 640,
+          "description": "计数线"
+        },
+        {
+          "name": "C_HYST",
+          "default": 16,
+          "description": "计数迟滞"
+        },
+        {
+          "name": "C_MIN_AREA",
+          "default": 128,
+          "description": "最小颜色面积"
+        },
+        {
+          "name": "C_MIN_SIZE",
+          "default": 12,
+          "description": "最小球框"
+        },
+        {
+          "name": "C_MAX_SIZE",
+          "default": 384,
+          "description": "最大球框"
+        },
+        {
+          "name": "C_MAX_MOVE",
+          "default": 64,
+          "description": "关联距离"
+        },
+        {
+          "name": "C_DEBOUNCE",
+          "default": 2100000,
+          "description": "按键消抖"
+        },
+        {
+          "name": "C_LONG_PRESS",
+          "default": 103520000,
+          "description": "长按时间"
+        },
+        {
+          "name": "C_FACE_GATE",
+          "default": 0,
+          "description": "独立旋转工程默认关闭人脸门禁"
+        },
+        {
+          "name": "C_ROTATION_ENABLE",
+          "default": 1,
+          "description": "独立旋转工程默认开启旋转支路"
+        },
+        {
+          "name": "C_ROTATION_CLOCK_HZ",
+          "default": 103520000,
+          "description": "旋转时间戳标定"
+        },
+        {
+          "name": "C_FACE_STUMPS",
+          "default": "E:/project/ball/fpga/applications/ball_rotation/rtl/face_rom/stumps.mem",
+          "description": "保留人脸支路参数，默认关闭时不实例化门禁硬件"
+        },
+        {
+          "name": "C_FACE_STAGES",
+          "default": "E:/project/ball/fpga/applications/ball_rotation/rtl/face_rom/stages.mem",
+          "description": "保留人脸支路参数，默认关闭时不实例化门禁硬件"
+        },
+        {
+          "name": "C_FACE_COORDINATES",
+          "default": "E:/project/ball/fpga/applications/ball_rotation/rtl/face_rom/coordinates.mem",
+          "description": "保留人脸支路参数，默认关闭时不实例化门禁硬件"
+        }
+      ],
+      "feature": "rotation"
+    },
+    {
+      "name": "ball_status_osd",
+      "rtl_path": "rtl/ball_status_osd.v",
+      "description": "保留两拍像素合成；旋转开启时在144至157行显示角度、转速、圈数及诊断。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "i_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "i_clk",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rstn",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "i_rstn",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rgb",
+            "direction": "input",
+            "width": 96,
+            "role": "signal",
+            "description": "i_rgb",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "status",
+            "description": "i_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_sof",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_sof",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eol",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_eol",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_eof",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_eof",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_x",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_y",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_count_mode",
+            "direction": "input",
+            "width": 1,
+            "role": "control",
+            "description": "i_count_mode",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_strict",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_strict",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_face_unlocked",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_face_unlocked",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_face_busy",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_face_busy",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_face_fault",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "i_face_fault",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_face_confirmed",
+            "direction": "input",
+            "width": 2,
+            "role": "signal",
+            "description": "i_face_confirmed",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_camera_status",
+            "direction": "input",
+            "width": 48,
+            "role": "status",
+            "description": "i_camera_status",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_count",
+            "direction": "input",
+            "width": 4,
+            "role": "signal",
+            "description": "i_diag_count",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_reject",
+            "direction": "input",
+            "width": 4,
+            "role": "signal",
+            "description": "i_diag_reject",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_width_bcd",
+            "direction": "input",
+            "width": 16,
+            "role": "signal",
+            "description": "i_diag_width_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_height_bcd",
+            "direction": "input",
+            "width": 16,
+            "role": "signal",
+            "description": "i_diag_height_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_area_bcd",
+            "direction": "input",
+            "width": 28,
+            "role": "signal",
+            "description": "i_diag_area_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_diag_fill_bcd",
+            "direction": "input",
+            "width": 12,
+            "role": "signal",
+            "description": "i_diag_fill_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_red_bcd",
+            "direction": "input",
+            "width": 40,
+            "role": "signal",
+            "description": "i_red_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_green_bcd",
+            "direction": "input",
+            "width": 40,
+            "role": "signal",
+            "description": "i_green_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_yellow_bcd",
+            "direction": "input",
+            "width": 40,
+            "role": "signal",
+            "description": "i_yellow_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_total_bcd",
+            "direction": "input",
+            "width": 44,
+            "role": "signal",
+            "description": "i_total_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_x_bcd",
+            "direction": "input",
+            "width": 16,
+            "role": "signal",
+            "description": "i_x_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_y_bcd",
+            "direction": "input",
+            "width": 16,
+            "role": "signal",
+            "description": "i_y_bcd",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_gate_state",
+            "direction": "input",
+            "width": 3,
+            "role": "signal",
+            "description": "i_gate_state",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_track_status",
+            "direction": "input",
+            "width": 2,
+            "role": "status",
+            "description": "i_track_status",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_reason",
+            "direction": "input",
+            "width": 3,
+            "role": "signal",
+            "description": "i_reason",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_rgb",
+            "direction": "output",
+            "width": 96,
+            "role": "signal",
+            "description": "o_rgb",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "status",
+            "description": "o_valid",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_sof",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "o_sof",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_eol",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "o_eol",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "o_eof",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "o_eof",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_enable",
+            "direction": "input",
+            "width": 1,
+            "description": "i_rotation_enable",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_angle_valid",
+            "direction": "input",
+            "width": 1,
+            "description": "i_rotation_angle_valid",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_rpm_valid",
+            "direction": "input",
+            "width": 1,
+            "description": "i_rotation_rpm_valid",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_negative",
+            "direction": "input",
+            "width": 1,
+            "description": "i_rotation_negative",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_partial",
+            "direction": "input",
+            "width": 1,
+            "description": "i_rotation_partial",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_status",
+            "direction": "input",
+            "width": 3,
+            "description": "i_rotation_status",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_reason",
+            "direction": "input",
+            "width": 4,
+            "description": "i_rotation_reason",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_rpm_bcd",
+            "direction": "input",
+            "width": 32,
+            "description": "i_rotation_rpm_bcd",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_angle_bcd",
+            "direction": "input",
+            "width": 16,
+            "description": "i_rotation_angle_bcd",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_net_bcd",
+            "direction": "input",
+            "width": 20,
+            "description": "i_rotation_net_bcd",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_cw_bcd",
+            "direction": "input",
+            "width": 40,
+            "description": "i_rotation_cw_bcd",
+            "role": "native",
+            "clock_domain": "i_clk"
+          },
+          {
+            "name": "i_rotation_ccw_bcd",
+            "direction": "input",
+            "width": 40,
+            "description": "i_rotation_ccw_bcd",
+            "role": "native",
+            "clock_domain": "i_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "保留两拍像素合成；旋转开启时在144至157行显示角度、转速、圈数及诊断。"
+      ],
+      "clock": {
+        "name": "i_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "i_rstn",
+        "active": "low",
+        "synchronous": false
+      },
+      "constraints": [
+        "保持原有像素延迟和视频端口",
+        "C_ROTATION_ENABLE参数控制旋转综合",
+        "RAM不做逐单元复位"
+      ],
+      "corner_cases": [
+        "清零撤销旧代次",
+        "漏检不使用预测框计算角度",
+        "错误时冻结累计圈数"
+      ],
+      "verification_cases": [
+        "RGB整链路与Python对比",
+        "原计数、会话清零及代次回归"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "transaction",
+          "title": "事务与有效标记",
+          "scenario": "transaction",
+          "description": "示意图中的长事务已压缩；实际周期数以状态机及仿真报告为准，像素支路保持原延迟。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "i_clk",
+                "wave": "p....."
+              },
+              {
+                "name": "i_valid",
+                "wave": "010..."
+              },
+              {
+                "name": "o_valid",
+                "wave": "0..10."
+              },
+              {
+                "name": "i_sof",
+                "wave": "010..."
+              },
+              {
+                "name": "o_sof",
+                "wave": "0..10."
+              }
+            ]
+          }
+        }
+      ],
+      "parameters": [
+        {
+          "name": "C_ROTATION",
+          "default": 0,
+          "description": "是否合成旋转状态行，生产runtime传入有效开关"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,455 @@
+{
+  "name": "runtime_timing",
+  "modules": [
+    {
+      "name": "ball_runtime",
+      "rtl_path": "rtl/ball_runtime.v",
+      "description": "将源帧实测框送入旋转支路；累计相位的绝对值、缩位和BCD转换分拍执行，最终显示在CSI帧边界整包提交，像素通路延迟不变。",
+      "interfaces": {
+        "ports": [
+          {
+            "name": "I_clk",
+            "direction": "input",
+            "width": 1,
+            "role": "clock",
+            "description": "I_clk",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rst_n",
+            "direction": "input",
+            "width": 1,
+            "role": "reset",
+            "description": "I_rst_n",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_keys_n",
+            "direction": "input",
+            "width": 4,
+            "role": "signal",
+            "description": "I_keys_n",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_camera_status",
+            "direction": "input",
+            "width": 48,
+            "role": "status",
+            "description": "I_camera_status",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_rgb",
+            "direction": "input",
+            "width": 96,
+            "role": "signal",
+            "description": "I_rgb",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_valid",
+            "direction": "input",
+            "width": 1,
+            "role": "status",
+            "description": "I_valid",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_user",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "I_user",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "I_last",
+            "direction": "input",
+            "width": 1,
+            "role": "signal",
+            "description": "I_last",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_data",
+            "direction": "output",
+            "width": 128,
+            "role": "data",
+            "description": "O_data",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_valid",
+            "direction": "output",
+            "width": 1,
+            "role": "status",
+            "description": "O_valid",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_last",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "O_last",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_done",
+            "direction": "output",
+            "width": 1,
+            "role": "status",
+            "description": "O_done",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_early",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "O_early",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_error",
+            "direction": "output",
+            "width": 1,
+            "role": "signal",
+            "description": "O_error",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_red",
+            "direction": "output",
+            "width": 32,
+            "role": "signal",
+            "description": "O_red",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_green",
+            "direction": "output",
+            "width": 32,
+            "role": "signal",
+            "description": "O_green",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_yellow",
+            "direction": "output",
+            "width": 32,
+            "role": "signal",
+            "description": "O_yellow",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_total",
+            "direction": "output",
+            "width": 34,
+            "role": "signal",
+            "description": "O_total",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_count_mode",
+            "direction": "output",
+            "width": 1,
+            "role": "control",
+            "description": "O_count_mode",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_gate_state",
+            "direction": "output",
+            "width": 3,
+            "role": "signal",
+            "description": "O_gate_state",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_track_status",
+            "direction": "output",
+            "width": 2,
+            "role": "status",
+            "description": "O_track_status",
+            "clock_domain": "I_clk"
+          },
+          {
+            "name": "O_camera_step",
+            "direction": "output",
+            "width": 2,
+            "role": "signal",
+            "description": "O_camera_step",
+            "clock_domain": "I_clk"
+          }
+        ]
+      },
+      "behavior": [
+        "默认C_FACE_GATE=0、C_ROTATION_ENABLE=1；旋转仅在追踪模式、解锁且图像宽高均不小于256时启用，计数模式维持原计数通路。",
+        "源帧号、epoch及SOF时间戳贯穿像素缓存、CCL与实测框；漏检后的预测框不作为角度观测。",
+        "在上升沿n接受rotation_done且rotation_epoch等于active_epoch：冻结48位累计相位绝对值、RPM幅值、角度换算值、方向圈数及状态，并撤销旧的待发布结果。",
+        "上升沿n+1对冻结绝对值执行缩位：floor(abs_net*100/65536)。abs_net大于等于65536000时输出99999，否则仅对低26位按64+32+4计算33位乘积，并取[32:16]；无需48位乘100链。",
+        "n+1设置flag_rotation_load；十进制转换器在n+2采样装载，32位CW转换器在n+34输出完成脉冲，runtime在n+35锁存全部已完成的BCD值。较短的角度、RPM和净圈数转换提前完成并保持。",
+        "若无抢占且epoch持续有效，最早在n+36且I_user为高的上升沿发布整包BCD；实际等待取决于后续CSI帧边界。I_user不会立即发布同拍刚完成的BCD。",
+        "新的rotation_done优先于旧的scale阶段；完成脉冲只有format_valid且epoch匹配，并且当前没有rotation_done、flag_rotation_scale或flag_rotation_load时才接收，避免旧BCD混入新元数据。",
+        "输入饱和保留reason=15；仅显示净圈数超99999且输入未饱和时使用reason=14。符号独立保留，缩位仅改变显示数值，不改旋转累计量。",
+        "clear_history、门禁锁定或进入计数模式会清理scale/load/format_valid/pending及显示有效状态；rotation_fault在I_user边界发布fault状态并撤销角度和RPM有效标志。",
+        "视频仍按原front、overlay、OSD与128位打包路径运行；显示数值增加内部准备阶段，不增加像素数据的寄存器级数。"
+      ],
+      "clock": {
+        "name": "I_clk",
+        "edge": "posedge"
+      },
+      "reset": {
+        "name": "I_rst_n",
+        "active": "low",
+        "synchronous": false
+      },
+      "constraints": [
+        "I_clk为MIPI_RX_BYTE_CLK，默认时间戳标定103520000Hz；I_rst_n为异步低有效复位。",
+        "保持外部96位RGB输入、128位视频输出、全部视频有效与帧行标记接口，以及原像素延迟。",
+        "C_ROTATION_ENABLE控制旋转综合；图像宽高不足256时旋转支路关闭。",
+        "缩位乘法的三个移位项先显式扩展为33位，避免Verilog移位操作数过窄导致截断。",
+        "不得通过放宽时钟、虚假多周期或删除接口约束取得时序通过；实际物理时序以同一源码与SDC的route报告为准。",
+        "RAM不做逐单元复位；清零通过有效位与epoch撤销事务。"
+      ],
+      "corner_cases": [
+        "48位有符号净相位最小值-2^47的无符号绝对值应保持2^47，并进入显示饱和。",
+        "abs_net=65535999精确截位结果为99999且不置显示超限；abs_net=65536000及更大值显示99999并置显示超限。",
+        "新结果分别与旧BCD完成、scale、load同拍时，旧完成脉冲不得提交；新的结果重新启动转换。",
+        "清零、epoch改变、计数模式切换及故障期间不得发布旧旋转结果。",
+        "输入saturated与显示上限同时命中时，reason=15优先于reason=14。",
+        "静止、反转、漏检及标记不可见时，遵守旋转支路有效标志，不把预测坐标当作实测角度。"
+      ],
+      "verification_cases": [
+        "sim/tb_ball_rotation_format.v及格式边界向量：正负累计值、最小负数、65536000阈值、输入饱和优先级及新旧转换抢占。",
+        "sim/run_rotation_checks.py --full：8帧RGB整链路及Python定点结果核对。",
+        "原计数、会话清零、epoch及视频延迟回归。",
+        "严格generated_deliverable_gate检查修改后的runtime；门禁状态与历史格式问题按报告原样保留，不作为物理时序证据。"
+      ],
+      "timing_diagrams": [
+        {
+          "id": "display_pipeline",
+          "title": "旋转显示数值的捕获、缩位与帧边界发布",
+          "scenario": "display_pipeline",
+          "description": "列表示每个I_clk上升沿之后的寄存器状态；第1列空闲，第2列为捕获沿n。图中32位BCD循环完整展开；未发生抢占且下一次I_user位于n+36。该图为RTL契约示意，不是实测波形。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p......................................"
+              },
+              {
+                "name": "rotation_done (sample)",
+                "wave": "010...................................."
+              },
+              {
+                "name": "flag_rotation_scale",
+                "wave": "010...................................."
+              },
+              {
+                "name": "flag_rotation_load",
+                "wave": "0.10..................................."
+              },
+              {
+                "name": "flag_rotation_format_valid",
+                "wave": "0.1...................................."
+              },
+              {
+                "name": "CW decimal busy",
+                "wave": "0..1...............................0..."
+              },
+              {
+                "name": "rotation_format_done",
+                "wave": "0..................................10.."
+              },
+              {
+                "name": "flag_rotation_pending",
+                "wave": "0...................................1.."
+              },
+              {
+                "name": "I_user (sample)",
+                "wave": "0....................................10"
+              },
+              {
+                "name": "display BCD",
+                "wave": "=....................................=.",
+                "data": [
+                  "old",
+                  "new"
+                ]
+              }
+            ],
+            "config": {
+              "hscale": 1
+            }
+          }
+        },
+        {
+          "id": "preemption",
+          "title": "新结果抢占旧BCD完成与清零撤销",
+          "scenario": "preemption",
+          "description": "逻辑事件示意：旧转换完成与新rotation_done同拍时拒绝旧完成，下一拍缩位再下一拍装载；随后清零撤销待转换和待显示状态。长BCD转换过程省略，不表示固定帧间隔。",
+          "wavejson": {
+            "signal": [
+              {
+                "name": "I_clk",
+                "wave": "p........."
+              },
+              {
+                "name": "rotation_done",
+                "wave": "010......."
+              },
+              {
+                "name": "old rotation_format_done",
+                "wave": "010......."
+              },
+              {
+                "name": "flag_rotation_scale",
+                "wave": "010......."
+              },
+              {
+                "name": "flag_rotation_load",
+                "wave": "0.10......"
+              },
+              {
+                "name": "flag_rotation_format_valid",
+                "wave": "0.1...0..."
+              },
+              {
+                "name": "clear_history",
+                "wave": "0.....10.."
+              },
+              {
+                "name": "flag_rotation_pending",
+                "wave": "0........."
+              },
+              {
+                "name": "display BCD",
+                "wave": "=.....=...",
+                "data": [
+                  "old",
+                  "cleared"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "parameters": [
+        {
+          "name": "C_WIDTH",
+          "default": 1280,
+          "description": "宽度"
+        },
+        {
+          "name": "C_HEIGHT",
+          "default": 720,
+          "description": "高度"
+        },
+        {
+          "name": "C_X_MIN",
+          "default": 64,
+          "description": "ROI左界"
+        },
+        {
+          "name": "C_Y_MIN",
+          "default": 160,
+          "description": "ROI上界"
+        },
+        {
+          "name": "C_X_END",
+          "default": 1216,
+          "description": "ROI右界"
+        },
+        {
+          "name": "C_Y_END",
+          "default": 640,
+          "description": "ROI下界"
+        },
+        {
+          "name": "C_GATE_MIN",
+          "default": 544,
+          "description": "门区左界"
+        },
+        {
+          "name": "C_GATE_END",
+          "default": 736,
+          "description": "门区右界"
+        },
+        {
+          "name": "C_LINE",
+          "default": 640,
+          "description": "计数线"
+        },
+        {
+          "name": "C_HYST",
+          "default": 16,
+          "description": "计数迟滞"
+        },
+        {
+          "name": "C_MIN_AREA",
+          "default": 128,
+          "description": "最小颜色面积"
+        },
+        {
+          "name": "C_MIN_SIZE",
+          "default": 12,
+          "description": "最小球框"
+        },
+        {
+          "name": "C_MAX_SIZE",
+          "default": 384,
+          "description": "最大球框"
+        },
+        {
+          "name": "C_MAX_MOVE",
+          "default": 64,
+          "description": "关联距离"
+        },
+        {
+          "name": "C_DEBOUNCE",
+          "default": 2100000,
+          "description": "按键消抖"
+        },
+        {
+          "name": "C_LONG_PRESS",
+          "default": 103520000,
+          "description": "长按时间"
+        },
+        {
+          "name": "C_FACE_GATE",
+          "default": 0,
+          "description": "独立旋转工程默认关闭人脸门禁"
+        },
+        {
+          "name": "C_ROTATION_ENABLE",
+          "default": 1,
+          "description": "独立旋转工程默认开启旋转支路"
+        },
+        {
+          "name": "C_ROTATION_CLOCK_HZ",
+          "default": 103520000,
+          "description": "旋转时间戳标定"
+        },
+        {
+          "name": "C_FACE_STUMPS",
+          "default": "E:/project/ball/fpga/applications/ball_rotation/rtl/face_rom/stumps.mem",
+          "description": "保留人脸支路参数，默认关闭时不实例化门禁硬件"
+        },
+        {
+          "name": "C_FACE_STAGES",
+          "default": "E:/project/ball/fpga/applications/ball_rotation/rtl/face_rom/stages.mem",
+          "description": "保留人脸支路参数，默认关闭时不实例化门禁硬件"
+        },
+        {
+          "name": "C_FACE_COORDINATES",
+          "default": "E:/project/ball/fpga/applications/ball_rotation/rtl/face_rom/coordinates.mem",
+          "description": "保留人脸支路参数，默认关闭时不实例化门禁硬件"
+        }
+      ],
+      "feature": "rotation"
+    }
+  ]
+}
