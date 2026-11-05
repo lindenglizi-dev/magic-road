@@ -1,5 +1,20 @@
 # Magic Road：视觉世界模型与硬件加速
 
+开发流程已固定在 [AGENTS.md](AGENTS.md) 与
+[project-hygiene Skill](.agents/skills/project-hygiene/SKILL.md)：使用当前分支保存源码版本，
+每个通过验证的阶段进行明确范围的提交和推送；新过程文件集中到 `artifacts/`，不再复制整套工程。
+
+阶段收尾检查（Python 标准库，无需安装依赖）：
+
+```powershell
+python .agents/skills/project-hygiene/scripts/hygiene.py staged --repo .
+python .agents/skills/project-hygiene/scripts/hygiene.py scan --repo .
+```
+
+第一条检查已暂存文件的大文件、生成目录及敏感文件名；第二条记录指定目录大小、下次巡检可比较的增长量及清理候选，
+报告固定覆盖 `artifacts/hygiene/latest.json`，不会不断生成报告副本。工具没有删除模式；
+旧版运行环境、会话数据库、人工资料和关键验证证据不能直接当缓存清空。
+
 目标是先建立可复现的视觉预测任务，再研究小型学习模型及其多步状态预测加速器。当前已有 **P1 桌面仿真数据与解析基线**、**P2 首轮桌面视觉预测模型试训**和 **Minecraft M0 离线数据契约与检查器**；P2 图像预测尚未超过简单对照。下一条主线按下文规划推进 **Minecraft 小场景世界模型 → 定点参考 → RTL**，Minecraft 游戏采集、训练及硬件实现均未开始。
 
 ## Minecraft M0：离线数据检查
